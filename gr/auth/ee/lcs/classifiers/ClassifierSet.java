@@ -70,7 +70,7 @@ public class ClassifierSet {
 	  }
 	 return 0;
   }
-
+  
   /** 
    *  removes a classifier from the set by either completely deleting it (if the classsifier's numerosity is 0) or by decreasing the numerosity
    */
