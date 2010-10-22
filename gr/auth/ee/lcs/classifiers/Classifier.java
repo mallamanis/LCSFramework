@@ -5,6 +5,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 
 /** 
  *  Represents a single classifier/ rule
+ *  @author Miltos Allamanis
  */
 public class Classifier {
 
@@ -95,7 +96,7 @@ public class Classifier {
   }
 
   /**
-   * 
+   * Getter of the ExtendedBitSet
    * @return the classifier's chromosome as an extendedBitSet
    */
   public ExtendedBitSet getChromosome() {

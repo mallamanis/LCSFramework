@@ -6,7 +6,8 @@ import java.util.Vector;
 
 
 /** 
- *  implement abstractSet?
+ *  implement abstractSet of Classifiers, counting numerosity
+ *  @author Miltos Allamanis
  */
 public class ClassifierSet {
 

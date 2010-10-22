@@ -10,9 +10,16 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
  */
 public class BestClassifierSelector implements INaturalSelector {
 
-  public void select(int howManyToSelect, ClassifierSet fromPopulation, ClassifierSet toPopulation) {
+	/**
+	 * Implementation of abstract method
+	 * Selects the best classifier in the fromPopulation and adds it to toPopulation
+	 * @param howManyToSelect the numerosity that the best classifier is going to be added
+	 * @param fromPopulation the source set of classifiers
+	 * @param toPopulation the target set of classifiers. In this set the best classifier will be added
+	 */
+	public void select(int howManyToSelect, ClassifierSet fromPopulation, ClassifierSet toPopulation) {
 	 
-	  //Search for best
+	  //Search for the best classifier
 	  double bestFitness=-1;
 	  int bestIndex=-1;
 	  for (int i=0;i<fromPopulation.getNumberOfMacroclassifiers();i++){

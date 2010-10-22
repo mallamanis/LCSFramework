@@ -12,7 +12,8 @@ import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import org.junit.Test;
 
 /**
- * @author miltiadis
+ * A simple boolean representation for input data
+ * @author Miltos Allamanis
  *
  */
 public class SimpleBooleanRepresentationTest {
