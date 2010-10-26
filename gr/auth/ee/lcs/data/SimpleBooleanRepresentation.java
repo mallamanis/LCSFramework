@@ -170,8 +170,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public void setRepresentationSpecificClassifierData(Classifier aClassifier) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	/* (non-Javadoc)
