@@ -3,7 +3,7 @@ package gr.auth.ee.lcs.geneticalgorithm;
 import gr.auth.ee.lcs.classifiers.Classifier;
 
 /**
- * The interface of a unary genertic operator
+ * The interface of a unary genetic operator
  * @author Miltos Allamanis
  *
  */
