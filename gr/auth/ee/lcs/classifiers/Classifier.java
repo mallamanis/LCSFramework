@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs.classifiers;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 
 
 /** 
@@ -18,7 +19,12 @@ public class Classifier {
    *  An object (of undefined type) that is used by the update algorithms
    */
   public Object updateData;
-
+  
+  /**
+   * 
+   */
+  public int experience=0;
+  
   /** 
    *  the timestamp is the last iteration the classifier has participated in a GA Evolution
    */
@@ -57,6 +63,8 @@ public class Classifier {
    */
   public Classifier(){
 	  chromosome=new ExtendedBitSet(ClassifierTransformBridge.instance.getChromosomeSize());
+	  updateData=UpdateAlgorithmFactoryAndStrategy.createDefaultDataObject();
+	  ClassifierTransformBridge.instance.setRepresentationSpecificClassifierData(this);
   }
   
   /**    
