@@ -6,19 +6,20 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 /** 
  *  An abstract *S-LCS update algorithm as described in Tzima-Mitkas paper
  */
-public abstract class AbstractSLCSUpdateAlgorithm implements IUpdateAlgorithmFactoryAndStrategy {
+public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
   /** 
    *  The abstract function used to calculate the fitness of a classifier
    */
   public abstract void updateFitness(Classifier aClassifier, ClassifierSet correctSet);
 
-  @Override
+  
   public Object createStateClassifierObject() {
+	  //TODO: Intial parameters
 	return new GenericSLCSClassifierData();
   }
 
-  @Override
+  
   /**
    * Updates the set
    * setA is the match set
@@ -31,6 +32,7 @@ public abstract class AbstractSLCSUpdateAlgorithm implements IUpdateAlgorithmFac
 		  data.ns=(data.ns*data.msa+setB.getTotalNumerosity())/(data.msa+1);
 		  data.msa++;
 		  updateFitness(cl,setB);
+		  this.updateSubsumption(cl);
 	  }
   
   }
