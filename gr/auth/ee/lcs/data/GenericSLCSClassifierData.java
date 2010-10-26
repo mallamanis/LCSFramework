@@ -25,5 +25,14 @@ public class GenericSLCSClassifierData {
    *  false positives
    */
   public Integer fp;
+  
+  /**
+   * Strength
+   */
+  public double str;
+  
+  public Object clone(){
+	  return this.clone();
+  }
 
 }
