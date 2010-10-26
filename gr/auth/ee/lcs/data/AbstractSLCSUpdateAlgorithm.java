@@ -19,9 +19,20 @@ public abstract class AbstractSLCSUpdateAlgorithm implements IUpdateAlgorithmFac
   }
 
   @Override
-  public void updateSet(ClassifierSet setA, ClassifierSet setB) {
-	// TODO Auto-generated method stub
-	
+  /**
+   * Updates the set
+   * setA is the match set
+   * setB is the correct set  
+   */
+  public final void updateSet(ClassifierSet setA, ClassifierSet setB){
+	  for (int i=0;i<setA.getNumberOfMacroclassifiers();i++){
+		  Classifier cl=setA.getClassifier(i);
+		  GenericSLCSClassifierData data=((GenericSLCSClassifierData)cl.updateData);
+		  data.ns=(data.ns*data.msa+setB.getTotalNumerosity())/(data.msa+1);
+		  data.msa++;
+		  updateFitness(cl,setB);
+	  }
+  
   }
 
 }
