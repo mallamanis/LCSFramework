@@ -13,7 +13,7 @@ public class Classifier {
   /** 
    *  the fitness of the classifier
    */
-  public double fitness=0;
+  public double fitness=.1;
 
   /** 
    *  An object (of undefined type) that is used by the update algorithms
