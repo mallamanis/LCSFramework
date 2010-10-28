@@ -13,13 +13,20 @@ import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
  */
 public class NichedSteadyStateFitnessProportionalGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 
-  public INaturalSelector gaSelector;
+  protected INaturalSelector gaSelector;
 
-  public IBinaryGeneticOperator crossoverOp;
+  protected IBinaryGeneticOperator crossoverOp;
   
-  public IUnaryGeneticOperator mutationOp;
+  protected IUnaryGeneticOperator mutationOp;
   
   private int timestamp=0;
+  
+  public NichedSteadyStateFitnessProportionalGeneticAlgorithm(INaturalSelector gaSelector, IBinaryGeneticOperator crossoverOp, IUnaryGeneticOperator mutationOp){
+	  this.gaSelector=gaSelector;
+	  this.crossoverOp=crossoverOp;
+	  this.mutationOp=mutationOp;
+  }
+  
   @Override
   /**
    * Evovles a set
