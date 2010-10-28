@@ -9,27 +9,27 @@ public class GenericSLCSClassifierData {
   /** 
    *  niche set size estimation
    */
-  public Integer ns;
+  public int ns=0;
 
   /** 
    *  Match Set Appearances
    */
-  public Integer msa;
+  public int msa=0;
 
   /** 
    *  true positives
    */
-  public Integer tp;
+  public int tp=0;
 
   /** 
    *  false positives
    */
-  public Integer fp;
+  public int fp=0;
   
   /**
    * Strength
    */
-  public double str;
+  public double str=0;
   
   public Object clone(){
 	  return this.clone();
