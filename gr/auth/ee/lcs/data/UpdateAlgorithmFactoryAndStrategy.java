@@ -37,8 +37,8 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
 	  }
   }
   
-  public double subsumptionFitnessThreshold;
-  public int subsumptionExperienceThreshold;
+  public double subsumptionFitnessThreshold=1;
+  public int subsumptionExperienceThreshold=100;
   
   protected void updateSubsumption(Classifier aClassifier){
 	 aClassifier.canSubsume=aClassifier.fitness>subsumptionFitnessThreshold &&
