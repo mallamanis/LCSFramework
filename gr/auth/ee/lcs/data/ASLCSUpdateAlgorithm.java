@@ -5,7 +5,11 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 
 public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
-	public double n;
+	private double n;
+	
+	public ASLCSUpdateAlgorithm(double n){
+		this.n=n;
+	}
 	
   public void updateFitness(Classifier aClassifier, ClassifierSet correctSet) {
 	  GenericSLCSClassifierData data=((GenericSLCSClassifierData)aClassifier.updateData);
