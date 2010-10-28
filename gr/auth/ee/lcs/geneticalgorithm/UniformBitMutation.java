@@ -10,7 +10,11 @@ import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
  */
 public class UniformBitMutation implements IUnaryGeneticOperator {
 
-  public double mutationRate;
+  private double mutationRate;
+  
+  public UniformBitMutation(double mutationRate){
+	  this.mutationRate=mutationRate;
+  }
 
   /**
    * operates on the given classifier by mutating its bits
