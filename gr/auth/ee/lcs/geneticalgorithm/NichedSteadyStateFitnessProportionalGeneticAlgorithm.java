@@ -19,22 +19,33 @@ public class NichedSteadyStateFitnessProportionalGeneticAlgorithm implements IGe
   
   protected IUnaryGeneticOperator mutationOp;
   
+  protected int gaActivationAge;
+  
   private int timestamp=0;
   
-  public NichedSteadyStateFitnessProportionalGeneticAlgorithm(INaturalSelector gaSelector, IBinaryGeneticOperator crossoverOp, IUnaryGeneticOperator mutationOp){
+  public NichedSteadyStateFitnessProportionalGeneticAlgorithm(INaturalSelector gaSelector, IBinaryGeneticOperator crossoverOp, IUnaryGeneticOperator mutationOp, int gaActivationAge){
 	  this.gaSelector=gaSelector;
 	  this.crossoverOp=crossoverOp;
 	  this.mutationOp=mutationOp;
+	  this.gaActivationAge=gaActivationAge;
   }
   
   @Override
   /**
-   * Evovles a set
+   * Evolves a set
    * If the set is empty an exception will be thrown
    */
   public void evolveSet(ClassifierSet evolveSet, ClassifierSet population) {
 	 
 	  timestamp++;
+	  
+	  int meanAge=0;
+	  for (int i=0;i<evolveSet.getNumberOfMacroclassifiers();i++){
+		  meanAge+=evolveSet.getClassifierNumerosity(i)*evolveSet.getClassifier(i).timestamp;
+	  }
+	  meanAge/=evolveSet.getTotalNumerosity();
+	  if (timestamp-meanAge<this.gaActivationAge)
+		  return;
 	  
 	for (int i=0;i<evolveSet.getNumberOfMacroclassifiers();i++){
 		evolveSet.getClassifier(i).experience++;
