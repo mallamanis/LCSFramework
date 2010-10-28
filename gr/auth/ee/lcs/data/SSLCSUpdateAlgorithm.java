@@ -9,7 +9,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	
 	public SSLCSUpdateAlgorithm(double reward, double penaltyPercent){
 		R=reward;
-		penaltyPercent=p;
+		p=penaltyPercent;
 	}
 	
   public void updateFitness(Classifier aClassifier, ClassifierSet correctSet) {
