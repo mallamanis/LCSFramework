@@ -5,7 +5,12 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 
 public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
-	public double R,p;
+	private double R,p;
+	
+	public SSLCSUpdateAlgorithm(double reward, double penaltyPercent){
+		R=reward;
+		penaltyPercent=p;
+	}
 	
   public void updateFitness(Classifier aClassifier, ClassifierSet correctSet) {
 	  GenericSLCSClassifierData data=((GenericSLCSClassifierData)aClassifier.updateData);
