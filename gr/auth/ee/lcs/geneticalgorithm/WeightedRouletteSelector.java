@@ -25,7 +25,7 @@ public class WeightedRouletteSelector implements INaturalSelector {
 	  for (int i=0;i<howManyToSelect;i++){
 		  //Roulette
 		  double rand=Math.random()*fitnessSum;
-		  double tempSum=-1;
+		  double tempSum=0;
 		  int selectedIndex=-1;
 		  do{
 			  selectedIndex++;
