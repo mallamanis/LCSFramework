@@ -9,7 +9,11 @@ public class OverpopulationInverseFitnessProportionateDeletion implements ISizeC
   /** 
    *  the maximum number of classifiers in the set
    */
-  public int maxPermittableSetSize;
+  private int maxPermittableSetSize;
+  
+  public OverpopulationInverseFitnessProportionateDeletion(int maxPermittableSetSize){
+	  this.maxPermittableSetSize=maxPermittableSetSize;
+  }
 
   public void controlSize(ClassifierSet aSet) {
 	  if (aSet.totalNumerosity<maxPermittableSetSize)
@@ -25,7 +29,7 @@ public class OverpopulationInverseFitnessProportionateDeletion implements ISizeC
 	  do{
 		  //Roulette
 		  double rand=Math.random()*fitnessSum;
-		  double tempSum=-1;
+		  double tempSum=0;
 		  int selectedIndex=-1;
 		  do{
 			  selectedIndex++;
