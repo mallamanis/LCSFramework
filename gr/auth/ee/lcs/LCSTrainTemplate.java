@@ -25,9 +25,9 @@ public class LCSTrainTemplate {
 		  
 		  //Generate Correct Set
 		  ClassifierSet correctSet=new ClassifierSet(new DummySizeControlStrategy());
-		  for (int i=0;i<correctSet.getNumberOfMacroclassifiers();i++){
-			  if (correctSet.getClassifier(i).actionAdvocated==expectedAction)
-				  correctSet.addClassifier(correctSet.getClassifier(i), correctSet.getClassifierNumerosity(i));		  
+		  for (int i=0;i<matchSet.getNumberOfMacroclassifiers();i++){
+			  if (matchSet.getClassifier(i).actionAdvocated==expectedAction)
+				  correctSet.addClassifier(matchSet.getClassifier(i), matchSet.getClassifierNumerosity(i));		  
 		  }
 		  
 		  if (correctSet.getNumberOfMacroclassifiers()==0){ //Cover
