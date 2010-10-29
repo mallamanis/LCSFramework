@@ -12,7 +12,7 @@ import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import org.junit.Test;
 
 /**
- * A simple boolean representation for input data
+ * A test for @see gr.auth.ee.data.SimpleBooleanRepresentation
  * @author Miltos Allamanis
  *
  */
@@ -101,7 +101,7 @@ public class SimpleBooleanRepresentationTest {
 	}
 
 	/**
-	 * Test method for {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#createRandomCoveringClassifier(double[])}.
+	 * Test method for {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#createRandomCoveringClassifier(double[],int)}.
 	 */
 	@Test
 	public void testCreateRandomCoveringClassifier() {
