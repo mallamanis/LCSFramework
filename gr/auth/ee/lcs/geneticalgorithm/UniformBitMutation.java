@@ -12,6 +12,11 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 
   private double mutationRate;
   
+  /**
+   * The default constructor
+   * @param mutationRate the probability that a bit will be flipped
+   * Initializes the operator's attributes
+   */
   public UniformBitMutation(double mutationRate){
 	  this.mutationRate=mutationRate;
   }
