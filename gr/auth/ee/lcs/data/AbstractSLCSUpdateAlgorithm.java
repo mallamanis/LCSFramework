@@ -11,7 +11,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactory
   /** 
    *  The abstract function used to calculate the fitness of a classifier
    */
-  public abstract void updateFitness(Classifier aClassifier, ClassifierSet correctSet);
+  public abstract void updateFitness(Classifier aClassifier,int numerosity, ClassifierSet correctSet);
 
   
   public Object createStateClassifierObject() {
@@ -31,7 +31,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactory
 		  GenericSLCSClassifierData data=((GenericSLCSClassifierData)cl.updateData);
 		  data.ns=(data.ns*data.msa+setB.getTotalNumerosity())/(data.msa+1);
 		  data.msa++;
-		  updateFitness(cl,setB);
+		  updateFitness(cl,setA.getClassifierNumerosity(i),setB);
 		  this.updateSubsumption(cl);
 	  }
   
