@@ -27,7 +27,7 @@ public class TzimaRepresentation extends ClassifierTransformBridge {
   }
 
   @Override
-  public Classifier createRandomCoveringClassifier(double[] visionVector) {
+  public Classifier createRandomCoveringClassifier(double[] visionVector, int advocatingAction) {
 	// TODO Auto-generated method stub
 	return null;
   }
