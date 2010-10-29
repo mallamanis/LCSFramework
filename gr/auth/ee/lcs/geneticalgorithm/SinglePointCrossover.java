@@ -12,7 +12,7 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 
 	/**
 	 * The implementation of the abstract method
-	 * @see gr.auth.ee.geneticalgorithm.IBinaryGeneticOperator
+	 * @see gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator
 	 */
 	public Classifier operate(Classifier classifierA, Classifier classifierB) {
 	  int chromosomeSize=classifierB.chromosome.size();
