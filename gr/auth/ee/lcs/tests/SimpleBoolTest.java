@@ -5,19 +5,21 @@ package gr.auth.ee.lcs.tests;
 
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
 import gr.auth.ee.lcs.classifiers.OverpopulationInverseFitnessProportionateDeletion;
-import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.SSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.BestFitnessTournamentSelector;
 import gr.auth.ee.lcs.geneticalgorithm.NichedSteadyStateFitnessProportionalGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.WeightedRouletteSelector;
 
 /**
- * @author miltiadis
+ * @author Miltos Allamanis
  *
  */
 public class SimpleBoolTest {
@@ -30,16 +32,16 @@ public class SimpleBoolTest {
 		myExample.ga=new NichedSteadyStateFitnessProportionalGeneticAlgorithm(
 				new WeightedRouletteSelector(),
 				new SinglePointCrossover(),
-				new UniformBitMutation(.1));
+				new UniformBitMutation(.04),50);
 		
-		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.9,3);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new SSLCSUpdateAlgorithm(5,.05);
+		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,3);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
 		
-		ClassifierSet rulePopulation=new ClassifierSet(new OverpopulationInverseFitnessProportionateDeletion(30));
+		ClassifierSet rulePopulation=new ClassifierSet(new DummySizeControlStrategy());//new OverpopulationInverseFitnessProportionateDeletion(100));
 		
 		int trainSet[][][]=new int[2][2][2];
 		fillSet(trainSet);
-		for (int rep=0;rep<100000;rep++)//Repeat 1000times
+		for (int rep=0;rep<1000;rep++)//Repeat 1000times
 			for (int a=0;a<2;a++)
 				for (int b=0;b<2;b++)
 					for (int c=0;c<2;c++){
