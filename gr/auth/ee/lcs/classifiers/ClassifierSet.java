@@ -13,9 +13,8 @@ public class ClassifierSet {
 
   public int totalNumerosity=0;
 
-    /**
-   * 
-   * @element-type Macroclassifier
+   /**
+   * Macroclassifier
    */
   public Vector<Macroclassifier>  myMacroclassifier;
   /** 
