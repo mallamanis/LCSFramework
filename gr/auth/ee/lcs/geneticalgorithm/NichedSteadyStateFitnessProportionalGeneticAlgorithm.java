@@ -13,16 +13,39 @@ import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
  */
 public class NichedSteadyStateFitnessProportionalGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 
+  /**
+   * The selector used for the next generation selection
+   */
   protected INaturalSelector gaSelector;
 
+  /**
+   * The crossover operator that will be used by the GA
+   */
   protected IBinaryGeneticOperator crossoverOp;
   
+  /**
+   * The mutation operator used by the GA
+   */
   protected IUnaryGeneticOperator mutationOp;
   
+  /**
+   * The GA activation age. The population must have an average age, greater that this
+   * in order for the GA to run
+   */
   protected int gaActivationAge;
   
+  /**
+   * The current timestamp. Used by the GA to count generations
+   */
   private int timestamp=0;
   
+  /**
+   * Default constructor
+   * @param gaSelector the INautralSelector that selects parents for next generation
+   * @param crossoverOp the crossover operator that will be used
+   * @param mutationOp the mutation operator that will be used
+   * @param gaActivationAge the age of the population that activates the G.A.
+   */
   public NichedSteadyStateFitnessProportionalGeneticAlgorithm(INaturalSelector gaSelector, IBinaryGeneticOperator crossoverOp, IUnaryGeneticOperator mutationOp, int gaActivationAge){
 	  this.gaSelector=gaSelector;
 	  this.crossoverOp=crossoverOp;
@@ -34,6 +57,7 @@ public class NichedSteadyStateFitnessProportionalGeneticAlgorithm implements IGe
   /**
    * Evolves a set
    * If the set is empty an exception will be thrown
+   * 
    */
   public void evolveSet(ClassifierSet evolveSet, ClassifierSet population) {
 	 
