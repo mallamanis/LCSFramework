@@ -31,13 +31,13 @@ public class LCSTrainTemplate {
 		  }
 		  
 		  if (correctSet.getNumberOfMacroclassifiers()==0){ //Cover
-			  Classifier coveringClassifier= ClassifierTransformBridge.instance.createRandomCoveringClassifier(dataInstance);
+			  Classifier coveringClassifier= ClassifierTransformBridge.instance.createRandomCoveringClassifier(dataInstance,expectedAction);
 			  coveringClassifier.actionAdvocated=expectedAction;
 			  population.addClassifier(coveringClassifier, 1);
 			  return;
 		  }
 		  
-		  UpdateAlgorithmFactoryAndStrategy.updateData(correctSet, matchSet);
+		  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
 		  ga.evolveSet(correctSet, population); //TODO: Timed activation
 		  
 		  
