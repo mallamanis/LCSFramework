@@ -49,7 +49,7 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 	 * @param toPopulation the destination population of the tournament winners
 	 * @param participants the int[] of indexes of participants
 	 */
-	protected void tournament( ClassifierSet fromPopulation, int[] participants, ClassifierSet toPopulation){
+	public void tournament( ClassifierSet fromPopulation, int[] participants, ClassifierSet toPopulation){
 		
 		//Sort by order
 		Arrays.sort(participants);
@@ -66,7 +66,7 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 					bestMacroclassifierParticipant=currentMacroclassifierIndex;
 					bestFitness=fromPopulation.getClassifier(currentMacroclassifierIndex).fitness;
 				}
-				currentMaxParticipantIndex++; //Next!
+				currentClassifierIndex++; //Next!
 			}
 			currentMacroclassifierIndex++;
 		}while(currentClassifierIndex<tournamentSize);
