@@ -31,7 +31,7 @@ public abstract class ClassifierTransformBridge {
   /** 
    *  Creates a random classifier to cover the visionVector
    */
-  public abstract Classifier createRandomCoveringClassifier(double[] visionVector);
+  public abstract Classifier createRandomCoveringClassifier(double[] visionVector, int advocatingAction);
 
   /** 
    *  Tests the given chromosomes if the baseClassifier is a more general version of the testClassifier
