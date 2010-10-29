@@ -23,14 +23,22 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 	}
 	
 	/**
+	 * Selects from the fromPopulation a set of classifiers that have competed to the tournament
 	 * @see gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(int, gr.auth.ee.lcs.classifiers.ClassifierSet, gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
 	public void select(int howManyToSelect, ClassifierSet fromPopulation,
 			ClassifierSet toPopulation) {
 		
-		for (int i=0;i<howManyToSelect;i++)
-			this.tournament(fromPopulation, toPopulation);
+		for (int i=0;i<howManyToSelect;i++){
+			//Generate random participants
+			int participants[]=new int[tournamentSize];
+			for (int j=0;i<tournamentSize;i++){
+				participants[j]=(int) Math.floor((Math.random()*fromPopulation.totalNumerosity));
+			}
+			this.tournament(fromPopulation, participants, toPopulation);
+		}
+			
 
 	}
 	
@@ -39,41 +47,33 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 	 * The winner of the tournament is added to the toPopulation
 	 * @param fromPopulation the source population to run the tournament in
 	 * @param toPopulation the destination population of the tournament winners
-	 * 
+	 * @param participants the int[] of indexes of participants
 	 */
-	private void tournament( ClassifierSet fromPopulation, ClassifierSet toPopulation){
-		//Generate random participants
-		int participants[]=new int[tournamentSize];
-		for (int i=0;i<tournamentSize;i++){
-			participants[i]=(int) Math.ceil((Math.random()*fromPopulation.totalNumerosity));
-		}
+	protected void tournament( ClassifierSet fromPopulation, int[] participants, ClassifierSet toPopulation){
 		
 		//Sort by order
 		Arrays.sort(participants);
-		double bestFitness=0; //Best fitness found in tournament
-		int currentParticipantIndex=0; //the index in the participants array of the current tournament participant
-		int bestParticipant=-1; //The current best participant
+		double bestFitness=Double.NEGATIVE_INFINITY; //Best fitness found in tournament
+		int currentMaxParticipantIndex=-1; //the index in the participants array of the current tournament competitor
+		int bestMacroclassifierParticipant=-1; //The current best participant
 		int currentClassifierIndex=0; //the index of the actual classifier (counting numerosity)
 		int currentMacroclassifierIndex=0; //The index of the macroclassifier being used
-		//Run tournament
+		//Run tournament 
 		do{
-			currentClassifierIndex+=fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex);
-			//Is the current macroclassifier the participant?
-			if (currentClassifierIndex>=participants[currentParticipantIndex]){
-				//Find best
+			currentMaxParticipantIndex+=fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex);
+			while (currentClassifierIndex<tournamentSize && participants[currentClassifierIndex]<=currentMaxParticipantIndex){ //currentParicipant is in this macroclassifier
 				if (fromPopulation.getClassifier(currentMacroclassifierIndex).fitness>bestFitness){
+					bestMacroclassifierParticipant=currentMacroclassifierIndex;
 					bestFitness=fromPopulation.getClassifier(currentMacroclassifierIndex).fitness;
-					bestParticipant=currentMacroclassifierIndex;
 				}
-					
-				currentParticipantIndex++;
-			}else{			
-				currentMacroclassifierIndex++;
+				currentMaxParticipantIndex++; //Next!
 			}
-		}while(currentParticipantIndex<tournamentSize);
+			currentMacroclassifierIndex++;
+		}while(currentClassifierIndex<tournamentSize);
+		
 		
 		//Add winner to set
-		toPopulation.addClassifier(fromPopulation.getClassifier(bestParticipant), 1);
+		toPopulation.addClassifier(fromPopulation.getClassifier(bestMacroclassifierParticipant), 1);
 		
 	}
 
