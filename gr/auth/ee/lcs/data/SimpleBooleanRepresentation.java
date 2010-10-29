@@ -88,7 +88,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier(double[])
 	 */
 	@Override
-	public Classifier createRandomCoveringClassifier(double[] visionVector) {
+	public Classifier createRandomCoveringClassifier(double[] visionVector,int advocatingAction) {
 		Classifier coverClassifier=new Classifier();
 		//Generate random output
 		coverClassifier.actionAdvocated=Math.random()<.5?0:1;
@@ -104,12 +104,12 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		
 		//Generalize
 		for (int i=0;i<chromosomeSize;i+=2){
-			if (Math.random()<this.coverGeneralizationRate)
+			if (Math.random()>this.coverGeneralizationRate)
 				chromosome.set(i);
 			else
 				chromosome.clear(i);
 		}
-		
+		coverClassifier.actionAdvocated=advocatingAction;
 		return coverClassifier;
 	}
 
