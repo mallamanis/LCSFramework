@@ -85,7 +85,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 
 	/**
 	 * Creates a simple random covering classifier
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier(double[])
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier(double[],int)
 	 */
 	@Override
 	public Classifier createRandomCoveringClassifier(double[] visionVector,int advocatingAction) {
