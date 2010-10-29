@@ -7,12 +7,20 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 	private double R,p;
 	
+	/**
+	 * Constructor of update algorithm
+	 * @param reward the reward a correct classifier will be given on correct classification
+	 * @param penaltyPercent the percentage of the reward that the classifier's penalty will be when failing to classify
+	 */
 	public SSLCSUpdateAlgorithm(double reward, double penaltyPercent){
 		R=reward;
 		p=penaltyPercent;
 	}
-	
-  public void updateFitness(Classifier aClassifier, int numerosity, ClassifierSet correctSet) {
+
+	/**
+	 * Implementation of abstract method defined in @see gr.auth.ee.lcs.data.AbstractSLCSUpdateAlgorithm
+	 */
+	public void updateFitness(Classifier aClassifier, int numerosity, ClassifierSet correctSet) {
 	  GenericSLCSClassifierData data=((GenericSLCSClassifierData)aClassifier.updateData);
 	  if (correctSet.getClassifierNumerosity(aClassifier)>0){ //aClassifier belongs to correctSet
 		  data.tp++;
