@@ -22,7 +22,7 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	   */
 	  int mutationPoint=(int) Math.round(Math.random()*chromosomeSize-1);
 	  child.chromosome=performCrossover(classifierA.getChromosome(),classifierB.getChromosome(),mutationPoint);
-	  
+	  child.fitness=(classifierA.fitness+classifierB.fitness)/2;
 	  return child;
   }
   
@@ -36,6 +36,7 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	protected ExtendedBitSet performCrossover(ExtendedBitSet chromosomeA,ExtendedBitSet chromosomeB,int position){
 	  ExtendedBitSet child=(ExtendedBitSet) chromosomeA.clone();
 	  child.setSubSet(position, chromosomeB.getSubSet(position, chromosomeB.size()-position));
+	  
 	  return child;
   }
 
