@@ -12,7 +12,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		p=penaltyPercent;
 	}
 	
-  public void updateFitness(Classifier aClassifier, ClassifierSet correctSet) {
+  public void updateFitness(Classifier aClassifier, int numerosity, ClassifierSet correctSet) {
 	  GenericSLCSClassifierData data=((GenericSLCSClassifierData)aClassifier.updateData);
 	  if (correctSet.getClassifierNumerosity(aClassifier)>0){ //aClassifier belongs to correctSet
 		  data.tp++;
@@ -22,7 +22,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		  data.str-=p*R/data.ns;
 	  }
 	  
-	  aClassifier.fitness=(data.str/data.msa);
+	  aClassifier.fitness=numerosity*(data.str/data.msa);
 	  
   }
 
