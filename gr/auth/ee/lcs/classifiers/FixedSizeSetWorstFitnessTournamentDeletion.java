@@ -17,11 +17,12 @@ public class FixedSizeSetWorstFitnessTournamentDeletion implements ISizeControlS
 	
 	/**
 	 * Constructor of deletion strategy
-	 * @param populationSize
+	 * @param populationSize the size that the population will have
+	 * @param tournamentSize the size of the tournaments done
 	 */
-	public FixedSizeSetWorstFitnessTournamentDeletion(int populationSize){
+	public FixedSizeSetWorstFitnessTournamentDeletion(int populationSize, int tournamentSize){
 		this.populationSize=populationSize;	
-		mySelector=new BestFitnessTournamentSelector(10,false);
+		mySelector=new BestFitnessTournamentSelector(tournamentSize,false);
 	}
 	
 	/**
@@ -32,7 +33,7 @@ public class FixedSizeSetWorstFitnessTournamentDeletion implements ISizeControlS
 		ClassifierSet toBeDeleted=new ClassifierSet(new DummySizeControlStrategy());
 		while (aSet.totalNumerosity>populationSize){
 			mySelector.select(1, aSet, toBeDeleted) ;
-			aSet.deleteClassifier(0);
+			aSet.deleteClassifier(toBeDeleted.getClassifier(0));
 			toBeDeleted.deleteClassifier(0);
 		}
 
