@@ -13,7 +13,7 @@ public class Classifier {
   /** 
    *  the fitness of the classifier
    */
-  public double fitness=.1;
+  public double fitness=.5;
 
   /** 
    *  An object (of undefined type) that is used by the update algorithms
@@ -23,7 +23,7 @@ public class Classifier {
   /**
    * 
    */
-  public int experience=0;
+  public int experience=1;
   
   /** 
    *  the timestamp is the last iteration the classifier has participated in a GA Evolution
@@ -72,8 +72,8 @@ public class Classifier {
    * @return true if the classifiers have equal chromosomes
    */
   public boolean equals(Classifier anotherClassifier) {
-	  return actionAdvocated==anotherClassifier.actionAdvocated && chromosome.equals(anotherClassifier.getChromosome());
-  }
+	  return ClassifierTransformBridge.instance.areEqual(this, anotherClassifier);
+	  }
 
   /** 
    *  Calls the bridge to detect if the classifier is matching the vision vector
