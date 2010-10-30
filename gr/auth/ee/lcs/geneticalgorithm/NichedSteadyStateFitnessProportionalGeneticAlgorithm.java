@@ -72,7 +72,6 @@ public class NichedSteadyStateFitnessProportionalGeneticAlgorithm implements IGe
 		  return;
 	  
 	for (int i=0;i<evolveSet.getNumberOfMacroclassifiers();i++){
-		evolveSet.getClassifier(i).experience++;
 		evolveSet.getClassifier(i).timestamp=timestamp;
 	}
 	  
