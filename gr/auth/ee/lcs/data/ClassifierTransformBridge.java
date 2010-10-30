@@ -38,6 +38,14 @@ public abstract class ClassifierTransformBridge {
    */
   public abstract boolean isMoreGeneral(Classifier baseClassifier, Classifier testClassifier);
 
+  /**
+   * Tests if two classifiers are equal
+   * @param cl1
+   * @param cl2
+   * @return true if classifiers are equal
+   */
+  public abstract boolean areEqual(Classifier cl1, Classifier cl2);
+  
   /** 
    *  Fixes a chromosome so as to be in the correct value range (e.g. after mutation or crossover)
    */
