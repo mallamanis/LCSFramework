@@ -14,11 +14,11 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
   public void updateFitness(Classifier aClassifier, int numerosity, ClassifierSet correctSet) {
 	  GenericSLCSClassifierData data=((GenericSLCSClassifierData)aClassifier.updateData);
 	  if (correctSet.getClassifierNumerosity(aClassifier)>0) //aClassifier belongs to correctSet
-		  data.tp++;
+		  data.tp+=1;
 	  else
-		  data.fp++;
+		  data.fp+=1;
 	  
-	  aClassifier.fitness=numerosity*Math.pow(data.tp/data.msa,n);
+	  aClassifier.fitness=numerosity*Math.pow(((double)data.tp)/(double)(data.msa),n);
 	  
   }
 
