@@ -90,9 +90,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	@Override
 	public Classifier createRandomCoveringClassifier(double[] visionVector,int advocatingAction) {
 		Classifier coverClassifier=new Classifier();
-		//Generate random output
-		coverClassifier.actionAdvocated=Math.random()<.5?0:1;
-		
+				
 		//Transform visionVector to BitSet (generalization not-set)
 		ExtendedBitSet chromosome=coverClassifier.getChromosome();
 		for (int i=1;i<chromosomeSize;i+=2){
@@ -113,7 +111,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		return coverClassifier;
 	}
 
-	/* (non-Javadoc)
+	/** 
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMoreGeneral(gr.auth.ee.lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
@@ -136,6 +134,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		}
 		return true;
 	}
+	
+	
 
 	/** 
 	 * In this representation there is nothing to fix
@@ -180,6 +180,29 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public void buildRepresentationModel() {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	@Override
+	/**
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs.classifiers.Classifier,gr.auth.ee.lcs.classifiers.Classifier)
+	 */
+	public boolean areEqual(Classifier cl1, Classifier cl2) {
+		if (cl1.actionAdvocated!=cl2.actionAdvocated)
+			return false;
+		
+		ExtendedBitSet baseChromosome =cl1.getChromosome();
+		ExtendedBitSet testChromosome = cl2.getChromosome();
+		
+		for (int i=0;i<chromosomeSize;i+=2){ //For each chromosome
+			
+			//if the base classifier is specific and the test is # return false
+			if (baseChromosome.get(i)!=testChromosome.get(i))
+				return false;
+			else if (baseChromosome.get(i+1)!=testChromosome.get(i+1) && baseChromosome.get(i))
+				return false;					
+		}
+		return true;
 	}
 
 }
