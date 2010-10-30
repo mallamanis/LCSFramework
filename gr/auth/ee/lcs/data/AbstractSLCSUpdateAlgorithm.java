@@ -15,7 +15,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactory
 
   
   public Object createStateClassifierObject() {
-	  //TODO: Intial parameters
+	  //TODO: Initial parameters
 	return new GenericSLCSClassifierData();
   }
 
@@ -33,6 +33,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactory
 		  data.msa++;
 		  updateFitness(cl,setA.getClassifierNumerosity(i),setB);
 		  this.updateSubsumption(cl);
+		  cl.experience++;
 	  }
   
   }
