@@ -34,6 +34,7 @@ public class LCSTrainTemplate {
 			  Classifier coveringClassifier= ClassifierTransformBridge.instance.createRandomCoveringClassifier(dataInstance,expectedAction);
 			  coveringClassifier.actionAdvocated=expectedAction;
 			  population.addClassifier(coveringClassifier, 1);
+			  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
 			  return;
 		  }
 		  
