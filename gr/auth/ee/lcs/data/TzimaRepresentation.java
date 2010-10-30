@@ -69,4 +69,10 @@ public void buildRepresentationModel() {
 	
 }
 
+@Override
+public boolean areEqual(Classifier cl1, Classifier cl2) {
+	// TODO Auto-generated method stub
+	return false;
+}
+
 }
