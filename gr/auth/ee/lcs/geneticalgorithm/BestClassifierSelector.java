@@ -10,6 +10,16 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
  */
 public class BestClassifierSelector implements INaturalSelector {
 
+	private boolean max=true;
+	
+	/**
+	 * Default constructor
+	 * @param max if by best we mean the max fitness then true, else false
+	 */
+	public BestClassifierSelector(boolean max){
+		this.max=max;
+	}
+	
 	/**
 	 * Implementation of abstract method
 	 * Selects the best classifier in the fromPopulation and adds it to toPopulation
@@ -20,11 +30,11 @@ public class BestClassifierSelector implements INaturalSelector {
 	public void select(int howManyToSelect, ClassifierSet fromPopulation, ClassifierSet toPopulation) {
 	 
 	  //Search for the best classifier
-	  double bestFitness=-1;
+	  double bestFitness=max?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
 	  int bestIndex=-1;
 	  for (int i=0;i<fromPopulation.getNumberOfMacroclassifiers();i++){
-		  double temp=fromPopulation.getClassifier(i).fitness;
-		  if (temp>bestFitness){
+		  double temp=fromPopulation.getClassifier(i).fitness/fromPopulation.getClassifierNumerosity(i); //TODO: Is that correct?
+		  if ((max?1.:-1.)*(temp-bestFitness)>0){
 			  bestFitness=temp;
 			  bestIndex=i;
 		  }
