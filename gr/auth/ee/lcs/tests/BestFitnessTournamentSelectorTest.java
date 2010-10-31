@@ -89,5 +89,15 @@ public class BestFitnessTournamentSelectorTest {
 		mySelector.tournament(population, participants, results);
 		assertTrue(results.getClassifier(0).fitness==1);
 	}
+	
+	@Test
+	public void testTournament7() {
+		int participants[]={3,5,0};
+		mySelector=new BestFitnessTournamentSelector(3,false);
+		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
+		
+		mySelector.tournament(population, participants, results);
+		assertTrue(results.getClassifier(0).fitness==1);
+	}
 
 }
