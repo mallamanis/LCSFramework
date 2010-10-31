@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.SSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.BestClassifierSelector;
 import gr.auth.ee.lcs.geneticalgorithm.BestFitnessTournamentSelector;
 import gr.auth.ee.lcs.geneticalgorithm.NichedSteadyStateFitnessProportionalGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.SinglePointCrossover;
@@ -38,11 +39,11 @@ public class SimpleBoolTest {
 		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,3);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
 		
-		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessTournamentDeletion(27,5));
+		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessTournamentDeletion(27,new BestClassifierSelector(false)));
 		
 		int trainSet[][][]=new int[2][2][2];
 		fillSet(trainSet);
-		for (int rep=0;rep<100;rep++){//Repeat 100times
+		for (int rep=0;rep<1000;rep++){//Repeat 100times
 			for (int a=0;a<2;a++)
 				for (int b=0;b<2;b++)
 					for (int c=0;c<2;c++){
