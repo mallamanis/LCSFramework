@@ -30,8 +30,8 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		  data.str-=p*R/data.ns;
 	  }
 	  
-	  aClassifier.fitness=numerosity*(data.str/data.msa);
-	  
+	  aClassifier.fitness=(data.str/data.msa); 
+	  	  
   }
 
 
