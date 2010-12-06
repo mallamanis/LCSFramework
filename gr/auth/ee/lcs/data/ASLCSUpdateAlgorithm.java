@@ -18,7 +18,8 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	  else
 		  data.fp+=1;
 	  
-	  aClassifier.fitness=Math.pow(((double)(data.tp))/(double)(data.msa),n);
+	  //Niche set sharing heuristic...
+	  aClassifier.fitness=Math.pow(((double)(data.tp))/(double)(data.msa),n)/Math.log(data.ns+1);
 	  
 	  
   }
