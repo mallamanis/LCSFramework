@@ -51,7 +51,7 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
   
   
   public double subsumptionFitnessThreshold=.9;
-  public int subsumptionExperienceThreshold=100;
+  public int subsumptionExperienceThreshold=4;
   
   /**
    * Concrete implementation of the subsumption strength

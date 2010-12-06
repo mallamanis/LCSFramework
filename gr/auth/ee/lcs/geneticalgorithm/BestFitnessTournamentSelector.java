@@ -69,9 +69,9 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 		do{
 			currentBestParticipantIndex+=fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex);
 			while (currentClassifierIndex<tournamentSize && participants[currentClassifierIndex]<=currentBestParticipantIndex){ //currentParicipant is in this macroclassifier
-				if ((max?1.:-1.)*(fromPopulation.getClassifier(currentMacroclassifierIndex).fitness-bestFitness)>0){
+				if ((max?1.:-1.)*(fromPopulation.getClassifier(currentMacroclassifierIndex).fitness/fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex)-bestFitness)>0){
 					bestMacroclassifierParticipant=currentMacroclassifierIndex;
-					bestFitness=fromPopulation.getClassifier(currentMacroclassifierIndex).fitness;
+					bestFitness=fromPopulation.getClassifier(currentMacroclassifierIndex).fitness/fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex);
 				}
 				currentClassifierIndex++; //Next!
 			}

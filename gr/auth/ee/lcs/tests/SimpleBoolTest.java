@@ -6,7 +6,7 @@ package gr.auth.ee.lcs.tests;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
-import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessTournamentDeletion;
+import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.OverpopulationInverseFitnessProportionateDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
@@ -15,7 +15,7 @@ import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.BestClassifierSelector;
 import gr.auth.ee.lcs.geneticalgorithm.BestFitnessTournamentSelector;
-import gr.auth.ee.lcs.geneticalgorithm.NichedSteadyStateFitnessProportionalGeneticAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.WeightedRouletteSelector;
@@ -31,15 +31,15 @@ public class SimpleBoolTest {
 	 */
 	public static void main(String[] args) {
 		LCSTrainTemplate myExample=new LCSTrainTemplate();
-		myExample.ga=new NichedSteadyStateFitnessProportionalGeneticAlgorithm(
-				new BestFitnessTournamentSelector(10,true),
+		myExample.ga=new SteadyStateGeneticAlgorithm(
+				new BestClassifierSelector(false),
 				new SinglePointCrossover(),
 				new UniformBitMutation(.04),15);
 		
 		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,3);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
 		
-		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessTournamentDeletion(27,new BestClassifierSelector(false)));
+		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(300,new BestClassifierSelector(false)));
 		
 		int trainSet[][][]=new int[2][2][2];
 		fillSet(trainSet);

@@ -18,7 +18,8 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	  else
 		  data.fp+=1;
 	  
-	  aClassifier.fitness=numerosity*Math.pow(((double)data.tp)/(double)(data.msa),n);
+	  aClassifier.fitness=numerosity*Math.pow(((double)(data.tp))/(double)(data.msa),n);
+	  
 	  
   }
 
