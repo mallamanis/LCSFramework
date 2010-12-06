@@ -16,5 +16,12 @@ public interface INaturalSelector {
 	 * @param toPopulation the ClassifierSet to copy the selected classifiers
 	 */
 	public void select(int howManyToSelect, ClassifierSet fromPopulation, ClassifierSet toPopulation);
+	
+	/**
+	 * 
+	 * @param fromPopulation the ClassifierSet to select classifiers from
+	 * @return the macroclassifier index of the selected by the NaturalSelector
+	 */
+	public int select(ClassifierSet fromPopulation);
 
 }
