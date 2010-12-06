@@ -33,71 +33,58 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament1() {
 		int participants[]={0,0,0};
-		mySelector=new BestFitnessTournamentSelector(3,true);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
+		mySelector=new BestFitnessTournamentSelector(3,true);		
 		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==1);
+		assertTrue(mySelector.tournament(population,participants)==0);
 	}
 	
 	@Test
 	public void testTournament2() {
 		int participants[]={0,1,0};
 		mySelector=new BestFitnessTournamentSelector(3,true);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
-		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==2);
+				
+		assertTrue(mySelector.tournament(population,participants)==1);
 	}
 	
 	@Test
 	public void testTournament3() {
 		int participants[]={2,1,0};
 		mySelector=new BestFitnessTournamentSelector(3,true);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
-		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==2);
+				
+		assertTrue(mySelector.tournament(population,participants)==1);
 	}
 	
 	@Test
 	public void testTournament4() {
 		int participants[]={5,1,0};
 		mySelector=new BestFitnessTournamentSelector(3,true);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
 		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==3);
+		System.out.println(mySelector.tournament(population,participants));
+		assertTrue(mySelector.tournament(population,participants)==2);
 	}
 	
 	@Test
 	public void testTournament5() {
 		int participants[]={5,5,5};
 		mySelector=new BestFitnessTournamentSelector(3,true);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
 		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==3);
+		assertTrue(mySelector.tournament(population,participants)==2);
 	}
 	
 	@Test
 	public void testTournament6() {
 		int participants[]={5,1,0};
 		mySelector=new BestFitnessTournamentSelector(3,false);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
 		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==1);
+		assertTrue(mySelector.tournament(population,participants)==0);
 	}
 	
 	@Test
 	public void testTournament7() {
 		int participants[]={3,5,0};
 		mySelector=new BestFitnessTournamentSelector(3,false);
-		ClassifierSet results=new ClassifierSet(new DummySizeControlStrategy());
 		
-		mySelector.tournament(population, participants, results);
-		assertTrue(results.getClassifier(0).fitness==1);
+		assertTrue(mySelector.tournament(population,participants)==0);
 	}
 
 }
