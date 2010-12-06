@@ -28,19 +28,24 @@ public class BestClassifierSelector implements INaturalSelector {
 	 * @param toPopulation the target set of classifiers. In this set the best classifier will be added
 	 */
 	public void select(int howManyToSelect, ClassifierSet fromPopulation, ClassifierSet toPopulation) {
-	 
-	  //Search for the best classifier
-	  double bestFitness=max?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
-	  int bestIndex=-1;
-	  for (int i=0;i<fromPopulation.getNumberOfMacroclassifiers();i++){
-		  double temp=fromPopulation.getClassifier(i).fitness/fromPopulation.getClassifierNumerosity(i); //TODO: Is that correct?
-		  if ((max?1.:-1.)*(temp-bestFitness)>0){
-			  bestFitness=temp;
-			  bestIndex=i;
-		  }
-	  }
-	  //Add it toPopulation
-	  toPopulation.addClassifier(fromPopulation.getClassifier(bestIndex), howManyToSelect);
+	   //Add it toPopulation
+	  toPopulation.addClassifier(fromPopulation.getClassifier(select(fromPopulation)), howManyToSelect);
   }
+
+	@Override
+	public int select(ClassifierSet fromPopulation) {
+		 //Search for the best classifier
+		  double bestFitness=max?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
+		  int bestIndex=-1;
+		  for (int i=0;i<fromPopulation.getNumberOfMacroclassifiers();i++){
+			  double temp=fromPopulation.getClassifier(i).fitness;
+			  if ((max?1.:-1.)*(temp-bestFitness)>0){
+				  bestFitness=temp;
+				  bestIndex=i;
+			  }
+		  }
+		  
+		return bestIndex;
+	}
 
 }
