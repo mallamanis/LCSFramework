@@ -32,18 +32,18 @@ public class SimpleBoolTest {
 	public static void main(String[] args) {
 		LCSTrainTemplate myExample=new LCSTrainTemplate();
 		myExample.ga=new SteadyStateGeneticAlgorithm(
-				new BestClassifierSelector(false),
+				new BestFitnessTournamentSelector(10,true),
 				new SinglePointCrossover(),
 				new UniformBitMutation(.04),15);
 		
 		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,3);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new SSLCSUpdateAlgorithm(1,2);
 		
-		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(300,new BestClassifierSelector(false)));
+		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(300,new BestFitnessTournamentSelector(50,false)));
 		
 		int trainSet[][][]=new int[2][2][2];
 		fillSet(trainSet);
-		for (int rep=0;rep<1000;rep++){//Repeat 100times
+		for (int rep=0;rep<10000;rep++){//Repeat 100times
 			for (int a=0;a<2;a++)
 				for (int b=0;b<2;b++)
 					for (int c=0;c<2;c++){
