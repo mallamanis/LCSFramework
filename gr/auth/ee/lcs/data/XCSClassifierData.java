@@ -5,8 +5,12 @@ package gr.auth.ee.lcs.data;
  */
 public class XCSClassifierData {
 
-  public double predictionError;
+  public double predictionError=0;
+  
+  public double actionSet=1;
 
-  public double predictedPayOff;
+  public double predictedPayOff=10;
+  
+  public double k;
 
 }
