@@ -30,6 +30,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactory
 		  Classifier cl=setA.getClassifier(i);
 		  GenericSLCSClassifierData data=((GenericSLCSClassifierData)cl.updateData);
 		  data.ns=(data.ns*data.msa+setB.getTotalNumerosity())/(data.msa+1);
+		  
 		  data.msa++;
 		  updateFitness(cl,setA.getClassifierNumerosity(i),setB);
 		  this.updateSubsumption(cl);
