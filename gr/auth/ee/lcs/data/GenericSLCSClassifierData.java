@@ -9,17 +9,17 @@ public class GenericSLCSClassifierData {
   /** 
    *  niche set size estimation
    */
-  public int ns=1;
+  public double ns=1;
 
   /** 
    *  Match Set Appearances
    */
-  public int msa=1;
+  public int msa=0;
 
   /** 
    *  true positives
    */
-  public int tp=1;
+  public int tp=0;
 
   /** 
    *  false positives
