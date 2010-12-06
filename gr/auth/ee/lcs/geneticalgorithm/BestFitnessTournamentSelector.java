@@ -38,12 +38,9 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 			ClassifierSet toPopulation) {
 		
 		for (int i=0;i<howManyToSelect;i++){
-			//Generate random participants
-			int participants[]=new int[tournamentSize];
-			for (int j=0;i<tournamentSize;i++){
-				participants[j]=(int) Math.floor((Math.random()*fromPopulation.totalNumerosity));
-			}
-			this.tournament(fromPopulation, participants, toPopulation);
+			
+			toPopulation.addClassifier(fromPopulation.getClassifier(this.select(fromPopulation)), 1);
+			
 		}
 			
 
@@ -56,7 +53,7 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 	 * @param toPopulation the destination population of the tournament winners
 	 * @param participants the int[] of indexes of participants
 	 */
-	public void tournament( ClassifierSet fromPopulation, int[] participants, ClassifierSet toPopulation){
+	public int tournament( ClassifierSet fromPopulation, int[] participants){
 		
 		//Sort by order
 		Arrays.sort(participants);
@@ -69,18 +66,28 @@ public class BestFitnessTournamentSelector implements INaturalSelector {
 		do{
 			currentBestParticipantIndex+=fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex);
 			while (currentClassifierIndex<tournamentSize && participants[currentClassifierIndex]<=currentBestParticipantIndex){ //currentParicipant is in this macroclassifier
-				if ((max?1.:-1.)*(fromPopulation.getClassifier(currentMacroclassifierIndex).fitness/fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex)-bestFitness)>0){
+				if ((max?1.:-1.)*(fromPopulation.getClassifier(currentMacroclassifierIndex).fitness-bestFitness)>0){
 					bestMacroclassifierParticipant=currentMacroclassifierIndex;
-					bestFitness=fromPopulation.getClassifier(currentMacroclassifierIndex).fitness/fromPopulation.getClassifierNumerosity(currentMacroclassifierIndex);
+					bestFitness=fromPopulation.getClassifier(currentMacroclassifierIndex).fitness;
 				}
 				currentClassifierIndex++; //Next!
 			}
 			currentMacroclassifierIndex++;
 		}while(currentClassifierIndex<tournamentSize);
 		
+		return bestMacroclassifierParticipant;
+			
 		
-		//Add winner to set
-		toPopulation.addClassifier(fromPopulation.getClassifier(bestMacroclassifierParticipant), 1);
+	}
+
+	@Override
+	public int select(ClassifierSet fromPopulation) {
+		int participants[]=new int[tournamentSize];
+		//Create random participants
+		for (int j=0;j<tournamentSize;j++){
+			participants[j]=(int) Math.floor((Math.random()*fromPopulation.totalNumerosity));
+		}
+		return this.tournament(fromPopulation, participants);
 		
 	}
 
