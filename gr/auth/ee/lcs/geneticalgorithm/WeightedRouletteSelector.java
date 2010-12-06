@@ -4,7 +4,7 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 /**
  * A Natural Selection operator performing a weighted roulette wheel selection
  * @author Miltos Allamanis
- *
+ * @deprecated
  */
 public class WeightedRouletteSelector implements INaturalSelector {
 
@@ -36,5 +36,11 @@ public class WeightedRouletteSelector implements INaturalSelector {
 	  }//next roulette
 	  
   }
+
+	@Override
+	public int select(ClassifierSet fromPopulation) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }
