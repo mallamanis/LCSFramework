@@ -13,6 +13,8 @@ import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.SSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.XCSClassifierData;
+import gr.auth.ee.lcs.data.XCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.BestClassifierSelector;
 import gr.auth.ee.lcs.geneticalgorithm.BestFitnessTournamentSelector;
 import gr.auth.ee.lcs.geneticalgorithm.SteadyStateGeneticAlgorithm;
@@ -37,13 +39,14 @@ public class SimpleBoolTest {
 				new UniformBitMutation(.04),15);
 		
 		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,3);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new SSLCSUpdateAlgorithm(1,2);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
+		//UpdateAlgorithmFactoryAndStrategy.currentStrategy=new XCSUpdateAlgorithm(.2,10,.01,.1,3);
 		
 		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(300,new BestFitnessTournamentSelector(50,false)));
 		
 		int trainSet[][][]=new int[2][2][2];
 		fillSet(trainSet);
-		for (int rep=0;rep<10000;rep++){//Repeat 100times
+		for (int rep=0;rep<1000;rep++){//Iterate
 			for (int a=0;a<2;a++)
 				for (int b=0;b<2;b++)
 					for (int c=0;c<2;c++){
@@ -57,11 +60,12 @@ public class SimpleBoolTest {
 						System.out.println("Iteration "+rep + "Trained:"+a+b+c);
 						for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
 							System.out.println(rulePopulation.getClassifier(i).toString()+" fit:"+rulePopulation.getClassifier(i).fitness+" exp:"+rulePopulation.getClassifier(i).experience+" num:"+rulePopulation.getClassifierNumerosity(i));
+							//System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
 						}
 					}
 		}
 		
-		
+		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 		
 	}
 	
