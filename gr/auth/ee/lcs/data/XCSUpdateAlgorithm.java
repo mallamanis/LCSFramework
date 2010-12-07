@@ -1,5 +1,7 @@
 package gr.auth.ee.lcs.data;
 
+import java.io.Serializable;
+
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 
@@ -50,9 +52,9 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	  this.n=n;
   }
   
-  public Object createStateClassifierObject() {
+  public Serializable createStateClassifierObject() {
 	  //TODO: Initial Parameters
-	return (Object)new XCSClassifierData();
+	return (Serializable)new XCSClassifierData();
   }
 
   /**
