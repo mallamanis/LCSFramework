@@ -1,10 +1,15 @@
 package gr.auth.ee.lcs.data;
 
+import java.io.Serializable;
+
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 
 /** 
  *  An interface for representing different update strategies, depending on the LCS algorithm
+ *  The implementing objects are factories because they instantiate update algorithm-specific
+ *  objects for the classifiers. They also represent a strategy because they provide different
+ *  methods to update each classifier's fitness. 
  *  @author Miltos Allamanis
  */
 public abstract class  UpdateAlgorithmFactoryAndStrategy {
@@ -12,7 +17,7 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
   /** 
    *  Creates a data object for a classifier
    */
-  protected abstract Object createStateClassifierObject();
+  protected abstract Serializable createStateClassifierObject();
 
   /** 
    *  updates classifiers of a setA taking into consideration setB
@@ -30,7 +35,7 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
    * Bridge to selected strategy
    * @return returns the data object as specified by the implementation
    */
-  public static Object createDefaultDataObject(){
+  public static Serializable createDefaultDataObject(){
 	  if( currentStrategy!=null)
 		  return currentStrategy.createStateClassifierObject();
 	  else
@@ -51,7 +56,7 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
   
   
   public double subsumptionFitnessThreshold=.9;
-  public int subsumptionExperienceThreshold=4;
+  public int subsumptionExperienceThreshold=100;
   
   /**
    * Concrete implementation of the subsumption strength
