@@ -1,5 +1,7 @@
 package gr.auth.ee.lcs.data;
 
+import java.io.Serializable;
+
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Classifier;
 
@@ -14,7 +16,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends UpdateAlgorithmFactory
   public abstract void updateFitness(Classifier aClassifier,int numerosity, ClassifierSet correctSet);
 
   
-  public Object createStateClassifierObject() {
+  public Serializable createStateClassifierObject() {
 	  //TODO: Initial parameters
 	return new GenericSLCSClassifierData();
   }
