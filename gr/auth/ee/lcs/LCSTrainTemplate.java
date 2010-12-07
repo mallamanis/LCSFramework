@@ -7,6 +7,11 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
+/**
+ * This is a template algorithm for training LCSs
+ * @author Miltos Allamanis
+ *
+ */
 public class LCSTrainTemplate {
 
 	public IGeneticAlgorithmStrategy ga;
