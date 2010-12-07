@@ -3,7 +3,7 @@ package gr.auth.ee.lcs.data;
 import java.io.Serializable;
 
 /** 
- *  An object representing the classifier data
+ *  An object representing the classifier data for the XCS update algorithm
  */
 public class XCSClassifierData implements Serializable {
 
