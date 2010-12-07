@@ -1,5 +1,7 @@
 package gr.auth.ee.lcs.classifiers;
 
+import java.io.Serializable;
+
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 
@@ -8,9 +10,14 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
  *  Represents a single classifier/ rule
  *  @author Miltos Allamanis
  */
-public class Classifier {
+public class Classifier implements Serializable{
 
-  /** 
+  /**
+	 * Serialization code for versioning
+	 */
+	private static final long serialVersionUID = 8628765535406768159L;
+
+/** 
    *  the fitness of the classifier
    */
   public double fitness=.5;

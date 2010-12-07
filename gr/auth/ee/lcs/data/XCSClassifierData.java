@@ -1,11 +1,18 @@
 package gr.auth.ee.lcs.data;
 
+import java.io.Serializable;
+
 /** 
  *  An object representing the classifier data
  */
-public class XCSClassifierData {
+public class XCSClassifierData implements Serializable {
 
-  public double predictionError=0;
+  /**
+	 * Serialization Id
+	 */
+	private static final long serialVersionUID = -4348877142305226957L;
+
+public double predictionError=0;
   
   public double actionSet=1;
 

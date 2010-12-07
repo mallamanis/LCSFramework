@@ -1,12 +1,19 @@
 package gr.auth.ee.lcs.classifiers;
 
+import java.io.Serializable;
+
 
 /** 
  *  Represents a macroclassifier. A macroclassifier is a classifier with a numerosity
  */
-public class Macroclassifier {
+public class Macroclassifier implements Serializable {
 
-  public int numerosity;
+  /**
+	 * Serialization id for versioning
+	 */
+	private static final long serialVersionUID = 1705517271818439866L;
+
+public int numerosity;
 
   public Classifier myClassifier;
   

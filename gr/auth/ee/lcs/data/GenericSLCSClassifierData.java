@@ -1,12 +1,19 @@
 package gr.auth.ee.lcs.data;
 
+import java.io.Serializable;
+
 
 /** 
  *  An data object for the *S-LCS update algorithm
  */
-public class GenericSLCSClassifierData {
+public class GenericSLCSClassifierData implements Serializable {
 
-  /** 
+  /**
+	 * serial for versions
+	 */
+	private static final long serialVersionUID = -20798032843413916L;
+
+/** 
    *  niche set size estimation
    */
   public double ns=1;
