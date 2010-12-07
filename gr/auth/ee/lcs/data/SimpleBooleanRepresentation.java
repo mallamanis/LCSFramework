@@ -107,7 +107,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 			else
 				chromosome.clear(i);
 		}
-		coverClassifier.actionAdvocated=advocatingAction;
+		//coverClassifier.actionAdvocated=advocatingAction;
+		coverClassifier.actionAdvocated=Math.random()<.5?1:0;
 		return coverClassifier;
 	}
 
