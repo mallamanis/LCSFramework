@@ -1,18 +1,22 @@
-/**
- * 
- */
 package gr.auth.ee.lcs.classifiers;
 
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 
 /**
- * A fixed size control strategy. Classifiers are deleted by worst-tournaments
+ * A fixed size control strategy. Classifiers are deleted based on the selector tournaments
  * @author Miltos Allamanis
  *
  */
 public class FixedSizeSetWorstFitnessDeletion implements ISizeControlStrategy {
 
+	/**
+	 * The Natural Selector used to select the the classifier to be deleted
+	 */
 	private INaturalSelector mySelector;
+	
+	/**
+	 * The fixed population size of the controlled set
+	 */
 	private int populationSize;
 	
 	/**
