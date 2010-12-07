@@ -25,7 +25,7 @@ public class Classifier implements Serializable{
   /** 
    *  An object (of undefined type) that is used by the update algorithms
    */
-  public Object updateData;
+  public Serializable updateData;
   
   /**
    * 
@@ -50,7 +50,7 @@ public class Classifier implements Serializable{
   /** 
    *  An object for saving the transformation specific data
    */
-  public Object transformData;
+  public Serializable transformData;
 
   /** 
    *  The classifier's chromosome
