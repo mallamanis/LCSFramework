@@ -204,4 +204,19 @@ public int totalNumerosity=0;
 	  return opened;
   }
 
+  /**
+   * Postprocessing in the classifier set. Simply remove all classifiers with less than a minimum
+   * experience and minimum fitness
+   * @param minExperience the minimum experience of the classifiers
+   * @param minFitness the minimum fitness of the classifiers
+   */
+  public void postProcessThreshold(int minExperience,float minFitness){
+	  for (int i=this.myMacroclassifier.size()-1;i>=0;i--){
+		  if (this.myMacroclassifier.elementAt(i).myClassifier.experience<minExperience ||
+				  this.myMacroclassifier.elementAt(i).myClassifier.fitness<minFitness)
+			  this.myMacroclassifier.removeElementAt(i);
+	  }
+  }
+  
+  
 }
