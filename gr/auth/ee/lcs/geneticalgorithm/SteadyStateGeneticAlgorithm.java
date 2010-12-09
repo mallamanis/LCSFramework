@@ -3,6 +3,7 @@ package gr.auth.ee.lcs.geneticalgorithm;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 
 
 
@@ -89,6 +90,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		//produce a child
 		Classifier child=crossoverOp.operate(parentA, parentB);
 		child=mutationOp.operate(child);
+		ClassifierTransformBridge.fixClassifier(child);
 		population.addClassifier(child,1);
 	}
   }
