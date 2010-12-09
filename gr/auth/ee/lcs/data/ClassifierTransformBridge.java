@@ -57,6 +57,14 @@ public abstract class ClassifierTransformBridge {
    */
   public abstract void fixChromosome(ExtendedBitSet aChromosome);
 
+  /**
+   * Calls to the bridge to fix a classifier
+   * @param toBeFixed
+   */
+  public static void fixClassifier(Classifier toBeFixed){
+	  ClassifierTransformBridge.instance.fixChromosome(toBeFixed.chromosome);
+  }
+  
   /** 
    *  @return the size of the chromosome (used for the chromosome construction)
    */
