@@ -47,7 +47,7 @@ public class ComplexRepresentationTest {
 		ExtendedBitSet set=new ExtendedBitSet("11101111111111000000000011011");
 		Classifier ex=new Classifier();
 		ex.chromosome=set;
-		System.out.println(rep.toNaturalLanguageString(ex));
+		//System.out.println(rep.toNaturalLanguageString(ex)); //TODO: Fix and test
 	}
 	
 	@Test
@@ -75,10 +75,41 @@ public class ComplexRepresentationTest {
 		Classifier ex2=new Classifier();
 		ex2.chromosome=set2;
 		
+		
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 	}
 	
+	@Test
+	public void moreGeneralTest3(){
+		ExtendedBitSet set1=new ExtendedBitSet("11101111111111000000000011010");
+		Classifier ex1=new Classifier();
+		ex1.chromosome=set1;
+		
+		ExtendedBitSet set2=new ExtendedBitSet("00000000010001000000001010010");
+		Classifier ex2=new Classifier();
+		ex2.chromosome=set2;
+		
+		assertFalse(rep.isMoreGeneral(ex2, ex1));
+		assertTrue(rep.isMoreGeneral(ex1, ex2));
+	}
+	
+	@Test
+	public void fixChromosomeTest(){
+		ExtendedBitSet set1=new ExtendedBitSet("11111111111110111111111111010");
+		Classifier ex1=new Classifier();
+		ex1.chromosome=set1;
+		
+		//Does fix work correctly?
+		ExtendedBitSet fixed=new ExtendedBitSet("11111111111111111111111011010");
+		rep.fixChromosome(set1);
+		assertTrue(set1.equals(fixed));
+		
+		//Does fix work correctly on correct chromosomes?
+		rep.fixChromosome(fixed);
+		assertTrue(set1.equals(fixed));
+		
+	}
 	
 
 }
