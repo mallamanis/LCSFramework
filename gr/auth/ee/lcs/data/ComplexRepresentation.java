@@ -1,8 +1,13 @@
 package gr.auth.ee.lcs.data;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Enumeration;
+
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
-
+import weka.core.Instances;
 
 
 public class ComplexRepresentation extends ClassifierTransformBridge {
@@ -47,7 +52,8 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
 	for (int i=0;i<attributeList.length;i++)
 		attributeList[i].randomCoveringValue((float)visionVector[i], generatedClassifier);
 	
-	generatedClassifier.actionAdvocated=advocatingAction; //TODO:Random?
+	//generatedClassifier.actionAdvocated=advocatingAction; //TODO:Random?
+	generatedClassifier.actionAdvocated=(int)Math.round(Math.random()*(ruleConsequents.length-1));
 	return generatedClassifier;
   }
 
@@ -111,6 +117,53 @@ public boolean areEqual(Classifier cl1, Classifier cl2) {
 			return false;
 	
 	return true;
+}
+
+public  ComplexRepresentation(String inputArff, int precision) throws IOException{
+	FileReader reader = new FileReader(inputArff);
+	Instances instances = new Instances(reader);
+	if (instances.classIndex()<0)
+		instances.setClassIndex(instances.numAttributes() - 1);
+	
+	attributeList= new Attribute[instances.numAttributes()-1];
+	
+	//Rule Consequents
+	Enumeration<?> classNames = instances.classAttribute().enumerateValues();
+	ruleConsequents=new String[instances.numClasses()];
+	for (int i=0;i<instances.numClasses();i++)
+		ruleConsequents[i]=(String) classNames.nextElement();
+	
+	for (int i=0;i<instances.numAttributes();i++){
+		if (i==instances.classIndex()) continue;
+		
+		String attributeName=instances.attribute(i).name();
+		
+		if (instances.attribute(i).isNominal()){
+			
+			String[] attributeNames=new String[instances.attribute(i).numValues()];
+			Enumeration<?> values = instances.attribute(i).enumerateValues();
+			for (int j=0;j<attributeNames.length;j++){
+				attributeNames[j]=(String)values.nextElement();
+			}
+			attributeList[i]=new ComplexRepresentation.NominalAttribute(this.chromosomeSize,
+					attributeName,attributeNames);
+		}else if (instances.attribute(i).isNumeric()){
+			//Find min-max values
+			float minValue,maxValue;
+			minValue=Float.valueOf(instances.attribute(i).value(0));
+			maxValue=minValue;
+			for (int sample=0;sample<instances.numInstances();sample++){
+				float currentVal=Float.valueOf(instances.attribute(i).value(sample));
+				if (currentVal>maxValue) maxValue=currentVal;
+				if (currentVal<minValue) minValue=currentVal;
+			}
+			
+			attributeList[i]=new ComplexRepresentation.IntervalAttribute(this.chromosomeSize+1
+					, attributeName, minValue, maxValue, precision);
+		}
+		
+	}
+	
 }
 
 /**
@@ -218,8 +271,12 @@ public class NominalAttribute extends Attribute{
 
 	@Override
 	public void fixAttributeRepresentation(ExtendedBitSet chromosome) {
-		//No fixing needed
-		return;		
+		if (chromosome.get(positionInChromosome)) //Specific
+			for(int i=1;i<this.lengthInBits;i++)
+				if (chromosome.get(positionInChromosome+i))
+						return;
+		//Fix (we have none in set]
+		chromosome.clear(positionInChromosome);
 	}
 
 	@Override
