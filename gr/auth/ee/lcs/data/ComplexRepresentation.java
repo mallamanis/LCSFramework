@@ -39,7 +39,7 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
   @Override
   public String toNaturalLanguageString(Classifier aClassifier) {
 	String nlRule="";
-	for (int i=0;i<attributeList.length-1;i++)
+	for (int i=0;i<attributeList.length;i++)
 		nlRule+=attributeList[i].toString(aClassifier.chromosome)+" AND ";
 	//Add consequence
 	nlRule+="=>"+ruleConsequents[aClassifier.actionAdvocated];
@@ -271,12 +271,13 @@ public class NominalAttribute extends Attribute{
 
 	@Override
 	public void fixAttributeRepresentation(ExtendedBitSet chromosome) {
+		int ones=0;
 		if (chromosome.get(positionInChromosome)) //Specific
 			for(int i=1;i<this.lengthInBits;i++)
 				if (chromosome.get(positionInChromosome+i))
-						return;
-		//Fix (we have none in set]
-		chromosome.clear(positionInChromosome);
+						ones++;
+		if (ones==0 || ones==lengthInBits-1) //Fix (we have none or all set]		
+			chromosome.clear(positionInChromosome);
 	}
 
 	@Override
