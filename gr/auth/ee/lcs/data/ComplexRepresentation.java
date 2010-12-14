@@ -145,8 +145,13 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 			for (int j=0;j<attributeNames.length;j++){
 				attributeNames[j]=(String)values.nextElement();
 			}
-			attributeList[i]=new ComplexRepresentation.NominalAttribute(this.chromosomeSize,
-					attributeName,attributeNames);
+			//Create boolean or generic nominal
+			if (attributeNames.length>2)
+				attributeList[i]=new ComplexRepresentation.NominalAttribute(this.chromosomeSize,
+						attributeName,attributeNames);
+			else
+				attributeList[i]=new ComplexRepresentation.BooleanAttribute(chromosomeSize, attributeName);
+			
 		}else if (instances.attribute(i).isNumeric()){
 			//Find min-max values
 			float minValue,maxValue;
@@ -244,13 +249,21 @@ public class NominalAttribute extends Attribute{
 	@Override
 	public void randomCoveringValue(float attributeValue,
 			Classifier myChromosome) {
+		//Clear everything
+		myChromosome.chromosome.clear(positionInChromosome, this.lengthInBits);
+		if (Math.random()<0.99) //TODO: Variable probability?
+			myChromosome.chromosome.set(positionInChromosome);
+		else
+			myChromosome.chromosome.clear(positionInChromosome);
+		
 		//Randomize all bits of gene
-		for (int i=0;i<lengthInBits;i++){
-			if (Math.random()<0.5) //TODO: Variable probability?
+		for (int i=1;i<lengthInBits;i++){
+			if (Math.random()<0.2) //TODO: Variable probability?
 				myChromosome.chromosome.set(positionInChromosome+i);
 			else
 				myChromosome.chromosome.clear(positionInChromosome+i);
 		}		
+		
 		
 		//and set as "1" the nominal values that we are trying to match
 		myChromosome.chromosome.set(positionInChromosome+1+(int)attributeValue);
@@ -374,7 +387,7 @@ public class IntervalAttribute extends Attribute{
 		int newMaxBound=(int)Math.ceil(((maxValue-minValue-(maxValue-attributeValue)*Math.random())/(maxValue-minValue)*totalParts));
 		
 		//Then set at chromosome
-		if (Math.random()<0.5)
+		if (Math.random()<0.8)
 			generatedClassifier.chromosome.set(positionInChromosome);
 		else
 			generatedClassifier.chromosome.clear(positionInChromosome);
@@ -419,4 +432,90 @@ public class IntervalAttribute extends Attribute{
 	
 }
 
+/**
+ * A boolean attribute
+ * @author miltiadis
+ *
+ */
+public class BooleanAttribute extends Attribute{
+
+	public BooleanAttribute(int startPosition, String attributeName) {
+		super(startPosition, attributeName);
+		lengthInBits=2;
+		chromosomeSize+=lengthInBits;
+	}
+
+	@Override
+	public String toString(ExtendedBitSet convertingClassifier) {
+		if (convertingClassifier.get(this.positionInChromosome)){
+			return convertingClassifier.get(this.positionInChromosome+1)?"1":"0";
+		}else{
+			return "#";
+		}
+		
+	}
+
+	@Override
+	public boolean isMatch(float attributeVision,
+			ExtendedBitSet testedChromosome) {
+		
+		if (testedChromosome.get(this.positionInChromosome)){
+			if ((attributeVision==0?false:true)==testedChromosome.get(this.positionInChromosome+1))
+				return true;
+			else
+				return false;
+		}else{
+			return true;
+		}
+	}
+
+	@Override
+	public void randomCoveringValue(float attributeValue,
+			Classifier generatedClassifier) {
+		if (attributeValue==0)
+			generatedClassifier.getChromosome().clear(positionInChromosome+1);
+		else
+			generatedClassifier.getChromosome().set(positionInChromosome+1);
+		
+		if (Math.random()<0.01) //TODO: Configurable generalization rate
+			generatedClassifier.getChromosome().clear(positionInChromosome);
+		else
+			generatedClassifier.getChromosome().set(positionInChromosome);	
+				
+		
+	}
+
+	@Override
+	public void fixAttributeRepresentation(ExtendedBitSet generatedClassifier) {
+		return;		
+	}
+
+	@Override
+	public boolean isMoreGeneral(ExtendedBitSet baseChromosome,
+			ExtendedBitSet testChromosome) {
+		//if the base classifier is specific and the test is # return false
+		if (baseChromosome.get(positionInChromosome) && !testChromosome.get(positionInChromosome))
+			return false;
+		if (baseChromosome.get(positionInChromosome+1)!=
+			testChromosome.get(positionInChromosome+1) && baseChromosome.get(positionInChromosome))
+			return false;
+		
+		return true;
+	}
+
+	@Override
+	public boolean isEqual(ExtendedBitSet baseChromosome,
+			ExtendedBitSet testChromosome) {
+			
+			//if the base classifier is specific and the test is # return false
+			if (baseChromosome.get(positionInChromosome)!=testChromosome.get(positionInChromosome))
+				return false;
+			else if (baseChromosome.get(positionInChromosome+1)!=
+				testChromosome.get(positionInChromosome+1) && baseChromosome.get(positionInChromosome))
+				return false;					
+		
+		return true;
+	}
+	
+}
 }
