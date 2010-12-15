@@ -4,21 +4,24 @@ import static org.junit.Assert.*;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
+import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
-import gr.auth.ee.lcs.geneticalgorithm.BestFitnessTournamentSelector;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.TournamentSelector;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class BestFitnessTournamentSelectorTest {
 
-	BestFitnessTournamentSelector mySelector;
+	TournamentSelector mySelector;
 	ClassifierSet population;
 	
 	@Before
 	public void setUp() throws Exception {
 		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,2);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
 		population=new ClassifierSet(new DummySizeControlStrategy());
 		for (int i=0;i<3;i++){
 			Classifier aClassifier=new Classifier();
@@ -33,7 +36,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament1() {
 		int participants[]={0,0,0};
-		mySelector=new BestFitnessTournamentSelector(3,true);		
+		mySelector=new TournamentSelector(3,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);		
 		
 		assertTrue(mySelector.tournament(population,participants)==0);
 	}
@@ -41,7 +44,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament2() {
 		int participants[]={0,1,0};
-		mySelector=new BestFitnessTournamentSelector(3,true);
+		mySelector=new TournamentSelector(3,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 				
 		assertTrue(mySelector.tournament(population,participants)==1);
 	}
@@ -49,7 +52,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament3() {
 		int participants[]={2,1,0};
-		mySelector=new BestFitnessTournamentSelector(3,true);
+		mySelector=new TournamentSelector(3,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 				
 		assertTrue(mySelector.tournament(population,participants)==1);
 	}
@@ -57,7 +60,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament4() {
 		int participants[]={5,1,0};
-		mySelector=new BestFitnessTournamentSelector(3,true);
+		mySelector=new TournamentSelector(3,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 		
 		System.out.println(mySelector.tournament(population,participants));
 		assertTrue(mySelector.tournament(population,participants)==2);
@@ -66,7 +69,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament5() {
 		int participants[]={5,5,5};
-		mySelector=new BestFitnessTournamentSelector(3,true);
+		mySelector=new TournamentSelector(3,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 		
 		assertTrue(mySelector.tournament(population,participants)==2);
 	}
@@ -74,7 +77,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament6() {
 		int participants[]={5,1,0};
-		mySelector=new BestFitnessTournamentSelector(3,false);
+		mySelector=new TournamentSelector(3,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 		
 		assertTrue(mySelector.tournament(population,participants)==0);
 	}
@@ -82,7 +85,7 @@ public class BestFitnessTournamentSelectorTest {
 	@Test
 	public void testTournament7() {
 		int participants[]={3,5,0};
-		mySelector=new BestFitnessTournamentSelector(3,false);
+		mySelector=new TournamentSelector(3,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 		
 		assertTrue(mySelector.tournament(population,participants)==0);
 	}
