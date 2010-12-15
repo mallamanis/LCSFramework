@@ -111,4 +111,20 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	  	
 	  
   }
+
+@Override
+public double getComparisonValue(Classifier aClassifier, int mode) {
+	XCSClassifierData data;
+	switch (mode){
+		case COMPARISON_MODE_EXPLORATION:
+			return aClassifier.fitness;
+		case COMPARISON_MODE_DELETION:
+			data=((XCSClassifierData)aClassifier.updateData);
+			return data.k; //TODO: Something else?		
+		case COMPARISON_MODE_EXPLOITATION:
+			data=((XCSClassifierData)aClassifier.updateData);
+			return data.predictedPayOff; 				
+	}
+	return 0;
+}
 }
