@@ -16,7 +16,7 @@ public double predictionError=0;
   
   public double actionSet=1;
 
-  public double predictedPayOff=10;
+  public double predictedPayOff=5;
   
   public double k;
 
