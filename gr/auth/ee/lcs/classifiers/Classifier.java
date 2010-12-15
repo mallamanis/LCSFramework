@@ -20,7 +20,7 @@ public class Classifier implements Serializable{
 /** 
    *  the fitness of the classifier
    */
-  public double fitness=.5;
+  public double fitness=.5; //TODO: Through setters-getters
 
   /** 
    *  An object (of undefined type) that is used by the update algorithms
@@ -116,6 +116,10 @@ public class Classifier implements Serializable{
    */
   public ExtendedBitSet getChromosome() {
 	  return chromosome;
+  }
+  
+  public double getComparisonValue(int mode){
+	  return UpdateAlgorithmFactoryAndStrategy.currentStrategy.getComparisonValue(this, mode);
   }
 
 }
