@@ -31,6 +31,7 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
    */
   public static UpdateAlgorithmFactoryAndStrategy currentStrategy ;
   
+   
   /**
    * Bridge to selected strategy
    * @return returns the data object as specified by the implementation
@@ -66,5 +67,18 @@ public abstract class  UpdateAlgorithmFactoryAndStrategy {
 	 aClassifier.canSubsume=aClassifier.fitness>subsumptionFitnessThreshold &&
 	 							aClassifier.experience> subsumptionExperienceThreshold;
   }
+  
+  /**
+   * Returns the implementation specific attribute that represents the classifier's
+   * comparison to the other's 
+   * @param aClassifier the classifier's value to be returned
+   * @param mode
+   * @return the numeric value
+   */
+  public abstract double getComparisonValue(Classifier aClassifier, int mode);
+  
+  public static final int COMPARISON_MODE_EXPLOITATION=0;
+  public static final int COMPARISON_MODE_DELETION=1;
+  public static final int COMPARISON_MODE_EXPLORATION=2;
 
 }
