@@ -34,9 +34,25 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		  data.fp+=1;
 	  
 	  //Niche set sharing heuristic...
-	  aClassifier.fitness=Math.pow(((double)(data.tp))/(double)(data.msa),n)/Math.log(data.ns+1)*Math.log(data.msa);
-	  
+	  //aClassifier.fitness=Math.pow(((double)(data.tp))/(double)(data.msa),n)/Math.log(data.ns+1)*Math.log(data.msa);
+	  aClassifier.fitness=Math.pow(((double)(data.tp))/(double)(data.msa),n);
 	  
   }
+
+	@Override
+	public double getComparisonValue(Classifier aClassifier, int mode) {
+		GenericSLCSClassifierData data;
+		switch (mode){
+			case COMPARISON_MODE_EXPLORATION:
+				return aClassifier.fitness;
+			case COMPARISON_MODE_DELETION:
+				data=(GenericSLCSClassifierData)aClassifier.updateData;
+				return aClassifier.fitness*Math.exp(-(data.ns==Double.NaN?1:data.ns)+1); //TODO: Something else?		
+			case COMPARISON_MODE_EXPLOITATION:
+				data=(GenericSLCSClassifierData)aClassifier.updateData;
+				return (((double)(data.tp))/(double)(data.msa)); 					
+		}
+		return 0;
+	}
 
 }
