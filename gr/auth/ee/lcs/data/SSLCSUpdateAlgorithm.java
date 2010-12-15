@@ -34,5 +34,21 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	  	  
   }
 
+	@Override
+	public double getComparisonValue(Classifier aClassifier, int mode) {
+		GenericSLCSClassifierData data;
+		switch (mode){
+			case COMPARISON_MODE_DELETION:
+				data=(GenericSLCSClassifierData)aClassifier.updateData;
+				return aClassifier.fitness/data.ns; //TODO: Something else?		
+			case COMPARISON_MODE_EXPLOITATION:
+				data=(GenericSLCSClassifierData)aClassifier.updateData;
+				return data.str; 			
+			case COMPARISON_MODE_EXPLORATION:
+				return aClassifier.fitness;
+		}
+		return 0;
+	}
+
 
 }
