@@ -19,6 +19,20 @@ public class LCSTrainTemplate {
 	  public void trainWithDataSet(double[][] dataSet) {
 	  }
 
+	  /**
+	   * A double indicating the probability that the GA will run on the matchSet 
+	   * (and not on the correct set)
+	   */
+	  private double matchSetRunProbability;
+
+	  /**
+	   * Constructor
+	   * @param gaMatchSetRunProbability
+	   */
+	  public LCSTrainTemplate(double gaMatchSetRunProbability){
+		  matchSetRunProbability=gaMatchSetRunProbability;
+	  }
+	  
 	  public void trainWithInstance(ClassifierSet population, double[] dataInstance,int expectedAction) {
 		  //Generate MatchSet
 		  ClassifierSet matchSet=new ClassifierSet(new DummySizeControlStrategy());
@@ -37,14 +51,17 @@ public class LCSTrainTemplate {
 		  
 		  if (correctSet.getNumberOfMacroclassifiers()==0){ //Cover
 			  Classifier coveringClassifier= ClassifierTransformBridge.instance.createRandomCoveringClassifier(dataInstance,expectedAction);
-			  coveringClassifier.actionAdvocated=expectedAction;
+			  
 			  population.addClassifier(coveringClassifier, 1);
 			  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
 			  return;
 		  }
 		  
 		  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
-		  ga.evolveSet(correctSet, population); //TODO: Timed activation
+		  if (Math.random()<matchSetRunProbability)
+		  	ga.evolveSet(matchSet, population);
+		  else
+			ga.evolveSet(correctSet, population);
 		  
 		  
 	  }
