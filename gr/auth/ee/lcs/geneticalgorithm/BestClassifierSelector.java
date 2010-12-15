@@ -11,13 +11,16 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 public class BestClassifierSelector implements INaturalSelector {
 
 	private boolean max=true;
+	private int mode;
 	
 	/**
 	 * Default constructor
 	 * @param max if by best we mean the max fitness then true, else false
+	 * @param mode the mode of the values taken
 	 */
-	public BestClassifierSelector(boolean max){
+	public BestClassifierSelector(boolean max, int mode){
 		this.max=max;
+		this.mode=mode;
 	}
 	
 	/**
@@ -36,12 +39,18 @@ public class BestClassifierSelector implements INaturalSelector {
 	public int select(ClassifierSet fromPopulation) {
 		 //Search for the best classifier
 		  double bestFitness=max?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
+		  int bestExp=0;
 		  int bestIndex=-1;
 		  for (int i=0;i<fromPopulation.getNumberOfMacroclassifiers();i++){
-			  double temp=fromPopulation.getClassifier(i).fitness;
+			  double temp=fromPopulation.getClassifier(i).getComparisonValue(mode);
 			  if ((max?1.:-1.)*(temp-bestFitness)>0){
 				  bestFitness=temp;
 				  bestIndex=i;
+				  bestExp=fromPopulation.getClassifier(i).experience;
+			  }else if ((max?1.:-1.)*(temp-bestFitness)==0 && fromPopulation.getClassifier(i).experience>bestExp){
+				  bestFitness=temp;
+				  bestIndex=i;
+				  bestExp=fromPopulation.getClassifier(i).experience;
 			  }
 		  }
 		  
