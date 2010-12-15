@@ -1,6 +1,5 @@
 package gr.auth.ee.lcs.data;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -51,9 +50,9 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
 	Classifier generatedClassifier=new Classifier();
 	for (int i=0;i<attributeList.length;i++)
 		attributeList[i].randomCoveringValue((float)visionVector[i], generatedClassifier);
-	
-	//generatedClassifier.actionAdvocated=advocatingAction; //TODO:Random?
+		
 	generatedClassifier.actionAdvocated=(int)Math.round(Math.random()*(ruleConsequents.length-1));
+	//generatedClassifier.actionAdvocated=advocatingAction;
 	return generatedClassifier;
   }
 
