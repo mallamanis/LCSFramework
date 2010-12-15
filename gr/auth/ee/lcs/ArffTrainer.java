@@ -4,9 +4,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.XCSClassifierData;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -54,9 +52,24 @@ public class ArffTrainer {
 					System.out.println("Predicted Payoff: "+((XCSClassifierData)(population.getClassifier(l).updateData)).predictedPayOff);
 				}*/
 		}	
-
-	
 	}
+	
+	public void selfEvaluate(ClassifierSet population){
+		LCSExploitTemplate eval=new LCSExploitTemplate();
+		int tp=0,fp=0;
+		for (int i=0;i<instancesValues.length;i++){ //for each instance
+			if (eval.classifiy(instancesValues[i], population)==advocatedActions[i])
+				tp++;
+			else if (eval.classifiy(instancesValues[i], population)!=-1)
+				fp++;
+		}
+		
+		double errorRate=((double)fp)/((double)(fp+tp));
+		System.out.println("tp:"+tp+" fp:"+fp+" errorRate:"+errorRate+" total instances:"+instancesValues.length);
+		
+	}
+	
+	
 
 
 }
