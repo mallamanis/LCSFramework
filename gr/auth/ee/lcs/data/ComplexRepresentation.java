@@ -118,6 +118,13 @@ public boolean areEqual(Classifier cl1, Classifier cl2) {
 	return true;
 }
 
+/**
+ * Arff Loader
+ * TODO: In an inherited class (not representation specific)
+ * @param inputArff the input .arff
+ * @param precision bits used for precision
+ * @throws IOException when .arff not found
+ */
 public  ComplexRepresentation(String inputArff, int precision) throws IOException{
 	FileReader reader = new FileReader(inputArff);
 	Instances instances = new Instances(reader);
@@ -147,9 +154,10 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 			//Create boolean or generic nominal
 			if (attributeNames.length>2)
 				attributeList[i]=new ComplexRepresentation.NominalAttribute(this.chromosomeSize,
-						attributeName,attributeNames);
+						attributeName,attributeNames,0.01);
 			else
-				attributeList[i]=new ComplexRepresentation.BooleanAttribute(chromosomeSize, attributeName);
+				attributeList[i]=new ComplexRepresentation.BooleanAttribute(
+						chromosomeSize, attributeName,0.33);
 			
 		}else if (instances.attribute(i).isNumeric()){
 			//Find min-max values
@@ -163,7 +171,7 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 			}
 			
 			attributeList[i]=new ComplexRepresentation.IntervalAttribute(this.chromosomeSize+1
-					, attributeName, minValue, maxValue, precision);
+					, attributeName, minValue, maxValue, precision,0.1);
 		}
 		
 	}
@@ -178,6 +186,7 @@ public abstract class Attribute{
 	protected int lengthInBits; //The length in bits of the attribute in the chromosome
 	protected int positionInChromosome; //The attribute's position in the chromosome
 	protected String nameOfAttribute; //The human-readable name of the attribute
+	protected double generalizationRate;
 	
 	/**
 	 * Convert Attribute to human-readable String
@@ -195,9 +204,10 @@ public abstract class Attribute{
 	
 	public abstract void fixAttributeRepresentation(ExtendedBitSet generatedClassifier);
 	
-	public Attribute(int startPosition,String attributeName){
+	public Attribute(int startPosition,String attributeName, double generalizationRate){
 		nameOfAttribute=attributeName;
 		positionInChromosome=startPosition;
+		this.generalizationRate= generalizationRate;
 	}	
 	
 	public int getLengthInBits(){
@@ -224,8 +234,9 @@ public class NominalAttribute extends Attribute{
 
 	private String[] nominalValuesNames;
 	
-	public NominalAttribute(int startPosition, String attributeName, String[] nominalValuesNames) {
-		super(startPosition, attributeName);
+	public NominalAttribute(int startPosition, String attributeName,
+			String[] nominalValuesNames, double generalizationRate) {
+		super(startPosition, attributeName,generalizationRate);
 		this.nominalValuesNames=nominalValuesNames;
 		//We are going to use one bit per possible value plus one activation bit
 		lengthInBits=nominalValuesNames.length+1;
@@ -236,7 +247,7 @@ public class NominalAttribute extends Attribute{
 	public String toString(ExtendedBitSet convertingChromosome) {
 		//Check if attribute is active
 		if (!convertingChromosome.get(positionInChromosome))
-			return "";
+			return nameOfAttribute+":#";
 		String attr;
 		attr=nameOfAttribute+" in [";
 		for (int i=0;i<nominalValuesNames.length;i++)
@@ -250,7 +261,7 @@ public class NominalAttribute extends Attribute{
 			Classifier myChromosome) {
 		//Clear everything
 		myChromosome.chromosome.clear(positionInChromosome, this.lengthInBits);
-		if (Math.random()<0.99) //TODO: Variable probability?
+		if (Math.random()<(1-generalizationRate)) 
 			myChromosome.chromosome.set(positionInChromosome);
 		else
 			myChromosome.chromosome.clear(positionInChromosome);
@@ -333,8 +344,8 @@ public class IntervalAttribute extends Attribute{
 	
 	
 	public IntervalAttribute(int startPosition, String attributeName, float minValue,
-			float maxValue, int precisionBits) {
-		super(startPosition, attributeName);
+			float maxValue, int precisionBits, double generalizationRate) {
+		super(startPosition, attributeName, generalizationRate);
 		this.minValue=minValue;
 		this.maxValue=maxValue;
 		this.precisionBits=precisionBits;
@@ -361,7 +372,7 @@ public class IntervalAttribute extends Attribute{
 	public String toString(ExtendedBitSet convertingChromosome) {
 		//Check if condition active
 		if (!convertingChromosome.get(positionInChromosome))
-			return "";
+			return nameOfAttribute+":#";
 		String value=nameOfAttribute+" in ["+getLowBoundValue(convertingChromosome)+","+
 				getHighBoundValue(convertingChromosome)+"]";		
 		return value;
@@ -386,7 +397,7 @@ public class IntervalAttribute extends Attribute{
 		int newMaxBound=(int)Math.ceil(((maxValue-minValue-(maxValue-attributeValue)*Math.random())/(maxValue-minValue)*totalParts));
 		
 		//Then set at chromosome
-		if (Math.random()<0.8)
+		if (Math.random()<(1-generalizationRate))
 			generatedClassifier.chromosome.set(positionInChromosome);
 		else
 			generatedClassifier.chromosome.clear(positionInChromosome);
@@ -438,8 +449,8 @@ public class IntervalAttribute extends Attribute{
  */
 public class BooleanAttribute extends Attribute{
 
-	public BooleanAttribute(int startPosition, String attributeName) {
-		super(startPosition, attributeName);
+	public BooleanAttribute(int startPosition, String attributeName, double generalizationRate) {
+		super(startPosition, attributeName, generalizationRate);
 		lengthInBits=2;
 		chromosomeSize+=lengthInBits;
 	}
@@ -476,7 +487,7 @@ public class BooleanAttribute extends Attribute{
 		else
 			generatedClassifier.getChromosome().set(positionInChromosome+1);
 		
-		if (Math.random()<0.01) //TODO: Configurable generalization rate
+		if (Math.random()<generalizationRate) //TODO: Configurable generalization rate
 			generatedClassifier.getChromosome().clear(positionInChromosome);
 		else
 			generatedClassifier.getChromosome().set(positionInChromosome);	
