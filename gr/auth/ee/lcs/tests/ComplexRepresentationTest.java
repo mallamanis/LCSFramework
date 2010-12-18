@@ -21,9 +21,9 @@ public class ComplexRepresentationTest {
 		rep=new ComplexRepresentation(list,names);
 		ClassifierTransformBridge.setInstance(rep);
 		String[] attribute={"A","B","A+"};
-		list[0]=rep.new NominalAttribute(rep.getChromosomeSize(), "nom", attribute);
-		list[1]=rep.new IntervalAttribute(rep.getChromosomeSize(),"int",(float)-2.3,(float)5.785,10);
-		list[2]=rep.new NominalAttribute(rep.getChromosomeSize(), "nom2", attribute);
+		list[0]=rep.new NominalAttribute(rep.getChromosomeSize(), "nom", attribute,0);
+		list[1]=rep.new IntervalAttribute(rep.getChromosomeSize(),"int",(float)-2.3,(float)5.785,10,0);
+		list[2]=rep.new NominalAttribute(rep.getChromosomeSize(), "nom2", attribute,0);
 		
 		
 	}
@@ -101,7 +101,7 @@ public class ComplexRepresentationTest {
 		ex1.chromosome=set1;
 		
 		//Does fix work correctly?
-		ExtendedBitSet fixed=new ExtendedBitSet("11111111111111111111111011010");
+		ExtendedBitSet fixed=new ExtendedBitSet("11101111111111111111111011010");
 		rep.fixChromosome(set1);
 		assertTrue(set1.equals(fixed));
 		
