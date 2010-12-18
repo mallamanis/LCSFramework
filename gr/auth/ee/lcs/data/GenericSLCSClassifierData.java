@@ -21,12 +21,12 @@ public class GenericSLCSClassifierData implements Serializable {
   /** 
    *  Match Set Appearances
    */
-  public int msa=0;
+  public int msa=1;
 
   /** 
    *  true positives
    */
-  public int tp=0;
+  public int tp=1;
 
   /** 
    *  false positives
