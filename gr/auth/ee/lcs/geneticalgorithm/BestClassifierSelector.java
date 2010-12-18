@@ -32,7 +32,10 @@ public class BestClassifierSelector implements INaturalSelector {
 	 */
 	public void select(int howManyToSelect, ClassifierSet fromPopulation, ClassifierSet toPopulation) {
 	   //Add it toPopulation
-	  toPopulation.addClassifier(fromPopulation.getClassifier(select(fromPopulation)), howManyToSelect);
+	  int bestIndex=select(fromPopulation);
+	  if (bestIndex==-1)
+		  return;
+	  toPopulation.addClassifier(fromPopulation.getClassifier(bestIndex), howManyToSelect);
   }
 
 	@Override
@@ -47,7 +50,7 @@ public class BestClassifierSelector implements INaturalSelector {
 				  bestFitness=temp;
 				  bestIndex=i;
 				  bestExp=fromPopulation.getClassifier(i).experience;
-			  }else if ((max?1.:-1.)*(temp-bestFitness)==0 && fromPopulation.getClassifier(i).experience>bestExp){
+			  }else if (temp==bestFitness && fromPopulation.getClassifier(i).experience>bestExp){
 				  bestFitness=temp;
 				  bestIndex=i;
 				  bestExp=fromPopulation.getClassifier(i).experience;
