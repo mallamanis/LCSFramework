@@ -72,6 +72,8 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	  if (timestamp-meanAge<this.gaActivationAge)
 		  return;
 	  
+	  
+	  
 	for (int i=0;i<evolveSet.getNumberOfMacroclassifiers();i++){
 		evolveSet.getClassifier(i).timestamp=timestamp;
 	}
@@ -92,7 +94,9 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		child=mutationOp.operate(child);
 		ClassifierTransformBridge.fixClassifier(child);
 		population.addClassifier(child,1);
+		
 	}
+	
   }
 
 }
