@@ -162,10 +162,10 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 		}else if (instances.attribute(i).isNumeric()){
 			//Find min-max values
 			float minValue,maxValue;
-			minValue=Float.valueOf(instances.attribute(i).value(0));
+			minValue=(float)instances.get(0).toDoubleArray()[i];
 			maxValue=minValue;
 			for (int sample=0;sample<instances.numInstances();sample++){
-				float currentVal=Float.valueOf(instances.attribute(i).value(sample));
+				float currentVal=(float)instances.get(sample).toDoubleArray()[i];
 				if (currentVal>maxValue) maxValue=currentVal;
 				if (currentVal<minValue) minValue=currentVal;
 			}
