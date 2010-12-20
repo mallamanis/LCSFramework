@@ -30,6 +30,11 @@ public class Classifier implements Serializable{
   /**
    * 
    */
+  transient private boolean[] matchInstances;
+  
+  /**
+   * 
+   */
   public int experience=1;
   
   /** 
@@ -88,6 +93,15 @@ public class Classifier implements Serializable{
   public boolean isMatch(double[] visionVector) {
 	  return ClassifierTransformBridge.instance.isMatch(visionVector, chromosome);
   }
+  
+  /** 
+   *  Checks if Classifier is matches an instance vector
+   */
+  public boolean isMatch(int instanceIndex) {
+	  if (this.matchInstances==null) buildMatches();
+	  return this.matchInstances[instanceIndex];
+  }
+  
 
   /** 
    *  Calls the bridge to convert it self to natural language string
@@ -120,6 +134,12 @@ public class Classifier implements Serializable{
   
   public double getComparisonValue(int mode){
 	  return UpdateAlgorithmFactoryAndStrategy.currentStrategy.getComparisonValue(this, mode);
+  }
+  
+  public void buildMatches(){
+	  this.matchInstances=new boolean[ClassifierTransformBridge.instances.length];
+	  for (int i=0;i<ClassifierTransformBridge.instances.length;i++)
+		  matchInstances[i]= ClassifierTransformBridge.instance.isMatch(ClassifierTransformBridge.instances[i], this.chromosome);
   }
 
 }

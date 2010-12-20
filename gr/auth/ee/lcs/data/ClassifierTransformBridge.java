@@ -15,6 +15,11 @@ public abstract class ClassifierTransformBridge {
    *  the singleton instance of the bridge
    */
   public static ClassifierTransformBridge instance;
+  
+  /**
+   * 
+   */
+  public static double[][] instances;
 
   /** 
    *  checks if the visionVector matches the condition of the given chromosome
