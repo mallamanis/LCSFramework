@@ -216,6 +216,20 @@ public int totalNumerosity=0;
 				  this.myMacroclassifier.elementAt(i).myClassifier.fitness<minFitness)
 			  this.myMacroclassifier.removeElementAt(i);
 	  }
+	  
+  }
+  
+  /**
+   * Self subsume
+   */
+  public void selfSubsume(){
+	  for (int i=0;i<this.getNumberOfMacroclassifiers();i++){
+		  Classifier cl=this.getClassifier(0);
+		  int numerosity=this.getClassifierNumerosity(0);
+		  this.myMacroclassifier.remove(0);
+		  this.totalNumerosity-=numerosity;
+		  this.addClassifier(cl, numerosity);
+	  }
   }
   
   
