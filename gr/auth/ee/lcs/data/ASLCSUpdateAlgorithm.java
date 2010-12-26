@@ -44,10 +44,11 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		GenericSLCSClassifierData data;
 		switch (mode){
 			case COMPARISON_MODE_EXPLORATION:
-				return aClassifier.fitness;
+				return aClassifier.fitness*(aClassifier.experience<8?0:1);
 			case COMPARISON_MODE_DELETION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;
-				return aClassifier.fitness*Math.exp(-(data.ns==Double.NaN?1:data.ns)+1); //TODO: Something else?		
+				return aClassifier.fitness*((aClassifier.experience<20)?100.:Math.exp(-(data.ns==Double.NaN?1:data.ns)+1));
+					 //TODO: Something else?		
 			case COMPARISON_MODE_EXPLOITATION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;
 				return (((double)(data.tp))/(double)(data.msa)); 					
