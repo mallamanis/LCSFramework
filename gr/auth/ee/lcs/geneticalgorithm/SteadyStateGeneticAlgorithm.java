@@ -41,17 +41,24 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
   private int timestamp=0;
   
   /**
+   * The rate that the crossover is performed
+   */
+  float crossoverRate;
+  
+  /**
    * Default constructor
    * @param gaSelector the INautralSelector that selects parents for next generation
    * @param crossoverOp the crossover operator that will be used
    * @param mutationOp the mutation operator that will be used
    * @param gaActivationAge the age of the population that activates the G.A.
    */
-  public SteadyStateGeneticAlgorithm(INaturalSelector gaSelector, IBinaryGeneticOperator crossoverOp, IUnaryGeneticOperator mutationOp, int gaActivationAge){
+  public SteadyStateGeneticAlgorithm(INaturalSelector gaSelector, IBinaryGeneticOperator crossoverOp,
+		  float crossoverRate ,IUnaryGeneticOperator mutationOp, int gaActivationAge){
 	  this.gaSelector=gaSelector;
 	  this.crossoverOp=crossoverOp;
 	  this.mutationOp=mutationOp;
 	  this.gaActivationAge=gaActivationAge;
+	  this.crossoverRate=crossoverRate;
   }
   
   @Override
@@ -89,8 +96,12 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	
 	//Reproduce
 	for (int i=0;i<2;i++){
+		Classifier child;
 		//produce a child
-		Classifier child=crossoverOp.operate(parentA, parentB);
+		if (Math.random()<crossoverRate)
+			child=crossoverOp.operate(parentA, parentB);
+		else
+			child= crossoverOp.operate((i==0)?parentA:parentB, (i==0)?parentA:parentB);
 		child=mutationOp.operate(child);
 		ClassifierTransformBridge.fixClassifier(child);
 		population.addClassifier(child,1);
