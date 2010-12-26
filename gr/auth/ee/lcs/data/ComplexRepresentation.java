@@ -154,7 +154,7 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 			//Create boolean or generic nominal
 			if (attributeNames.length>2)
 				attributeList[i]=new ComplexRepresentation.NominalAttribute(this.chromosomeSize,
-						attributeName,attributeNames,0.01);
+						attributeName,attributeNames,0.33);
 			else
 				attributeList[i]=new ComplexRepresentation.BooleanAttribute(
 						chromosomeSize, attributeName,0.33);
@@ -171,7 +171,7 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 			}
 			
 			attributeList[i]=new ComplexRepresentation.IntervalAttribute(this.chromosomeSize+1
-					, attributeName, minValue, maxValue, precision,0.1);
+					, attributeName, minValue, maxValue, precision,0.33);
 		}
 		
 	}
@@ -268,7 +268,7 @@ public class NominalAttribute extends Attribute{
 		
 		//Randomize all bits of gene
 		for (int i=1;i<lengthInBits;i++){
-			if (Math.random()<0.2) //TODO: Variable probability?
+			if (Math.random()<0.5) //TODO: Variable probability?
 				myChromosome.chromosome.set(positionInChromosome+i);
 			else
 				myChromosome.chromosome.clear(positionInChromosome+i);
