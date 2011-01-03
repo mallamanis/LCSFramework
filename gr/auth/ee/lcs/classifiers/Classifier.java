@@ -28,9 +28,14 @@ public class Classifier implements Serializable{
   public Serializable updateData;
   
   /**
-   * 
+   * A boolean array indicating which dataset instances the rule matches
    */
   transient private boolean[] matchInstances;
+  
+  /**
+   * A float showing the matches percentage
+   */
+  transient public float coverage=0;
   
   /**
    * 
@@ -140,6 +145,12 @@ public class Classifier implements Serializable{
 	  this.matchInstances=new boolean[ClassifierTransformBridge.instances.length];
 	  for (int i=0;i<ClassifierTransformBridge.instances.length;i++)
 		  matchInstances[i]= ClassifierTransformBridge.instance.isMatch(ClassifierTransformBridge.instances[i], this.chromosome);
+	  
+	  int matchingInstances=0;
+	  for (int i=0;i<ClassifierTransformBridge.instances.length;i++)
+		  if (matchInstances[i]) matchingInstances++;
+	  
+	  this.coverage= ((float)matchingInstances)/((float)ClassifierTransformBridge.instances.length);
   }
 
 }
