@@ -22,6 +22,7 @@ import gr.auth.ee.lcs.data.ComplexRepresentation.Attribute;
 import gr.auth.ee.lcs.data.ComplexRepresentation.IntervalAttribute;
 import gr.auth.ee.lcs.data.ComplexRepresentation.NominalAttribute;
 import gr.auth.ee.lcs.data.XSLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.BestClassifierSelector;
 import gr.auth.ee.lcs.geneticalgorithm.TournamentSelector;
 import gr.auth.ee.lcs.geneticalgorithm.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.SteadyStateGeneticAlgorithm;
@@ -38,26 +39,30 @@ public class ComplexRepresentationLCSTest {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		LCSTrainTemplate myExample=new LCSTrainTemplate(.7);
+		LCSTrainTemplate myExample=new LCSTrainTemplate(.01);
 		myExample.ga=new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(10,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
-				new SinglePointCrossover(),
-				new UniformBitMutation(.04),15);
+				new SinglePointCrossover(),(float).8,
+				new UniformBitMutation(.04),50);
 		
-		String filename="/home/miltiadis/Desktop/position3.arff";
+		String filename="/home/miltiadis/Desktop/iris.arff";
 		ComplexRepresentation rep=new ComplexRepresentation(filename,10);
 		ClassifierTransformBridge.setInstance(rep);
 		
 		
-		//UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new XCSUpdateAlgorithm(.2,10,.01,.1,3);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(10);
+		//UpdateAlgorithmFactoryAndStrategy.currentStrategy=new XCSUpdateAlgorithm(.2,10,.01,.1,3);
 		
 		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
-				800,new TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+				100,new TournamentSelector(30,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+		//ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
+		//		1000,new BestClassifierSelector(false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		
+		//ClassifierSet rulePopulation = ClassifierSet.openClassifierSet("set", new FixedSizeSetWorstFitnessDeletion(
+		//		600,new TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer=new ArffTrainer();
 		trainer.loadInstances(filename);
-		trainer.train(myExample, 800000, rulePopulation);
+		trainer.train(myExample, 1000, rulePopulation);
 		
 		
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
@@ -65,15 +70,16 @@ public class ComplexRepresentationLCSTest {
 			//System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
 		}
 		System.out.println("Post process...");
-		//rulePopulation.postProcessThreshold(10, (float)0);
+		//rulePopulation.postProcessThreshold(4, (float)0);
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
-			System.out.println(rulePopulation.getClassifier(i).toString()+" fit:"+rulePopulation.getClassifier(i).fitness+" exp:"+rulePopulation.getClassifier(i).experience+" num:"+rulePopulation.getClassifierNumerosity(i));
-			System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
-			//System.out.println("tp: "+((GenericSLCSClassifierData)(rulePopulation.getClassifier(i).updateData)).tp);
+			System.out.println(rulePopulation.getClassifier(i).toString()+" fit:"+rulePopulation.getClassifier(i).fitness+" exp:"+rulePopulation.getClassifier(i).experience+" num:"+rulePopulation.getClassifierNumerosity(i)+ "cov:"+rulePopulation.getClassifier(i).coverage);
+			//System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
+			System.out.println("tp: "+((GenericSLCSClassifierData)(rulePopulation.getClassifier(i).updateData)).tp);
 		}
 		//ClassifierSet.saveClassifierSet(rulePopulation, "set");
 		
 		trainer.selfEvaluate(rulePopulation);
+		trainer.evaluateOnTest(rulePopulation);
 		
 		
 		

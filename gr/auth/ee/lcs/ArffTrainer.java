@@ -17,25 +17,30 @@ import weka.core.Instances;
  */
 public class ArffTrainer {
 
-	
 	private int[] advocatedActions;
+	Instances testSet;
 	
 	public void loadInstances(String filename) throws IOException{
 		//Open .arff
 		FileReader reader = new FileReader(filename);
-		Instances instances = new Instances(reader);
-		if (instances.classIndex()<0)
-			instances.setClassIndex(instances.numAttributes() - 1);
+		Instances set = new Instances(reader);
+		if (set.classIndex()<0)
+			set.setClassIndex(set.numAttributes() - 1);
 		
-		ClassifierTransformBridge.instances=new double[instances.numInstances()][instances.numAttributes()-1];
-		advocatedActions=new int[instances.numInstances()];
+		set.stratify(10);
+		
+		Instances trainSet = set.trainCV(10, 9);
+		testSet = set.testCV(10, 9);
+		
+		ClassifierTransformBridge.instances=new double[trainSet.numInstances()][trainSet.numAttributes()-1];
+		advocatedActions=new int[trainSet.numInstances()];
 		
 		//Load instances
-		for (int i=0;i<instances.numInstances();i++){
-			for (int j=0;j<instances.numAttributes()-1;j++){
-				ClassifierTransformBridge.instances[i][j]=instances.get(i).value(j);
+		for (int i=0;i<trainSet.numInstances();i++){
+			for (int j=0;j<trainSet.numAttributes()-1;j++){
+				ClassifierTransformBridge.instances[i][j]=trainSet.get(i).value(j);
 			}
-			advocatedActions[i]=(int)instances.get(i).value(instances.classIndex());
+			advocatedActions[i]=(int)trainSet.get(i).value(trainSet.classIndex());
 		}
 		
 	}
@@ -53,6 +58,7 @@ public class ArffTrainer {
 	
 	public void selfEvaluate(ClassifierSet population){
 		LCSExploitTemplate eval=new LCSExploitTemplate();
+		//int confusionMatrix[][]=new int[][];
 		int tp=0,fp=0;
 		for (int i=0;i<ClassifierTransformBridge.instances.length;i++){ //for each instance
 			if (eval.classifiy(ClassifierTransformBridge.instances[i], population)==advocatedActions[i])
@@ -63,6 +69,29 @@ public class ArffTrainer {
 		
 		double errorRate=((double)fp)/((double)(fp+tp));
 		System.out.println("tp:"+tp+" fp:"+fp+" errorRate:"+errorRate+" total instances:"+ClassifierTransformBridge.instances.length);
+		
+	}
+	
+	public void evaluateOnTest(ClassifierSet population){
+		LCSExploitTemplate eval=new LCSExploitTemplate();
+		int tp=0,fp=0;
+		
+		for (int i=0;i<testSet.numInstances();i++){
+			double[] instance =  new double[testSet.numAttributes()-1];
+			int advocatedAction = (int)testSet.get(i).classValue();
+			for (int j=0;j<testSet.numAttributes()-1;j++){
+				instance[j]=testSet.get(i).value(j);
+			}
+			if (eval.classifiy(instance, population)==advocatedActions[i])
+				tp++;
+			else if (eval.classifiy(instance, population)!=-1)
+				fp++;
+			
+		}
+		
+		double errorRate=((double)fp)/((double)(fp+tp));
+		System.out.println("tp:"+tp+" fp:"+fp+" errorRate:"+errorRate+" total instances:"+testSet.numInstances());
+		
 		
 	}
 	
