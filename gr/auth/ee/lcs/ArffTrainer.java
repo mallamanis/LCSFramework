@@ -38,9 +38,9 @@ public class ArffTrainer {
 		//Load instances
 		for (int i=0;i<trainSet.numInstances();i++){
 			for (int j=0;j<trainSet.numAttributes()-1;j++){
-				ClassifierTransformBridge.instances[i][j]=trainSet.get(i).value(j);
+				ClassifierTransformBridge.instances[i][j]=trainSet.instance(i).value(j);
 			}
-			advocatedActions[i]=(int)trainSet.get(i).value(trainSet.classIndex());
+			advocatedActions[i]=(int)trainSet.instance(i).value(trainSet.classIndex());
 		}
 		
 	}
@@ -78,9 +78,9 @@ public class ArffTrainer {
 		
 		for (int i=0;i<testSet.numInstances();i++){
 			double[] instance =  new double[testSet.numAttributes()-1];
-			int advocatedAction = (int)testSet.get(i).classValue();
+			int advocatedAction = (int)testSet.instance(i).classValue();
 			for (int j=0;j<testSet.numAttributes()-1;j++){
-				instance[j]=testSet.get(i).value(j);
+				instance[j]=testSet.instance(i).value(j);
 			}
 			if (eval.classifiy(instance, population)==advocatedActions[i])
 				tp++;
