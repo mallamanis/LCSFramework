@@ -24,7 +24,7 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	  child.chromosome=performCrossover(classifierA.getChromosome(),classifierB.getChromosome(),mutationPoint);
 	  child.fitness=(classifierA.fitness+classifierB.fitness)/2;
 	  //TODO: Set specific update data
-	  child.actionAdvocated=(Math.random()<.5)?classifierB.actionAdvocated:classifierA.actionAdvocated;
+	  child.setActionAdvocated((Math.random()<.5)?classifierB.getActionAdvocated():classifierA.getActionAdvocated());
 	  return child;
   }
   

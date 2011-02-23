@@ -88,15 +88,15 @@ public class SimpleBooleanRepresentationTest {
 		Classifier testClassifier= new Classifier();
 		
 		testClassifier.chromosome=new ExtendedBitSet("01110110");
-		testClassifier.actionAdvocated=0;
+		testClassifier.setActionAdvocated(0);
 		assertEquals(test.toNaturalLanguageString(testClassifier),"010#=>0");
 		
 		testClassifier.chromosome=new ExtendedBitSet("10011111");
-		testClassifier.actionAdvocated=1;
+		testClassifier.setActionAdvocated(1);
 		assertEquals(test.toNaturalLanguageString(testClassifier),"#011=>1");
 		
 		testClassifier.chromosome=new ExtendedBitSet("00000000");
-		testClassifier.actionAdvocated=1;
+		testClassifier.setActionAdvocated(1);
 		assertEquals(test.toNaturalLanguageString(testClassifier),"####=>1");
 	}
 
@@ -133,17 +133,17 @@ public class SimpleBooleanRepresentationTest {
 		Classifier base=new Classifier();
 		Classifier test=new Classifier();
 		
-		base.actionAdvocated=1; test.actionAdvocated=1;
+		base.setActionAdvocated(1); test.setActionAdvocated(1);
 		base.chromosome=new ExtendedBitSet("10110010"); //#1##
 		test.chromosome=new ExtendedBitSet("11110110"); //110#
 		assertTrue(testRep.isMoreGeneral(base, test));
 				
-		base.actionAdvocated=1; test.actionAdvocated=0; 
+		base.setActionAdvocated(1); test.setActionAdvocated(0); 
 		base.chromosome=new ExtendedBitSet("11110010"); //11##
 		test.chromosome=new ExtendedBitSet("11110110"); //110#
 		assertFalse(testRep.isMoreGeneral(base, test));
 				
-		base.actionAdvocated=0; test.actionAdvocated=0;
+		base.setActionAdvocated(0); test.setActionAdvocated(0);
 		base.chromosome=new ExtendedBitSet("11110010"); //11##
 		test.chromosome=new ExtendedBitSet("10110110"); //#10#
 		assertFalse(testRep.isMoreGeneral(base, test));

@@ -55,7 +55,7 @@ public class Classifier implements Serializable{
   /** 
    *  Is an integer representing the action this classifier advocates for
    */
-  public int actionAdvocated;
+  private int actionAdvocated;
 
   /** 
    *  An object for saving the transformation specific data
@@ -82,6 +82,21 @@ public class Classifier implements Serializable{
 	  chromosome=new ExtendedBitSet(ClassifierTransformBridge.instance.getChromosomeSize());
 	  updateData=UpdateAlgorithmFactoryAndStrategy.createDefaultDataObject();
 	  ClassifierTransformBridge.instance.setRepresentationSpecificClassifierData(this);
+  }
+  
+  /**
+   * Getter for the advocated action 
+   * @return
+   */
+  public int getActionAdvocated(){
+	  return actionAdvocated;  
+  }
+  
+  /**
+   * Setter for advocated action
+   */
+  public void setActionAdvocated(int action){
+	  actionAdvocated = action;
   }
   
   /**    

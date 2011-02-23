@@ -39,7 +39,7 @@ public class ClassifierSetTest {
 	public void testAddClassifier() {
 		ClassifierSet testSet=new ClassifierSet(new DummySizeControlStrategy());
 		Classifier testClassifier=new Classifier();
-		testClassifier.actionAdvocated=1;
+		testClassifier.setActionAdvocated(1);
 		testClassifier.chromosome=new ExtendedBitSet("10010111");
 		
 		assertEquals(testSet.getNumberOfMacroclassifiers(),0);
@@ -53,7 +53,7 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getTotalNumerosity(),5);
 		//Create a classifier with the same chromosome but different advocated action
 		Classifier testClassifier2=new Classifier();
-		testClassifier2.actionAdvocated=0;
+		testClassifier2.setActionAdvocated(0);
 		testClassifier2.chromosome=new ExtendedBitSet("10010111");
 		testSet.addClassifier(testClassifier2,3);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),2);
@@ -64,7 +64,7 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getTotalNumerosity(),13+5);
 		
 		Classifier testClassifier3=new Classifier();
-		testClassifier3.actionAdvocated=1;
+		testClassifier3.setActionAdvocated(1);
 		testClassifier2.chromosome=new ExtendedBitSet("10001100");
 		testSet.addClassifier(testClassifier3,1);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),3);
@@ -83,7 +83,7 @@ public class ClassifierSetTest {
 	public void testDeleteClassifier() {
 		ClassifierSet testSet=new ClassifierSet(new DummySizeControlStrategy());
 		Classifier testClassifier=new Classifier();
-		testClassifier.actionAdvocated=1;
+		testClassifier.setActionAdvocated(1);
 		testClassifier.chromosome=new ExtendedBitSet("10010111");
 		
 		assertEquals(testSet.getNumberOfMacroclassifiers(),0);

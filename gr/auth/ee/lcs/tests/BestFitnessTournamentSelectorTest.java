@@ -26,7 +26,8 @@ public class BestFitnessTournamentSelectorTest {
 		for (int i=0;i<3;i++){
 			Classifier aClassifier=new Classifier();
 			aClassifier.fitness=i+1;
-			aClassifier.actionAdvocated=i;
+			aClassifier.setActionAdvocated(i);
+			aClassifier.experience=100;
 			population.addClassifier(aClassifier, i+1);
 		}
 		//We now should have fitnesses {1,2,2,3,3,3}
@@ -46,7 +47,7 @@ public class BestFitnessTournamentSelectorTest {
 		int participants[]={0,1,0};
 		mySelector=new TournamentSelector(3,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 				
-		assertTrue(mySelector.tournament(population,participants)==1);
+		assertEquals(mySelector.tournament(population,participants),1);
 	}
 	
 	@Test

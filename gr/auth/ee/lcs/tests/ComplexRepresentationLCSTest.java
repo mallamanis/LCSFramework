@@ -62,7 +62,7 @@ public class ComplexRepresentationLCSTest {
 		//		600,new TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer=new ArffTrainer();
 		trainer.loadInstances(filename);
-		trainer.train(myExample, 1000, rulePopulation);
+		trainer.train(myExample, 2000, rulePopulation);
 		
 		
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){

@@ -41,7 +41,7 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
 	for (int i=0;i<attributeList.length;i++)
 		nlRule+=attributeList[i].toString(aClassifier.chromosome)+" AND ";
 	//Add consequence
-	nlRule+="=>"+ruleConsequents[aClassifier.actionAdvocated];
+	nlRule+="=>"+ruleConsequents[aClassifier.getActionAdvocated()];
 	return nlRule;
   }
 
@@ -51,7 +51,7 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
 	for (int i=0;i<attributeList.length;i++)
 		attributeList[i].randomCoveringValue((float)visionVector[i], generatedClassifier);
 		
-	generatedClassifier.actionAdvocated=(int)Math.round(Math.random()*(ruleConsequents.length-1));
+	generatedClassifier.setActionAdvocated((int)Math.round(Math.random()*(ruleConsequents.length-1)));
 	//generatedClassifier.actionAdvocated=advocatingAction;
 	return generatedClassifier;
   }
@@ -60,7 +60,7 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
   public boolean isMoreGeneral(Classifier baseClassifier,
 		Classifier testClassifier) {
 	//If classifiers advocate for different actions, return false
-	if (baseClassifier.actionAdvocated!=testClassifier.actionAdvocated)
+	if (baseClassifier.getActionAdvocated()!=testClassifier.getActionAdvocated())
 		return false;
 		
 	ExtendedBitSet baseChromosome =baseClassifier.getChromosome();
@@ -105,7 +105,7 @@ public void buildRepresentationModel() {
 
 @Override
 public boolean areEqual(Classifier cl1, Classifier cl2) {
-	if (cl1.actionAdvocated!=cl2.actionAdvocated)
+	if (cl1.getActionAdvocated()!=cl2.getActionAdvocated())
 		return false;
 	
 	ExtendedBitSet baseChromosome =cl1.getChromosome();

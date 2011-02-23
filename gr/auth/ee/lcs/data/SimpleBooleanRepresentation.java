@@ -79,7 +79,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				output="#"+output;
 			}
 		}
-		output+="=>"+aClassifier.actionAdvocated;
+		output+="=>"+aClassifier.getActionAdvocated();
 		return output;
 	}
 
@@ -108,7 +108,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				chromosome.clear(i);
 		}
 		//coverClassifier.actionAdvocated=advocatingAction;
-		coverClassifier.actionAdvocated=Math.random()<.5?1:0;
+		coverClassifier.setActionAdvocated(Math.random()<.5?1:0);
 		return coverClassifier;
 	}
 
@@ -119,7 +119,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public boolean isMoreGeneral(Classifier baseClassifier,
 			Classifier testClassifier) {
 		//If classifiers advocate for different actions, return false
-		if (baseClassifier.actionAdvocated!=testClassifier.actionAdvocated)
+		if (baseClassifier.getActionAdvocated()!=testClassifier.getActionAdvocated())
 			return false;
 		
 		ExtendedBitSet baseChromosome =baseClassifier.getChromosome();
@@ -189,7 +189,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs.classifiers.Classifier,gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	public boolean areEqual(Classifier cl1, Classifier cl2) {
-		if (cl1.actionAdvocated!=cl2.actionAdvocated)
+		if (cl1.getActionAdvocated()!=cl2.getActionAdvocated())
 			return false;
 		
 		ExtendedBitSet baseChromosome =cl1.getChromosome();
