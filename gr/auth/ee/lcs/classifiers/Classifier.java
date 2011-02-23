@@ -53,11 +53,6 @@ public class Classifier implements Serializable{
   public boolean canSubsume=false;
 
   /** 
-   *  Is an integer representing the action this classifier advocates for
-   */
-  private int actionAdvocated;
-
-  /** 
    *  An object for saving the transformation specific data
    */
   public Serializable transformData;
@@ -89,14 +84,14 @@ public class Classifier implements Serializable{
    * @return
    */
   public int getActionAdvocated(){
-	  return actionAdvocated;  
+	  return ClassifierTransformBridge.instance.getClassification(this);  
   }
   
   /**
    * Setter for advocated action
    */
   public void setActionAdvocated(int action){
-	  actionAdvocated = action;
+	  ClassifierTransformBridge.instance.setClassification(this, action);
   }
   
   /**    

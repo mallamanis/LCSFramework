@@ -9,7 +9,7 @@ import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import weka.core.Instances;
 
 
-public class ComplexRepresentation extends ClassifierTransformBridge {
+public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
   /** 
    *  The rate by which the createRandomCoveringClassifier considers a specific condition as Don't Care
@@ -17,10 +17,10 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
    */
   public double coveringGeneralizationRate;
 
-  private Attribute[] attributeList;
-  private int chromosomeSize=0;
+  protected Attribute[] attributeList;
+  protected int chromosomeSize=0;
   
-  private String[] ruleConsequents;
+  protected String[] ruleConsequents;
   
   public ComplexRepresentation(Attribute[] attributes,String[] ruleConsequents){
 	  this.attributeList=attributes;
@@ -29,7 +29,7 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
 
   @Override
   public boolean isMatch(double[] visionVector, ExtendedBitSet chromosome) {
-	for (int i=0;i<attributeList.length;i++)
+	for (int i=0;i<attributeList.length-1;i++)
 		if (!attributeList[i].isMatch((float)visionVector[i], chromosome))
 			return false;
 	return true;
@@ -38,20 +38,20 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
   @Override
   public String toNaturalLanguageString(Classifier aClassifier) {
 	String nlRule="";
-	for (int i=0;i<attributeList.length;i++)
+	for (int i=0;i<attributeList.length-1;i++)
 		nlRule+=attributeList[i].toString(aClassifier.chromosome)+" AND ";
 	//Add consequence
-	nlRule+="=>"+ruleConsequents[aClassifier.getActionAdvocated()];
+	nlRule+="=>"+attributeList[attributeList.length-1].toString(aClassifier.chromosome);
 	return nlRule;
   }
 
   @Override
   public Classifier createRandomCoveringClassifier(double[] visionVector, int advocatingAction) {
 	Classifier generatedClassifier=new Classifier();
-	for (int i=0;i<attributeList.length;i++)
+	for (int i=0;i<attributeList.length-1;i++)
 		attributeList[i].randomCoveringValue((float)visionVector[i], generatedClassifier);
 		
-	generatedClassifier.setActionAdvocated((int)Math.round(Math.random()*(ruleConsequents.length-1)));
+	attributeList[attributeList.length-1].randomCoveringValue(advocatingAction, generatedClassifier);
 	//generatedClassifier.actionAdvocated=advocatingAction;
 	return generatedClassifier;
   }
@@ -66,7 +66,7 @@ public class ComplexRepresentation extends ClassifierTransformBridge {
 	ExtendedBitSet baseChromosome =baseClassifier.getChromosome();
 	ExtendedBitSet testChromosome = testClassifier.getChromosome();
 	
-	for (int i=0;i<attributeList.length;i++)
+	for (int i=0;i<attributeList.length-1;i++)
 		if (!attributeList[i].isMoreGeneral(baseChromosome, testChromosome))
 			return false;
 	
@@ -105,9 +105,6 @@ public void buildRepresentationModel() {
 
 @Override
 public boolean areEqual(Classifier cl1, Classifier cl2) {
-	if (cl1.getActionAdvocated()!=cl2.getActionAdvocated())
-		return false;
-	
 	ExtendedBitSet baseChromosome =cl1.getChromosome();
 	ExtendedBitSet testChromosome = cl2.getChromosome();
 	
@@ -117,6 +114,8 @@ public boolean areEqual(Classifier cl1, Classifier cl2) {
 	
 	return true;
 }
+
+protected abstract void createClassRepresentation();
 
 /**
  * Arff Loader
@@ -128,10 +127,11 @@ public boolean areEqual(Classifier cl1, Classifier cl2) {
 public  ComplexRepresentation(String inputArff, int precision) throws IOException{
 	FileReader reader = new FileReader(inputArff);
 	Instances instances = new Instances(reader);
+	//TODO: Change 4 ml
 	if (instances.classIndex()<0)
 		instances.setClassIndex(instances.numAttributes() - 1);
 	
-	attributeList= new Attribute[instances.numAttributes()-1];
+	attributeList= new Attribute[instances.numAttributes()];
 	
 	//Rule Consequents
 	Enumeration<?> classNames = instances.classAttribute().enumerateValues();
@@ -140,7 +140,7 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 		ruleConsequents[i]=(String) classNames.nextElement();
 	
 	for (int i=0;i<instances.numAttributes();i++){
-		if (i==instances.classIndex()) continue;
+		if (i==instances.classIndex()) continue; //TODO: Change 4 ml
 		
 		String attributeName=instances.attribute(i).name();
 		
@@ -176,10 +176,13 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
 		
 	}
 	
+	//Build class into gene
+	createClassRepresentation();
+	
 }
 
 /**
- * A private inner abstract class that represents a single attribute
+ * A inner abstract class that represents a single attribute
  * @author Miltos Allamanis
  */
 public abstract class Attribute{

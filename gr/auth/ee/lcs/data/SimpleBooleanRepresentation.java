@@ -108,7 +108,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				chromosome.clear(i);
 		}
 		//coverClassifier.actionAdvocated=advocatingAction;
-		coverClassifier.setActionAdvocated(Math.random()<.5?1:0);
+		((int[])(coverClassifier.transformData))[0]=(Math.random()<.5?1:0);
 		return coverClassifier;
 	}
 
@@ -171,6 +171,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public void setRepresentationSpecificClassifierData(Classifier aClassifier) {
+		aClassifier.transformData = new int[1];
 		return;
 	}
 
@@ -204,6 +205,19 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				return false;					
 		}
 		return true;
+	}
+
+
+	@Override
+	public int getClassification(Classifier aClassifier) {
+		return ((int[])(aClassifier.transformData))[0];
+	}
+
+
+	@Override
+	public void setClassification(Classifier aClassifier, int action) {
+		((int[])(aClassifier.transformData))[0] = action;
+		
 	}
 
 }

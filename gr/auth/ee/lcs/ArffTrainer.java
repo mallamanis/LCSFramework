@@ -29,8 +29,8 @@ public class ArffTrainer {
 		
 		set.stratify(10);
 		
-		Instances trainSet = set.trainCV(10, 9);
-		testSet = set.testCV(10, 9);
+		Instances trainSet = set;//set.trainCV(10, 9);
+		//testSet = set.testCV(10, 9);
 		
 		ClassifierTransformBridge.instances=new double[trainSet.numInstances()][trainSet.numAttributes()-1];
 		advocatedActions=new int[trainSet.numInstances()];

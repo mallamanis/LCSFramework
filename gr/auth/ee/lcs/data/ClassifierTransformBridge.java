@@ -63,6 +63,20 @@ public abstract class ClassifierTransformBridge {
   public abstract void fixChromosome(ExtendedBitSet aChromosome);
 
   /**
+   * Gets the classification as specified by the representation
+   * @param aClassifer the classifier from which to obtain the classification
+   * @return the class
+   */
+  public abstract int getClassification(Classifier aClassifier); //TODO: Pending changes on ml
+  
+  /**
+   * Sets the classification as specified by the representation
+   * @param aClassfier the classifier to set the classification
+   * @param action the action to set on the classifier
+   */
+  public abstract void setClassification(Classifier aClassifier, int action); //TODO: Pending changes on ml
+  
+  /**
    * Calls to the bridge to fix a classifier
    * @param toBeFixed
    */
