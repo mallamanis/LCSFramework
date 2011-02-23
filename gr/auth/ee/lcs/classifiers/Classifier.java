@@ -12,12 +12,16 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
  */
 public class Classifier implements Serializable{
 
+	/**
+	 * Cache for action
+	 */
+	private int actionCache = -1;
   /**
 	 * Serialization code for versioning
 	 */
 	private static final long serialVersionUID = 8628765535406768159L;
 
-/** 
+  /** 
    *  the fitness of the classifier
    */
   public double fitness=.5; //TODO: Through setters-getters
@@ -84,7 +88,9 @@ public class Classifier implements Serializable{
    * @return
    */
   public int getActionAdvocated(){
-	  return ClassifierTransformBridge.instance.getClassification(this);  
+	  if (actionCache<0)
+		  actionCache = ClassifierTransformBridge.instance.getClassification(this);  
+	  return actionCache;
   }
   
   /**
@@ -92,6 +98,7 @@ public class Classifier implements Serializable{
    */
   public void setActionAdvocated(int action){
 	  ClassifierTransformBridge.instance.setClassification(this, action);
+	  actionCache = -1;
   }
   
   /**    

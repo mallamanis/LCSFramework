@@ -46,7 +46,7 @@ public class ComplexRepresentationLCSTest {
 				new SinglePointCrossover(),(float).8,
 				new UniformBitMutation(.04),50);
 		
-		String filename="/home/miltiadis/Desktop/position9.arff";
+		String filename="/home/miltiadis/Desktop/position6.arff";
 		ComplexRepresentation rep=new UnilabelRepresentation(filename,10);
 		ClassifierTransformBridge.setInstance(rep);
 		
@@ -63,7 +63,7 @@ public class ComplexRepresentationLCSTest {
 		//		600,new TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer=new ArffTrainer();
 		trainer.loadInstances(filename);
-		trainer.train(myExample, 2000, rulePopulation);
+		trainer.train(myExample, 1000, rulePopulation);
 		
 		
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
