@@ -15,6 +15,7 @@ import gr.auth.ee.lcs.data.ComplexRepresentation;
 import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.GenericSLCSClassifierData;
 import gr.auth.ee.lcs.data.SSLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.XCSClassifierData;
@@ -46,16 +47,17 @@ public class ComplexRepresentationLCSTest {
 				new SinglePointCrossover(),(float).8,
 				new UniformBitMutation(.04),50);
 		
-		String filename="/home/miltiadis/Desktop/position6.arff";
-		ComplexRepresentation rep=new UnilabelRepresentation(filename,10);
+		String filename="/home/miltiadis/Desktop/dec9.arff";
+		ComplexRepresentation rep=new UnilabelRepresentation(filename,7);
 		ClassifierTransformBridge.setInstance(rep);
 		
 		
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(10);
+		//UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(10);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new UCSUpdateAlgorithm(.1,10,.99,.1);
 		//UpdateAlgorithmFactoryAndStrategy.currentStrategy=new XCSUpdateAlgorithm(.2,10,.01,.1,3);
 		
 		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
-				500,new TournamentSelector(30,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+				2000,new TournamentSelector(30,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		//ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
 		//		1000,new BestClassifierSelector(false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		
