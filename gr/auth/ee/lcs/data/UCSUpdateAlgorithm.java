@@ -53,6 +53,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		for (int i=0;i<matchSet.getNumberOfMacroclassifiers();i++){
 			  Classifier cl=matchSet.getClassifier(i);
 			  GenericSLCSClassifierData data=((GenericSLCSClassifierData)cl.updateData);
+			  
+			  data.msa += 1;
 			  if (correctSet.getClassifierNumerosity(cl)>0){
 				  data.tp += 1;
 				  double accuracy = ((double)data.tp)/((double)data.msa);
@@ -66,7 +68,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				  data.fp += 1;
 				  data.str = 0;
 			  }
-			  data.msa += 1;			  
+			  			  
 			  
 			  this.updateSubsumption(cl);
 			  cl.experience++;
@@ -94,7 +96,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				return aClassifier.fitness*(aClassifier.experience<8?0:1);
 			case COMPARISON_MODE_DELETION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;
-				return aClassifier.fitness*((aClassifier.experience<20)?100.:Math.exp(-(data.ns==Double.NaN?1:data.ns)+1))*(((aClassifier.coverage==0) && aClassifier.experience==1)?0.:1);
+				return aClassifier.fitness*((aClassifier.experience<20)?100.:Math.exp(-(data.ns==Double.NaN?1:data.ns)+1))*(((aClassifier.getCoverage()==0) && aClassifier.experience==1)?0.:1);
 					 //TODO: Something else?		
 			case COMPARISON_MODE_EXPLOITATION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;
