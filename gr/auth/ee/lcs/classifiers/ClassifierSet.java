@@ -39,29 +39,31 @@ public int totalNumerosity=0;
   /** 
    *  Adds a classifier with the a given numerosity to the set.
    *  It checks whether the classifier already exists and increases its numerosity.
-   *  It also checks for subsumption nad updates the set's numerosity
+   *  It also checks for subsumption and updates the set's numerosity
+   *  @param thoroughAdd to thoroghly check addition 
    */
-  public void addClassifier(Classifier aClassifier, int numerosity) {
+  public void addClassifier(Classifier aClassifier, int numerosity, boolean thoroughAdd) {
 	  //Add numerosity to the Set
 	  this.totalNumerosity+=numerosity;
 	  
 	  //Subsume if possible
-	  for (int i=0;i<myMacroclassifier.size();i++){
-		  Classifier theClassifier=myMacroclassifier.elementAt(i).myClassifier;
-		  if (theClassifier.canSubsume){
-			  if (ClassifierTransformBridge.instance.isMoreGeneral(theClassifier, aClassifier)){
-				  //Subsume and control size...
+	  if (thoroughAdd){
+		  for (int i=0;i<myMacroclassifier.size();i++){
+			  Classifier theClassifier=myMacroclassifier.elementAt(i).myClassifier;
+			  if (theClassifier.canSubsume){
+				  if (ClassifierTransformBridge.instance.isMoreGeneral(theClassifier, aClassifier)){
+					  //Subsume and control size...
+					  myMacroclassifier.elementAt(i).numerosity+=numerosity;
+					  myISizeControlStrategy.controlSize(this);
+					  return;
+				  }
+			  }else if(theClassifier.equals(aClassifier)){ //Or it can't subsume but it is equal
 				  myMacroclassifier.elementAt(i).numerosity+=numerosity;
 				  myISizeControlStrategy.controlSize(this);
 				  return;
 			  }
-		  }else if(theClassifier.equals(aClassifier)){ //Or it can't subsume but it is equal
-			  myMacroclassifier.elementAt(i).numerosity+=numerosity;
-			  myISizeControlStrategy.controlSize(this);
-			  return;
 		  }
 	  }
-	  
 	  //No matching or subsumable more general classifier could be found. Add and control size...
 	  Macroclassifier newMacroclassifer=new Macroclassifier(aClassifier,numerosity);
 	  this.myMacroclassifier.add(newMacroclassifer);		  
@@ -80,7 +82,7 @@ public int totalNumerosity=0;
    */
   public int getClassifierNumerosity(Classifier aClassifier) {
 	  for (int i=0;i<myMacroclassifier.size();i++){
-		  if (myMacroclassifier.elementAt(i).equals(aClassifier))
+		  if (myMacroclassifier.elementAt(i).myClassifier.getSerial()== aClassifier.getSerial())
 			  return this.myMacroclassifier.elementAt(i).numerosity;
 	  }
 	 return 0;
@@ -93,7 +95,7 @@ public int totalNumerosity=0;
 	  		 
 	  int index;
 	  for (index=0;index<myMacroclassifier.size();index++){
-		  if (myMacroclassifier.elementAt(index).equals(aClassifier)) break;
+		  if (myMacroclassifier.elementAt(index).myClassifier.getSerial() == aClassifier.getSerial()) break;
 	  }
 		  
 	  if (index==myMacroclassifier.size()) return;
@@ -228,7 +230,7 @@ public int totalNumerosity=0;
 		  int numerosity=this.getClassifierNumerosity(0);
 		  this.myMacroclassifier.remove(0);
 		  this.totalNumerosity-=numerosity;
-		  this.addClassifier(cl, numerosity);
+		  this.addClassifier(cl, numerosity, true);
 	  }
   }
   

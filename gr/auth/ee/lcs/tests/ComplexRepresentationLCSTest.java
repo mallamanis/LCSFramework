@@ -47,7 +47,7 @@ public class ComplexRepresentationLCSTest {
 				new SinglePointCrossover(),(float).8,
 				new UniformBitMutation(.04),50);
 		
-		String filename="/home/miltiadis/Desktop/dec9.arff";
+		String filename="/home/miltiadis/Desktop/position9.arff";
 		ComplexRepresentation rep=new UnilabelRepresentation(filename,7);
 		ClassifierTransformBridge.setInstance(rep);
 		
@@ -57,7 +57,7 @@ public class ComplexRepresentationLCSTest {
 		//UpdateAlgorithmFactoryAndStrategy.currentStrategy=new XCSUpdateAlgorithm(.2,10,.01,.1,3);
 		
 		ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
-				2000,new TournamentSelector(30,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+				1000,new TournamentSelector(40,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		//ClassifierSet rulePopulation=new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
 		//		1000,new BestClassifierSelector(false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		
@@ -65,7 +65,7 @@ public class ComplexRepresentationLCSTest {
 		//		600,new TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer=new ArffTrainer();
 		trainer.loadInstances(filename);
-		trainer.train(myExample, 1000, rulePopulation);
+		trainer.train(myExample, 200, rulePopulation);
 		
 		
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
@@ -75,7 +75,7 @@ public class ComplexRepresentationLCSTest {
 		System.out.println("Post process...");
 		//rulePopulation.postProcessThreshold(4, (float)0);
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
-			System.out.println(rulePopulation.getClassifier(i).toString()+" fit:"+rulePopulation.getClassifier(i).fitness+" exp:"+rulePopulation.getClassifier(i).experience+" num:"+rulePopulation.getClassifierNumerosity(i)+ "cov:"+rulePopulation.getClassifier(i).coverage);
+			System.out.println(rulePopulation.getClassifier(i).toString()+" fit:"+rulePopulation.getClassifier(i).fitness+" exp:"+rulePopulation.getClassifier(i).experience+" num:"+rulePopulation.getClassifierNumerosity(i)+ "cov:"+rulePopulation.getClassifier(i).getCoverage());
 			//System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
 			System.out.println("tp: "+((GenericSLCSClassifierData)(rulePopulation.getClassifier(i).updateData)).tp);
 		}

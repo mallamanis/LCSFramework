@@ -34,12 +34,19 @@ public class Classifier implements Serializable{
   /**
    * A boolean array indicating which dataset instances the rule matches
    */
-  transient private boolean[] matchInstances;
+  transient private byte[] matchInstances;
   
   /**
    * A float showing the matches percentage
    */
-  transient public float coverage=0;
+  transient protected int covered=0;
+  transient protected int checked=0;
+  
+  /**
+   * The serial number of the classifier (start from the lowest & increment)
+   */
+  private static int currentSerial = Integer.MIN_VALUE;
+  private int serial; 
   
   /**
    * 
@@ -81,6 +88,7 @@ public class Classifier implements Serializable{
 	  chromosome=new ExtendedBitSet(ClassifierTransformBridge.instance.getChromosomeSize());
 	  updateData=UpdateAlgorithmFactoryAndStrategy.createDefaultDataObject();
 	  ClassifierTransformBridge.instance.setRepresentationSpecificClassifierData(this);
+	  this.serial = currentSerial++;
   }
   
   /**
@@ -108,6 +116,14 @@ public class Classifier implements Serializable{
   public boolean equals(Classifier anotherClassifier) {
 	  return ClassifierTransformBridge.instance.areEqual(this, anotherClassifier);
 	  }
+  
+  /**
+   * Getter for the classifier's Serial Number
+   * @return
+   */
+  public int getSerial(){
+	  return this.serial;
+  }
 
   /** 
    *  Calls the bridge to detect if the classifier is matching the vision vector
@@ -121,7 +137,15 @@ public class Classifier implements Serializable{
    */
   public boolean isMatch(int instanceIndex) {
 	  if (this.matchInstances==null) buildMatches();
-	  return this.matchInstances[instanceIndex];
+	  
+	  //if we haven't cached the answer, then answer...
+	  if (this.matchInstances[instanceIndex] == -1){
+		  this.matchInstances[instanceIndex] = (byte) ((ClassifierTransformBridge.instance.isMatch(ClassifierTransformBridge.instances[instanceIndex], this.chromosome))?1:0);
+		  this.checked++;
+		  this.covered += this.matchInstances[instanceIndex];
+	  }
+	  
+	  return this.matchInstances[instanceIndex]==1;
   }
   
 
@@ -158,16 +182,22 @@ public class Classifier implements Serializable{
 	  return UpdateAlgorithmFactoryAndStrategy.currentStrategy.getComparisonValue(this, mode);
   }
   
+  /**
+   * Build matches vector and init it 
+   */
   public void buildMatches(){
-	  this.matchInstances=new boolean[ClassifierTransformBridge.instances.length];
+	  this.matchInstances=new byte[ClassifierTransformBridge.instances.length];
 	  for (int i=0;i<ClassifierTransformBridge.instances.length;i++)
-		  matchInstances[i]= ClassifierTransformBridge.instance.isMatch(ClassifierTransformBridge.instances[i], this.chromosome);
-	  
-	  int matchingInstances=0;
-	  for (int i=0;i<ClassifierTransformBridge.instances.length;i++)
-		  if (matchInstances[i]) matchingInstances++;
-	  
-	  this.coverage= ((float)matchingInstances)/((float)ClassifierTransformBridge.instances.length);
+		  matchInstances[i]= -1;
+	  	  
   }
+  
+  public double getCoverage(){
+	  if (this.checked == 0) return .5;
+	  return ((double)this.covered)/((double)this.checked);
+	  
+  }
+  
+  
 
 }
