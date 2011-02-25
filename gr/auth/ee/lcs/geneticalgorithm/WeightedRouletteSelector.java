@@ -32,7 +32,7 @@ public class WeightedRouletteSelector implements INaturalSelector {
 			  tempSum+=fromPopulation.getClassifierNumerosity(selectedIndex)*fromPopulation.getClassifier(selectedIndex).fitness;			  
 		  }while(tempSum<rand);	  
 		  //Add selectedIndex
-		  toPopulation.addClassifier(fromPopulation.getClassifier(selectedIndex), 1);
+		  toPopulation.addClassifier(fromPopulation.getClassifier(selectedIndex), 1, false);
 	  }//next roulette
 	  
   }

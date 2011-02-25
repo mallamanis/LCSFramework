@@ -42,7 +42,7 @@ public class TournamentSelector implements INaturalSelector {
 		
 		for (int i=0;i<howManyToSelect;i++){
 			
-			toPopulation.addClassifier(fromPopulation.getClassifier(this.select(fromPopulation)), 1);
+			toPopulation.addClassifier(fromPopulation.getClassifier(this.select(fromPopulation)), 1, false);
 			
 		}
 			

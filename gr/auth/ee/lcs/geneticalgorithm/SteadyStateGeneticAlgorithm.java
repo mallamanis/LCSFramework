@@ -104,7 +104,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			child= crossoverOp.operate((i==0)?parentA:parentB, (i==0)?parentA:parentB);
 		child=mutationOp.operate(child);
 		ClassifierTransformBridge.fixClassifier(child);
-		population.addClassifier(child,1);
+		population.addClassifier(child,1,true);
 		
 	}
 	
