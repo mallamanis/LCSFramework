@@ -35,7 +35,7 @@ public class BestClassifierSelector implements INaturalSelector {
 	  int bestIndex=select(fromPopulation);
 	  if (bestIndex==-1)
 		  return;
-	  toPopulation.addClassifier(fromPopulation.getClassifier(bestIndex), howManyToSelect);
+	  toPopulation.addClassifier(fromPopulation.getClassifier(bestIndex), howManyToSelect,true);
   }
 
 	@Override
