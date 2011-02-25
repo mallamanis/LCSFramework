@@ -28,7 +28,7 @@ public class BestFitnessTournamentSelectorTest {
 			aClassifier.fitness=i+1;
 			aClassifier.setActionAdvocated(i);
 			aClassifier.experience=100;
-			population.addClassifier(aClassifier, i+1);
+			population.addClassifier(aClassifier, i+1,false);
 		}
 		//We now should have fitnesses {1,2,2,3,3,3}
 		
