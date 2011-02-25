@@ -34,30 +34,43 @@ public class LCSTrainTemplate {
 	  }
 	  
 	  public void trainWithInstance(ClassifierSet population, int dataInstanceIndex,int expectedAction) {
-		  //Generate MatchSet
+		  
+		  /*
+		   * Generate match and correct set
+		   */
 		  ClassifierSet matchSet=new ClassifierSet(new DummySizeControlStrategy());
+		  ClassifierSet correctSet=new ClassifierSet(new DummySizeControlStrategy());
+		  
+		  //TODO: Parallelize for performance increase
 		  for (int i=0;i<population.getNumberOfMacroclassifiers();i++){
 			  if ( population.getClassifier(i).isMatch(dataInstanceIndex)){
-				  matchSet.addClassifier(population.getClassifier(i), population.getClassifierNumerosity(i));
+				  Classifier cl = population.getClassifier(i);
+				  int numerosity = population.getClassifierNumerosity(i);
+				  //Generate MatchSet
+				  matchSet.addClassifier(cl,numerosity ,false);
+				  
+				  //Generate Correct Set
+				  if (cl.getActionAdvocated()==expectedAction)
+					  correctSet.addClassifier(cl, numerosity,false);		  
 			  }
 		  }
 		  
-		  //Generate Correct Set
-		  ClassifierSet correctSet=new ClassifierSet(new DummySizeControlStrategy());
-		  for (int i=0;i<matchSet.getNumberOfMacroclassifiers();i++){
-			  if (matchSet.getClassifier(i).getActionAdvocated()==expectedAction)
-				  correctSet.addClassifier(matchSet.getClassifier(i), matchSet.getClassifierNumerosity(i));		  
-		  }
-		  
-		  if (correctSet.getNumberOfMacroclassifiers()==0){ //Cover
+ 
+		  /**
+		   * Cover if necessary
+		   */
+		  if (correctSet.getNumberOfMacroclassifiers()==0){
 			  Classifier coveringClassifier= ClassifierTransformBridge.instance.createRandomCoveringClassifier(
 					  ClassifierTransformBridge.instances[dataInstanceIndex],expectedAction);
 			  
-			  population.addClassifier(coveringClassifier, 1);
+			  population.addClassifier(coveringClassifier, 1,false);
 			  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
 			  return;
 		  }
 		  
+		  /*
+		   * Evolve Population
+		   */
 		  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
 		  if (Math.random()<matchSetRunProbability)
 		  	ga.evolveSet(matchSet, population);
