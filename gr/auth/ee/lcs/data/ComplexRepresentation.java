@@ -63,7 +63,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	if (baseClassifier.getActionAdvocated()!=testClassifier.getActionAdvocated())
 		return false;
 		
-	ExtendedBitSet baseChromosome =baseClassifier.getChromosome();
+	ExtendedBitSet baseChromosome = baseClassifier.getChromosome();
 	ExtendedBitSet testChromosome = testClassifier.getChromosome();
 	
 	for (int i=0;i<attributeList.length-1;i++)
@@ -108,7 +108,8 @@ public boolean areEqual(Classifier cl1, Classifier cl2) {
 	ExtendedBitSet baseChromosome =cl1.getChromosome();
 	ExtendedBitSet testChromosome = cl2.getChromosome();
 	
-	for (int i=0;i<attributeList.length;i++)
+	//Check for equality starting with class
+	for (int i=attributeList.length-1;i>=0;i--)
 		if (!attributeList[i].isEqual(baseChromosome, testChromosome))
 			return false;
 	
