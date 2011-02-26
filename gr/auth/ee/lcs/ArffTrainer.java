@@ -61,9 +61,9 @@ public class ArffTrainer {
 		//int confusionMatrix[][]=new int[][];
 		int tp=0,fp=0;
 		for (int i=0;i<ClassifierTransformBridge.instances.length;i++){ //for each instance
-			if (eval.classifiy(ClassifierTransformBridge.instances[i], population)==advocatedActions[i])
+			if (eval.classify(ClassifierTransformBridge.instances[i], population)==advocatedActions[i])
 				tp++;
-			else if (eval.classifiy(ClassifierTransformBridge.instances[i], population)!=-1)
+			else if (eval.classify(ClassifierTransformBridge.instances[i], population)!=-1)
 				fp++;
 		}
 		
@@ -82,9 +82,9 @@ public class ArffTrainer {
 			for (int j=0;j<testSet.numAttributes()-1;j++){
 				instance[j]=testSet.instance(i).value(j);
 			}
-			if (eval.classifiy(instance, population)==advocatedActions[i])
+			if (eval.classify(instance, population)==advocatedActions[i])
 				tp++;
-			else if (eval.classifiy(instance, population)!=-1)
+			else if (eval.classify(instance, population)!=-1)
 				fp++;
 			
 		}
