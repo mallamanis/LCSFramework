@@ -28,7 +28,7 @@ public int totalNumerosity=0;
    /**
    * Macroclassifier
    */
-  public Vector<Macroclassifier>  myMacroclassifier;
+  public Vector<Macroclassifier>  myMacroclassifiers;
   /** 
    *  An interface for a strategy on deleting classifiers from the set. 
    *  This attribute is transient and therefore not serializable
@@ -52,24 +52,24 @@ public int totalNumerosity=0;
 	  //Subsume if possible
 	  if (thoroughAdd){
 		  Classifier aClassifier = macro.myClassifier;
-		  for (int i=0;i<myMacroclassifier.size();i++){
-			  Classifier theClassifier=myMacroclassifier.elementAt(i).myClassifier;
+		  for (int i=0;i<myMacroclassifiers.size();i++){
+			  Classifier theClassifier=myMacroclassifiers.elementAt(i).myClassifier;
 			  if (theClassifier.canSubsume){
 				  if (ClassifierTransformBridge.instance.isMoreGeneral(theClassifier, aClassifier)){
 					  //Subsume and control size...
-					  myMacroclassifier.elementAt(i).numerosity+=numerosity;
+					  myMacroclassifiers.elementAt(i).numerosity+=numerosity;
 					  if (myISizeControlStrategy!=null) myISizeControlStrategy.controlSize(this);
 					  return;
 				  }
 			  }else if(theClassifier.equals(aClassifier)){ //Or it can't subsume but it is equal
-				  myMacroclassifier.elementAt(i).numerosity+=numerosity;
+				  myMacroclassifiers.elementAt(i).numerosity+=numerosity;
 				  if (myISizeControlStrategy!=null) myISizeControlStrategy.controlSize(this);
 				  return;
 			  }
 		  }
 	  }
 	  //No matching or subsumable more general classifier could be found. Add and control size...
-	  this.myMacroclassifier.add(macro);		  
+	  this.myMacroclassifiers.add(macro);		  
 	  if (myISizeControlStrategy!=null) myISizeControlStrategy.controlSize(this);
   }
 
@@ -84,9 +84,9 @@ public int totalNumerosity=0;
    *  returns a classifier's numerosity (the number of microclassifiers)
    */
   public int getClassifierNumerosity(Classifier aClassifier) {
-	  for (int i=0;i<myMacroclassifier.size();i++){
-		  if (myMacroclassifier.elementAt(i).myClassifier.getSerial()== aClassifier.getSerial())
-			  return this.myMacroclassifier.elementAt(i).numerosity;
+	  for (int i=0;i<myMacroclassifiers.size();i++){
+		  if (myMacroclassifiers.elementAt(i).myClassifier.getSerial()== aClassifier.getSerial())
+			  return this.myMacroclassifiers.elementAt(i).numerosity;
 	  }
 	 return 0;
   }
@@ -97,11 +97,11 @@ public int totalNumerosity=0;
   public void deleteClassifier(Classifier aClassifier) {
 	  		 
 	  int index;
-	  for (index=0;index<myMacroclassifier.size();index++){
-		  if (myMacroclassifier.elementAt(index).myClassifier.getSerial() == aClassifier.getSerial()) break;
+	  for (index=0;index<myMacroclassifiers.size();index++){
+		  if (myMacroclassifiers.elementAt(index).myClassifier.getSerial() == aClassifier.getSerial()) break;
 	  }
 		  
-	  if (index==myMacroclassifier.size()) return;
+	  if (index==myMacroclassifiers.size()) return;
 	  deleteClassifier(index);
 		  
   }
@@ -114,10 +114,10 @@ public int totalNumerosity=0;
    */
   public void deleteClassifier(int index){
 	  this.totalNumerosity--;
-	  if (this.myMacroclassifier.elementAt(index).numerosity>1)
-		  this.myMacroclassifier.elementAt(index).numerosity--;
+	  if (this.myMacroclassifiers.elementAt(index).numerosity>1)
+		  this.myMacroclassifiers.elementAt(index).numerosity--;
 	  else
-		  this.myMacroclassifier.remove(index);
+		  this.myMacroclassifiers.remove(index);
   }
 
   /**
@@ -125,14 +125,14 @@ public int totalNumerosity=0;
    * @return the number of macroclassifiers in the set
    */
   public int getNumberOfMacroclassifiers() {
-	  return this.myMacroclassifier.size();
+	  return this.myMacroclassifiers.size();
   }
 
   /** 
    *  @return the classifier with the specified index in the macroclassifiers vector
    */
   public Classifier getClassifier(int index) {
-	  return this.myMacroclassifier.elementAt(index).myClassifier;
+	  return this.myMacroclassifiers.elementAt(index).myClassifier;
   }
   
   /**
@@ -141,14 +141,14 @@ public int totalNumerosity=0;
    * @return
    */
   public Macroclassifier getMacroclassifier(int index){
-	  return this.myMacroclassifier.elementAt(index);
+	  return this.myMacroclassifiers.elementAt(index);
   }
 
   /** 
    *  @return true if the set is empty
    */
   public boolean isEmpty() {
-	  return this.myMacroclassifier.isEmpty();
+	  return this.myMacroclassifiers.isEmpty();
   }
 
   /**
@@ -156,7 +156,7 @@ public int totalNumerosity=0;
    */
   public ClassifierSet(ISizeControlStrategy SizeControlStrategy) {
 	  this.myISizeControlStrategy=SizeControlStrategy;
-	  this.myMacroclassifier=new Vector<Macroclassifier>();
+	  this.myMacroclassifiers=new Vector<Macroclassifier>();
 	  
   }
   
@@ -166,7 +166,7 @@ public int totalNumerosity=0;
    * @return the index'th macroclassifier numerosity
    */
   public int getClassifierNumerosity(int index){
-	  return this.myMacroclassifier.elementAt(index).numerosity;
+	  return this.myMacroclassifiers.elementAt(index).numerosity;
   }
   
   /**
@@ -225,10 +225,10 @@ public int totalNumerosity=0;
    * @param minFitness the minimum fitness of the classifiers
    */
   public void postProcessThreshold(int minExperience,float minFitness){
-	  for (int i=this.myMacroclassifier.size()-1;i>=0;i--){
-		  if (this.myMacroclassifier.elementAt(i).myClassifier.experience<minExperience ||
-				  this.myMacroclassifier.elementAt(i).myClassifier.fitness<minFitness)
-			  this.myMacroclassifier.removeElementAt(i);
+	  for (int i=this.myMacroclassifiers.size()-1;i>=0;i--){
+		  if (this.myMacroclassifiers.elementAt(i).myClassifier.experience<minExperience ||
+				  this.myMacroclassifiers.elementAt(i).myClassifier.fitness<minFitness)
+			  this.myMacroclassifiers.removeElementAt(i);
 	  }
 	  
   }
@@ -240,7 +240,7 @@ public int totalNumerosity=0;
 	  for (int i=0;i<this.getNumberOfMacroclassifiers();i++){
 		  Macroclassifier cl=this.getMacroclassifier(0);
 		  int numerosity=cl.numerosity;
-		  this.myMacroclassifier.remove(0);
+		  this.myMacroclassifiers.remove(0);
 		  this.totalNumerosity-=numerosity;
 		  this.addClassifier(cl, true);
 	  }

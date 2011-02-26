@@ -56,7 +56,7 @@ public class LCSTrainTemplate {
 		  }
 		  
  
-		  /**
+		  /*
 		   * Cover if necessary
 		   */
 		  if (correctSet.getNumberOfMacroclassifiers()==0){
