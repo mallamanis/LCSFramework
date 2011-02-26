@@ -34,7 +34,7 @@ public class FixedSizeSetWorstFitnessDeletion implements ISizeControlStrategy {
 	 */
 	@Override
 	public void controlSize(ClassifierSet aSet) {
-		ClassifierSet toBeDeleted=new ClassifierSet(new DummySizeControlStrategy());
+		ClassifierSet toBeDeleted=new ClassifierSet(null);
 		while (aSet.totalNumerosity>populationSize){
 			mySelector.select(1, aSet, toBeDeleted) ;
 			//System.out.println("Deleting:"+toBeDeleted.getClassifier(0));  //DEBUG
