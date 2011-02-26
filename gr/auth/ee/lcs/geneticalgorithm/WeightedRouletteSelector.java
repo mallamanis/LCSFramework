@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs.geneticalgorithm;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 /**
  * A Natural Selection operator performing a weighted roulette wheel selection
  * @author Miltos Allamanis
@@ -32,7 +33,7 @@ public class WeightedRouletteSelector implements INaturalSelector {
 			  tempSum+=fromPopulation.getClassifierNumerosity(selectedIndex)*fromPopulation.getClassifier(selectedIndex).fitness;			  
 		  }while(tempSum<rand);	  
 		  //Add selectedIndex
-		  toPopulation.addClassifier(fromPopulation.getClassifier(selectedIndex), 1, false);
+		  toPopulation.addClassifier(new Macroclassifier(fromPopulation.getClassifier(selectedIndex), 1), false);
 	  }//next roulette
 	  
   }

@@ -3,6 +3,7 @@ package gr.auth.ee.lcs.geneticalgorithm;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 
 
@@ -85,7 +86,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		evolveSet.getClassifier(i).timestamp=timestamp;
 	}
 	  
-	ClassifierSet parents=new ClassifierSet(new DummySizeControlStrategy());
+	ClassifierSet parents=new ClassifierSet(null);
 	//Select parents
 	gaSelector.select(1, evolveSet, parents);
 	Classifier parentA=parents.getClassifier(0);
@@ -104,7 +105,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			child= crossoverOp.operate((i==0)?parentA:parentB, (i==0)?parentA:parentB);
 		child=mutationOp.operate(child);
 		ClassifierTransformBridge.fixClassifier(child);
-		population.addClassifier(child,1,true);
+		population.addClassifier(new Macroclassifier(child,1),true);
 		
 	}
 	

@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs.geneticalgorithm;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 
 /**
  * Selects and adds the best classifier (based on fitness) from the inital ClassifierSet to the target set.
@@ -35,7 +36,7 @@ public class BestClassifierSelector implements INaturalSelector {
 	  int bestIndex=select(fromPopulation);
 	  if (bestIndex==-1)
 		  return;
-	  toPopulation.addClassifier(fromPopulation.getClassifier(bestIndex), howManyToSelect,true);
+	  toPopulation.addClassifier(new Macroclassifier(fromPopulation.getClassifier(bestIndex), howManyToSelect),true);
   }
 
 	@Override

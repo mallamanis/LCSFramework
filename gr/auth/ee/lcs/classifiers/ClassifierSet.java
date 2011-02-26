@@ -42,32 +42,35 @@ public int totalNumerosity=0;
    *  It also checks for subsumption and updates the set's numerosity
    *  @param thoroughAdd to thoroghly check addition 
    */
-  public void addClassifier(Classifier aClassifier, int numerosity, boolean thoroughAdd) {
+  public void addClassifier(Macroclassifier macro, boolean thoroughAdd) {
+	  
+	  
+	  int numerosity = macro.numerosity;
 	  //Add numerosity to the Set
 	  this.totalNumerosity+=numerosity;
 	  
 	  //Subsume if possible
 	  if (thoroughAdd){
+		  Classifier aClassifier = macro.myClassifier;
 		  for (int i=0;i<myMacroclassifier.size();i++){
 			  Classifier theClassifier=myMacroclassifier.elementAt(i).myClassifier;
 			  if (theClassifier.canSubsume){
 				  if (ClassifierTransformBridge.instance.isMoreGeneral(theClassifier, aClassifier)){
 					  //Subsume and control size...
 					  myMacroclassifier.elementAt(i).numerosity+=numerosity;
-					  myISizeControlStrategy.controlSize(this);
+					  if (myISizeControlStrategy!=null) myISizeControlStrategy.controlSize(this);
 					  return;
 				  }
 			  }else if(theClassifier.equals(aClassifier)){ //Or it can't subsume but it is equal
 				  myMacroclassifier.elementAt(i).numerosity+=numerosity;
-				  myISizeControlStrategy.controlSize(this);
+				  if (myISizeControlStrategy!=null) myISizeControlStrategy.controlSize(this);
 				  return;
 			  }
 		  }
 	  }
 	  //No matching or subsumable more general classifier could be found. Add and control size...
-	  Macroclassifier newMacroclassifer=new Macroclassifier(aClassifier,numerosity);
-	  this.myMacroclassifier.add(newMacroclassifer);		  
-	  myISizeControlStrategy.controlSize(this);
+	  this.myMacroclassifier.add(macro);		  
+	  if (myISizeControlStrategy!=null) myISizeControlStrategy.controlSize(this);
   }
 
   /** 
@@ -130,6 +133,15 @@ public int totalNumerosity=0;
    */
   public Classifier getClassifier(int index) {
 	  return this.myMacroclassifier.elementAt(index).myClassifier;
+  }
+  
+  /**
+   * Returns the macroclassifier at the given index
+   * @param index
+   * @return
+   */
+  public Macroclassifier getMacroclassifier(int index){
+	  return this.myMacroclassifier.elementAt(index);
   }
 
   /** 
@@ -226,11 +238,11 @@ public int totalNumerosity=0;
    */
   public void selfSubsume(){
 	  for (int i=0;i<this.getNumberOfMacroclassifiers();i++){
-		  Classifier cl=this.getClassifier(0);
-		  int numerosity=this.getClassifierNumerosity(0);
+		  Macroclassifier cl=this.getMacroclassifier(0);
+		  int numerosity=cl.numerosity;
 		  this.myMacroclassifier.remove(0);
 		  this.totalNumerosity-=numerosity;
-		  this.addClassifier(cl, numerosity, true);
+		  this.addClassifier(cl, true);
 	  }
   }
   

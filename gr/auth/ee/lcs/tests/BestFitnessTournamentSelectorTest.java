@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
@@ -22,13 +23,13 @@ public class BestFitnessTournamentSelectorTest {
 	public void setUp() throws Exception {
 		ClassifierTransformBridge.instance=new SimpleBooleanRepresentation(.33,2);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy=new ASLCSUpdateAlgorithm(5);
-		population=new ClassifierSet(new DummySizeControlStrategy());
+		population=new ClassifierSet(null);
 		for (int i=0;i<3;i++){
 			Classifier aClassifier=new Classifier();
 			aClassifier.fitness=i+1;
 			aClassifier.setActionAdvocated(i);
 			aClassifier.experience=100;
-			population.addClassifier(aClassifier, i+1,false);
+			population.addClassifier(new Macroclassifier(aClassifier, i+1),false);
 		}
 		//We now should have fitnesses {1,2,2,3,3,3}
 		

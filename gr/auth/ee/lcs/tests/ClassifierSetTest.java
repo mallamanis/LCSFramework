@@ -8,6 +8,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 
@@ -37,15 +38,15 @@ public class ClassifierSetTest {
 	 */
 	@Test
 	public void testAddClassifier() {
-		ClassifierSet testSet=new ClassifierSet(new DummySizeControlStrategy());
+		ClassifierSet testSet=new ClassifierSet(null);
 		Classifier testClassifier=new Classifier();
 		testClassifier.setActionAdvocated(1);
 		testClassifier.chromosome=new ExtendedBitSet("10010111");
 		
 		assertEquals(testSet.getNumberOfMacroclassifiers(),0);
-		testSet.addClassifier(testClassifier,3,true);
+		testSet.addClassifier(new Macroclassifier(testClassifier,3),true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),1);
-		testSet.addClassifier(testClassifier,2,true);
+		testSet.addClassifier(new Macroclassifier(testClassifier,2),true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),1);
 		
 		assertEquals(testSet.getClassifier(0),testClassifier);
@@ -55,9 +56,9 @@ public class ClassifierSetTest {
 		Classifier testClassifier2=new Classifier();
 		testClassifier2.setActionAdvocated(0);
 		testClassifier2.chromosome=new ExtendedBitSet("10010111");
-		testSet.addClassifier(testClassifier2,3,true);
+		testSet.addClassifier(new Macroclassifier(testClassifier2,3),true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),2);
-		testSet.addClassifier(testClassifier2,10,true);
+		testSet.addClassifier(new Macroclassifier(testClassifier2,10),true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),2);
 		assertEquals(testSet.getClassifier(1),testClassifier2);
 		assertEquals(testSet.getClassifierNumerosity(testClassifier2),13);
@@ -66,9 +67,9 @@ public class ClassifierSetTest {
 		Classifier testClassifier3=new Classifier();
 		testClassifier3.setActionAdvocated(1);
 		testClassifier2.chromosome=new ExtendedBitSet("10001100");
-		testSet.addClassifier(testClassifier3,1,true);
+		testSet.addClassifier(new Macroclassifier(testClassifier3,1),true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),3);
-		testSet.addClassifier(testClassifier3,1,true);
+		testSet.addClassifier(new Macroclassifier(testClassifier3,1),true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),3);
 		assertEquals(testSet.getClassifier(2),testClassifier3);
 		assertEquals(testSet.getClassifierNumerosity(testClassifier3),2);
@@ -81,13 +82,13 @@ public class ClassifierSetTest {
 	 */
 	@Test
 	public void testDeleteClassifier() {
-		ClassifierSet testSet=new ClassifierSet(new DummySizeControlStrategy());
+		ClassifierSet testSet=new ClassifierSet(null);
 		Classifier testClassifier=new Classifier();
 		testClassifier.setActionAdvocated(1);
 		testClassifier.chromosome=new ExtendedBitSet("10010111");
 		
 		assertEquals(testSet.getNumberOfMacroclassifiers(),0);
-		testSet.addClassifier(testClassifier,3,false);
+		testSet.addClassifier(new Macroclassifier(testClassifier,3),false);
 		assertEquals(testSet.getNumberOfMacroclassifiers(),1);
 		assertEquals(testSet.getTotalNumerosity(),3);
 		

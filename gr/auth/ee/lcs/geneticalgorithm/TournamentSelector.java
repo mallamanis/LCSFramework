@@ -4,6 +4,8 @@
 package gr.auth.ee.lcs.geneticalgorithm;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
+
 import java.util.Arrays;
 
 /**
@@ -42,7 +44,7 @@ public class TournamentSelector implements INaturalSelector {
 		
 		for (int i=0;i<howManyToSelect;i++){
 			
-			toPopulation.addClassifier(fromPopulation.getClassifier(this.select(fromPopulation)), 1, false);
+			toPopulation.addClassifier(new Macroclassifier(fromPopulation.getClassifier(this.select(fromPopulation)), 1), false);
 			
 		}
 			

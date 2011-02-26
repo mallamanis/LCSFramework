@@ -3,6 +3,7 @@ package gr.auth.ee.lcs;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -38,20 +39,20 @@ public class LCSTrainTemplate {
 		  /*
 		   * Generate match and correct set
 		   */
-		  ClassifierSet matchSet=new ClassifierSet(new DummySizeControlStrategy());
-		  ClassifierSet correctSet=new ClassifierSet(new DummySizeControlStrategy());
+		  ClassifierSet matchSet=new ClassifierSet(null);
+		  ClassifierSet correctSet=new ClassifierSet(null);
 		  
 		  //TODO: Parallelize for performance increase
 		  for (int i=0;i<population.getNumberOfMacroclassifiers();i++){
 			  if ( population.getClassifier(i).isMatch(dataInstanceIndex)){
-				  Classifier cl = population.getClassifier(i);
-				  int numerosity = population.getClassifierNumerosity(i);
+				  Macroclassifier cl = population.getMacroclassifier(i);
+				  int numerosity = cl.numerosity;
 				  //Generate MatchSet
-				  matchSet.addClassifier(cl,numerosity ,false);
+				  matchSet.addClassifier(cl ,false);
 				  
 				  //Generate Correct Set
-				  if (cl.getActionAdvocated()==expectedAction)
-					  correctSet.addClassifier(cl, numerosity,false);		  
+				  if (cl.myClassifier.getActionAdvocated()==expectedAction)
+					  correctSet.addClassifier(cl,false);		  
 			  }
 		  }
 		  
@@ -63,7 +64,7 @@ public class LCSTrainTemplate {
 			  Classifier coveringClassifier= ClassifierTransformBridge.instance.createRandomCoveringClassifier(
 					  ClassifierTransformBridge.instances[dataInstanceIndex],expectedAction);
 			  
-			  population.addClassifier(coveringClassifier, 1,false);
+			  population.addClassifier(new Macroclassifier(coveringClassifier, 1),false);
 			  UpdateAlgorithmFactoryAndStrategy.updateData(matchSet,correctSet);
 			  return;
 		  }
