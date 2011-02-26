@@ -40,7 +40,7 @@ public int totalNumerosity=0;
    *  Adds a classifier with the a given numerosity to the set.
    *  It checks whether the classifier already exists and increases its numerosity.
    *  It also checks for subsumption and updates the set's numerosity
-   *  @param thoroughAdd to thoroghly check addition 
+   *  @param thoroughAdd to thoroughly check addition 
    */
   public void addClassifier(Macroclassifier macro, boolean thoroughAdd) {
 	  
