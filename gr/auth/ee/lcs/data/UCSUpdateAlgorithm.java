@@ -50,21 +50,22 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	@Override
 	protected void updateSet(ClassifierSet matchSet, ClassifierSet correctSet) {
 		double strengthSum = 0;
-		for (int i=0;i<matchSet.getNumberOfMacroclassifiers();i++){
-			  Classifier cl=matchSet.getClassifier(i);
-			  GenericSLCSClassifierData data=((GenericSLCSClassifierData)cl.updateData);
+		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
+			  Classifier cl = matchSet.getClassifier(i);
+			  GenericSLCSClassifierData data = ((GenericSLCSClassifierData) cl.updateData);
 			  
 			  data.msa += 1;
-			  if (correctSet.getClassifierNumerosity(cl)>0){
+			  if (correctSet.getClassifierNumerosity(cl) > 0) {
 				  data.tp += 1;
-				  double accuracy = ((double)data.tp)/((double)data.msa);
-				  if (accuracy > acc0)
-					  data.str = 1;
-				  else
-					  data.str = a*Math.pow(accuracy/acc0, n);
+				  double accuracy = ((double) data.tp) / ((double) data.msa);
+				  if (accuracy > acc0) {
+					data.str = 1;
+				  } else {
+					data.str = a * Math.pow(accuracy / acc0, n);
+				  }
 				  
 				  strengthSum += data.str * matchSet.getClassifierNumerosity(i);
-			  }else{
+			  } else {
 				  data.fp += 1;
 				  data.str = 0;
 			  }
@@ -75,12 +76,12 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		  }
 		
 		//Fix for avoiding problems...
-		if (strengthSum == 0) strengthSum =1;
+		if (strengthSum == 0) strengthSum = 1;
 		
-		for (int i=0;i<matchSet.getNumberOfMacroclassifiers();i++){
-			Classifier cl=matchSet.getClassifier(i);
-			GenericSLCSClassifierData data=((GenericSLCSClassifierData)cl.updateData);
-			cl.fitness += b*(data.str/strengthSum-cl.fitness);
+		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
+			Classifier cl = matchSet.getClassifier(i);
+			GenericSLCSClassifierData data = ((GenericSLCSClassifierData) cl.updateData);
+			cl.fitness += b * (data.str / strengthSum - cl.fitness);
 		}
 
 	}
@@ -96,7 +97,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				return aClassifier.fitness*(aClassifier.experience<8?0:1);
 			case COMPARISON_MODE_DELETION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;
-				return aClassifier.fitness*((aClassifier.experience<20)?100.:Math.exp(-(data.ns==Double.NaN?1:data.ns)+1))*(((aClassifier.getCoverage()==0) && aClassifier.experience==1)?0.:1);
+				return aClassifier.fitness*((aClassifier.experience<20)?100.:Math.exp(-(Double.isNaN(data.ns)?1:data.ns)+1))*(((aClassifier.getCoverage()==0) && aClassifier.experience==1)?0.:1);
 					 //TODO: Something else?		
 			case COMPARISON_MODE_EXPLOITATION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;

@@ -21,22 +21,22 @@ public class GenericSLCSClassifierData implements Serializable {
   /** 
    *  Match Set Appearances
    */
-  public int msa=1;
+  public int msa = 1;
 
   /** 
    *  true positives
    */
-  public int tp=1;
+  public int tp = 1;
 
   /** 
    *  false positives
    */
-  public int fp=0;
+  public int fp = 0;
   
   /**
    * Strength
    */
-  public double str=0;
+  public double str = 0;
   
   public Object clone(){
 	  return this.clone();

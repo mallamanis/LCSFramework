@@ -41,13 +41,13 @@ public class ComplexRepresentationLCSTest {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		LCSTrainTemplate myExample=new LCSTrainTemplate(.01);
+		LCSTrainTemplate myExample = new LCSTrainTemplate(0.01);
 		myExample.ga=new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(10,true,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(),(float).8,
 				new UniformBitMutation(.04),50);
 		
-		String filename="/home/miltiadis/Desktop/dec9.arff";
+		String filename="/home/miltiadis/Desktop/position9.arff";
 		ComplexRepresentation rep=new UnilabelRepresentation(filename,7);
 		ClassifierTransformBridge.setInstance(rep);
 		
@@ -65,7 +65,7 @@ public class ComplexRepresentationLCSTest {
 		//		600,new TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer=new ArffTrainer();
 		trainer.loadInstances(filename);
-		trainer.train(myExample, 100, rulePopulation);
+		trainer.train(myExample, 1000, rulePopulation);
 		
 		
 		for (int i=0;i<rulePopulation.getNumberOfMacroclassifiers();i++){
