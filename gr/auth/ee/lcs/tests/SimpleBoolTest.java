@@ -5,7 +5,6 @@ package gr.auth.ee.lcs.tests;
 
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.OverpopulationInverseFitnessProportionateDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;

@@ -2,7 +2,6 @@ package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.DummySizeControlStrategy;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
@@ -46,7 +45,7 @@ public class LCSTrainTemplate {
 		  for (int i=0;i<population.getNumberOfMacroclassifiers();i++){
 			  if ( population.getClassifier(i).isMatch(dataInstanceIndex)){
 				  Macroclassifier cl = population.getMacroclassifier(i);
-				  int numerosity = cl.numerosity;
+				  
 				  //Generate MatchSet
 				  matchSet.addClassifier(cl ,false);
 				  

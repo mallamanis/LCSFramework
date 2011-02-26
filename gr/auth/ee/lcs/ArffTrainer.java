@@ -78,7 +78,7 @@ public class ArffTrainer {
 		
 		for (int i=0;i<testSet.numInstances();i++){
 			double[] instance =  new double[testSet.numAttributes()-1];
-			int advocatedAction = (int)testSet.instance(i).classValue();
+			//int advocatedAction = (int)testSet.instance(i).classValue();
 			for (int j=0;j<testSet.numAttributes()-1;j++){
 				instance[j]=testSet.instance(i).value(j);
 			}
