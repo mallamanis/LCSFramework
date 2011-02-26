@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
@@ -72,24 +69,29 @@ public class ArffTrainer {
 		
 	}
 	
-	public void evaluateOnTest(ClassifierSet population){
-		LCSExploitTemplate eval=new LCSExploitTemplate();
-		int tp=0,fp=0;
+	/**
+	 * Evaluate on testset
+	 * @param population the population on with the rules will be evaluated
+	 */
+	public void evaluateOnTest(ClassifierSet population) {
+		LCSExploitTemplate eval = new LCSExploitTemplate();
+		int tp = 0, fp = 0;
 		
-		for (int i=0;i<testSet.numInstances();i++){
-			double[] instance =  new double[testSet.numAttributes()-1];
+		for (int i = 0; i < testSet.numInstances(); i++) {
+			double[] instance =  new double[ testSet.numAttributes() - 1 ];
 			//int advocatedAction = (int)testSet.instance(i).classValue();
-			for (int j=0;j<testSet.numAttributes()-1;j++){
-				instance[j]=testSet.instance(i).value(j);
+			for (int j = 0; j < testSet.numAttributes() - 1; j++) {
+				instance[j] = testSet.instance(i).value(j);
 			}
-			if (eval.classify(instance, population)==advocatedActions[i])
+			if (eval.classify(instance, population) == advocatedActions[i]) {
 				tp++;
-			else if (eval.classify(instance, population)!=-1)
+			} else if (eval.classify(instance, population) != -1) {
 				fp++;
+			}
 			
 		}
 		
-		double errorRate=((double)fp)/((double)(fp+tp));
+		double errorRate = ((double) fp) / ((double) (fp + tp));
 		System.out.println("tp:"+tp+" fp:"+fp+" errorRate:"+errorRate+" total instances:"+testSet.numInstances());
 		
 		
