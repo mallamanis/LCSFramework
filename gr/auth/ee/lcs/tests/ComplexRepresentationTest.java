@@ -24,7 +24,7 @@ public class ComplexRepresentationTest {
 		list[0]=rep.new NominalAttribute(rep.getChromosomeSize(), "nom", attribute,0);
 		list[1]=rep.new IntervalAttribute(rep.getChromosomeSize(),"int",(float)-2.3,(float)5.785,10,0);
 		list[2]=rep.new NominalAttribute(rep.getChromosomeSize(), "nom2", attribute,0);
-		list[3]=rep.new UniLabel(rep.getChromosomeSize(),"class",0,names);
+		list[3]=rep.new UniLabel(rep.getChromosomeSize(),"class",names);
 		
 		
 	}

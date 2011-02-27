@@ -4,37 +4,38 @@ import java.io.Serializable;
 
 
 /** 
- *  An data object for the *S-LCS update algorithm
+ *  An data object for the *S-LCS update algorithm.
+ *  @author Miltos Allamanis
  */
 public class GenericSLCSClassifierData implements Serializable {
 
   /**
-	 * serial for versions
+	 * serial for versions.
 	 */
 	private static final long serialVersionUID = -20798032843413916L;
 
 /** 
-   *  niche set size estimation
+   *  niche set size estimation.
    */
-  public double ns=1;
+  public double ns = 1;
 
   /** 
-   *  Match Set Appearances
+   *  Match Set Appearances.
    */
   public int msa = 1;
 
   /** 
-   *  true positives
+   *  true positives.
    */
   public int tp = 1;
 
   /** 
-   *  false positives
+   *  false positives.
    */
   public int fp = 0;
   
   /**
-   * Strength
+   * Strength.
    */
   public double str = 0;
   

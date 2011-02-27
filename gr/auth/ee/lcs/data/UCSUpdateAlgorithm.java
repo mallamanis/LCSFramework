@@ -9,24 +9,21 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import java.io.Serializable;
 
 /**
- * @author Miltos Allamanis
  * A UCS implementation with fitness sharing
- *
+ * @author Miltos Allamanis
  */
 public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
-	 * Private variables: the UCS parameter sharing
+	 * Private variables: the UCS parameter sharing.
 	 */
-	private double a;
-	private double acc0;
-	private double n;
-	private double b;
+	private double a, acc0, n, b;
 	
 	/**
-	 * Default constructor
+	 * Default constructor.
 	 */
-	public UCSUpdateAlgorithm(double alpha, double n, double acc0, double learningRate) {
+	public UCSUpdateAlgorithm(double alpha,
+			double n, double acc0, double learningRate) {
 		this.a = alpha;
 		this.n = n;
 		this.acc0 = acc0;
@@ -52,7 +49,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		double strengthSum = 0;
 		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
 			  Classifier cl = matchSet.getClassifier(i);
-			  GenericSLCSClassifierData data = ((GenericSLCSClassifierData) cl.updateData);
+			  GenericSLCSClassifierData data 
+			  		= ((GenericSLCSClassifierData) cl.updateData);
 			  
 			  data.msa += 1;
 			  if (correctSet.getClassifierNumerosity(cl) > 0) {
@@ -92,16 +90,16 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	@Override
 	public double getComparisonValue(Classifier aClassifier, int mode) {
 		GenericSLCSClassifierData data;
-		switch (mode){
+		switch (mode) {
 			case COMPARISON_MODE_EXPLORATION:
-				return aClassifier.fitness*(aClassifier.experience<8?0:1);
+				return aClassifier.fitness * (aClassifier.experience<8?0:1);
 			case COMPARISON_MODE_DELETION:
 				data=(GenericSLCSClassifierData)aClassifier.updateData;
-				return aClassifier.fitness*((aClassifier.experience<20)?100.:Math.exp(-(Double.isNaN(data.ns)?1:data.ns)+1))*(((aClassifier.getCoverage()==0) && aClassifier.experience==1)?0.:1);
+				return aClassifier.fitness * ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double.isNaN(data.ns)?1:data.ns)+1))*(((aClassifier.getCoverage()==0) && aClassifier.experience==1)?0.:1);
 					 //TODO: Something else?		
 			case COMPARISON_MODE_EXPLOITATION:
-				data=(GenericSLCSClassifierData)aClassifier.updateData;
-				return (((double)(data.tp))/(double)(data.msa)); 					
+				data = (GenericSLCSClassifierData) aClassifier.updateData;
+				return (((double) (data.tp)) / (double) (data.msa)); 					
 		}
 		return 0;
 	}

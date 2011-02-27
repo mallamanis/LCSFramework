@@ -6,107 +6,118 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 
 /** 
- *  The XCS update algorithm
+ *  The XCS update algorithm.
+ *  @author Miltos Allamanis
  */
 public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
   /** 
-   *  the initial parameters of the data object
+   *  the initial parameters of the data object.
    */
   public static XCSClassifierData initialParameters;
 
   /**
-   * learning rate
+   * XCS learning rate.
    */
   private double beta;
   
   /**
-   * correct classification payoff
+   * Correct classification payoff.
    */
-    private double P;
+    private double payoff;
     
    /**
-    * Accepted Error e0 (accuracy function parameter)
+    * Accepted Error e0 (accuracy function parameter).
     */
     private double e0;
   
   /**
-   * alpha rate (accuracy function parameter)
+   * alpha rate (accuracy function parameter).
    */
     private double alpha;
     
     /**
-     * n factor
+     * n factor.
      */
     private double n;
   
   /**
-   * Constructor
+   * Constructor.
    * @param beta the learning rate of the XCS update algorithm
    */
-  public XCSUpdateAlgorithm(double beta, double P, double e0, double alpha, double n){
-	  this.beta=beta;
-	  this.P=P;
-	  this.e0=e0;
-	  this.alpha=alpha;
-	  this.n=n;
+  public XCSUpdateAlgorithm(double beta,
+		  double P, double e0, double alpha, double n) {
+	  this.beta = beta;
+	  this.payoff = P;
+	  this.e0 = e0;
+	  this.alpha = alpha;
+	  this.n = n;
   }
   
   public Serializable createStateClassifierObject() {
 	  //TODO: Initial Parameters
-	return (Serializable)new XCSClassifierData();
+	return (Serializable) new XCSClassifierData();
   }
 
   /**
-   * implementing abstract method @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy
+   * Implementing abstract method.
+   * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy 
    * @param setA the action set
    * @param setB the correct set
    */
   public void updateSet(ClassifierSet setA, ClassifierSet setB) {
-	  double accuracySum=0;
+	  double accuracySum = 0;
 	  
-	  for (int i=0;i<setA.getNumberOfMacroclassifiers();i++){
-		  Classifier cl=setA.getClassifier(i);
-		  XCSClassifierData data=((XCSClassifierData)cl.updateData); //Get update data object
+	  for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++){
+		  Classifier cl = setA.getClassifier(i);
+		  
+		  //Get update data object
+		  XCSClassifierData data 
+		  		= ((XCSClassifierData) cl.updateData); 
 		  cl.experience++; //Increase Experience
 		  
 		  double payOff; //the classifier's payoff
-		  if (setB.getClassifierNumerosity(cl)>0)
-			  payOff=P;
+		  if (setB.getClassifierNumerosity(cl) > 0)
+			  payOff = payoff;
 		  else
-			  payOff=0;
+			  payOff = 0;
 		  
 		  //Update Predicted Payoff
-		  if (cl.experience<1/beta)
-			  data.predictedPayOff+=(payOff-data.predictedPayOff)/cl.experience;
+		  if (cl.experience < 1 / beta)
+			  data.predictedPayOff += (payOff - data.predictedPayOff) / cl.experience;
 		  else
-			  data.predictedPayOff+=beta*(payOff-data.predictedPayOff);
+			  data.predictedPayOff += beta * (payOff - data.predictedPayOff);
 		  
 		  //Update Prediction Error
-		  if (cl.experience<1/beta)
-			  data.predictionError+=(Math.abs(payOff-data.predictedPayOff)-data.predictionError)/cl.experience;
+		  if (cl.experience < 1 / beta)
+			  data.predictionError += (Math.abs(payOff - data.predictedPayOff) 
+					  - data.predictionError) / cl.experience;
 		  else
-			  data.predictionError+=beta*(Math.abs(payOff-data.predictedPayOff)-data.predictionError);
+			  data.predictionError += beta * (Math.abs(payOff - data.predictedPayOff) - data.predictionError);
 		   
 		  //Update Action Set Estimate
-		  if (cl.experience<1/beta)
-			  data.actionSet+=(setA.getTotalNumerosity()-data.actionSet)/cl.experience;
+		  if (cl.experience < 1 / beta)
+			  data.actionSet += (setA.getTotalNumerosity() - data.actionSet) / cl.experience;
 		  else
-			  data.actionSet+=beta*(setA.getTotalNumerosity()-data.actionSet);
+			  data.actionSet += beta * (setA.getTotalNumerosity() - data.actionSet);
 			 
 		  //Fitness Update Step 1
-		  if (data.predictionError<e0)
-			  data.k=1;
+		  if (data.predictionError < e0)
+			  data.k = 1;
 		  else
-			  data.k=alpha*Math.pow(data.predictionError/e0, -n);
-		  accuracySum+=data.k*setA.getClassifierNumerosity(i);		  
+			  data.k = alpha * Math.pow(data.predictionError / e0, -n);
+		  accuracySum += data.k * setA.getClassifierNumerosity(i);		  
 	  }
 	  
 	  //Update Fitness Step 2
-	  for (int i=0;i<setA.getNumberOfMacroclassifiers();i++){
-		  Classifier cl=setA.getClassifier(i);
-		  XCSClassifierData data=((XCSClassifierData)cl.updateData); //Get update data object
-		  cl.fitness+=beta*(data.k/accuracySum-cl.fitness); //per micro-classifier
+	  for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++){
+		  Classifier cl = setA.getClassifier(i);
+		  
+		  //Get update data object
+		  XCSClassifierData data = ((XCSClassifierData) cl.updateData); 
+		  
+		  //per micro-classifier
+		  cl.fitness += beta * (data.k / accuracySum - cl.fitness);
 	  }
 	  	
 	  
@@ -119,10 +130,10 @@ public double getComparisonValue(Classifier aClassifier, int mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			return aClassifier.fitness;
 		case COMPARISON_MODE_DELETION:
-			data=((XCSClassifierData)aClassifier.updateData);
+			data = ((XCSClassifierData) aClassifier.updateData);
 			return data.k; //TODO: Something else?		
 		case COMPARISON_MODE_EXPLOITATION:
-			data=((XCSClassifierData)aClassifier.updateData);
+			data = ((XCSClassifierData) aClassifier.updateData);
 			return data.predictedPayOff; 				
 	}
 	return 0;

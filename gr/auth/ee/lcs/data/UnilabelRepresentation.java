@@ -9,13 +9,16 @@ import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import java.io.IOException;
 
 /**
- * @author miltiadis
+ * A unilabel representation.
+ * @author Miltos Allamanis
  *
  */
 public class UnilabelRepresentation extends ComplexRepresentation {
 
 	/**
-	 * Call superclass's constructor
+	 * Call superclass's constructor.
+	 * @param attributes the attributes of the representation
+	 * @param ruleConsequents the names of the rule consequents
 	 */
 	public UnilabelRepresentation(Attribute[] attributes,
 			String[] ruleConsequents) {
@@ -23,7 +26,10 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	}
 
 	/**
-	 * Call superclass's constructor
+	 * Call superclass's constructor.
+	 * @param inputArff the filename of the input .arff 
+	 * @param precision the precision for the interval rules
+	 * @throws IOException when file cannot be read
 	 */
 	public UnilabelRepresentation(String inputArff, int precision)
 			throws IOException {
@@ -36,61 +42,83 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	@Override
 	protected void createClassRepresentation() {
 		
-		attributeList[attributeList.length-1] = new UniLabel(chromosomeSize,"class",0,ruleConsequents);
+		attributeList[attributeList.length - 1] 
+		              = new UniLabel(chromosomeSize, "class", ruleConsequents);
 
 	}
 	
 	@Override
 	public int getClassification(Classifier aClassifier) {
-		return ((UniLabel)attributeList[attributeList.length-1]).getValue(aClassifier.chromosome);
+		return ((UniLabel) attributeList[attributeList.length - 1])
+				.getValue(aClassifier.chromosome);
 	}
 	
 	@Override
 	public void setClassification(Classifier aClassifier, int action) {
-		((UniLabel)attributeList[attributeList.length-1]).setValue(aClassifier.chromosome, action);
+		((UniLabel) attributeList[attributeList.length - 1])
+			.setValue(aClassifier.chromosome, action);
 		
 	}
 	
+	/**
+	 * A representation of the class "attribute"
+	 * @author Miltos Allamanis
+	 *
+	 */
 	public class UniLabel extends Attribute{
 
 		/**
-		 * The classes
+		 * The classes.
 		 */
 		private String[] classes;
 		
+		/**
+		 * The constructor. 
+		 * @param startPosition the starting position at the gene
+		 * @param attributeName the name of the attribute
+		 * @param classNames
+		 */
 		public UniLabel(int startPosition, String attributeName,
-				double generalizationRate, String[] classNames) {
-			super(startPosition, attributeName, generalizationRate);
-			lengthInBits = (int)Math.ceil(Math.log10(classNames.length)/Math.log10(2));
-			chromosomeSize+= lengthInBits;
+				String[] classNames) {
+			super(startPosition, attributeName, 0);
+			lengthInBits = (int) Math.ceil(
+					Math.log10(classNames.length) / Math.log10(2));
+			chromosomeSize += lengthInBits;
 			classes = classNames;
 		}
 
 		@Override
 		public String toString(ExtendedBitSet convertingClassifier) {
-			int index = convertingClassifier.getIntAt(positionInChromosome, lengthInBits);
+			int index = convertingClassifier.getIntAt(
+					positionInChromosome, lengthInBits);
 			return classes[index];
 		}
 
 		@Override
 		public boolean isMatch(float attributeVision,
 				ExtendedBitSet testedChromosome) {
-			return testedChromosome.getIntAt(positionInChromosome, lengthInBits)==(int)attributeVision;
+			return testedChromosome.getIntAt(positionInChromosome, lengthInBits) 
+					== (int)attributeVision;
 		}
 
 		@Override
 		public void randomCoveringValue(float attributeValue,
 				Classifier generatedClassifier) {
 			int coverClass = (int) attributeValue;
-			generatedClassifier.chromosome.setIntAt(positionInChromosome, lengthInBits, coverClass);
+			generatedClassifier.chromosome.setIntAt(
+					positionInChromosome, lengthInBits, coverClass);
 		}
 
 		@Override
 		public void fixAttributeRepresentation(
 				ExtendedBitSet generatedClassifier) {
-			if (generatedClassifier.getIntAt(positionInChromosome, lengthInBits)>=classes.length){
-				int randClass = (int) Math.floor(Math.random()*classes.length);
-				generatedClassifier.setIntAt(positionInChromosome, lengthInBits, randClass);
+			if (generatedClassifier.getIntAt(positionInChromosome, lengthInBits)
+					>= classes.length){
+				
+				int randClass = (int) Math.floor(
+						Math.random() * classes.length);
+				generatedClassifier.setIntAt(positionInChromosome,
+						lengthInBits, randClass);
 			}
 			
 		}
@@ -98,7 +126,8 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		@Override
 		public boolean isMoreGeneral(ExtendedBitSet baseChromosome,
 				ExtendedBitSet testChromosome) {
-			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits)==testChromosome.getIntAt(positionInChromosome, lengthInBits))
+			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits)
+					== testChromosome.getIntAt(positionInChromosome, lengthInBits))
 				return true;
 			else
 				return false;
@@ -107,10 +136,8 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		@Override
 		public boolean isEqual(ExtendedBitSet baseChromosome,
 				ExtendedBitSet testChromosome) {
-			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits)==testChromosome.getIntAt(positionInChromosome, lengthInBits))
-				return true;
-			else
-				return false;
+			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits)
+					== testChromosome.getIntAt(positionInChromosome, lengthInBits));			
 		}
 		
 		public int getValue(ExtendedBitSet chromosome){

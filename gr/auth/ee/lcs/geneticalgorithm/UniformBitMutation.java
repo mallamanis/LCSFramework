@@ -10,15 +10,18 @@ import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
  */
 public class UniformBitMutation implements IUnaryGeneticOperator {
 
+	/**
+	 * The rate at which the mutation happens.
+	 */
   private double mutationRate;
   
   /**
-   * The default constructor
+   * The default constructor.
    * @param mutationRate the probability that a bit will be flipped
-   * Initializes the operator's attributes
+   * Initializes the operator's attributes.
    */
-  public UniformBitMutation(double mutationRate){
-	  this.mutationRate=mutationRate;
+  public UniformBitMutation(double rate) {
+	  this.mutationRate = rate;
   }
 
   /**
@@ -26,10 +29,10 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
    * @return the mutated classifier
    */
   public Classifier operate(Classifier aClassifier) {
-	  int chromosomeSize=aClassifier.chromosome.size();
-	  ExtendedBitSet chromosome=aClassifier.getChromosome();
-	  for (int i=0;i<chromosomeSize;i++){
-		  if (Math.random()<mutationRate)
+	  int chromosomeSize = aClassifier.chromosome.size();
+	  ExtendedBitSet chromosome = aClassifier.getChromosome();
+	  for (int i = 0; i < chromosomeSize; i++) {
+		  if (Math.random() < mutationRate)
 			  chromosome.invert(i);
 	  }
 	  return aClassifier;

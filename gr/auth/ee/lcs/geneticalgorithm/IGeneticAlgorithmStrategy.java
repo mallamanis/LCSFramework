@@ -9,10 +9,11 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 public interface IGeneticAlgorithmStrategy {
 
 	/**
-	 * An interface for the different strategies for genetically evolving a population
+	 * An interface for the different strategies for
+	 * 		genetically evolving a population.
 	 * @param evolveSet The set to evolve
 	 * @param population The population to add new classifiers
 	 */
-	public void evolveSet(ClassifierSet evolveSet, ClassifierSet population);
+	void evolveSet(ClassifierSet evolveSet, ClassifierSet population);
 
 }

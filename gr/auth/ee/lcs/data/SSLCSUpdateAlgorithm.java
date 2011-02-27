@@ -3,51 +3,68 @@ package gr.auth.ee.lcs.data;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Classifier;
 
+/**
+ * SS-LCS Update Algorithm.
+ * @author Miltos Allamanis
+ */
 public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
-	private double R,p;
+	/**
+	 * Reward and penalty percentage parameters.
+	 */
+	private double strengthReward, penalty;
 	
 	/**
 	 * Constructor of update algorithm
-	 * @param reward the reward a correct classifier will be given on correct classification
-	 * @param penaltyPercent the percentage of the reward that the classifier's penalty will be when failing to classify
+	 * @param reward the reward a correct classifier will
+	 * 			 be given on correct classification
+	 * @param penaltyPercent the percentage of the reward
+	 * 	 that the classifier's penalty will be when failing to classify
 	 */
 	public SSLCSUpdateAlgorithm(double reward, double penaltyPercent){
-		R=reward;
-		p=penaltyPercent;
+		strengthReward = reward;
+		penalty = penaltyPercent;
 	}
 
 	/**
-	 * Implementation of abstract method defined in @see gr.auth.ee.lcs.data.AbstractSLCSUpdateAlgorithm
+	 * Implementation of abstract method 
+	 * defined in @see gr.auth.ee.lcs.data.AbstractSLCSUpdateAlgorithm .
 	 */
-	public void updateFitness(Classifier aClassifier, int numerosity, ClassifierSet correctSet) {
-	  GenericSLCSClassifierData data=((GenericSLCSClassifierData)aClassifier.updateData);
-	  if (correctSet.getClassifierNumerosity(aClassifier)>0){ //aClassifier belongs to correctSet
+	public void updateFitness(Classifier aClassifier,
+			int numerosity, ClassifierSet correctSet) {
+	  GenericSLCSClassifierData data 
+	  		= ((GenericSLCSClassifierData) aClassifier.updateData);
+	  
+	  if (correctSet.getClassifierNumerosity(aClassifier) > 0) { 
+		  //aClassifier belongs to correctSet
 		  data.tp++;
-		  data.str+=R/correctSet.getTotalNumerosity();
-	  }else{
+		  data.str += strengthReward / correctSet.getTotalNumerosity();
+	  } else {
 		  data.fp++;
-		  data.str-=p*R/data.ns;
+		  data.str -= penalty * strengthReward / data.ns;
 	  }
 	  
-	  aClassifier.fitness=(data.str/data.msa); 
+	  aClassifier.fitness = (data.str / data.msa); 
 	  	  
   }
 
 	@Override
 	public double getComparisonValue(Classifier aClassifier, int mode) {
 		GenericSLCSClassifierData data;
-		switch (mode){
+		switch (mode) {
 			case COMPARISON_MODE_DELETION:
-				data=(GenericSLCSClassifierData)aClassifier.updateData;
-				return aClassifier.fitness/data.ns; //TODO: Something else?		
+				data = (GenericSLCSClassifierData) aClassifier.updateData;
+				//TODO: Something else?
+				return aClassifier.fitness / data.ns; 		
 			case COMPARISON_MODE_EXPLOITATION:
-				data=(GenericSLCSClassifierData)aClassifier.updateData;
+				data = (GenericSLCSClassifierData) aClassifier.updateData;
 				return data.str; 			
 			case COMPARISON_MODE_EXPLORATION:
 				return aClassifier.fitness;
+			default:
+				return 0;
 		}
-		return 0;
+		
 	}
 
 

@@ -2,7 +2,8 @@ package gr.auth.ee.lcs.data;
 
 
 /** 
- *  The representation specific classifier data
+ *  The representation specific classifier data.
+ *  @deprecated
  */
 public class TzimaClassifierData {
 
