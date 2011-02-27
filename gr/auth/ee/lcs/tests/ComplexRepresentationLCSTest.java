@@ -8,15 +8,15 @@ import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.ComplexRepresentation;
-import gr.auth.ee.lcs.data.GenericSLCSClassifierData;
-import gr.auth.ee.lcs.data.UCSUpdateAlgorithm;
-import gr.auth.ee.lcs.data.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.geneticalgorithm.SinglePointCrossover;
-import gr.auth.ee.lcs.geneticalgorithm.SteadyStateGeneticAlgorithm;
-import gr.auth.ee.lcs.geneticalgorithm.TournamentSelector;
-import gr.auth.ee.lcs.geneticalgorithm.UniformBitMutation;
+import gr.auth.ee.lcs.data.representations.ComplexRepresentation;
+import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
+import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
+import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ public class ComplexRepresentationLCSTest {
 				new SinglePointCrossover(), (float) .8, new UniformBitMutation(
 						.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/testReal.arff";
+		String filename = "/home/miltiadis/Desktop/position9.arff";
 		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
 		ClassifierTransformBridge.setInstance(rep);
 

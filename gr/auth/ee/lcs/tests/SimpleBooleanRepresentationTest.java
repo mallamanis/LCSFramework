@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
+import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#isMatch(double[], gr.auth.ee.lcs.classifiers.ExtendedBitSet)}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#isMatch(double[], gr.auth.ee.lcs.classifiers.ExtendedBitSet)}
 	 * .
 	 */
 	@Test
@@ -120,7 +120,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#toNaturalLanguageString(gr.auth.ee.lcs.classifiers.Classifier)}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#toNaturalLanguageString(gr.auth.ee.lcs.classifiers.Classifier)}
 	 * .
 	 */
 	@Test
@@ -144,7 +144,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#createRandomCoveringClassifier(double[],int)}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#createRandomCoveringClassifier(double[],int)}
 	 * .
 	 */
 	@Test
@@ -180,7 +180,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#isMoreGeneral(gr.auth.ee.lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#isMoreGeneral(gr.auth.ee.lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)}
 	 * .
 	 */
 	@Test
@@ -219,7 +219,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#getChromosomeSize()}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#getChromosomeSize()}
 	 * .
 	 */
 	@Test
@@ -233,7 +233,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.SimpleBooleanRepresentation#setVisionSize(int)}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#setVisionSize(int)}
 	 * .
 	 */
 	@Test

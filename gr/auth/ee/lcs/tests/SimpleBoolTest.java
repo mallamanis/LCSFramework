@@ -6,14 +6,14 @@ package gr.auth.ee.lcs.tests;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
-import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.geneticalgorithm.SinglePointCrossover;
-import gr.auth.ee.lcs.geneticalgorithm.SteadyStateGeneticAlgorithm;
-import gr.auth.ee.lcs.geneticalgorithm.TournamentSelector;
-import gr.auth.ee.lcs.geneticalgorithm.UniformBitMutation;
+import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
+import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 /**
  * @author Miltos Allamanis

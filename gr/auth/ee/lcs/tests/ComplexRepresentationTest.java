@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.ComplexRepresentation.Attribute;
-import gr.auth.ee.lcs.data.UnilabelRepresentation;
+import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
+import gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute;
 
 import org.junit.Before;
 import org.junit.Test;

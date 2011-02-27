@@ -1,9 +1,13 @@
-package gr.auth.ee.lcs.geneticalgorithm;
+package gr.auth.ee.lcs.geneticalgorithm.algorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.IUnaryGeneticOperator;
 
 /**
  * A steady-stage GA that selects two individuals from a set (with probability

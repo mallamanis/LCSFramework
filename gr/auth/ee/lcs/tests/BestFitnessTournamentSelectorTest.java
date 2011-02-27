@@ -5,11 +5,11 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.geneticalgorithm.TournamentSelector;
+import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 import org.junit.Before;
 import org.junit.Test;

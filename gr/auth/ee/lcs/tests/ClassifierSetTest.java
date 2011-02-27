@@ -10,7 +10,7 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.SimpleBooleanRepresentation;
+import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 
 import org.junit.Before;
 import org.junit.Test;

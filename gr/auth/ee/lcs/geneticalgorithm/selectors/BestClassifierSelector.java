@@ -1,7 +1,8 @@
-package gr.auth.ee.lcs.geneticalgorithm;
+package gr.auth.ee.lcs.geneticalgorithm.selectors;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
+import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 
 /**
  * Selects and adds the best classifier (based on fitness) from the inital

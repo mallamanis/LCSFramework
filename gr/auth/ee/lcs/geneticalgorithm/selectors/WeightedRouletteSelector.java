@@ -1,7 +1,8 @@
-package gr.auth.ee.lcs.geneticalgorithm;
+package gr.auth.ee.lcs.geneticalgorithm.selectors;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
+import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 
 /**
  * A Natural Selection operator performing a weighted roulette wheel selection.

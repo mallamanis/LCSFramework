@@ -1,7 +1,5 @@
 package gr.auth.ee.lcs.classifiers;
 
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,8 +9,8 @@ import java.io.Serializable;
 import java.util.Vector;
 
 /**
- * Implement set of Classifiers, counting numerosity fo classifiers. This object
- * is serializabe
+ * Implement set of Classifiers, counting numerosity for classifiers. This
+ * object is serializabe
  * 
  * @author Miltos Allamanis
  */
@@ -55,8 +53,7 @@ public class ClassifierSet implements Serializable {
 			for (int i = 0; i < myMacroclassifiers.size(); i++) {
 				Classifier theClassifier = myMacroclassifiers.elementAt(i).myClassifier;
 				if (theClassifier.canSubsume) {
-					if (ClassifierTransformBridge.instance.isMoreGeneral(
-							theClassifier, aClassifier)) {
+					if (theClassifier.isMoreGeneral(aClassifier)) {
 						// Subsume and control size...
 						myMacroclassifiers.elementAt(i).numerosity += numerosity;
 						if (myISizeControlStrategy != null)

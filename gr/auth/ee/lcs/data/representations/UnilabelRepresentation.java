@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.data;
+package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;

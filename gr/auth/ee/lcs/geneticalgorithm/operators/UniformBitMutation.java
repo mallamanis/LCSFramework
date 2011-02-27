@@ -1,7 +1,8 @@
-package gr.auth.ee.lcs.geneticalgorithm;
+package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.geneticalgorithm.IUnaryGeneticOperator;
 
 /**
  * Implements a mutation operator. Bits of a chromosome are mutated by following

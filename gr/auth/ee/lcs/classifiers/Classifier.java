@@ -174,6 +174,18 @@ public class Classifier implements Serializable {
 	}
 
 	/**
+	 * Return if this classifier is more general than the testClassifier.
+	 * 
+	 * @param testClassifier
+	 *            the test classifier
+	 * @return true if the classifier is more general
+	 */
+	public boolean isMoreGeneral(Classifier testClassifier) {
+		return ClassifierTransformBridge.instance.isMoreGeneral(this,
+				testClassifier);
+	}
+
+	/**
 	 * Calls the bridge to convert it self to natural language string.
 	 */
 	public String toString() {

@@ -1,4 +1,4 @@
-package gr.auth.ee.lcs.data;
+package gr.auth.ee.lcs.data.updateAlgorithms.data;
 
 import java.io.Serializable;
 

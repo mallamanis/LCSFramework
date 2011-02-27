@@ -1,7 +1,8 @@
-package gr.auth.ee.lcs.data;
+package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 
 import java.io.FileReader;
 import java.io.IOException;

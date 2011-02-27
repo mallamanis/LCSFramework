@@ -1,7 +1,9 @@
-package gr.auth.ee.lcs.data;
+package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.updateAlgorithms.data.XCSClassifierData;
 
 import java.io.Serializable;
 
