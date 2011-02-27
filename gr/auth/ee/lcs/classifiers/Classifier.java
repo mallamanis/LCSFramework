@@ -35,7 +35,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * A boolean array indicating which dataset instances the rule matches.
 	 */
-	transient private byte[] matchInstances;
+	private transient byte[] matchInstances;
 
 	/**
 	 * A float showing the number of instances that the rule has covered. Used
@@ -80,8 +80,10 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
 	 * a getter for the fitness of the classifier.
+	 * 
+	 * @return the classifier's fitness
 	 */
-	public double getFitness() {
+	public final double getFitness() {
 		return fitness;
 	}
 
@@ -94,17 +96,18 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Constructor for creating a classifier from a chromosome
+	 * Constructor for creating a classifier from a chromosome.
 	 * 
 	 * @param chromosome
+	 *            the chromosome from which to create the classifier
 	 */
-	public Classifier(ExtendedBitSet chromosome) {
+	public Classifier(final ExtendedBitSet chromosome) {
 		super(chromosome);
 		setConstructionData();
 	}
 
 	/**
-	 * Sets the update-specific and transform-specific data needed
+	 * Sets the update-specific and transform-specific data needed.
 	 */
 	private void setConstructionData() {
 		updateData = UpdateAlgorithmFactoryAndStrategy
@@ -119,9 +122,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Getter for the advocated action.
 	 * 
-	 * @return
+	 * @return the advocated action
 	 */
-	public int getActionAdvocated() {
+	public final int getActionAdvocated() {
 		if (actionCache < 0)
 			actionCache = ClassifierTransformBridge.instance
 					.getClassification(this);
@@ -130,8 +133,11 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
 	 * Setter for advocated action.
+	 * 
+	 * @param action
+	 *            the action to set the classifier to advocate for
 	 */
-	public void setActionAdvocated(int action) {
+	public final void setActionAdvocated(final int action) {
 		ClassifierTransformBridge.instance.setClassification(this, action);
 		actionCache = -1;
 	}
@@ -140,32 +146,41 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @param anotherClassifier
 	 * @return true if the classifiers have equal chromosomes
 	 */
-	public boolean equals(Classifier anotherClassifier) {
+	public final boolean equals(final Classifier anotherClassifier) {
 		return ClassifierTransformBridge.instance.areEqual(this,
 				anotherClassifier);
 	}
 
 	/**
-	 * Getter for the classifier's Serial Number
+	 * Getter for the classifier's Serial Number.
 	 * 
-	 * @return
+	 * @return the classifier's serial number
 	 */
-	public int getSerial() {
+	public final int getSerial() {
 		return this.serial;
 	}
 
 	/**
 	 * Calls the bridge to detect if the classifier is matching the vision
-	 * vector
+	 * vector.
+	 * 
+	 * @param visionVector
+	 *            the vision vector to match
+	 * @return true if the classifier matches the visionVector
 	 */
-	public boolean isMatch(double[] visionVector) {
+	public final boolean isMatch(final double[] visionVector) {
 		return ClassifierTransformBridge.instance.isMatch(visionVector, this);
 	}
 
 	/**
-	 * Checks if Classifier is matches an instance vector
+	 * Checks if Classifier is matches an instance vector. Through caching for
+	 * performance optimization.
+	 * 
+	 * @param instanceIndex
+	 *            the instance index to check for a match
+	 * @return true if the classifier matches the instance of the given index
 	 */
-	public boolean isMatch(int instanceIndex) {
+	public final boolean isMatch(final int instanceIndex) {
 		if (this.matchInstances == null)
 			buildMatches();
 
@@ -189,43 +204,54 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            the test classifier
 	 * @return true if the classifier is more general
 	 */
-	public boolean isMoreGeneral(Classifier testClassifier) {
+	public final boolean isMoreGeneral(final Classifier testClassifier) {
 		return ClassifierTransformBridge.instance.isMoreGeneral(this,
 				testClassifier);
 	}
 
 	/**
 	 * Calls the bridge to convert it self to natural language string.
+	 * 
+	 * @return the classifier described in a string
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return ClassifierTransformBridge.instance.toNaturalLanguageString(this);
 	}
 
 	/**
 	 * Calls the bridge to fix itself.
 	 */
-	public void fixChromosome() {
+	public final void fixChromosome() {
 		ClassifierTransformBridge.instance.fixChromosome(this);
 	}
 
 	/**
 	 * Calls the bridge to divide bits into attributes.
+	 * 
+	 * @return the bitstring representation of the classifier
 	 */
-	public String toBitString() {
+	public final String toBitString() {
 		return ClassifierTransformBridge.instance.toBitSetString(this);
 	}
 
 	/**
-	 * Getter of the ExtendedBitSet
+	 * Getter of the ExtendedBitSet.
 	 * 
 	 * @return the classifier's chromosome as an extendedBitSet
 	 */
-	public ExtendedBitSet getChromosome() {
+	public final ExtendedBitSet getChromosome() {
 		return this;
 	}
 
-	public double getComparisonValue(int mode) {
+	/**
+	 * Returns a numeric value for comparing the classifier.
+	 * 
+	 * @param mode
+	 *            the mode of comparison
+	 * @return the value of comparison
+	 */
+	public final double getComparisonValue(final int mode) {
 		return UpdateAlgorithmFactoryAndStrategy.currentStrategy
 				.getComparisonValue(this, mode);
 	}
@@ -233,13 +259,18 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Build matches vector and initialize it.
 	 */
-	public void buildMatches() {
+	public final void buildMatches() {
 		this.matchInstances = new byte[ClassifierTransformBridge.instances.length];
 		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++)
 			matchInstances[i] = -1;
 	}
 
-	public double getCoverage() {
+	/**
+	 * Returns the classifer's coverage approximation.
+	 * 
+	 * @return the classifier's coverage as calculated by the current checks
+	 */
+	public final double getCoverage() {
 		if (this.checked == 0)
 			return .5;
 		return ((double) this.covered) / ((double) this.checked);

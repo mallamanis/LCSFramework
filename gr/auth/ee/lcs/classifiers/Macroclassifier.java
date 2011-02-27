@@ -31,7 +31,8 @@ public class Macroclassifier implements Serializable {
 	 * @param classifierNumerosity
 	 *            it's numerosity
 	 */
-	public Macroclassifier(Classifier newClassifier, int classifierNumerosity) {
+	public Macroclassifier(final Classifier newClassifier,
+			final int classifierNumerosity) {
 		myClassifier = newClassifier;
 		numerosity = classifierNumerosity;
 	}
@@ -44,7 +45,7 @@ public class Macroclassifier implements Serializable {
 	 * @return true if the classifier and the macro-classifier have the same
 	 *         rule
 	 */
-	public boolean equals(Classifier aClassifier) {
+	public final boolean equals(final Classifier aClassifier) {
 		return this.myClassifier.equals(aClassifier);
 	}
 
@@ -57,7 +58,7 @@ public class Macroclassifier implements Serializable {
 	 * @return true if the classifier and the macro-classifier represent the
 	 *         same rule
 	 */
-	public boolean equals(Macroclassifier macroClassifier) {
+	public final boolean equals(final Macroclassifier macroClassifier) {
 		return this.myClassifier.equals(macroClassifier.myClassifier);
 	}
 

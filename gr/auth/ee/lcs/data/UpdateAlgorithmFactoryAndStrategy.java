@@ -40,7 +40,7 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 * @param setA
 	 * @param setB
 	 */
-	public static void updateData(ClassifierSet setA, ClassifierSet setB) {
+	public static void updateData(final ClassifierSet setA, final ClassifierSet setB) {
 		if (currentStrategy != null) {
 			currentStrategy.updateSet(setA, setB);
 
@@ -100,7 +100,7 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 * @param aClassifier
 	 *            the classifier, whose subsumption ability is to be updated
 	 */
-	protected void updateSubsumption(Classifier aClassifier) {
+	protected void updateSubsumption(final Classifier aClassifier) {
 		aClassifier.canSubsume = aClassifier.fitness > subsumptionFitnessThreshold
 				&& aClassifier.experience > subsumptionExperienceThreshold;
 	}

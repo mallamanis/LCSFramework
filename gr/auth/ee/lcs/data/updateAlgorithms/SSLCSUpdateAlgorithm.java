@@ -17,7 +17,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	private double strengthReward, penalty;
 
 	/**
-	 * Constructor of update algorithm
+	 * Constructor of update algorithm.
 	 * 
 	 * @param reward
 	 *            the reward a correct classifier will be given on correct
@@ -26,18 +26,18 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 *            the percentage of the reward that the classifier's penalty
 	 *            will be when failing to classify
 	 */
-	public SSLCSUpdateAlgorithm(double reward, double penaltyPercent) {
+	public SSLCSUpdateAlgorithm(final double reward, final double penaltyPercent) {
 		strengthReward = reward;
 		penalty = penaltyPercent;
 	}
 
-	/**
-	 * Implementation of abstract method defined in @see
-	 * gr.auth.ee.lcs.data.AbstractSLCSUpdateAlgorithm .
+	
+	/* (non-Javadoc)
+	 * @see gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm#updateFitness(gr.auth.ee.lcs.classifiers.Classifier, int, gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void updateFitness(Classifier aClassifier, int numerosity,
-			ClassifierSet correctSet) {
+	public void updateFitness(final Classifier aClassifier, final int numerosity,
+			final ClassifierSet correctSet) {
 		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
 
 		if (correctSet.getClassifierNumerosity(aClassifier) > 0) {
@@ -53,8 +53,11 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue(gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
 	@Override
-	public double getComparisonValue(Classifier aClassifier, int mode) {
+	public double getComparisonValue(final Classifier aClassifier, final int mode) {
 		GenericSLCSClassifierData data;
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:

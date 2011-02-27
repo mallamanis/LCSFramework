@@ -17,12 +17,12 @@ public class OverpopulationInverseFitnessProportionateDeletion implements
 	private int maxPermittableSetSize;
 
 	public OverpopulationInverseFitnessProportionateDeletion(
-			int maxPermittableSetSize) {
+			final int maxPermittableSetSize) {
 		this.maxPermittableSetSize = maxPermittableSetSize;
 	}
 
 	@Override
-	public void controlSize(ClassifierSet aSet) {
+	public final void controlSize(final ClassifierSet aSet) {
 		if (aSet.getTotalNumerosity() < maxPermittableSetSize)
 			return;
 		// Exceeded Size, Perform Size Control Strategy
@@ -46,7 +46,8 @@ public class OverpopulationInverseFitnessProportionateDeletion implements
 			} while (tempSum < rand);
 			// Add selectedIndex
 			aSet.deleteClassifier(selectedIndex);
-		} while (aSet.getTotalNumerosity() > maxPermittableSetSize); // next roulette
+		} while (aSet.getTotalNumerosity() > maxPermittableSetSize); // next
+																		// roulette
 
 	}
 

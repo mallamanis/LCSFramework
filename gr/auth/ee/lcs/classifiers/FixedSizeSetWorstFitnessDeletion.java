@@ -24,20 +24,24 @@ public class FixedSizeSetWorstFitnessDeletion implements ISizeControlStrategy {
 	/**
 	 * Constructor of deletion strategy.
 	 * 
-	 * @param populationSize
+	 * @param maxPopulationSize
 	 *            the size that the population will have
+	 * @param selector
+	 *            the selector used for deleting
 	 */
-	public FixedSizeSetWorstFitnessDeletion(int populationSize,
-			INaturalSelector selector) {
-		this.populationSize = populationSize;
+	public FixedSizeSetWorstFitnessDeletion(final int maxPopulationSize,
+			final INaturalSelector selector) {
+		this.populationSize = maxPopulationSize;
 		mySelector = selector;
 	}
 
 	/**
+	 * @param aSet
+	 *            the set to control
 	 * @see gr.auth.ee.lcs.classifiers.ISizeControlStrategy#controlSize(gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void controlSize(ClassifierSet aSet) {
+	public final void controlSize(final ClassifierSet aSet) {
 		ClassifierSet toBeDeleted = new ClassifierSet(null);
 		while (aSet.getTotalNumerosity() > populationSize) {
 			mySelector.select(1, aSet, toBeDeleted);

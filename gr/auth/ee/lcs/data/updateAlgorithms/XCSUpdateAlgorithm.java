@@ -49,9 +49,17 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * 
 	 * @param beta
 	 *            the learning rate of the XCS update algorithm
+	 * @param P
+	 *            the penalty of the XCS update algorithm
+	 * @param e0
+	 *            the maximum acceptable error for fitness sharing
+	 * @param alpha
+	 *            used for fitness sharing
+	 * @param n
+	 *            used for fitness sharing
 	 */
-	public XCSUpdateAlgorithm(double beta, double P, double e0, double alpha,
-			double n) {
+	public XCSUpdateAlgorithm(final double beta, final double P,
+			final double e0, final double alpha, final double n) {
 		this.beta = beta;
 		this.payoff = P;
 		this.e0 = e0;
@@ -59,6 +67,12 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		this.n = n;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
+	 * createStateClassifierObject()
+	 */
 	@Override
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial Parameters
@@ -75,7 +89,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the correct set
 	 */
 	@Override
-	public void updateSet(ClassifierSet setA, ClassifierSet setB) {
+	public void updateSet(final ClassifierSet setA, final ClassifierSet setB) {
 		double accuracySum = 0;
 
 		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
@@ -136,9 +150,17 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
 	@Override
-	public double getComparisonValue(Classifier aClassifier, int mode) {
-		XCSClassifierData data;
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		final XCSClassifierData data;
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			return aClassifier.fitness;

@@ -23,16 +23,16 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * @param n
 	 *            the strictness factor ν used in updating
 	 */
-	public ASLCSUpdateAlgorithm(double n) {
+	public ASLCSUpdateAlgorithm(final double n) {
 		this.n = n;
 	}
 
-	/**
-	 * implements @see gr.auth.ee.cs.data.AbstractSLCSUpdateAlgorithm .
+	/* (non-Javadoc)
+	 * @see gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm#updateFitness(gr.auth.ee.lcs.classifiers.Classifier, int, gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void updateFitness(Classifier aClassifier, int numerosity,
-			ClassifierSet correctSet) {
+	public void updateFitness(final Classifier aClassifier, final int numerosity,
+			final ClassifierSet correctSet) {
 		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
 		if (correctSet.getClassifierNumerosity(aClassifier) > 0)
 			data.tp += 1; // aClassifier at the correctSet
@@ -45,8 +45,11 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue(gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
 	@Override
-	public double getComparisonValue(Classifier aClassifier, int mode) {
+	public double getComparisonValue(final Classifier aClassifier, final int mode) {
 		GenericSLCSClassifierData data;
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:

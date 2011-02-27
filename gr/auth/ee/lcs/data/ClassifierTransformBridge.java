@@ -29,14 +29,15 @@ public abstract class ClassifierTransformBridge {
 	 * @param toBeFixed
 	 *            the classifier to be fixed
 	 */
-	public static void fixClassifier(Classifier toBeFixed) {
+	public static void fixClassifier(final Classifier toBeFixed) {
 		ClassifierTransformBridge.instance.fixChromosome(toBeFixed);
 	}
 
 	/**
 	 * Sets the static instance of the bridge.
+	 * @param aBridge the bridge to set
 	 */
-	public static void setInstance(ClassifierTransformBridge aBridge) {
+	public static void setInstance(final ClassifierTransformBridge aBridge) {
 		ClassifierTransformBridge.instance = aBridge;
 	}
 
@@ -52,7 +53,7 @@ public abstract class ClassifierTransformBridge {
 	public abstract boolean areEqual(Classifier cl1, Classifier cl2);
 
 	/**
-	 * @deprecated Unknown if usefull
+	 * @deprecated Unknown if useful
 	 */
 	@Deprecated
 	public abstract void buildRepresentationModel();

@@ -100,7 +100,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @param bitSet
 	 *            the other bit set
 	 */
-	public ExtendedBitSet(ExtendedBitSet bitSet) {
+	public ExtendedBitSet(final ExtendedBitSet bitSet) {
 		lenBits = bitSet.lenBits;
 		if (bitUnits == null || bitUnits.length < bitSet.bitUnits.length) {
 			bitUnits = new long[bitSet.bitUnits.length];
@@ -134,7 +134,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @param bitPattern
 	 *            initial bits values
 	 */
-	public ExtendedBitSet(int length, byte[] bitPattern) {
+	public ExtendedBitSet(int length, final byte[] bitPattern) {
 		bitUnits = new long[(length - 1) / BITSINLONG + 1];
 		lenBits = length;
 		for (int index = 0; length > 0; length -= BITSINLONG, ++index) {
@@ -152,7 +152,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @param randomSeed
 	 *            seed for generator; if zero the generator is not re-seeded
 	 */
-	public ExtendedBitSet(int length, long randomSeed) {
+	public ExtendedBitSet(final int length, final long randomSeed) {
 		this(length);
 
 		// Assign random values
@@ -184,7 +184,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @param bitPattern
 	 *            initial bits values
 	 */
-	public ExtendedBitSet(int length, long[] bitPattern) {
+	public ExtendedBitSet(final int length, final long[] bitPattern) {
 		initAll(length, bitPattern);
 	}
 
@@ -196,7 +196,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @param bitPattern
 	 *            bit set as string of 1s and 0s.
 	 */
-	public ExtendedBitSet(String bitPattern) {
+	public ExtendedBitSet(final String bitPattern) {
 		int index = 0;
 
 		lenBits = bitPattern.length();
@@ -230,7 +230,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit set to be ANDed with
 	 * @return this
 	 */
-	public ExtendedBitSet and(ExtendedBitSet bitSet) {
+	public final ExtendedBitSet and(ExtendedBitSet bitSet) {
 		if (bitSet.lenBits < lenBits) {
 			bitSet = (new ExtendedBitSet(lenBits)).setSubSet(0, bitSet);
 		}
@@ -248,7 +248,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit set to be ANDed with
 	 * @return this
 	 */
-	public ExtendedBitSet and(int offset, ExtendedBitSet bitSet) {
+	public final ExtendedBitSet and(int offset, final ExtendedBitSet bitSet) {
 		extendIfNeeded(offset + bitSet.lenBits);
 
 		int otherOffset = 0;
@@ -269,7 +269,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as a byte
 	 */
-	public byte byteValue() {
+	public final byte byteValue() {
 		return getByteAt(0, BITSINBYTE);
 	}
 
@@ -279,7 +279,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as a char
 	 */
-	public char charValue() {
+	public final char charValue() {
 		return getCharAt(0, BITSINCHAR);
 	}
 
@@ -290,7 +290,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit to clear
 	 * @return this
 	 */
-	public ExtendedBitSet clear(int offset) {
+	public final ExtendedBitSet clear(final int offset) {
 		extendIfNeeded(offset + 1);
 
 		int thisLong = offset / BITSINLONG;
@@ -311,7 +311,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            length of range
 	 * @return this
 	 */
-	public ExtendedBitSet clear(int offset, int length) {
+	public final ExtendedBitSet clear(int offset, int length) {
 		extendIfNeeded(offset + length);
 
 		while (length > 0) {
@@ -340,7 +340,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the other bit set
 	 * @return the current bit set
 	 */
-	public ExtendedBitSet copy(ExtendedBitSet bitSet) {
+	public final ExtendedBitSet copy(final ExtendedBitSet bitSet) {
 		if (bitSet != this) {
 			lenBits = bitSet.lenBits;
 			if (bitUnits == null || bitUnits.length < bitSet.bitUnits.length) {
@@ -376,7 +376,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            number of positions to creep left
 	 * @return this
 	 */
-	public ExtendedBitSet creepLeft(int offset, int length, int shift) {
+	public final ExtendedBitSet creepLeft(final int offset, int length,
+			int shift) {
 		extendIfNeeded(offset + length);
 
 		// Emulate the behaviour of Java << operator, i.e. normalise shift
@@ -426,7 +427,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @see creepLeft
 	 */
-	public ExtendedBitSet creepRight(int offset, int length, int shift) {
+	public final ExtendedBitSet creepRight(final int offset, int length,
+			int shift) {
 		extendIfNeeded(offset + length);
 
 		// Emulate the behaviour of Java >>> operator, i.e. normalise shift
@@ -462,7 +464,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            number of bits to remove
 	 * @return this
 	 */
-	public ExtendedBitSet deleteSubSet(int offset, int length) {
+	public final ExtendedBitSet deleteSubSet(final int offset, final int length) {
 		shiftRightUnsigned(offset, lenBits - offset, length);
 		lenBits -= length;
 
@@ -475,7 +477,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as a double
 	 */
-	public double doubleValue() {
+	public final double doubleValue() {
 		return getDoubleAt(0);
 	}
 
@@ -487,7 +489,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @return true if the objects are the same; false otherwise
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		boolean retValue = false;
 
 		if (obj instanceof ExtendedBitSet) {
@@ -522,7 +524,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as a float
 	 */
-	public float floatValue() {
+	public final float floatValue() {
 		return getFloatAt(0);
 	}
 
@@ -533,7 +535,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit to read
 	 * @return the bit's value
 	 */
-	public boolean get(int offset) {
+	public final boolean get(final int offset) {
 		extendIfNeeded(offset + 1);
 
 		int thisLong = offset / BITSINLONG;
@@ -550,7 +552,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as a byte
 	 */
-	public byte getByteAt(int offset) {
+	public final byte getByteAt(final int offset) {
 		return getByteAt(offset, BITSINBYTE);
 	}
 
@@ -565,7 +567,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the number of bits to read
 	 * @return the bits represented as a byte
 	 */
-	public byte getByteAt(int offset, int length) {
+	public final byte getByteAt(final int offset, int length) {
 		if (length > BITSINBYTE) {
 			length = BITSINBYTE;
 		}
@@ -580,7 +582,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as a char
 	 */
-	public char getCharAt(int offset) {
+	public final char getCharAt(final int offset) {
 		return getCharAt(offset, BITSINCHAR);
 	}
 
@@ -595,7 +597,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the number of bits to read
 	 * @return the bits represented as a char
 	 */
-	public char getCharAt(int offset, int length) {
+	public final char getCharAt(final int offset, int length) {
 		if (length > BITSINCHAR) {
 			length = BITSINCHAR;
 		}
@@ -610,7 +612,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as a double
 	 */
-	public double getDoubleAt(int offset) {
+	public final double getDoubleAt(final int offset) {
 		return Double.longBitsToDouble(getLongAt(offset, BITSINLONG));
 	}
 
@@ -622,7 +624,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as a float
 	 */
-	public float getFloatAt(int offset) {
+	public final float getFloatAt(final int offset) {
 		return Float.intBitsToFloat(getIntAt(offset, BITSININT));
 	}
 
@@ -634,7 +636,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as an int
 	 */
-	public int getIntAt(int offset) {
+	public final int getIntAt(final int offset) {
 		return getIntAt(offset, BITSININT);
 	}
 
@@ -649,7 +651,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the number of bits to read
 	 * @return the bits represented as an int
 	 */
-	public int getIntAt(int offset, int length) {
+	public final int getIntAt(final int offset, int length) {
 		if (length > BITSININT) {
 			length = BITSININT;
 		}
@@ -664,7 +666,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as a long
 	 */
-	public long getLongAt(int offset) {
+	public final long getLongAt(final int offset) {
 		return getLongAt(offset, BITSINLONG);
 	}
 
@@ -679,7 +681,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the number of bits to read
 	 * @return the bits represented as a long
 	 */
-	public long getLongAt(int offset, int length) {
+	public final long getLongAt(final int offset, int length) {
 		if (length > BITSINLONG) {
 			length = BITSINLONG;
 		}
@@ -709,7 +711,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the offset to read from
 	 * @return the bits at that offset represented as a short
 	 */
-	public short getShortAt(int offset) {
+	public final short getShortAt(final int offset) {
 		return getShortAt(offset, BITSINSHORT);
 	}
 
@@ -724,7 +726,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the number of bits to read
 	 * @return the bits represented as a short
 	 */
-	public short getShortAt(int offset, int length) {
+	public final short getShortAt(final int offset, int length) {
 		if (length > BITSINSHORT) {
 			length = BITSINSHORT;
 		}
@@ -741,7 +743,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            length of subset
 	 * @return the indicated subset of bits
 	 */
-	public ExtendedBitSet getSubSet(int offset, int length) {
+	public final ExtendedBitSet getSubSet(int offset, int length) {
 		extendIfNeeded(offset + length);
 
 		int chunks = (length - 1) / BITSINLONG + 1;
@@ -765,7 +767,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @return the hashCode
 	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		int retValue = lenBits;
 
 		if (bitUnits != null) {
@@ -789,7 +791,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            initial bits values
 	 * @return this
 	 */
-	public ExtendedBitSet initAll(int length, long[] inBits) {
+	public final ExtendedBitSet initAll(final int length, final long[] inBits) {
 		int longsNeeded = (length - 1) / BITSINLONG + 1;
 
 		if (bitUnits == null || (longsNeeded > bitUnits.length)) {
@@ -814,7 +816,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            bit set to insert
 	 * @return this
 	 */
-	public ExtendedBitSet insertSubSet(int offset, ExtendedBitSet bitSet) {
+	public final ExtendedBitSet insertSubSet(int offset,
+			final ExtendedBitSet bitSet) {
 		if (offset < 0) {
 			offset = lenBits;
 		} else {
@@ -831,7 +834,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as an int
 	 */
-	public int intValue() {
+	public final int intValue() {
 		return getIntAt(0, BITSININT);
 	}
 
@@ -842,7 +845,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit to flip
 	 * @return this
 	 */
-	public ExtendedBitSet invert(int offset) {
+	public final ExtendedBitSet invert(final int offset) {
 		extendIfNeeded(offset + 1);
 
 		int thisLong = offset / BITSINLONG;
@@ -863,7 +866,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            length of range
 	 * @return this
 	 */
-	public ExtendedBitSet invert(int offset, int length) {
+	public final ExtendedBitSet invert(int offset, int length) {
 		extendIfNeeded(offset + length);
 		while (length > 0) {
 			long newValue = getLongAt(offset, length) ^ -1L;
@@ -880,7 +883,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as a long
 	 */
-	public long longValue() {
+	public final long longValue() {
 		return getLongAt(0, BITSINLONG);
 	}
 
@@ -894,7 +897,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit set to be ORed with
 	 * @return this
 	 */
-	public ExtendedBitSet or(ExtendedBitSet bitSet) {
+	public final ExtendedBitSet or(ExtendedBitSet bitSet) {
 		if (bitSet.lenBits < lenBits) {
 			bitSet = (new ExtendedBitSet(lenBits)).setSubSet(0, bitSet);
 		}
@@ -912,7 +915,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit set to be ORed with
 	 * @return this
 	 */
-	public ExtendedBitSet or(int offset, ExtendedBitSet bitSet) {
+	public final ExtendedBitSet or(int offset, final ExtendedBitSet bitSet) {
 		extendIfNeeded(offset + bitSet.lenBits);
 
 		int otherOffset = 0;
@@ -945,7 +948,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @see creepLeft
 	 */
-	public ExtendedBitSet rotateLeft(int offset, int length, int shift) {
+	public final ExtendedBitSet rotateLeft(final int offset, final int length,
+			final int shift) {
 		if (shift % length != 0) {
 			ExtendedBitSet save = getSubSet(offset + length - shift, shift);
 
@@ -974,7 +978,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @see creepLeft
 	 */
-	public ExtendedBitSet rotateRight(int offset, int length, int shift) {
+	public final ExtendedBitSet rotateRight(final int offset, final int length,
+			final int shift) {
 		if (shift % length != 0) {
 			ExtendedBitSet save = getSubSet(offset, shift);
 
@@ -992,7 +997,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit to set
 	 * @return this
 	 */
-	public ExtendedBitSet set(int offset) {
+	public final ExtendedBitSet set(final int offset) {
 		extendIfNeeded(offset + 1);
 
 		int thisLong = offset / BITSINLONG;
@@ -1013,7 +1018,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            length of range
 	 * @return this
 	 */
-	public ExtendedBitSet set(int offset, int length) {
+	public final ExtendedBitSet set(int offset, int length) {
 		extendIfNeeded(offset + length);
 
 		while (length > 0) {
@@ -1034,7 +1039,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to set it to
 	 * @return this
 	 */
-	public ExtendedBitSet setBooleanAt(int offset, boolean value) {
+	public final ExtendedBitSet setBooleanAt(final int offset,
+			final boolean value) {
 		if (value) {
 			return set(offset);
 		} else {
@@ -1052,7 +1058,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setByteAt(int offset, byte value) {
+	public final ExtendedBitSet setByteAt(final int offset, final byte value) {
 		return setByteAt(offset, BITSINBYTE, value);
 	}
 
@@ -1069,7 +1075,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setByteAt(int offset, int length, byte value) {
+	public final ExtendedBitSet setByteAt(final int offset, int length,
+			final byte value) {
 		if (length > BITSINBYTE) {
 			length = BITSINBYTE;
 		}
@@ -1086,7 +1093,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setCharAt(int offset, char value) {
+	public final ExtendedBitSet setCharAt(final int offset, final char value) {
 		return setCharAt(offset, BITSINCHAR, value);
 	}
 
@@ -1103,7 +1110,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setCharAt(int offset, int length, char value) {
+	public final ExtendedBitSet setCharAt(final int offset, int length,
+			final char value) {
 		if (length > BITSINCHAR) {
 			length = BITSINCHAR;
 		}
@@ -1120,7 +1128,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setDoubleAt(int offset, double value) {
+	public final ExtendedBitSet setDoubleAt(final int offset, final double value) {
 		return setLongAt(offset, BITSINLONG, Double.doubleToLongBits(value));
 	}
 
@@ -1134,7 +1142,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setFloatAt(int offset, float value) {
+	public final ExtendedBitSet setFloatAt(final int offset, final float value) {
 		return setIntAt(offset, BITSININT, Float.floatToIntBits(value));
 	}
 
@@ -1148,7 +1156,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setIntAt(int offset, int value) {
+	public final ExtendedBitSet setIntAt(final int offset, final int value) {
 		return setIntAt(offset, BITSININT, value);
 	}
 
@@ -1166,7 +1174,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setIntAt(int offset, int length, int value) {
+	public final ExtendedBitSet setIntAt(final int offset, int length,
+			final int value) {
 		if (length > BITSININT) {
 			length = BITSININT;
 		}
@@ -1187,7 +1196,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setLongAt(int offset, int length, long value) {
+	public final ExtendedBitSet setLongAt(final int offset, int length,
+			long value) {
 		if (length > BITSINLONG) {
 			length = BITSINLONG;
 
@@ -1224,7 +1234,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setLongAt(int offset, long value) {
+	public final ExtendedBitSet setLongAt(final int offset, final long value) {
 		return setLongAt(offset, BITSINLONG, value);
 	}
 
@@ -1241,7 +1251,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setShortAt(int offset, int length, short value) {
+	public final ExtendedBitSet setShortAt(final int offset, int length,
+			final short value) {
 		if (length > BITSINSHORT) {
 			length = BITSINSHORT;
 		}
@@ -1258,7 +1269,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the value to write into the set
 	 * @return this
 	 */
-	public ExtendedBitSet setShortAt(int offset, short value) {
+	public final ExtendedBitSet setShortAt(final int offset, final short value) {
 		return setShortAt(offset, BITSINSHORT, value);
 	}
 
@@ -1269,7 +1280,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            new size of the bit set.
 	 * @return this
 	 */
-	public ExtendedBitSet setSize(int length) {
+	public final ExtendedBitSet setSize(final int length) {
 		if (length < lenBits) {
 			// Clear the bits to ensure that all unused bits are always
 			// zero. It makes life easier for comparing and extending.
@@ -1292,7 +1303,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            bit set to obtain the new values from
 	 * @return this
 	 */
-	public ExtendedBitSet setSubSet(int offset, ExtendedBitSet bitSet) {
+	public final ExtendedBitSet setSubSet(int offset,
+			final ExtendedBitSet bitSet) {
 		extendIfNeeded(offset + bitSet.lenBits);
 		int otherOffset = 0;
 		for (int length = bitSet.lenBits; length > 0; length -= BITSINLONG) {
@@ -1321,7 +1333,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @see creepLeft
 	 */
-	public ExtendedBitSet shiftLeft(int offset, int length, int shift) {
+	public final ExtendedBitSet shiftLeft(final int offset, final int length,
+			final int shift) {
 		if (shift % length != 0) {
 			// Shift the bits and zero what's left over
 			creepLeft(offset, length, shift);
@@ -1349,7 +1362,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @see creepLeft
 	 */
-	public ExtendedBitSet shiftRightSigned(int offset, int length, int shift) {
+	public final ExtendedBitSet shiftRightSigned(final int offset,
+			final int length, final int shift) {
 		if (shift % length != 0) {
 			// Shift the bits and sign extend what's left over
 
@@ -1382,7 +1396,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @see creepLeft
 	 */
-	public ExtendedBitSet shiftRightUnsigned(int offset, int length, int shift) {
+	public final ExtendedBitSet shiftRightUnsigned(final int offset,
+			final int length, final int shift) {
 		if (shift % length != 0) {
 			// Shift the bits and zero what's left over
 			creepRight(offset, length, shift);
@@ -1398,7 +1413,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the bit set represented as a short
 	 */
-	public short shortValue() {
+	public final short shortValue() {
 		return getShortAt(0, BITSINSHORT);
 	}
 
@@ -1407,7 +1422,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * 
 	 * @return the number of bits in the set
 	 */
-	public int size() {
+	public final int size() {
 		return lenBits;
 	}
 
@@ -1424,8 +1439,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            bit set to swap values with
 	 * @return this
 	 */
-	public ExtendedBitSet swapSubSet(int offset, int length,
-			ExtendedBitSet bitSet) {
+	public final ExtendedBitSet swapSubSet(int offset, final int length,
+			final ExtendedBitSet bitSet) {
 		extendIfNeeded(offset + length);
 		for (int len = length; len > 0; len -= BITSINLONG) {
 			long saved = getLongAt(offset, len);
@@ -1471,7 +1486,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit set to be XORed with
 	 * @return this
 	 */
-	public ExtendedBitSet xor(ExtendedBitSet bitSet) {
+	public final ExtendedBitSet xor(ExtendedBitSet bitSet) {
 		if (bitSet.lenBits < lenBits) {
 			bitSet = (new ExtendedBitSet(lenBits)).setSubSet(0, bitSet);
 		}
@@ -1489,7 +1504,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            the bit set to be XORed with
 	 * @return this
 	 */
-	public ExtendedBitSet xor(int offset, ExtendedBitSet bitSet) {
+	public final ExtendedBitSet xor(int offset, final ExtendedBitSet bitSet) {
 		extendIfNeeded(offset + bitSet.lenBits);
 
 		int otherOffset = 0;
@@ -1511,7 +1526,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @param length
 	 *            number of bits set is required to hold
 	 */
-	protected void extendIfNeeded(int length) {
+	protected final void extendIfNeeded(final int length) {
 		if (length > lenBits) {
 			int chunks = (length - 1) / BITSINLONG + 1;
 

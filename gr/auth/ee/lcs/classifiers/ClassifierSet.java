@@ -10,7 +10,7 @@ import java.util.Vector;
 
 /**
  * Implement set of Classifiers, counting numerosity for classifiers. This
- * object is serializable
+ * object is serializable.
  * 
  * @author Miltos Allamanis
  */
@@ -30,8 +30,8 @@ public class ClassifierSet implements Serializable {
 	 *            the ClassifierSet's
 	 * @return the opened classifier set
 	 */
-	public static ClassifierSet openClassifierSet(String path,
-			ISizeControlStrategy sizeControlStrategy) {
+	public static ClassifierSet openClassifierSet(final String path,
+			final ISizeControlStrategy sizeControlStrategy) {
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
 		ClassifierSet opened = null;
@@ -61,7 +61,8 @@ public class ClassifierSet implements Serializable {
 	 * @param filename
 	 *            the path to save the set
 	 */
-	public static void saveClassifierSet(ClassifierSet toSave, String filename) {
+	public static void saveClassifierSet(final ClassifierSet toSave,
+			final String filename) {
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 
@@ -76,7 +77,7 @@ public class ClassifierSet implements Serializable {
 		}
 
 	}
-	
+
 	/**
 	 * The total numerosity of all classifiers in set.
 	 */
@@ -91,12 +92,15 @@ public class ClassifierSet implements Serializable {
 	 * An interface for a strategy on deleting classifiers from the set. This
 	 * attribute is transient and therefore not serializable
 	 */
-	transient private ISizeControlStrategy myISizeControlStrategy;
+	private transient ISizeControlStrategy myISizeControlStrategy;
 
 	/**
 	 * The default ClassifierSet constructor.
+	 * 
+	 * @param sizeControlStrategy
+	 *            the size control strategy to use for controlling the set
 	 */
-	public ClassifierSet(ISizeControlStrategy sizeControlStrategy) {
+	public ClassifierSet(final ISizeControlStrategy sizeControlStrategy) {
 		this.myISizeControlStrategy = sizeControlStrategy;
 		this.myMacroclassifiers = new Vector<Macroclassifier>();
 
@@ -105,12 +109,15 @@ public class ClassifierSet implements Serializable {
 	/**
 	 * Adds a classifier with the a given numerosity to the set. It checks if
 	 * the classifier already exists and increases its numerosity. It also
-	 * checks for subsumption and updates the set's numerosity
+	 * checks for subsumption and updates the set's numerosity.
 	 * 
 	 * @param thoroughAdd
 	 *            to thoroughly check addition
+	 * @param macro
+	 *            the macroclassifier to add to the set
 	 */
-	public void addClassifier(Macroclassifier macro, boolean thoroughAdd) {
+	public final void addClassifier(final Macroclassifier macro,
+			final boolean thoroughAdd) {
 
 		int numerosity = macro.numerosity;
 		// Add numerosity to the Set
@@ -150,10 +157,13 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * removes a micro-classifier from the set. It either completely deletes it
-	 * (if the classsifier's numerosity is 0) or by decreasing the numerosity
+	 * Removes a micro-classifier from the set. It either completely deletes it
+	 * (if the classsifier's numerosity is 0) or by decreasing the numerosity.
+	 * 
+	 * @param aClassifier
+	 *            the classifier to delete
 	 */
-	public void deleteClassifier(Classifier aClassifier) {
+	public final void deleteClassifier(final Classifier aClassifier) {
 
 		int index;
 		for (index = 0; index < myMacroclassifiers.size(); index++) {
@@ -175,7 +185,7 @@ public class ClassifierSet implements Serializable {
 	 * @param index
 	 *            the index of the classifier's macroclassifier to delete
 	 */
-	public void deleteClassifier(int index) {
+	public final void deleteClassifier(final int index) {
 		this.totalNumerosity--;
 		if (this.myMacroclassifiers.elementAt(index).numerosity > 1)
 			this.myMacroclassifiers.elementAt(index).numerosity--;
@@ -184,18 +194,24 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
+	 * Return the classifier at a given index of the macroclassifier vector
+	 * 
+	 * @param index
+	 *            the index of the macroclassifier
 	 * @return the classifier at the specified index
 	 */
-	public Classifier getClassifier(int index) {
+	public final Classifier getClassifier(final int index) {
 		return this.myMacroclassifiers.elementAt(index).myClassifier;
 	}
 
 	/**
-	 * returns a classifier's numerosity (the number of microclassifiers).
+	 * Returns a classifier's numerosity (the number of microclassifiers).
 	 * 
+	 * @param aClassifier
+	 *            the classifier
 	 * @return the given classifier's numerosity
 	 */
-	public int getClassifierNumerosity(Classifier aClassifier) {
+	public final int getClassifierNumerosity(final Classifier aClassifier) {
 		for (int i = 0; i < myMacroclassifiers.size(); i++) {
 			if (myMacroclassifiers.elementAt(i).myClassifier.getSerial() == aClassifier
 					.getSerial())
@@ -211,7 +227,7 @@ public class ClassifierSet implements Serializable {
 	 *            the index of the macroclassifier
 	 * @return the index'th macroclassifier numerosity
 	 */
-	public int getClassifierNumerosity(int index) {
+	public final int getClassifierNumerosity(final int index) {
 		return this.myMacroclassifiers.elementAt(index).numerosity;
 	}
 
@@ -219,9 +235,10 @@ public class ClassifierSet implements Serializable {
 	 * Returns the macroclassifier at the given index.
 	 * 
 	 * @param index
-	 * @return
+	 *            the index of the macroclassifier vector
+	 * @return the macroclassifier at a given index
 	 */
-	public Macroclassifier getMacroclassifier(int index) {
+	public final Macroclassifier getMacroclassifier(final int index) {
 		return this.myMacroclassifiers.elementAt(index);
 	}
 
@@ -230,22 +247,24 @@ public class ClassifierSet implements Serializable {
 	 * 
 	 * @return the number of macroclassifiers in the set
 	 */
-	public int getNumberOfMacroclassifiers() {
+	public final int getNumberOfMacroclassifiers() {
 		return this.myMacroclassifiers.size();
 	}
 
 	/**
-	 * returns the set's total numerosity (the total number of
+	 * Returns the set's total numerosity (the total number of
 	 * microclassifiers).
+	 * 
+	 * @return the sets total numerosity
 	 */
-	public int getTotalNumerosity() {
+	public final int getTotalNumerosity() {
 		return this.totalNumerosity;
 	}
 
 	/**
 	 * @return true if the set is empty
 	 */
-	public boolean isEmpty() {
+	public final boolean isEmpty() {
 		return this.myMacroclassifiers.isEmpty();
 	}
 
@@ -258,7 +277,8 @@ public class ClassifierSet implements Serializable {
 	 * @param minFitness
 	 *            the minimum fitness of the classifiers
 	 */
-	public void postProcessThreshold(int minExperience, float minFitness) {
+	public final void postProcessThreshold(final int minExperience,
+			final float minFitness) {
 		for (int i = this.myMacroclassifiers.size() - 1; i >= 0; i--) {
 			if (this.myMacroclassifiers.elementAt(i).myClassifier.experience < minExperience
 					|| this.myMacroclassifiers.elementAt(i).myClassifier.fitness < minFitness)
@@ -270,7 +290,7 @@ public class ClassifierSet implements Serializable {
 	/**
 	 * Self subsume.
 	 */
-	public void selfSubsume() {
+	public final void selfSubsume() {
 		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
 			Macroclassifier cl = this.getMacroclassifier(0);
 			int numerosity = cl.numerosity;
