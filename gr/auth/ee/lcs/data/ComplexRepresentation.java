@@ -8,29 +8,56 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import weka.core.Instances;
 
-
+/**
+ * A Complex representation for the chromosome.
+ * @author Miltos Allamanis
+ *
+ */
 public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
   /** 
-   *  The rate by which the createRandomCoveringClassifier considers a specific condition as Don't Care
+   *  The rate by which the createRandomCoveringClassifier 
+   *  considers a specific condition as Don't Care.
    *  @deprecated
    */
   public double coveringGeneralizationRate;
 
+  /**
+   * The list of all attributes
+   */
   protected Attribute[] attributeList;
-  protected int chromosomeSize=0;
   
+  /**
+   * The size of the chromosomes of the representation
+   */
+  protected int chromosomeSize = 0;
+  
+  /**
+   * The string (names) of the rule consequents.
+   */
   protected String[] ruleConsequents;
   
-  public ComplexRepresentation(Attribute[] attributes,String[] ruleConsequents){
-	  this.attributeList=attributes;
-	  this.ruleConsequents=ruleConsequents;
+  /**
+   * Constructor.
+   * @param attributes the attribute objects of the representation
+   * @param ruleConsequentsNames the rule consequents
+   */
+  public ComplexRepresentation(
+		  Attribute[] attributes, String[] ruleConsequentsNames) {
+	  this.attributeList = attributes;
+	  this.ruleConsequents = ruleConsequentsNames;
   }
 
+  /**
+   * Implements the matching.
+   * @param visionVector the vision vector to match
+   * @param chromosome the chromosome to match
+   */
   @Override
-  public boolean isMatch(double[] visionVector, ExtendedBitSet chromosome) {
-	for (int i=0;i<attributeList.length-1;i++)
-		if (!attributeList[i].isMatch((float)visionVector[i], chromosome))
+  public boolean isMatch(
+		  double[] visionVector, ExtendedBitSet chromosome) {
+	for (int i = 0; i < attributeList.length - 1; i++)
+		if (!attributeList[i].isMatch((float) visionVector[i], chromosome))
 			return false;
 	return true;
   }
@@ -38,21 +65,25 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
   @Override
   public String toNaturalLanguageString(Classifier aClassifier) {
 	String nlRule="";
-	for (int i=0;i<attributeList.length-1;i++)
-		nlRule+=attributeList[i].toString(aClassifier.chromosome)+" AND ";
+	for (int i = 0; i < attributeList.length - 1; i++)
+		nlRule += attributeList[i].toString(aClassifier.chromosome) + " AND ";
+	
 	//Add consequence
-	nlRule+="=>"+attributeList[attributeList.length-1].toString(aClassifier.chromosome);
+	nlRule += "=>" + attributeList[attributeList.length - 1].
+						toString(aClassifier.chromosome);
 	return nlRule;
   }
 
   @Override
-  public Classifier createRandomCoveringClassifier(double[] visionVector, int advocatingAction) {
-	Classifier generatedClassifier=new Classifier();
-	for (int i=0;i<attributeList.length-1;i++)
-		attributeList[i].randomCoveringValue((float)visionVector[i], generatedClassifier);
+  public Classifier createRandomCoveringClassifier(
+		  double[] visionVector, int advocatingAction) {
+	Classifier generatedClassifier = new Classifier();
+	for (int i = 0; i < attributeList.length - 1; i++)
+		attributeList[i].randomCoveringValue(
+				(float) visionVector[i], generatedClassifier);
 		
-	attributeList[attributeList.length-1].randomCoveringValue(advocatingAction, generatedClassifier);
-	//generatedClassifier.actionAdvocated=advocatingAction;
+	attributeList[attributeList.length-1].randomCoveringValue(
+			advocatingAction, generatedClassifier);
 	return generatedClassifier;
   }
 
@@ -60,13 +91,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
   public boolean isMoreGeneral(Classifier baseClassifier,
 		Classifier testClassifier) {
 	//If classifiers advocate for different actions, return false
-	if (baseClassifier.getActionAdvocated()!=testClassifier.getActionAdvocated())
+	if (baseClassifier.getActionAdvocated() 
+			!= testClassifier.getActionAdvocated())
 		return false;
 		
 	ExtendedBitSet baseChromosome = baseClassifier.getChromosome();
 	ExtendedBitSet testChromosome = testClassifier.getChromosome();
 	
-	for (int i=0;i<attributeList.length-1;i++)
+	for (int i = 0; i < attributeList.length - 1; i++)
 		if (!attributeList[i].isMoreGeneral(baseChromosome, testChromosome))
 			return false;
 	
@@ -75,7 +107,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
   @Override
   public void fixChromosome(ExtendedBitSet aChromosome) {
-	  for (int i=0;i<attributeList.length;i++)
+	  for (int i = 0; i < attributeList.length; i++)
 			attributeList[i].fixAttributeRepresentation(aChromosome);
 	
   }
@@ -105,74 +137,80 @@ public void buildRepresentationModel() {
 
 @Override
 public boolean areEqual(Classifier cl1, Classifier cl2) {
-	ExtendedBitSet baseChromosome =cl1.getChromosome();
+	ExtendedBitSet baseChromosome = cl1.getChromosome();
 	ExtendedBitSet testChromosome = cl2.getChromosome();
 	
 	//Check for equality starting with class
-	for (int i=attributeList.length-1;i>=0;i--)
+	for (int i = attributeList.length - 1; i >= 0; i--)
 		if (!attributeList[i].isEqual(baseChromosome, testChromosome))
 			return false;
 	
 	return true;
 }
 
+/**
+ * Create the class representation depending on the problem.
+ */
 protected abstract void createClassRepresentation();
 
 /**
- * Arff Loader
+ * Arff Loader.
  * TODO: In an inherited class (not representation specific)
  * @param inputArff the input .arff
  * @param precision bits used for precision
  * @throws IOException when .arff not found
  */
-public  ComplexRepresentation(String inputArff, int precision) throws IOException{
+public  ComplexRepresentation(String inputArff, int precision)
+							throws IOException{
 	FileReader reader = new FileReader(inputArff);
 	Instances instances = new Instances(reader);
 	//TODO: Change 4 ml
-	if (instances.classIndex()<0)
+	if (instances.classIndex() < 0)
 		instances.setClassIndex(instances.numAttributes() - 1);
 	
-	attributeList= new Attribute[instances.numAttributes()];
+	attributeList = new Attribute[instances.numAttributes()];
 	
 	//Rule Consequents
 	Enumeration<?> classNames = instances.classAttribute().enumerateValues();
-	ruleConsequents=new String[instances.numClasses()];
-	for (int i=0;i<instances.numClasses();i++)
-		ruleConsequents[i]=(String) classNames.nextElement();
+	ruleConsequents = new String[instances.numClasses()];
+	for (int i = 0; i < instances.numClasses(); i++)
+		ruleConsequents[i] = (String) classNames.nextElement();
 	
-	for (int i=0;i<instances.numAttributes();i++){
-		if (i==instances.classIndex()) continue; //TODO: Change 4 ml
+	for (int i = 0; i < instances.numAttributes(); i++){
+		if (i == instances.classIndex()) continue; //TODO: Change 4 ml
 		
-		String attributeName=instances.attribute(i).name();
+		String attributeName = instances.attribute(i).name();
 		
 		if (instances.attribute(i).isNominal()){
 			
-			String[] attributeNames=new String[instances.attribute(i).numValues()];
+			String[] attributeNames 
+				= new String[instances.attribute(i).numValues()];
 			Enumeration<?> values = instances.attribute(i).enumerateValues();
-			for (int j=0;j<attributeNames.length;j++){
-				attributeNames[j]=(String)values.nextElement();
+			for (int j = 0; j < attributeNames.length; j++){
+				attributeNames[j] = (String) values.nextElement();
 			}
 			//Create boolean or generic nominal
-			if (attributeNames.length>2)
-				attributeList[i]=new ComplexRepresentation.NominalAttribute(this.chromosomeSize,
-						attributeName,attributeNames,0.33);
+			if (attributeNames.length > 2)
+				attributeList[i] = new ComplexRepresentation.NominalAttribute(
+						this.chromosomeSize, attributeName, attributeNames, 0.33);
 			else
-				attributeList[i]=new ComplexRepresentation.BooleanAttribute(
-						chromosomeSize, attributeName,0.33);
+				attributeList[i] = new ComplexRepresentation.BooleanAttribute(
+						chromosomeSize, attributeName, 0.33);
 			
-		}else if (instances.attribute(i).isNumeric()){
+		} else if (instances.attribute(i).isNumeric()) {
 			//Find min-max values
-			float minValue,maxValue;
-			minValue=(float)instances.instance(0).toDoubleArray()[i];
-			maxValue=minValue;
-			for (int sample=0;sample<instances.numInstances();sample++){
-				float currentVal=(float)instances.instance(sample).toDoubleArray()[i];
-				if (currentVal>maxValue) maxValue=currentVal;
-				if (currentVal<minValue) minValue=currentVal;
+			float minValue, maxValue;
+			minValue = (float) instances.instance(0).toDoubleArray()[i];
+			maxValue = minValue;
+			for (int sample = 0;sample < instances.numInstances(); sample++){
+				float currentVal = (float) instances.instance(sample).toDoubleArray()[i];
+				if (currentVal > maxValue) maxValue = currentVal;
+				if (currentVal < minValue) minValue = currentVal;
 			}
 			
-			attributeList[i]=new ComplexRepresentation.IntervalAttribute(this.chromosomeSize+1
-					, attributeName, minValue, maxValue, precision,0.33);
+			attributeList[i] = new ComplexRepresentation.IntervalAttribute(
+					this.chromosomeSize + 1, attributeName, minValue,
+					maxValue, precision, 0.33);
 		}
 		
 	}
@@ -187,77 +225,129 @@ public  ComplexRepresentation(String inputArff, int precision) throws IOExceptio
  * @author Miltos Allamanis
  */
 public abstract class Attribute{
-	protected int lengthInBits; //The length in bits of the attribute in the chromosome
-	protected int positionInChromosome; //The attribute's position in the chromosome
-	protected String nameOfAttribute; //The human-readable name of the attribute
+	/**
+	 * The length in bits of the attribute in the chromosome.
+	 */
+	protected int lengthInBits; 
+	
+	/**
+	 * The attribute's position in the chromosome.
+	 */
+	protected int positionInChromosome; 
+	
+	/**
+	 * The human-readable name of the attribute.
+	 */
+	protected String nameOfAttribute; 
+	
+	/**
+	 * The generalization rate used when covering.
+	 */
 	protected double generalizationRate;
 	
 	/**
-	 * Convert Attribute to human-readable String
+	 * Convert Attribute to human-readable String.
+	 * @param convertingClassifier the chromosome of the classifier
+	 * 		to convert
+	 * @return the string representation of the attribute
 	 */
 	public abstract String toString(ExtendedBitSet convertingClassifier);
 	
 	/**
-	 * Check if the vision is a match to 
-	 * @param attributeVision
-	 * @return
+	 * Check if the attribute vision is a match to the chromosome. 
+	 * @param attributeVision the attribute vision value
+	 * @param testedChromosome the chromosome to test 
+	 * @return true if it is a match
 	 */
-	public abstract boolean isMatch(float attributeVision, ExtendedBitSet testedChromosome);
+	public abstract boolean isMatch(
+			float attributeVision, ExtendedBitSet testedChromosome);
 	
-	public abstract void randomCoveringValue(float attributeValue,Classifier generatedClassifier);
+	/**
+	 * Create a random gene for the vision attribute.
+	 * @param attributeValue the attribute value to cover
+	 * @param generatedClassifier the classifier where the chromosome
+	 * 		will be generated
+	 */
+	public abstract void randomCoveringValue(
+			float attributeValue, Classifier generatedClassifier);
 	
-	public abstract void fixAttributeRepresentation(ExtendedBitSet generatedClassifier);
+	/**
+	 * Fix an attribute representation.
+	 * @param generatedClassifier the chromosome to fix
+	 */
+	public abstract void fixAttributeRepresentation(
+			ExtendedBitSet generatedClassifier);
 	
-	public Attribute(int startPosition,String attributeName, double generalizationRate){
-		nameOfAttribute=attributeName;
-		positionInChromosome=startPosition;
-		this.generalizationRate= generalizationRate;
+	/**
+	 * The default constructor.
+	 * @param startPosition the position in the chromosome to start
+	 * 	the attribute representation
+	 * @param attributeName the name of the attribute
+	 * @param generalizationRate the generalization rate used
+	 */
+	public Attribute(int startPosition,
+			String attributeName, double generalizationRate){
+		nameOfAttribute = attributeName;
+		positionInChromosome = startPosition;
+		this.generalizationRate = generalizationRate;
 	}	
 	
-	public int getLengthInBits(){
+	/**
+	 * @return the length in bits of the chromosome.
+	 */
+	public int getLengthInBits() {
 		return lengthInBits;
 	}
 	
 	/**
-	 * Tests is baseChromsome is more general than the test chromosome
-	 * @param baseChromosome
-	 * @param testChromosome
-	 * @return
+	 * Tests is baseChromsome's gene is more general than the test chromosome.
+	 * @param baseChromosome the base chromosome
+	 * @param testChromosome the test chromosome
+	 * @return true if base is more general than test
 	 */
-	public abstract boolean isMoreGeneral(ExtendedBitSet baseChromosome, ExtendedBitSet testChromosome);
+	public abstract boolean isMoreGeneral(
+			ExtendedBitSet baseChromosome, ExtendedBitSet testChromosome);
 	
-	public abstract boolean isEqual(ExtendedBitSet baseChromosome, ExtendedBitSet testChromosome);
+	/**
+	 * Tests equality between genes.
+	 * @param baseChromosome the base chromosome
+	 * @param testChromosome the test chromosome
+	 * @return true if the genes are equivalent
+	 */
+	public abstract boolean isEqual(
+			ExtendedBitSet baseChromosome, ExtendedBitSet testChromosome);
 }
 
 /**
- * A nominal attribute. It is supposed that the vision vector "sees" a number from 0 to n-1
- * where n is the number of all possible values.
+ * A nominal attribute. 
+ * It is supposed that the vision vector "sees" a number from 0 to n-1.
+ * Where n is the number of all possible values.
  * @author Miltos Allamanis
  */
-public class NominalAttribute extends Attribute{
+public class NominalAttribute extends Attribute {
 
 	private String[] nominalValuesNames;
 	
 	public NominalAttribute(int startPosition, String attributeName,
 			String[] nominalValuesNames, double generalizationRate) {
-		super(startPosition, attributeName,generalizationRate);
+		super(startPosition, attributeName, generalizationRate);
 		this.nominalValuesNames=nominalValuesNames;
 		//We are going to use one bit per possible value plus one activation bit
-		lengthInBits=nominalValuesNames.length+1;
-		chromosomeSize+=lengthInBits;
+		lengthInBits = nominalValuesNames.length + 1;
+		chromosomeSize += lengthInBits;
 	}
 
 	@Override
 	public String toString(ExtendedBitSet convertingChromosome) {
 		//Check if attribute is active
 		if (!convertingChromosome.get(positionInChromosome))
-			return nameOfAttribute+":#";
+			return nameOfAttribute + ":#";
 		String attr;
-		attr=nameOfAttribute+" in [";
-		for (int i=0;i<nominalValuesNames.length;i++)
-			if (convertingChromosome.get(positionInChromosome+1+i))
-				attr+=nominalValuesNames[i]+", ";
-		return attr+"]";
+		attr = nameOfAttribute + " in [";
+		for (int i = 0; i < nominalValuesNames.length; i++)
+			if (convertingChromosome.get(positionInChromosome + 1 + i))
+				attr += nominalValuesNames[i] + ", ";
+		return attr + "]";
 	}
 
 	@Override
@@ -265,22 +355,23 @@ public class NominalAttribute extends Attribute{
 			Classifier myChromosome) {
 		//Clear everything
 		myChromosome.chromosome.clear(positionInChromosome, this.lengthInBits);
-		if (Math.random()<(1-generalizationRate)) 
+		if (Math.random() < (1 - generalizationRate)) 
 			myChromosome.chromosome.set(positionInChromosome);
 		else
 			myChromosome.chromosome.clear(positionInChromosome);
 		
 		//Randomize all bits of gene
-		for (int i=1;i<lengthInBits;i++){
-			if (Math.random()<0.5) //TODO: Variable probability?
-				myChromosome.chromosome.set(positionInChromosome+i);
+		for (int i = 1; i < lengthInBits; i++){
+			if (Math.random() < 0.5) //TODO: Variable probability?
+				myChromosome.chromosome.set(positionInChromosome + i);
 			else
-				myChromosome.chromosome.clear(positionInChromosome+i);
+				myChromosome.chromosome.clear(positionInChromosome + i);
 		}		
 		
 		
 		//and set as "1" the nominal values that we are trying to match
-		myChromosome.chromosome.set(positionInChromosome+1+(int)attributeValue);
+		myChromosome.chromosome.set(positionInChromosome + 1 
+				+ (int) attributeValue);
 		
 	}	
 	
@@ -289,21 +380,22 @@ public class NominalAttribute extends Attribute{
 		//if condition is not active
 		if (!testedChromosome.get(positionInChromosome))
 			return true;
-		int genePosition=(int)attributeVision+1+positionInChromosome;
-		if (testedChromosome.get(genePosition))
-			return true;
-		else
-			return false;
+		int genePosition = (int) attributeVision + 1 + positionInChromosome;
+		
+		return testedChromosome.get(genePosition);
+		
 	}
 
 	@Override
 	public void fixAttributeRepresentation(ExtendedBitSet chromosome) {
-		int ones=0;
+		int ones = 0;
 		if (chromosome.get(positionInChromosome)) //Specific
-			for(int i=1;i<this.lengthInBits;i++)
-				if (chromosome.get(positionInChromosome+i))
+			for(int i = 1; i < this.lengthInBits; i++)
+				if (chromosome.get(positionInChromosome + i))
 						ones++;
-		if (ones==0 || ones==lengthInBits-1) //Fix (we have none or all set]		
+		
+		//Fix (we have none or all set)
+		if (ones == 0 || ones == lengthInBits - 1) 		
 			chromosome.clear(positionInChromosome);
 	}
 

@@ -21,12 +21,12 @@ import java.util.Random;
 public class ExtendedBitSet
     implements Cloneable, Serializable {
   /**
-   * Holds the bits of the bit set, in units of BITSINLONG=64 bits
+   * Holds the bits of the bit set, in units of BITSINLONG=64 bits.
    */
   protected long[] bitUnits;
 
   /**
-   * Number of bits in the bit set
+   * Number of bits in the bit set.
    */
   protected int lenBits;
 
@@ -39,7 +39,7 @@ public class ExtendedBitSet
   protected static Random random = new Random();
 
   /**
-   * Zero length set constructor
+   * Zero length set constructor.
    */
   public ExtendedBitSet() {
     lenBits = 0;
@@ -172,7 +172,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Construct a copy of another extended bit set
+   * Construct a copy of another extended bit set.
    *
    * @param bitSet the other bit set
    */
@@ -185,7 +185,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Copy the contents of another extended bit set
+   * Copy the contents of another extended bit set.
    *
    * @param bitSet the other bit set
    * @return the current bit set
@@ -211,7 +211,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Return the bit set represented as a binary string
+   * Return the bit set represented as a binary string.
    *
    * @return the string representation of the set
    */
@@ -249,11 +249,9 @@ public class ExtendedBitSet
 
       if (this == other) {
         retValue = true;
-      }
-      else if (bitUnits == null) {
+      } else if (bitUnits == null) {
         retValue = (other.bitUnits == null);
-      }
-      else if (lenBits == other.lenBits) {
+      } else if (lenBits == other.lenBits) {
         // Ignore unused parts of the bit set (which might be there
         // if the set has shrunk in size)
         int limit = (bitUnits.length < other.bitUnits.length) ?
@@ -273,7 +271,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Gets the hashCode
+   * Gets the hashCode.
    * @return the hashCode
    */
   public int hashCode() {
@@ -289,7 +287,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Return the number of bits in the set
+   * Return the number of bits in the set.
    *
    * @return the number of bits in the set
    */
@@ -309,15 +307,14 @@ public class ExtendedBitSet
       // zero.  It makes life easier for comparing and extending.
       clear(length, lenBits - length);
       lenBits = length;
-    }
-    else {
+    } else {
       extendIfNeeded(length);
     }
     return this;
   }
 
   /**
-   * Get the value of a particular bit
+   * Get the value of a particular bit.
    *
    * @param offset the bit to read
    * @return the bit's value
@@ -328,11 +325,11 @@ public class ExtendedBitSet
     int thisLong = offset / BITSINLONG;
     int thisBit = offset % BITSINLONG;
 
-    return ( (bitUnits[thisLong] & (1L << thisBit)) != 0);
+    return ((bitUnits[thisLong] & (1L << thisBit)) != 0);
   }
 
   /**
-   * Set the value of a particular bit to true
+   * Set the value of a particular bit to true.
    *
    * @param offset the bit to set
    * @return this
@@ -369,7 +366,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Set the value of a particular bit to false
+   * Set the value of a particular bit to false.
    *
    * @param offset the bit to clear
    * @return this
@@ -380,7 +377,7 @@ public class ExtendedBitSet
     int thisLong = offset / BITSINLONG;
     long thisBit = offset % BITSINLONG;
 
-    bitUnits[thisLong] &= ~ (1L << thisBit);
+    bitUnits[thisLong] &= ~(1L << thisBit);
 
     return this;
   }
@@ -471,8 +468,8 @@ public class ExtendedBitSet
 
     int otherOffset = 0;
     for (int length = bitSet.lenBits; length > 0; length -= BITSINLONG) {
-      long newValue = getLongAt(offset, length) &
-          bitSet.getLongAt(otherOffset, length);
+      long newValue = getLongAt(offset, length) 
+      	& bitSet.getLongAt(otherOffset, length);
       setLongAt(offset, length, newValue);
       offset += BITSINLONG;
       otherOffset += BITSINLONG;
@@ -511,8 +508,8 @@ public class ExtendedBitSet
 
     int otherOffset = 0;
     for (int length = bitSet.lenBits; length > 0; length -= BITSINLONG) {
-      long newValue = getLongAt(offset, length) |
-          bitSet.getLongAt(otherOffset, length);
+      long newValue = getLongAt(offset, length) 
+      	| bitSet.getLongAt(otherOffset, length);
       setLongAt(offset, length, newValue);
       offset += BITSINLONG;
       otherOffset += BITSINLONG;
@@ -551,8 +548,8 @@ public class ExtendedBitSet
 
     int otherOffset = 0;
     for (int length = bitSet.lenBits; length > 0; length -= BITSINLONG) {
-      long newValue = getLongAt(offset, length) ^
-          bitSet.getLongAt(otherOffset, length);
+      long newValue = getLongAt(offset, length)
+      	^ bitSet.getLongAt(otherOffset, length);
       setLongAt(offset, length, newValue);
       offset += BITSINLONG;
       otherOffset += BITSINLONG;
@@ -562,7 +559,7 @@ public class ExtendedBitSet
   }
 
   /**
-   * Set the value of a particular bit to the boolean given
+   * Set the value of a particular bit to the boolean given.
    *
    * @param offset the bit to set
    * @param value the value to set it to
@@ -888,8 +885,7 @@ public class ExtendedBitSet
 
     if (shift == 0) {
       retValue = bitUnits[block];
-    }
-    else {
+    } else {
       retValue = bitUnits[block] >>> shift;
       if (BITSINLONG - shift < length) {
         retValue |= bitUnits[block + 1] << (BITSINLONG - shift);
@@ -936,14 +932,13 @@ public class ExtendedBitSet
 
     if (shift == 0) {
       bitUnits[block] = (bitUnits[block] & ~mask) | value;
-    }
-    else {
-      bitUnits[block] = (bitUnits[block] & ~ (mask << shift)) |
-          (value << shift);
+    } else {
+      bitUnits[block] = (bitUnits[block] & ~(mask << shift)) 
+      	| (value << shift);
       if (BITSINLONG - shift < length) {
-        bitUnits[block + 1] = (bitUnits[block + 1] &
-                           ~ (mask >>> (BITSINLONG - shift))) |
-            (value >>> (BITSINLONG - shift));
+        bitUnits[block + 1] = (bitUnits[block + 1] 
+                                        & ~(mask >>> (BITSINLONG - shift))) 
+                                        | (value >>> (BITSINLONG - shift));
       }
     }
 

@@ -1,14 +1,16 @@
 package gr.auth.ee.lcs.classifiers;
 
 /** 
- *  An interface for a strategy on deleting classifiers from the set
+ *  An interface for a strategy on deleting classifiers from the set.
  *  @author Miltos Allamanis
  */
 public interface ISizeControlStrategy {
 
   /** 
-   *  the abstract function that is used to control the size of the population
+   *  The abstract function that is used
+   *  to control the size of the population.
+   *  @param aSet the set to control
    */
-  public void controlSize(ClassifierSet aSet);
+  void controlSize(ClassifierSet aSet);
 
 }
