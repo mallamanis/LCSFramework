@@ -10,7 +10,7 @@ import java.util.Vector;
 
 /**
  * Implement set of Classifiers, counting numerosity for classifiers. This
- * object is serializabe
+ * object is serializable
  * 
  * @author Miltos Allamanis
  */
@@ -21,17 +21,86 @@ public class ClassifierSet implements Serializable {
 	 */
 	private static final long serialVersionUID = 2664983888922912954L;
 
-	public int totalNumerosity = 0;
+	/**
+	 * Open a saved (and serialized) ClassifierSet.
+	 * 
+	 * @param path
+	 *            the path of the ClassifierSet to be opened
+	 * @param sizeControlStrategy
+	 *            the ClassifierSet's
+	 * @return the opened classifier set
+	 */
+	public static ClassifierSet openClassifierSet(String path,
+			ISizeControlStrategy sizeControlStrategy) {
+		FileInputStream fis = null;
+		ObjectInputStream in = null;
+		ClassifierSet opened = null;
+
+		try {
+			fis = new FileInputStream(path);
+			in = new ObjectInputStream(fis);
+
+			opened = (ClassifierSet) in.readObject();
+			opened.myISizeControlStrategy = sizeControlStrategy;
+
+			in.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
+
+		return opened;
+	}
+
+	/**
+	 * A static function to save the classifier set.
+	 * 
+	 * @param toSave
+	 *            the set to be saved
+	 * @param filename
+	 *            the path to save the set
+	 */
+	public static void saveClassifierSet(ClassifierSet toSave, String filename) {
+		FileOutputStream fos = null;
+		ObjectOutputStream out = null;
+
+		try {
+			fos = new FileOutputStream(filename);
+			out = new ObjectOutputStream(fos);
+			out.writeObject(toSave);
+			out.close();
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+	}
+	
+	/**
+	 * The total numerosity of all classifiers in set.
+	 */
+	private int totalNumerosity = 0;
 
 	/**
 	 * Macroclassifier vector.
 	 */
-	public Vector<Macroclassifier> myMacroclassifiers;
+	private Vector<Macroclassifier> myMacroclassifiers;
+
 	/**
 	 * An interface for a strategy on deleting classifiers from the set. This
 	 * attribute is transient and therefore not serializable
 	 */
-	transient public ISizeControlStrategy myISizeControlStrategy;
+	transient private ISizeControlStrategy myISizeControlStrategy;
+
+	/**
+	 * The default ClassifierSet constructor.
+	 */
+	public ClassifierSet(ISizeControlStrategy sizeControlStrategy) {
+		this.myISizeControlStrategy = sizeControlStrategy;
+		this.myMacroclassifiers = new Vector<Macroclassifier>();
+
+	}
 
 	/**
 	 * Adds a classifier with the a given numerosity to the set. It checks if
@@ -81,28 +150,6 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * returns the set's total numerosity (the total number of
-	 * microclassifiers).
-	 */
-	public int getTotalNumerosity() {
-		return this.totalNumerosity;
-	}
-
-	/**
-	 * returns a classifier's numerosity (the number of microclassifiers).
-	 * 
-	 * @return the given classifier's numerosity
-	 */
-	public int getClassifierNumerosity(Classifier aClassifier) {
-		for (int i = 0; i < myMacroclassifiers.size(); i++) {
-			if (myMacroclassifiers.elementAt(i).myClassifier.getSerial() == aClassifier
-					.getSerial())
-				return this.myMacroclassifiers.elementAt(i).numerosity;
-		}
-		return 0;
-	}
-
-	/**
 	 * removes a micro-classifier from the set. It either completely deletes it
 	 * (if the classsifier's numerosity is 0) or by decreasing the numerosity
 	 */
@@ -137,15 +184,6 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * Getter.
-	 * 
-	 * @return the number of macroclassifiers in the set
-	 */
-	public int getNumberOfMacroclassifiers() {
-		return this.myMacroclassifiers.size();
-	}
-
-	/**
 	 * @return the classifier at the specified index
 	 */
 	public Classifier getClassifier(int index) {
@@ -153,29 +191,17 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * Returns the macroclassifier at the given index.
+	 * returns a classifier's numerosity (the number of microclassifiers).
 	 * 
-	 * @param index
-	 * @return
+	 * @return the given classifier's numerosity
 	 */
-	public Macroclassifier getMacroclassifier(int index) {
-		return this.myMacroclassifiers.elementAt(index);
-	}
-
-	/**
-	 * @return true if the set is empty
-	 */
-	public boolean isEmpty() {
-		return this.myMacroclassifiers.isEmpty();
-	}
-
-	/**
-	 * The default ClassifierSet constructor
-	 */
-	public ClassifierSet(ISizeControlStrategy sizeControlStrategy) {
-		this.myISizeControlStrategy = sizeControlStrategy;
-		this.myMacroclassifiers = new Vector<Macroclassifier>();
-
+	public int getClassifierNumerosity(Classifier aClassifier) {
+		for (int i = 0; i < myMacroclassifiers.size(); i++) {
+			if (myMacroclassifiers.elementAt(i).myClassifier.getSerial() == aClassifier
+					.getSerial())
+				return this.myMacroclassifiers.elementAt(i).numerosity;
+		}
+		return 0;
 	}
 
 	/**
@@ -190,59 +216,37 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * A static function to save the classifier set.
+	 * Returns the macroclassifier at the given index.
 	 * 
-	 * @param toSave
-	 *            the set to be saved
-	 * @param filename
-	 *            the path to save the set
+	 * @param index
+	 * @return
 	 */
-	public static void saveClassifierSet(ClassifierSet toSave, String filename) {
-		FileOutputStream fos = null;
-		ObjectOutputStream out = null;
-
-		try {
-			fos = new FileOutputStream(filename);
-			out = new ObjectOutputStream(fos);
-			out.writeObject(toSave);
-			out.close();
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-
+	public Macroclassifier getMacroclassifier(int index) {
+		return this.myMacroclassifiers.elementAt(index);
 	}
 
 	/**
-	 * Open a saved (and serialized) ClassifierSet.
+	 * Getter.
 	 * 
-	 * @param path
-	 *            the path of the ClassifierSet to be opened
-	 * @param SizeControlStrategy
-	 *            the ClassifierSet's
-	 * @return the opened classifier set
+	 * @return the number of macroclassifiers in the set
 	 */
-	public static ClassifierSet openClassifierSet(String path,
-			ISizeControlStrategy sizeControlStrategy) {
-		FileInputStream fis = null;
-		ObjectInputStream in = null;
-		ClassifierSet opened = null;
+	public int getNumberOfMacroclassifiers() {
+		return this.myMacroclassifiers.size();
+	}
 
-		try {
-			fis = new FileInputStream(path);
-			in = new ObjectInputStream(fis);
+	/**
+	 * returns the set's total numerosity (the total number of
+	 * microclassifiers).
+	 */
+	public int getTotalNumerosity() {
+		return this.totalNumerosity;
+	}
 
-			opened = (ClassifierSet) in.readObject();
-			opened.myISizeControlStrategy = sizeControlStrategy;
-
-			in.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		}
-
-		return opened;
+	/**
+	 * @return true if the set is empty
+	 */
+	public boolean isEmpty() {
+		return this.myMacroclassifiers.isEmpty();
 	}
 
 	/**

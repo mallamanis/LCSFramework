@@ -24,6 +24,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public double coveringGeneralizationRate;
 
 	/**

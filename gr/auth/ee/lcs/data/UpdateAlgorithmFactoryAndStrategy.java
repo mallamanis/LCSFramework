@@ -17,23 +17,6 @@ import java.io.Serializable;
 public abstract class UpdateAlgorithmFactoryAndStrategy {
 
 	/**
-	 * Creates a data object for a classifier.
-	 * 
-	 * @return the data object
-	 */
-	protected abstract Serializable createStateClassifierObject();
-
-	/**
-	 * Updates classifiers of a setA taking into consideration setB.
-	 * 
-	 * @param setA
-	 *            The first set to take into consideration during update
-	 * @param setB
-	 *            The second set to take into consideration during update
-	 */
-	protected abstract void updateSet(ClassifierSet setA, ClassifierSet setB);
-
-	/**
 	 * The static strategy used throughout the algorithms. Works like a
 	 * singleton.
 	 */
@@ -65,18 +48,22 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	}
 
 	public double subsumptionFitnessThreshold = .95;
+
 	public int subsumptionExperienceThreshold = 100;
 
 	/**
-	 * Concrete implementation of the subsumption strength.
-	 * 
-	 * @param aClassifier
-	 *            the classifier, whose subsumption ability is to be updated
+	 * Comparison mode used for LCS exploitation.
 	 */
-	protected void updateSubsumption(Classifier aClassifier) {
-		aClassifier.canSubsume = aClassifier.fitness > subsumptionFitnessThreshold
-				&& aClassifier.experience > subsumptionExperienceThreshold;
-	}
+	public static final int COMPARISON_MODE_EXPLOITATION = 0;
+	/**
+	 * Comparison mode used for population deletion.
+	 */
+	public static final int COMPARISON_MODE_DELETION = 1;
+
+	/**
+	 * Comparison mode used for exploration.
+	 */
+	public static final int COMPARISON_MODE_EXPLORATION = 2;
 
 	/**
 	 * Returns the implementation specific attribute that represents the
@@ -91,18 +78,31 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	public abstract double getComparisonValue(Classifier aClassifier, int mode);
 
 	/**
-	 * Comparison mode used for LCS exploitation.
+	 * Creates a data object for a classifier.
+	 * 
+	 * @return the data object
 	 */
-	public static final int COMPARISON_MODE_EXPLOITATION = 0;
+	protected abstract Serializable createStateClassifierObject();
 
 	/**
-	 * Comparison mode used for population deletion.
+	 * Updates classifiers of a setA taking into consideration setB.
+	 * 
+	 * @param setA
+	 *            The first set to take into consideration during update
+	 * @param setB
+	 *            The second set to take into consideration during update
 	 */
-	public static final int COMPARISON_MODE_DELETION = 1;
+	protected abstract void updateSet(ClassifierSet setA, ClassifierSet setB);
 
 	/**
-	 * Comparison mode used for exploration.
+	 * Concrete implementation of the subsumption strength.
+	 * 
+	 * @param aClassifier
+	 *            the classifier, whose subsumption ability is to be updated
 	 */
-	public static final int COMPARISON_MODE_EXPLORATION = 2;
+	protected void updateSubsumption(Classifier aClassifier) {
+		aClassifier.canSubsume = aClassifier.fitness > subsumptionFitnessThreshold
+				&& aClassifier.experience > subsumptionExperienceThreshold;
+	}
 
 }

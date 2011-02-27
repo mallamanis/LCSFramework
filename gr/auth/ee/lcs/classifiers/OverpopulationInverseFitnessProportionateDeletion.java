@@ -7,11 +7,12 @@ package gr.auth.ee.lcs.classifiers;
  * 
  * @deprecated not used
  */
+@Deprecated
 public class OverpopulationInverseFitnessProportionateDeletion implements
 		ISizeControlStrategy {
 
 	/**
-	 * the maximum number of classifiers in the set
+	 * the maximum number of classifiers in the set.
 	 */
 	private int maxPermittableSetSize;
 
@@ -20,8 +21,9 @@ public class OverpopulationInverseFitnessProportionateDeletion implements
 		this.maxPermittableSetSize = maxPermittableSetSize;
 	}
 
+	@Override
 	public void controlSize(ClassifierSet aSet) {
-		if (aSet.totalNumerosity < maxPermittableSetSize)
+		if (aSet.getTotalNumerosity() < maxPermittableSetSize)
 			return;
 		// Exceeded Size, Perform Size Control Strategy
 		// Find total sum
@@ -44,7 +46,7 @@ public class OverpopulationInverseFitnessProportionateDeletion implements
 			} while (tempSum < rand);
 			// Add selectedIndex
 			aSet.deleteClassifier(selectedIndex);
-		} while (aSet.totalNumerosity > maxPermittableSetSize);// next roulette
+		} while (aSet.getTotalNumerosity() > maxPermittableSetSize); // next roulette
 
 	}
 

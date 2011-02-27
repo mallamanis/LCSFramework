@@ -23,6 +23,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	public abstract void updateFitness(Classifier aClassifier, int numerosity,
 			ClassifierSet correctSet);
 
+	@Override
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial parameters
 		return new GenericSLCSClassifierData();
@@ -31,6 +32,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	/**
 	 * Updates the set. setA is the match set setB is the correct set
 	 */
+	@Override
 	public final void updateSet(ClassifierSet setA, ClassifierSet setB) {
 		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
 			Classifier cl = setA.getClassifier(i);

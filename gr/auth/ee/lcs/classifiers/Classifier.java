@@ -197,6 +197,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Calls the bridge to convert it self to natural language string.
 	 */
+	@Override
 	public String toString() {
 		return ClassifierTransformBridge.instance.toNaturalLanguageString(this);
 	}

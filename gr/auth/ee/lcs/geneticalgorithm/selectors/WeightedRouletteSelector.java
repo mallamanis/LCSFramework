@@ -10,6 +10,7 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * @author Miltos Allamanis
  * @deprecated
  */
+@Deprecated
 public class WeightedRouletteSelector implements INaturalSelector {
 
 	/**
@@ -23,6 +24,7 @@ public class WeightedRouletteSelector implements INaturalSelector {
 	 *            the ClassifierSet to which the selected Classifers will be
 	 *            added
 	 */
+	@Override
 	public void select(int howManyToSelect, ClassifierSet fromPopulation,
 			ClassifierSet toPopulation) {
 		// Find total sum

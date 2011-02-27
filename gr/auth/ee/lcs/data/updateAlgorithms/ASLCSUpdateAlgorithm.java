@@ -30,6 +30,7 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	/**
 	 * implements @see gr.auth.ee.cs.data.AbstractSLCSUpdateAlgorithm .
 	 */
+	@Override
 	public void updateFitness(Classifier aClassifier, int numerosity,
 			ClassifierSet correctSet) {
 		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);

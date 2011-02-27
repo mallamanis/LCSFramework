@@ -34,6 +34,7 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	 * 
 	 * @return the mutated classifier
 	 */
+	@Override
 	public Classifier operate(Classifier aClassifier) {
 		int chromosomeSize = aClassifier.size();
 		ExtendedBitSet chromosome = aClassifier.getChromosome();

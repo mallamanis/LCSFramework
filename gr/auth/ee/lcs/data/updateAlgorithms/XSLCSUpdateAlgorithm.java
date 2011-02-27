@@ -12,6 +12,7 @@ import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
  * @deprecated it's creation...
  * 
  */
+@Deprecated
 public class XSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 	private double beta = 0.1;

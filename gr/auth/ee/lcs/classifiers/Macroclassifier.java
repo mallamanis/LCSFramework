@@ -24,6 +24,19 @@ public class Macroclassifier implements Serializable {
 	public Classifier myClassifier;
 
 	/**
+	 * The Macroclassifier object constructor.
+	 * 
+	 * @param newClassifier
+	 *            the microclassifier
+	 * @param classifierNumerosity
+	 *            it's numerosity
+	 */
+	public Macroclassifier(Classifier newClassifier, int classifierNumerosity) {
+		myClassifier = newClassifier;
+		numerosity = classifierNumerosity;
+	}
+
+	/**
 	 * A wrapper of the equals method.
 	 * 
 	 * @param aClassifier
@@ -46,19 +59,6 @@ public class Macroclassifier implements Serializable {
 	 */
 	public boolean equals(Macroclassifier macroClassifier) {
 		return this.myClassifier.equals(macroClassifier.myClassifier);
-	}
-
-	/**
-	 * The Macroclassifier object constructor.
-	 * 
-	 * @param newClassifier
-	 *            the microclassifier
-	 * @param classifierNumerosity
-	 *            it's numerosity
-	 */
-	public Macroclassifier(Classifier newClassifier, int classifierNumerosity) {
-		myClassifier = newClassifier;
-		numerosity = classifierNumerosity;
 	}
 
 }

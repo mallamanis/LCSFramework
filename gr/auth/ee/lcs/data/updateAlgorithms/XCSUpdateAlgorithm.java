@@ -59,9 +59,10 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		this.n = n;
 	}
 
+	@Override
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial Parameters
-		return (Serializable) new XCSClassifierData();
+		return new XCSClassifierData();
 	}
 
 	/**
@@ -73,6 +74,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * @param setB
 	 *            the correct set
 	 */
+	@Override
 	public void updateSet(ClassifierSet setA, ClassifierSet setB) {
 		double accuracySum = 0;
 
