@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute;
+import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,30 +44,28 @@ public class ComplexRepresentationTest {
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
 			Classifier cover = rep.createRandomCoveringClassifier(visionVector,
 					0);
-			assertTrue(rep.isMatch(visionVector, cover.chromosome));
+			assertTrue(rep.isMatch(visionVector, cover));
 		}
 	}
 
 	@Test
 	public void checkStringOutput() {
 		ExtendedBitSet set = new ExtendedBitSet("11101111111111000000000011011");
-		Classifier ex = new Classifier();
-		ex.chromosome = set;
-		// System.out.println(rep.toNaturalLanguageString(ex)); //TODO: Fix and
-		// test
+		Classifier ex = new Classifier(set);
+
+		// TODO: Fix and test
+
 	}
 
 	@Test
 	public void moreGeneralTest1() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011011");
-		Classifier ex1 = new Classifier();
-		ex1.chromosome = set1;
+		Classifier ex1 = new Classifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"11111111111111000000000011011");
-		Classifier ex2 = new Classifier();
-		ex2.chromosome = set2;
+		Classifier ex2 = new Classifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -78,13 +76,11 @@ public class ComplexRepresentationTest {
 	public void moreGeneralTest2() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000001010");
-		Classifier ex1 = new Classifier();
-		ex1.chromosome = set1;
+		Classifier ex1 = new Classifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"11111111111111000000000011011");
-		Classifier ex2 = new Classifier();
-		ex2.chromosome = set2;
+		Classifier ex2 = new Classifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -94,13 +90,11 @@ public class ComplexRepresentationTest {
 	public void moreGeneralTest3() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011010");
-		Classifier ex1 = new Classifier();
-		ex1.chromosome = set1;
+		Classifier ex1 = new Classifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"00000000010001000000001010010");
-		Classifier ex2 = new Classifier();
-		ex2.chromosome = set2;
+		Classifier ex2 = new Classifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -110,8 +104,7 @@ public class ComplexRepresentationTest {
 	public void fixChromosomeTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"0011111111111110111111111111010");
-		Classifier ex1 = new Classifier();
-		ex1.chromosome = set1;
+		Classifier ex1 = new Classifier(set1);
 
 		// Does fix work correctly?
 		ExtendedBitSet fixed = new ExtendedBitSet(
@@ -129,8 +122,7 @@ public class ComplexRepresentationTest {
 	public void fixClassTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"1111111111111110111111111111010");
-		Classifier ex1 = new Classifier();
-		ex1.chromosome = set1;
+		Classifier ex1 = new Classifier(set1);
 
 		// Does fix work correctly?
 		rep.fixChromosome(set1);
@@ -141,8 +133,8 @@ public class ComplexRepresentationTest {
 	public void advocatedActionTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"0111111111111110111111111111010");
-		Classifier ex1 = new Classifier();
-		ex1.chromosome = set1;
+		Classifier ex1 = new Classifier(set1);
+
 		assertEquals(ex1.getActionAdvocated(), 1);
 
 		ex1.setActionAdvocated(2);

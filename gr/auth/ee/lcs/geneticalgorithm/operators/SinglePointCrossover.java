@@ -17,15 +17,15 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	 * @see gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator
 	 */
 	public Classifier operate(Classifier classifierA, Classifier classifierB) {
-		int chromosomeSize = classifierB.chromosome.size();
-		Classifier child = new Classifier();
+		int chromosomeSize = classifierB.size();
+		Classifier child;
 		/*
 		 * The point at which the crossover will occur
 		 */
 		int mutationPoint = (int) Math
 				.round(Math.random() * chromosomeSize - 1);
-		child.chromosome = performCrossover(classifierA.getChromosome(),
-				classifierB.getChromosome(), mutationPoint);
+		child = new Classifier(performCrossover(classifierA, classifierB,
+				mutationPoint));
 		child.fitness = (classifierA.fitness + classifierB.fitness) / 2;
 		// TODO: Set specific update data
 		return child;

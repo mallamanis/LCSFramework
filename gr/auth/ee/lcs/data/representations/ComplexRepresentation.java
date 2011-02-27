@@ -75,13 +75,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	public String toNaturalLanguageString(Classifier aClassifier) {
 		String nlRule = "";
 		for (int i = 0; i < attributeList.length - 1; i++)
-			nlRule += attributeList[i].toString(aClassifier.chromosome)
-					+ " AND ";
+			nlRule += attributeList[i].toString(aClassifier) + " AND ";
 
 		// Add consequence
 		nlRule += "=>"
-				+ attributeList[attributeList.length - 1]
-						.toString(aClassifier.chromosome);
+				+ attributeList[attributeList.length - 1].toString(aClassifier);
 		return nlRule;
 	}
 
@@ -396,24 +394,22 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		public void randomCoveringValue(float attributeValue,
 				Classifier myChromosome) {
 			// Clear everything
-			myChromosome.chromosome.clear(positionInChromosome,
-					this.lengthInBits);
+			myChromosome.clear(positionInChromosome, this.lengthInBits);
 			if (Math.random() < (1 - generalizationRate))
-				myChromosome.chromosome.set(positionInChromosome);
+				myChromosome.set(positionInChromosome);
 			else
-				myChromosome.chromosome.clear(positionInChromosome);
+				myChromosome.clear(positionInChromosome);
 
 			// Randomize all bits of gene
 			for (int i = 1; i < lengthInBits; i++) {
 				if (Math.random() < 0.5) // TODO: Variable probability?
-					myChromosome.chromosome.set(positionInChromosome + i);
+					myChromosome.set(positionInChromosome + i);
 				else
-					myChromosome.chromosome.clear(positionInChromosome + i);
+					myChromosome.clear(positionInChromosome + i);
 			}
 
 			// and set as "1" the nominal values that we are trying to match
-			myChromosome.chromosome.set(positionInChromosome + 1
-					+ (int) attributeValue);
+			myChromosome.set(positionInChromosome + 1 + (int) attributeValue);
 
 		}
 
@@ -588,13 +584,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 			// Then set at chromosome
 			if (Math.random() < (1 - generalizationRate))
-				generatedClassifier.chromosome.set(positionInChromosome);
+				generatedClassifier.set(positionInChromosome);
 			else
-				generatedClassifier.chromosome.clear(positionInChromosome);
+				generatedClassifier.clear(positionInChromosome);
 
-			generatedClassifier.chromosome.setIntAt(positionInChromosome + 1,
+			generatedClassifier.setIntAt(positionInChromosome + 1,
 					precisionBits, newLowBound);
-			generatedClassifier.chromosome.setIntAt(positionInChromosome + 1
+			generatedClassifier.setIntAt(positionInChromosome + 1
 					+ precisionBits, precisionBits, newMaxBound);
 		}
 

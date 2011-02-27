@@ -123,7 +123,7 @@ public abstract class ClassifierTransformBridge {
 	 *            the classifier to be fixed
 	 */
 	public static void fixClassifier(Classifier toBeFixed) {
-		ClassifierTransformBridge.instance.fixChromosome(toBeFixed.chromosome);
+		ClassifierTransformBridge.instance.fixChromosome(toBeFixed);
 	}
 
 	/**

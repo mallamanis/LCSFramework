@@ -38,7 +38,7 @@ public class ComplexRepresentationLCSTest {
 				new SinglePointCrossover(), (float) .8, new UniformBitMutation(
 						.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/position9.arff";
+		String filename = "/home/miltiadis/Desktop/position5.arff";
 		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
 		ClassifierTransformBridge.setInstance(rep);
 

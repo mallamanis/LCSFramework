@@ -37,9 +37,9 @@ public class MacroclassifierTest {
 	 */
 	@Test
 	public void testEquals() {
-		Classifier testClassifier = new Classifier();
+		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+				"10110001"));
 		testClassifier.setActionAdvocated(0);
-		testClassifier.chromosome = new ExtendedBitSet("10110001");
 		Macroclassifier testMacro1 = new Macroclassifier(testClassifier, 1);
 		Macroclassifier testMacro2 = new Macroclassifier(testClassifier, 0);
 		assertTrue(testMacro1.equals(testMacro2));
@@ -47,9 +47,9 @@ public class MacroclassifierTest {
 		assertTrue(testMacro1.equals(testClassifier));
 		assertTrue(testMacro2.equals(testClassifier));
 
-		Classifier testClassifier2 = new Classifier();
+		Classifier testClassifier2 = new Classifier(new ExtendedBitSet(
+				"10110001"));
 		testClassifier2.setActionAdvocated(0);
-		testClassifier2.chromosome = new ExtendedBitSet("10110001");
 		assertTrue(testMacro1.equals(testClassifier2));
 	}
 

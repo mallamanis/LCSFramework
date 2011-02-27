@@ -61,13 +61,13 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	@Override
 	public int getClassification(Classifier aClassifier) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier.chromosome);
+				.getValue(aClassifier);
 	}
 
 	@Override
 	public void setClassification(Classifier aClassifier, int action) {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
-				aClassifier.chromosome, action);
+				aClassifier, action);
 
 	}
 
@@ -120,8 +120,8 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		public void randomCoveringValue(float attributeValue,
 				Classifier generatedClassifier) {
 			int coverClass = (int) attributeValue;
-			generatedClassifier.chromosome.setIntAt(positionInChromosome,
-					lengthInBits, coverClass);
+			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
+					coverClass);
 		}
 
 		@Override

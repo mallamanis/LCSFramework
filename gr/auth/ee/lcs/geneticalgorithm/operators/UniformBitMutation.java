@@ -35,7 +35,7 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	 * @return the mutated classifier
 	 */
 	public Classifier operate(Classifier aClassifier) {
-		int chromosomeSize = aClassifier.chromosome.size();
+		int chromosomeSize = aClassifier.size();
 		ExtendedBitSet chromosome = aClassifier.getChromosome();
 		for (int i = 0; i < chromosomeSize; i++) {
 			if (Math.random() < mutationRate)

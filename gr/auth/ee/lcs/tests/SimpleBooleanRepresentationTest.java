@@ -30,92 +30,91 @@ public class SimpleBooleanRepresentationTest {
 	public void testIsMatch() {
 		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4);
 		ClassifierTransformBridge.setInstance(test);
-		Classifier testClassifier = new Classifier();
-		double visionVector[] = new double[4];
-
 		// Test Mask 1##0
-		testClassifier.chromosome = new ExtendedBitSet("11100001");
+		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+				"11100001"));
+		double visionVector[] = new double[4];
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
 		visionVector[2] = 1;
 		visionVector[3] = 1; // 1100
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
 		visionVector[2] = 0;
 		visionVector[3] = 1; // 1000
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 1;
 		visionVector[1] = 0;
 		visionVector[2] = 0;
 		visionVector[3] = 1; // 1001
-		assertFalse(test.isMatch(visionVector, testClassifier.chromosome));
+		assertFalse(test.isMatch(visionVector, testClassifier));
 
 		// Test Mask ####
-		testClassifier.chromosome = new ExtendedBitSet("00000000");
+		testClassifier = new Classifier(new ExtendedBitSet("00000000"));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
 		visionVector[2] = 0;
 		visionVector[3] = 1; // 1000
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 1;
 		visionVector[1] = 1;
 		visionVector[2] = 1;
 		visionVector[3] = 1; // 1111
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
 		visionVector[2] = 0;
 		visionVector[3] = 0; // 0000
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		// Test Mask 0000
-		testClassifier.chromosome = new ExtendedBitSet("01010101");
+		testClassifier = new Classifier(new ExtendedBitSet("01010101"));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
 		visionVector[2] = 0;
 		visionVector[3] = 0; // 0000
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 1;
 		visionVector[1] = 0;
 		visionVector[2] = 1;
 		visionVector[3] = 0; // 1010
-		assertFalse(test.isMatch(visionVector, testClassifier.chromosome));
+		assertFalse(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 1;
 		visionVector[1] = 1;
 		visionVector[2] = 1;
 		visionVector[3] = 1; // 1111
-		assertFalse(test.isMatch(visionVector, testClassifier.chromosome));
+		assertFalse(test.isMatch(visionVector, testClassifier));
 
 		// Test Mask 1111
-		testClassifier.chromosome = new ExtendedBitSet("11111111");
+		testClassifier = new Classifier(new ExtendedBitSet("11111111"));
 
 		visionVector[0] = 1;
 		visionVector[1] = 1;
 		visionVector[2] = 1;
 		visionVector[3] = 1; // 1111
-		assertTrue(test.isMatch(visionVector, testClassifier.chromosome));
+		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 1;
 		visionVector[1] = 0;
 		visionVector[2] = 1;
 		visionVector[3] = 0; // 1010
-		assertFalse(test.isMatch(visionVector, testClassifier.chromosome));
+		assertFalse(test.isMatch(visionVector, testClassifier));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
 		visionVector[2] = 0;
 		visionVector[3] = 1; // 1000
-		assertFalse(test.isMatch(visionVector, testClassifier.chromosome));
+		assertFalse(test.isMatch(visionVector, testClassifier));
 	}
 
 	/**
@@ -127,17 +126,17 @@ public class SimpleBooleanRepresentationTest {
 	public void testToNaturalLanguageString() {
 		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4);
 		ClassifierTransformBridge.setInstance(test);
-		Classifier testClassifier = new Classifier();
+		Classifier testClassifier;
 
-		testClassifier.chromosome = new ExtendedBitSet("01110110");
+		testClassifier = new Classifier(new ExtendedBitSet("01110110"));
 		testClassifier.setActionAdvocated(0);
 		assertEquals(test.toNaturalLanguageString(testClassifier), "010#=>0");
 
-		testClassifier.chromosome = new ExtendedBitSet("10011111");
+		testClassifier = new Classifier(new ExtendedBitSet("10011111"));
 		testClassifier.setActionAdvocated(1);
 		assertEquals(test.toNaturalLanguageString(testClassifier), "#011=>1");
 
-		testClassifier.chromosome = new ExtendedBitSet("00000000");
+		testClassifier = new Classifier(new ExtendedBitSet("00000000"));
 		testClassifier.setActionAdvocated(1);
 		assertEquals(test.toNaturalLanguageString(testClassifier), "####=>1");
 	}
@@ -191,28 +190,28 @@ public class SimpleBooleanRepresentationTest {
 		Classifier base = new Classifier();
 		Classifier test = new Classifier();
 
+		base = new Classifier(new ExtendedBitSet("10110010")); // #1##
+		test = new Classifier(new ExtendedBitSet("11110110")); // 110#
 		base.setActionAdvocated(1);
 		test.setActionAdvocated(1);
-		base.chromosome = new ExtendedBitSet("10110010"); // #1##
-		test.chromosome = new ExtendedBitSet("11110110"); // 110#
 		assertTrue(testRep.isMoreGeneral(base, test));
 
+		base = new Classifier(new ExtendedBitSet("11110010")); // 11##
+		test = new Classifier(new ExtendedBitSet("11110110")); // 110#
 		base.setActionAdvocated(1);
 		test.setActionAdvocated(0);
-		base.chromosome = new ExtendedBitSet("11110010"); // 11##
-		test.chromosome = new ExtendedBitSet("11110110"); // 110#
 		assertFalse(testRep.isMoreGeneral(base, test));
 
+		base = new Classifier(new ExtendedBitSet("11110010")); // 11##
+		test = new Classifier(new ExtendedBitSet("10110110")); // #10#
 		base.setActionAdvocated(0);
 		test.setActionAdvocated(0);
-		base.chromosome = new ExtendedBitSet("11110010"); // 11##
-		test.chromosome = new ExtendedBitSet("10110110"); // #10#
 		assertFalse(testRep.isMoreGeneral(base, test));
 
-		test.chromosome = new ExtendedBitSet("11110010"); // 11##
+		test = new Classifier(new ExtendedBitSet("11110010")); // 11##
 		assertTrue(testRep.isMoreGeneral(base, test));
 
-		test.chromosome = new ExtendedBitSet("10110010"); // #1##
+		test = new Classifier(new ExtendedBitSet("10110010")); // #1##
 		assertFalse(testRep.isMoreGeneral(base, test));
 
 	}

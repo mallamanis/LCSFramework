@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 
  * @author Miltos Allamanis
  */
-public class Classifier implements Serializable {
+public class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
 	 * Cache for action.
@@ -79,11 +79,6 @@ public class Classifier implements Serializable {
 	public Serializable transformData;
 
 	/**
-	 * The classifier's chromosome.
-	 */
-	public ExtendedBitSet chromosome;
-
-	/**
 	 * a getter for the fitness of the classifier.
 	 */
 	public double getFitness() {
@@ -94,9 +89,24 @@ public class Classifier implements Serializable {
 	 * The default constructor. Creates a chromosome of the given size
 	 */
 	public Classifier() {
-		chromosome = new ExtendedBitSet(
-				ClassifierTransformBridge.instance.getChromosomeSize());
+		super(ClassifierTransformBridge.instance.getChromosomeSize());
+		setConstructionData();
+	}
 
+	/**
+	 * Constructor for creating a classifier from a chromosome
+	 * 
+	 * @param chromosome
+	 */
+	public Classifier(ExtendedBitSet chromosome) {
+		super(chromosome);
+		setConstructionData();
+	}
+
+	/**
+	 * Sets the update-specific and transform-specific data needed
+	 */
+	private void setConstructionData() {
 		updateData = UpdateAlgorithmFactoryAndStrategy
 				.createDefaultDataObject();
 
@@ -149,8 +159,7 @@ public class Classifier implements Serializable {
 	 * vector
 	 */
 	public boolean isMatch(double[] visionVector) {
-		return ClassifierTransformBridge.instance.isMatch(visionVector,
-				chromosome);
+		return ClassifierTransformBridge.instance.isMatch(visionVector, this);
 	}
 
 	/**
@@ -165,7 +174,7 @@ public class Classifier implements Serializable {
 			this.matchInstances[instanceIndex] = (byte) ((ClassifierTransformBridge.instance
 					.isMatch(
 							ClassifierTransformBridge.instances[instanceIndex],
-							this.chromosome)) ? 1 : 0);
+							this)) ? 1 : 0);
 			this.checked++;
 			this.covered += this.matchInstances[instanceIndex];
 		}
@@ -196,7 +205,7 @@ public class Classifier implements Serializable {
 	 * Calls the bridge to fix itself.
 	 */
 	public void fixChromosome() {
-		ClassifierTransformBridge.instance.fixChromosome(chromosome);
+		ClassifierTransformBridge.instance.fixChromosome(this);
 	}
 
 	/**
@@ -212,7 +221,7 @@ public class Classifier implements Serializable {
 	 * @return the classifier's chromosome as an extendedBitSet
 	 */
 	public ExtendedBitSet getChromosome() {
-		return chromosome;
+		return this;
 	}
 
 	public double getComparisonValue(int mode) {
