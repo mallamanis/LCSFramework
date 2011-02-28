@@ -32,26 +32,22 @@ public class BestClassifierSelector implements INaturalSelector {
 	 * @param mode
 	 *            the mode of the values taken
 	 */
-	public BestClassifierSelector(boolean maximum, int comparisonMode) {
+	public BestClassifierSelector(final boolean maximum,
+			final int comparisonMode) {
 		this.max = maximum;
 		this.mode = comparisonMode;
 	}
 
-	/**
-	 * Implementation of abstract method. Selects the best classifier in the
-	 * fromPopulation and adds it to toPopulation
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param howManyToSelect
-	 *            the numerosity that the best classifier is going to be added
-	 * @param fromPopulation
-	 *            the source set of classifiers
-	 * @param toPopulation
-	 *            the target set of classifiers. In this set the best classifier
-	 *            will be added
+	 * @see gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(int,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void select(int howManyToSelect, ClassifierSet fromPopulation,
-			ClassifierSet toPopulation) {
+	public final void select(final int howManyToSelect,
+			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
 		// Add it toPopulation
 		int bestIndex = select(fromPopulation);
 		if (bestIndex == -1)
@@ -61,8 +57,15 @@ public class BestClassifierSelector implements INaturalSelector {
 						howManyToSelect), true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(gr.auth.ee.lcs
+	 * .classifiers.ClassifierSet)
+	 */
 	@Override
-	public int select(ClassifierSet fromPopulation) {
+	public int select(final ClassifierSet fromPopulation) {
 		// Search for the best classifier
 		double bestFitness = max ? Double.NEGATIVE_INFINITY
 				: Double.POSITIVE_INFINITY;

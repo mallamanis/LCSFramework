@@ -24,13 +24,18 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * Default constructor.
-	 * @param alpha used in fitness sharing
-	 * @param n used in fitness sharing
-	 * @param acc0 used in fitness sharing: the minimum "good" accuracy
-	 * @param learningRate the beta of UCS 
+	 * 
+	 * @param alpha
+	 *            used in fitness sharing
+	 * @param n
+	 *            used in fitness sharing
+	 * @param acc0
+	 *            used in fitness sharing: the minimum "good" accuracy
+	 * @param learningRate
+	 *            the beta of UCS
 	 */
-	public UCSUpdateAlgorithm(final double alpha, final double n, final double acc0,
-			final double learningRate) {
+	public UCSUpdateAlgorithm(final double alpha, final double n,
+			final double acc0, final double learningRate) {
 		this.a = alpha;
 		this.n = n;
 		this.acc0 = acc0;
@@ -58,7 +63,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * match set setB is the correct set
 	 */
 	@Override
-	protected void updateSet(final ClassifierSet matchSet, final ClassifierSet correctSet) {
+	protected void updateSet(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
 		double strengthSum = 0;
 		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
 			Classifier cl = matchSet.getClassifier(i);
@@ -104,7 +110,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier, final int mode) {
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
 		GenericSLCSClassifierData data;
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:

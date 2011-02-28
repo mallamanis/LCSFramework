@@ -40,7 +40,8 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 * @param setA
 	 * @param setB
 	 */
-	public static void updateData(final ClassifierSet setA, final ClassifierSet setB) {
+	public static void updateData(final ClassifierSet setA,
+			final ClassifierSet setB) {
 		if (currentStrategy != null) {
 			currentStrategy.updateSet(setA, setB);
 

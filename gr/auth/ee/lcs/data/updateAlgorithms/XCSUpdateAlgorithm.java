@@ -170,7 +170,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		case COMPARISON_MODE_EXPLOITATION:
 			data = ((XCSClassifierData) aClassifier.updateData);
 			return data.predictedPayOff;
+		default:
+			return 0;
 		}
-		return 0;
 	}
 }

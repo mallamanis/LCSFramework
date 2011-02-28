@@ -18,7 +18,7 @@ import weka.core.Instances;
  */
 /**
  * @author miltiadis
- *
+ * 
  */
 public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
@@ -60,19 +60,27 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		this.ruleConsequents = ruleConsequentsNames;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMatch(double[], gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMatch(double[],
+	 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 	 */
 	@Override
-	public final boolean isMatch(final double[] visionVector, final ExtendedBitSet chromosome) {
+	public final boolean isMatch(final double[] visionVector,
+			final ExtendedBitSet chromosome) {
 		for (int i = 0; i < attributeList.length - 1; i++)
 			if (!attributeList[i].isMatch((float) visionVector[i], chromosome))
 				return false;
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#toNaturalLanguageString(gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#toNaturalLanguageString
+	 * (gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
 	public final String toNaturalLanguageString(final Classifier aClassifier) {
@@ -86,12 +94,16 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return nlRule;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier(double[], int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier
+	 * (double[], int)
 	 */
 	@Override
-	public final Classifier createRandomCoveringClassifier(final double[] visionVector,
-			final int advocatingAction) {
+	public final Classifier createRandomCoveringClassifier(
+			final double[] visionVector, final int advocatingAction) {
 		Classifier generatedClassifier = new Classifier();
 		for (int i = 0; i < attributeList.length - 1; i++)
 			attributeList[i].randomCoveringValue((float) visionVector[i],
@@ -102,8 +114,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return generatedClassifier;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMoreGeneral(gr.auth.ee.lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#isMoreGeneral(gr.auth.ee
+	 * .lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
 	public final boolean isMoreGeneral(final Classifier baseClassifier,
@@ -123,8 +139,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#fixChromosome(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#fixChromosome(gr.auth.ee
+	 * .lcs.classifiers.ExtendedBitSet)
 	 */
 	@Override
 	public final void fixChromosome(final ExtendedBitSet aChromosome) {
@@ -133,7 +153,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#getChromosomeSize()
 	 */
 	@Override
@@ -141,8 +163,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return chromosomeSize;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#toBitSetString(gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#toBitSetString(gr.auth.
+	 * ee.lcs.classifiers.Classifier)
 	 */
 	@Override
 	public final String toBitSetString(final Classifier classifier) {
@@ -150,17 +176,25 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#setRepresentationSpecificClassifierData(gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#
+	 * setRepresentationSpecificClassifierData
+	 * (gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public void setRepresentationSpecificClassifierData(final Classifier aClassifier) {
+	public void setRepresentationSpecificClassifierData(
+			final Classifier aClassifier) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#buildRepresentationModel()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#buildRepresentationModel()
 	 */
 	@Override
 	public void buildRepresentationModel() {
@@ -168,8 +202,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs
+	 * .classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
 	public final boolean areEqual(final Classifier cl1, final Classifier cl2) {
@@ -399,13 +437,19 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		/**
 		 * Constructor.
-		 * @param startPosition the start position of the gene
-		 * @param attributeName the name of the attribute
-		 * @param nominalValuesNames a string[] containing the names of the nominal values
-		 * @param generalizationRate the generalization rate used for covering
+		 * 
+		 * @param startPosition
+		 *            the start position of the gene
+		 * @param attributeName
+		 *            the name of the attribute
+		 * @param nominalValuesNames
+		 *            a string[] containing the names of the nominal values
+		 * @param generalizationRate
+		 *            the generalization rate used for covering
 		 */
-		public NominalAttribute(final int startPosition, final String attributeName,
-				final String[] nominalValuesNames, final double generalizationRate) {
+		public NominalAttribute(final int startPosition,
+				final String attributeName, final String[] nominalValuesNames,
+				final double generalizationRate) {
 			super(startPosition, attributeName, generalizationRate);
 			this.nominalValuesNames = nominalValuesNames;
 			// We are going to use one bit per possible value plus one
@@ -414,8 +458,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			chromosomeSize += lengthInBits;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public String toString(final ExtendedBitSet convertingChromosome) {
@@ -430,8 +478,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return attr + "]";
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
 		public void randomCoveringValue(final float attributeValue,
@@ -456,8 +508,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMatch(final float attributeVision,
@@ -471,8 +527,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#fixAttributeRepresentation(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #fixAttributeRepresentation
+		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public void fixAttributeRepresentation(final ExtendedBitSet chromosome) {
@@ -487,8 +548,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				chromosome.clear(positionInChromosome);
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
@@ -506,8 +572,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return true;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isEqual(final ExtendedBitSet baseChromosome,
@@ -540,12 +611,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * The minimum and the maximum value that the attribute can receive.
 		 */
 		private float minValue, maxValue;
-		
+
 		/**
 		 * The number of bits to use for representing the interval limits.
 		 */
 		private int precisionBits = 0;
-		
+
 		/**
 		 * The number of parts we have split the interval from min to max.
 		 */
@@ -568,8 +639,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 *            the rate at which to create general attributes when
 		 *            covering
 		 */
-		public IntervalAttribute(final int startPosition, final String attributeName,
-				final float minValue, final float maxValue, final int precisionBits,
+		public IntervalAttribute(final int startPosition,
+				final String attributeName, final float minValue,
+				final float maxValue, final int precisionBits,
 				final double generalizationRate) {
 			super(startPosition, attributeName, generalizationRate);
 			this.minValue = minValue;
@@ -612,8 +684,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 					* (maxValue - minValue) + minValue;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public String toString(final ExtendedBitSet convertingChromosome) {
@@ -626,8 +702,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return value;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMatch(final float attributeVision,
@@ -640,8 +720,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
 		public void randomCoveringValue(final float attributeValue,
@@ -668,8 +752,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 					+ precisionBits, precisionBits, newMaxBound);
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#fixAttributeRepresentation(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #fixAttributeRepresentation
+		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public void fixAttributeRepresentation(final ExtendedBitSet chromosome) {
@@ -686,8 +775,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
@@ -702,8 +796,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isEqual(final ExtendedBitSet baseChromosome,
@@ -736,19 +835,27 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		/**
 		 * The constructor.
-		 * @param startPosition the position attribute gene starts in chromosome
-		 * @param attributeName the name of the attribute
-		 * @param generalizationRate the generalization rate, used at covering
+		 * 
+		 * @param startPosition
+		 *            the position attribute gene starts in chromosome
+		 * @param attributeName
+		 *            the name of the attribute
+		 * @param generalizationRate
+		 *            the generalization rate, used at covering
 		 */
-		public BooleanAttribute(final int startPosition, final String attributeName,
-				final double generalizationRate) {
+		public BooleanAttribute(final int startPosition,
+				final String attributeName, final double generalizationRate) {
 			super(startPosition, attributeName, generalizationRate);
 			lengthInBits = 2;
 			chromosomeSize += lengthInBits;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public String toString(final ExtendedBitSet convertingClassifier) {
@@ -761,8 +868,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMatch(final float attributeVision,
@@ -779,8 +890,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
 		public void randomCoveringValue(final float attributeValue,
@@ -800,8 +915,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#fixAttributeRepresentation(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #fixAttributeRepresentation
+		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public void fixAttributeRepresentation(
@@ -809,8 +929,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
@@ -827,8 +952,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return true;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isEqual(final ExtendedBitSet baseChromosome,

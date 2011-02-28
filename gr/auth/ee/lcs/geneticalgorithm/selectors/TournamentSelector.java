@@ -44,24 +44,23 @@ public class TournamentSelector implements INaturalSelector {
 	 *            comparison mode @see
 	 *            gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy
 	 */
-	public TournamentSelector(int sizeOfTournaments, boolean max,
-			int comparisonMode) {
+	public TournamentSelector(final int sizeOfTournaments, final boolean max,
+			final int comparisonMode) {
 		this.tournamentSize = sizeOfTournaments;
 		this.max = max;
 		this.mode = comparisonMode;
 	}
 
-	/**
-	 * Selects from the fromPopulation a set of classifiers that have competed
-	 * to the tournament
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(int,
-	 *      gr.auth.ee.lcs.classifiers.ClassifierSet,
-	 *      gr.auth.ee.lcs.classifiers.ClassifierSet)
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void select(int howManyToSelect, ClassifierSet fromPopulation,
-			ClassifierSet toPopulation) {
+	public final void select(final int howManyToSelect,
+			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
 
 		for (int i = 0; i < howManyToSelect; i++) {
 
@@ -85,7 +84,8 @@ public class TournamentSelector implements INaturalSelector {
 	 * @param participants
 	 *            the int[] of indexes of participants
 	 */
-	public int tournament(ClassifierSet fromPopulation, int[] participants) {
+	public final int tournament(final ClassifierSet fromPopulation,
+			final int[] participants) {
 
 		// Sort by order
 		Arrays.sort(participants);
@@ -134,8 +134,8 @@ public class TournamentSelector implements INaturalSelector {
 		int[] participants = new int[tournamentSize];
 		// Create random participants
 		for (int j = 0; j < tournamentSize; j++) {
-			participants[j] = (int) Math
-					.floor((Math.random() * fromPopulation.getTotalNumerosity()));
+			participants[j] = (int) Math.floor((Math.random() * fromPopulation
+					.getTotalNumerosity()));
 		}
 		return this.tournament(fromPopulation, participants);
 

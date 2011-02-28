@@ -12,12 +12,12 @@ import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 public class SinglePointCrossover implements IBinaryGeneticOperator {
 
 	/**
-	 * The implementation of the abstract method
+	 * The implementation of the abstract method.
 	 * 
 	 * @see gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator
 	 */
 	@Override
-	public Classifier operate(Classifier classifierA, Classifier classifierB) {
+	public Classifier operate(final Classifier classifierA, final Classifier classifierB) {
 		int chromosomeSize = classifierB.size();
 		Classifier child;
 		/*
@@ -43,8 +43,8 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	 *            the position (bit) to perform the crossover
 	 * @return the new cross-overed (child) chromosome
 	 */
-	protected ExtendedBitSet performCrossover(ExtendedBitSet chromosomeA,
-			ExtendedBitSet chromosomeB, int position) {
+	protected final ExtendedBitSet performCrossover(final ExtendedBitSet chromosomeA,
+			final ExtendedBitSet chromosomeB, final int position) {
 		ExtendedBitSet child = (ExtendedBitSet) chromosomeA.clone();
 		child.setSubSet(position,
 				chromosomeB.getSubSet(position, chromosomeB.size() - position));

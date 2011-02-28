@@ -31,13 +31,16 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		penalty = penaltyPercent;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm#updateFitness(gr.auth.ee.lcs.classifiers.Classifier, int, gr.auth.ee.lcs.classifiers.ClassifierSet)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm#
+	 * updateFitness(gr.auth.ee.lcs.classifiers.Classifier, int,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void updateFitness(final Classifier aClassifier, final int numerosity,
-			final ClassifierSet correctSet) {
+	public void updateFitness(final Classifier aClassifier,
+			final int numerosity, final ClassifierSet correctSet) {
 		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
 
 		if (correctSet.getClassifierNumerosity(aClassifier) > 0) {
@@ -53,11 +56,16 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue(gr.auth.ee.lcs.classifiers.Classifier, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier, final int mode) {
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
 		GenericSLCSClassifierData data;
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:

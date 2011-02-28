@@ -25,7 +25,7 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	 *            the probability that a bit will be flipped Initializes the
 	 *            operator's attributes.
 	 */
-	public UniformBitMutation(double rate) {
+	public UniformBitMutation(final double rate) {
 		this.mutationRate = rate;
 	}
 
@@ -35,7 +35,7 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	 * @return the mutated classifier
 	 */
 	@Override
-	public Classifier operate(Classifier aClassifier) {
+	public final Classifier operate(final Classifier aClassifier) {
 		int chromosomeSize = aClassifier.size();
 		ExtendedBitSet chromosome = aClassifier.getChromosome();
 		for (int i = 0; i < chromosomeSize; i++) {

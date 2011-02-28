@@ -62,9 +62,10 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	 * @param gaActivationAge
 	 *            the age of the population that activates the G.A.
 	 */
-	public SteadyStateGeneticAlgorithm(INaturalSelector gaSelector,
-			IBinaryGeneticOperator crossoverOp, float crossoverRate,
-			IUnaryGeneticOperator mutationOp, int gaActivationAge) {
+	public SteadyStateGeneticAlgorithm(final INaturalSelector gaSelector,
+			final IBinaryGeneticOperator crossoverOp,
+			final float crossoverRate, final IUnaryGeneticOperator mutationOp,
+			final int gaActivationAge) {
 		this.gaSelector = gaSelector;
 		this.crossoverOp = crossoverOp;
 		this.mutationOp = mutationOp;
@@ -72,12 +73,12 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		this.crossoverRate = crossoverRate;
 	}
 
-	@Override
 	/**
-	 * Evolves a set.
-	 * If the set is empty an exception will be thrown.   * 
+	 * Evolves a set. If the set is empty an exception will be thrown.
 	 */
-	public void evolveSet(ClassifierSet evolveSet, ClassifierSet population) {
+	@Override
+	public final void evolveSet(final ClassifierSet evolveSet,
+			final ClassifierSet population) {
 
 		timestamp++;
 

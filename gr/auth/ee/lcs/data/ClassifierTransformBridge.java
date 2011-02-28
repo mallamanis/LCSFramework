@@ -19,8 +19,8 @@ public abstract class ClassifierTransformBridge {
 	public static ClassifierTransformBridge instance;
 
 	/**
-   * The instances of the current problem
-   */
+	 * The instances of the current problem
+	 */
 	public static double[][] instances;
 
 	/**
@@ -35,7 +35,9 @@ public abstract class ClassifierTransformBridge {
 
 	/**
 	 * Sets the static instance of the bridge.
-	 * @param aBridge the bridge to set
+	 * 
+	 * @param aBridge
+	 *            the bridge to set
 	 */
 	public static void setInstance(final ClassifierTransformBridge aBridge) {
 		ClassifierTransformBridge.instance = aBridge;

@@ -16,15 +16,21 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	/**
 	 * The abstract function used to calculate the fitness of a classifier.
 	 * 
-	 * @param aClassifier the classifier to calculate the fitness
-	 * @param numerosity the numerosity of the given classifier
-	 * @param correctSet the correct set, used at updating the fitness
+	 * @param aClassifier
+	 *            the classifier to calculate the fitness
+	 * @param numerosity
+	 *            the numerosity of the given classifier
+	 * @param correctSet
+	 *            the correct set, used at updating the fitness
 	 */
 	public abstract void updateFitness(Classifier aClassifier, int numerosity,
 			ClassifierSet correctSet);
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#createStateClassifierObject()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
+	 * createStateClassifierObject()
 	 */
 	@Override
 	public Serializable createStateClassifierObject() {
@@ -34,9 +40,12 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 
 	/**
 	 * Updates the set. setA is the match set setB is the correct set
+	 * 
 	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmAndStrategy.updateSet
-	 * @param setA match set
-	 * @param setB correct set
+	 * @param setA
+	 *            match set
+	 * @param setB
+	 *            correct set
 	 */
 	@Override
 	public final void updateSet(final ClassifierSet setA,
