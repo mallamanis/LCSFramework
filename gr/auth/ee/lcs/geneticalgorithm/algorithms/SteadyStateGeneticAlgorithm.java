@@ -109,10 +109,11 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			Classifier child;
 			// produce a child
 			if (Math.random() < crossoverRate)
-				child = crossoverOp.operate(parentA, parentB);
+				child = crossoverOp.operate((i == 0) ? parentB : parentA,
+						(i == 0) ? parentA : parentB);
 			else
-				child = crossoverOp.operate((i == 0) ? parentA : parentB,
-						(i == 0) ? parentA : parentB); // TODO: Check?
+				child = (Classifier) ((i == 0) ? parentA : parentB).clone();
+			// TODO: Check?
 			child = mutationOp.operate(child);
 			ClassifierTransformBridge.fixClassifier(child);
 			population.addClassifier(new Macroclassifier(child, 1), true);

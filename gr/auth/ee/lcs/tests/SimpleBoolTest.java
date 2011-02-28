@@ -31,8 +31,8 @@ public class SimpleBoolTest {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), 1, new UniformBitMutation(.04), 15);
 
-		ClassifierTransformBridge.instance = new SimpleBooleanRepresentation(
-				.33, 3);
+		ClassifierTransformBridge.setInstance(new SimpleBooleanRepresentation(
+				.33, 3));
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
 				5, .99, 50);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new

@@ -21,8 +21,8 @@ public class BestFitnessTournamentSelectorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ClassifierTransformBridge.instance = new SimpleBooleanRepresentation(
-				.33, 2);
+		ClassifierTransformBridge.setInstance(new SimpleBooleanRepresentation(
+				.33, 2));
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
 				5, .99, 50);
 		population = new ClassifierSet(null);

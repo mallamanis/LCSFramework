@@ -13,6 +13,20 @@ import java.io.Serializable;
 public class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
+	 * The transform bridge.
+	 */
+	private static ClassifierTransformBridge transformBridge;
+
+	/**
+	 * Set the transform bridge.
+	 * 
+	 * @param bridge
+	 */
+	public static void setTransformBridge(final ClassifierTransformBridge bridge) {
+		transformBridge = bridge;
+	}
+
+	/**
 	 * Cache for action.
 	 */
 	private int actionCache = -1;
@@ -74,24 +88,15 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	public boolean canSubsume = false;
 
 	/**
-	 * An object for saving the transformation specific dat.a
+	 * An object for saving the transformation specific data.
 	 */
 	public Serializable transformData;
-
-	/**
-	 * a getter for the fitness of the classifier.
-	 * 
-	 * @return the classifier's fitness
-	 */
-	public final double getFitness() {
-		return fitness;
-	}
 
 	/**
 	 * The default constructor. Creates a chromosome of the given size
 	 */
 	public Classifier() {
-		super(ClassifierTransformBridge.instance.getChromosomeSize());
+		super(transformBridge.getChromosomeSize());
 		setConstructionData();
 	}
 
@@ -107,16 +112,40 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Sets the update-specific and transform-specific data needed.
+	 * Build matches vector and initialize it.
 	 */
-	private void setConstructionData() {
-		updateData = UpdateAlgorithmFactoryAndStrategy
-				.createDefaultDataObject();
+	public final void buildMatches() {
+		this.matchInstances = new byte[ClassifierTransformBridge.instances.length];
+		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++)
+			matchInstances[i] = -1;
+	}
 
-		ClassifierTransformBridge.instance
-				.setRepresentationSpecificClassifierData(this);
+	/**
+	 * Clone of the classifier.
+	 * 
+	 * @return the clone
+	 */
+	@Override
+	public final Object clone() {
+		Classifier clone = new Classifier(this);
+		clone.fitness = this.fitness;
+		return clone;
+	}
 
-		this.serial = currentSerial++;
+	/**
+	 * @param anotherClassifier
+	 *            the classifier against which check for equality
+	 * @return true if the classifiers have equal chromosomes
+	 */
+	public final boolean equals(final Classifier anotherClassifier) {
+		return transformBridge.areEqual(this, anotherClassifier);
+	}
+
+	/**
+	 * Calls the bridge to fix itself.
+	 */
+	public final void fixChromosome() {
+		transformBridge.fixChromosome(this);
 	}
 
 	/**
@@ -126,113 +155,8 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final int getActionAdvocated() {
 		if (actionCache < 0)
-			actionCache = ClassifierTransformBridge.instance
-					.getClassification(this);
+			actionCache = transformBridge.getClassification(this);
 		return actionCache;
-	}
-
-	/**
-	 * Setter for advocated action.
-	 * 
-	 * @param action
-	 *            the action to set the classifier to advocate for
-	 */
-	public final void setActionAdvocated(final int action) {
-		ClassifierTransformBridge.instance.setClassification(this, action);
-		actionCache = -1;
-	}
-
-	/**
-	 * @param anotherClassifier
-	 * @return true if the classifiers have equal chromosomes
-	 */
-	public final boolean equals(final Classifier anotherClassifier) {
-		return ClassifierTransformBridge.instance.areEqual(this,
-				anotherClassifier);
-	}
-
-	/**
-	 * Getter for the classifier's Serial Number.
-	 * 
-	 * @return the classifier's serial number
-	 */
-	public final int getSerial() {
-		return this.serial;
-	}
-
-	/**
-	 * Calls the bridge to detect if the classifier is matching the vision
-	 * vector.
-	 * 
-	 * @param visionVector
-	 *            the vision vector to match
-	 * @return true if the classifier matches the visionVector
-	 */
-	public final boolean isMatch(final double[] visionVector) {
-		return ClassifierTransformBridge.instance.isMatch(visionVector, this);
-	}
-
-	/**
-	 * Checks if Classifier is matches an instance vector. Through caching for
-	 * performance optimization.
-	 * 
-	 * @param instanceIndex
-	 *            the instance index to check for a match
-	 * @return true if the classifier matches the instance of the given index
-	 */
-	public final boolean isMatch(final int instanceIndex) {
-		if (this.matchInstances == null)
-			buildMatches();
-
-		// if we haven't cached the answer, then answer...
-		if (this.matchInstances[instanceIndex] == -1) {
-			this.matchInstances[instanceIndex] = (byte) ((ClassifierTransformBridge.instance
-					.isMatch(
-							ClassifierTransformBridge.instances[instanceIndex],
-							this)) ? 1 : 0);
-			this.checked++;
-			this.covered += this.matchInstances[instanceIndex];
-		}
-
-		return this.matchInstances[instanceIndex] == 1;
-	}
-
-	/**
-	 * Return if this classifier is more general than the testClassifier.
-	 * 
-	 * @param testClassifier
-	 *            the test classifier
-	 * @return true if the classifier is more general
-	 */
-	public final boolean isMoreGeneral(final Classifier testClassifier) {
-		return ClassifierTransformBridge.instance.isMoreGeneral(this,
-				testClassifier);
-	}
-
-	/**
-	 * Calls the bridge to convert it self to natural language string.
-	 * 
-	 * @return the classifier described in a string
-	 */
-	@Override
-	public final String toString() {
-		return ClassifierTransformBridge.instance.toNaturalLanguageString(this);
-	}
-
-	/**
-	 * Calls the bridge to fix itself.
-	 */
-	public final void fixChromosome() {
-		ClassifierTransformBridge.instance.fixChromosome(this);
-	}
-
-	/**
-	 * Calls the bridge to divide bits into attributes.
-	 * 
-	 * @return the bitstring representation of the classifier
-	 */
-	public final String toBitString() {
-		return ClassifierTransformBridge.instance.toBitSetString(this);
 	}
 
 	/**
@@ -257,15 +181,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Build matches vector and initialize it.
-	 */
-	public final void buildMatches() {
-		this.matchInstances = new byte[ClassifierTransformBridge.instances.length];
-		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++)
-			matchInstances[i] = -1;
-	}
-
-	/**
 	 * Returns the classifer's coverage approximation.
 	 * 
 	 * @return the classifier's coverage as calculated by the current checks
@@ -275,6 +190,114 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 			return .5;
 		return ((double) this.covered) / ((double) this.checked);
 
+	}
+
+	/**
+	 * a getter for the fitness of the classifier.
+	 * 
+	 * @return the classifier's fitness
+	 */
+	public final double getFitness() {
+		return fitness;
+	}
+
+	/**
+	 * Getter for the classifier's Serial Number.
+	 * 
+	 * @return the classifier's serial number
+	 */
+	public final int getSerial() {
+		return this.serial;
+	}
+
+	/**
+	 * Calls the bridge to detect if the classifier is matching the vision
+	 * vector.
+	 * 
+	 * @param visionVector
+	 *            the vision vector to match
+	 * @return true if the classifier matches the visionVector
+	 */
+	public final boolean isMatch(final double[] visionVector) {
+		return transformBridge.isMatch(visionVector, this);
+	}
+
+	/**
+	 * Checks if Classifier is matches an instance vector. Through caching for
+	 * performance optimization.
+	 * 
+	 * @param instanceIndex
+	 *            the instance index to check for a match
+	 * @return true if the classifier matches the instance of the given index
+	 */
+	public final boolean isMatch(final int instanceIndex) {
+		if (this.matchInstances == null)
+			buildMatches();
+
+		// if we haven't cached the answer, then answer...
+		if (this.matchInstances[instanceIndex] == -1) {
+			this.matchInstances[instanceIndex] = (byte) ((transformBridge
+					.isMatch(
+							ClassifierTransformBridge.instances[instanceIndex],
+							this)) ? 1 : 0);
+			this.checked++;
+			this.covered += this.matchInstances[instanceIndex];
+		}
+
+		return this.matchInstances[instanceIndex] == 1;
+	}
+
+	/**
+	 * Return if this classifier is more general than the testClassifier.
+	 * 
+	 * @param testClassifier
+	 *            the test classifier
+	 * @return true if the classifier is more general
+	 */
+	public final boolean isMoreGeneral(final Classifier testClassifier) {
+		return transformBridge.isMoreGeneral(this, testClassifier);
+	}
+
+	/**
+	 * Setter for advocated action.
+	 * 
+	 * @param action
+	 *            the action to set the classifier to advocate for
+	 */
+	public final void setActionAdvocated(final int action) {
+		transformBridge.setClassification(this, action);
+		actionCache = -1;
+	}
+
+	/**
+	 * Calls the bridge to divide bits into attributes.
+	 * 
+	 * @return the bitstring representation of the classifier
+	 */
+	public final String toBitString() {
+		return transformBridge.toBitSetString(this);
+	}
+
+	/**
+	 * Calls the bridge to convert it self to natural language string.
+	 * 
+	 * @return the classifier described in a string
+	 */
+	@Override
+	public final String toString() {
+		return transformBridge.toNaturalLanguageString(this);
+	}
+
+	/**
+	 * Sets the update-specific and transform-specific data needed.
+	 */
+	private void setConstructionData() {
+		updateData = UpdateAlgorithmFactoryAndStrategy
+				.createDefaultDataObject();
+
+		transformBridge.setRepresentationSpecificClassifierData(this);
+
+		this.serial = currentSerial++;
 	}
 
 }

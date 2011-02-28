@@ -3,9 +3,9 @@ package gr.auth.ee.lcs.classifiers;
 /**
  * A strategy for deleting classifiers from the set when they exceed a specified
  * value. The strategy deletes classifiers by creating an inverse fitness
- * proportional tournaments. TODO: Buggy(?)
+ * proportional tournaments.
  * 
- * @deprecated not used
+ * @deprecated not used & buggy
  */
 @Deprecated
 public class OverpopulationInverseFitnessProportionateDeletion implements
@@ -14,7 +14,7 @@ public class OverpopulationInverseFitnessProportionateDeletion implements
 	/**
 	 * the maximum number of classifiers in the set.
 	 */
-	private int maxPermittableSetSize;
+	private final int maxPermittableSetSize;
 
 	public OverpopulationInverseFitnessProportionateDeletion(
 			final int maxPermittableSetSize) {

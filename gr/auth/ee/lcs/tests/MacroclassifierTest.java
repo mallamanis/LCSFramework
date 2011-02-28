@@ -3,6 +3,7 @@
  */
 package gr.auth.ee.lcs.tests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
@@ -28,6 +29,24 @@ public class MacroclassifierTest {
 	public void setUp() throws Exception {
 		test = new SimpleBooleanRepresentation(0.5, 4);
 		ClassifierTransformBridge.setInstance(test);
+	}
+
+	@Test
+	public final void testClone() {
+		Classifier parentClassifier = new Classifier(new ExtendedBitSet(
+				"10110001"));
+		Classifier clone = (Classifier) parentClassifier.clone();
+		assertTrue(clone.equals(parentClassifier));
+		assertTrue(parentClassifier.equals(clone));
+		assertEquals(clone.experience, 1);
+		assertTrue(clone.fitness == parentClassifier.fitness);
+
+		ExtendedBitSet a = parentClassifier;
+		ExtendedBitSet b = clone;
+
+		assertEquals(a, b);
+		assertTrue(parentClassifier.getSerial() != clone.getSerial());
+
 	}
 
 	/**

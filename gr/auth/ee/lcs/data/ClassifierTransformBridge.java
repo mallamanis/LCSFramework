@@ -16,10 +16,10 @@ public abstract class ClassifierTransformBridge {
 	/**
 	 * The singleton instance of the bridge.
 	 */
-	public static ClassifierTransformBridge instance;
+	private static ClassifierTransformBridge instance;
 
 	/**
-	 * The instances of the current problem
+	 * The instances of the current problem.
 	 */
 	public static double[][] instances;
 
@@ -34,6 +34,15 @@ public abstract class ClassifierTransformBridge {
 	}
 
 	/**
+	 * Gets the static instance.
+	 * 
+	 * @return the static instance
+	 */
+	public static ClassifierTransformBridge getInstance() {
+		return instance;
+	}
+
+	/**
 	 * Sets the static instance of the bridge.
 	 * 
 	 * @param aBridge
@@ -41,6 +50,7 @@ public abstract class ClassifierTransformBridge {
 	 */
 	public static void setInstance(final ClassifierTransformBridge aBridge) {
 		ClassifierTransformBridge.instance = aBridge;
+		Classifier.setTransformBridge(aBridge);
 	}
 
 	/**

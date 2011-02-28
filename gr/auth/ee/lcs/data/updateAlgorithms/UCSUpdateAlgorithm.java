@@ -80,9 +80,9 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			data.msa += 1;
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1;
-				double accuracy = ((double) data.tp) / ((double) data.msa);
+				double accuracy = ((double) data.tp) / ((double) cl.experience);
 				if (accuracy > accuracy0) {
-					data.str = 1;
+					data.str = (cl.getCoverage() + 1);
 				} else {
 					data.str = a * Math.pow(accuracy / accuracy0, n);
 				}
