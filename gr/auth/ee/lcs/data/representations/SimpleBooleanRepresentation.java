@@ -24,7 +24,12 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	private double coverGeneralizationRate = 0.5;
 
 	/**
+	 * The costructor.
 	 * 
+	 * @param coveringGeneralizationRate
+	 *            the generalization rate for covering
+	 * @param visionBits
+	 *            the bits used at vision
 	 */
 	public SimpleBooleanRepresentation(double coveringGeneralizationRate,
 			int visionBits) {
@@ -41,7 +46,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * Set the number of bits in the input. This size determines the size of the
 	 * chormosome In this representation the size of the chromosome is 2*size
 	 */
-	public void setVisionSize(int size) {
+	public final void setVisionSize(final int size) {
 		this.chromosomeSize = 2 * size;
 	}
 

@@ -57,9 +57,15 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            used for fitness sharing
 	 * @param n
 	 *            used for fitness sharing
+	 * @param fitnessThreshold
+	 *            the fitness threshold for subsumption
+	 * @param experienceThreshold
+	 *            the experience threshold for subsumption
 	 */
 	public XCSUpdateAlgorithm(final double beta, final double P,
-			final double e0, final double alpha, final double n) {
+			final double e0, final double alpha, final double n,
+			final double fitnessThreshold, final int experienceThreshold) {
+		super(fitnessThreshold, experienceThreshold);
 		this.beta = beta;
 		this.payoff = P;
 		this.e0 = e0;

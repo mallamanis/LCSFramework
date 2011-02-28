@@ -15,6 +15,12 @@ import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
 @Deprecated
 public class XSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
+	public XSLCSUpdateAlgorithm(double subsumptionFitness,
+			int subsumptionExperience) {
+		super(subsumptionFitness, subsumptionExperience);
+
+	}
+
 	private double beta = 0.1;
 
 	/*

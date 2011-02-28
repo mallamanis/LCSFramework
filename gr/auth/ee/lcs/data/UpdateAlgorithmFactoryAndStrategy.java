@@ -23,6 +23,21 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	public static UpdateAlgorithmFactoryAndStrategy currentStrategy;
 
 	/**
+	 * Comparison mode used for LCS exploitation.
+	 */
+	public static final int COMPARISON_MODE_EXPLOITATION = 0;
+
+	/**
+	 * Comparison mode used for population deletion.
+	 */
+	public static final int COMPARISON_MODE_DELETION = 1;
+
+	/**
+	 * Comparison mode used for exploration.
+	 */
+	public static final int COMPARISON_MODE_EXPLORATION = 2;
+
+	/**
 	 * Bridge to selected strategy.
 	 * 
 	 * @return returns the data object as specified by the implementation
@@ -38,7 +53,9 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 * A bridge between update data and the actual implementation.
 	 * 
 	 * @param setA
+	 *            the match set
 	 * @param setB
+	 *            the correct set
 	 */
 	public static void updateData(final ClassifierSet setA,
 			final ClassifierSet setB) {
@@ -48,23 +65,28 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 		}
 	}
 
-	public double subsumptionFitnessThreshold = .95;
-
-	public int subsumptionExperienceThreshold = 100;
-
 	/**
-	 * Comparison mode used for LCS exploitation.
+	 * The fitness threshold for subsumption.
 	 */
-	public static final int COMPARISON_MODE_EXPLOITATION = 0;
+	private double subsumptionFitnessThreshold;
 	/**
-	 * Comparison mode used for population deletion.
+	 * The experience threshold for subsumption.
 	 */
-	public static final int COMPARISON_MODE_DELETION = 1;
+	private int subsumptionExperienceThreshold;
 
 	/**
-	 * Comparison mode used for exploration.
+	 * The constructor.
+	 * 
+	 * @param subsumptionFitness
+	 *            the fitness threshold for subsumption
+	 * @param subsumptionExperience
+	 *            the experience threshold for subsumption
 	 */
-	public static final int COMPARISON_MODE_EXPLORATION = 2;
+	public UpdateAlgorithmFactoryAndStrategy(final double subsumptionFitness,
+			final int subsumptionExperience) {
+		subsumptionFitnessThreshold = subsumptionFitness;
+		subsumptionExperienceThreshold = subsumptionExperience;
+	}
 
 	/**
 	 * Returns the implementation specific attribute that represents the

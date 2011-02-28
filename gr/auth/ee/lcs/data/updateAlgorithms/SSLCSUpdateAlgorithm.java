@@ -25,8 +25,16 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * @param penaltyPercent
 	 *            the percentage of the reward that the classifier's penalty
 	 *            will be when failing to classify
+	 * 
+	 * @param fitnessThreshold
+	 *            the fitness threshold for subsumption
+	 * @param experienceThreshold
+	 *            the experience threshold for subsumption
 	 */
-	public SSLCSUpdateAlgorithm(final double reward, final double penaltyPercent) {
+	public SSLCSUpdateAlgorithm(final double reward,
+			final double penaltyPercent, final double fitnessThreshold,
+			final int experienceThreshold) {
+		super(fitnessThreshold, experienceThreshold);
 		strengthReward = reward;
 		penalty = penaltyPercent;
 	}
@@ -39,7 +47,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void updateFitness(final Classifier aClassifier,
+	public final void updateFitness(final Classifier aClassifier,
 			final int numerosity, final ClassifierSet correctSet) {
 		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
 
@@ -64,7 +72,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier,
+	public final double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		GenericSLCSClassifierData data;
 		switch (mode) {

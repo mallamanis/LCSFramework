@@ -45,7 +45,7 @@ public class ComplexRepresentationLCSTest {
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// ASLCSUpdateAlgorithm(10);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				.1, 10, .99, .1);
+				.1, 10, .99, .1, .99, 50);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 

@@ -14,6 +14,17 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		UpdateAlgorithmFactoryAndStrategy {
 
 	/**
+	 * @param subsumptionFitness
+	 *            the fitness threshold for subsumption
+	 * @param subsumptionExperience
+	 *            the experience threshold for subsumption
+	 */
+	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
+			final int subsumptionExperience) {
+		super(subsumptionFitness, subsumptionExperience);
+	}
+
+	/**
 	 * The abstract function used to calculate the fitness of a classifier.
 	 * 
 	 * @param aClassifier

@@ -34,7 +34,7 @@ public class SimpleBoolTest {
 		ClassifierTransformBridge.instance = new SimpleBooleanRepresentation(
 				.33, 3);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				5);
+				5, .99, 50);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 

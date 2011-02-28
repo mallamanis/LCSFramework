@@ -120,7 +120,28 @@ public class ClassifierSetTest {
 	 * .
 	 */
 	@Test
-	public void testAddFromClassifierSet() {
+	public void testSubsumptionClassifierSet() {
+		ClassifierSet testSet = new ClassifierSet(null);
+		Classifier subsumableClassifier = new Classifier(new ExtendedBitSet(
+				"10010110"));
+		subsumableClassifier.canSubsume = true;
+		testSet.addClassifier(new Macroclassifier(subsumableClassifier, 1),
+				false);
+		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
+		assertEquals(testSet.getTotalNumerosity(), 1);
+		assertEquals(testSet.getClassifierNumerosity(subsumableClassifier), 1);
+
+		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+				"10010111"));
+		assertTrue(subsumableClassifier.isMoreGeneral(testClassifier));
+
+		testSet.addClassifier(new Macroclassifier(testClassifier, 1), true);
+
+		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
+		assertEquals(testSet.getClassifierNumerosity(0), 2);
+
+		assertEquals(testSet.getClassifierNumerosity(testClassifier), 0);
+		assertEquals(testSet.getClassifierNumerosity(subsumableClassifier), 2);
 
 	}
 

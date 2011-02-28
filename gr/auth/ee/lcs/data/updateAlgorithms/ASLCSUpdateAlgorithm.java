@@ -20,11 +20,17 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	/**
 	 * Object's Constuctor.
 	 * 
-	 * @param n
+	 * @param nParameter
 	 *            the strictness factor ν used in updating
+	 * @param fitnessThreshold
+	 *            the fitness threshold for subsumption
+	 * @param experienceThreshold
+	 *            the experience threshold for subsumption
 	 */
-	public ASLCSUpdateAlgorithm(final double n) {
-		this.n = n;
+	public ASLCSUpdateAlgorithm(final double nParameter,
+			final double fitnessThreshold, final int experienceThreshold) {
+		super(fitnessThreshold, experienceThreshold);
+		this.n = nParameter;
 	}
 
 	/*

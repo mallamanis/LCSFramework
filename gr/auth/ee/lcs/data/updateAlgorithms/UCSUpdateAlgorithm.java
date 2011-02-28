@@ -20,25 +20,32 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Private variables: the UCS parameter sharing.
 	 */
-	private double a, acc0, n, b;
+	private double a, accuracy0, n, b;
 
 	/**
 	 * Default constructor.
 	 * 
 	 * @param alpha
 	 *            used in fitness sharing
-	 * @param n
+	 * @param nParameter
 	 *            used in fitness sharing
 	 * @param acc0
 	 *            used in fitness sharing: the minimum "good" accuracy
 	 * @param learningRate
 	 *            the beta of UCS
+	 * 
+	 * @param fitnessThreshold
+	 *            the fitness threshold for subsumption
+	 * @param experienceThreshold
+	 *            the experience threshold for subsumption
 	 */
-	public UCSUpdateAlgorithm(final double alpha, final double n,
-			final double acc0, final double learningRate) {
+	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
+			final double acc0, final double learningRate,
+			final double fitnessThreshold, final int experienceThreshold) {
+		super(fitnessThreshold, experienceThreshold);
 		this.a = alpha;
 		this.n = n;
-		this.acc0 = acc0;
+		this.accuracy0 = acc0;
 		this.b = learningRate;
 	}
 
@@ -74,10 +81,10 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1;
 				double accuracy = ((double) data.tp) / ((double) data.msa);
-				if (accuracy > acc0) {
+				if (accuracy > accuracy0) {
 					data.str = 1;
 				} else {
-					data.str = a * Math.pow(accuracy / acc0, n);
+					data.str = a * Math.pow(accuracy / accuracy0, n);
 				}
 
 				strengthSum += data.str * matchSet.getClassifierNumerosity(i);
