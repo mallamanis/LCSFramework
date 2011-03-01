@@ -3,7 +3,6 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.data.XCSClassifierData;
 
 import java.io.Serializable;
 
@@ -47,7 +46,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * The experience threshold for subsumption.
 	 */
 	private final int subsumptionExperienceThreshold;
-	
+
 	/**
 	 * n factor.
 	 */
@@ -94,7 +93,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		// TODO: Initial Parameters
 		return new XCSClassifierData();
 	}
-	
+
 	/**
 	 * Implementation of the subsumption strength.
 	 * 
@@ -102,9 +101,10 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the classifier, whose subsumption ability is to be updated
 	 */
 	protected final void updateSubsumption(final Classifier aClassifier) {
-		aClassifier.setSubsumptionAbility( (aClassifier
-				.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
-				&& (aClassifier.experience > subsumptionExperienceThreshold));
+		aClassifier
+				.setSubsumptionAbility((aClassifier
+						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
+						&& (aClassifier.experience > subsumptionExperienceThreshold));
 	}
 
 	/*
@@ -117,7 +117,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		final XCSClassifierData data = ((XCSClassifierData) aClassifier.updateData);
+		final XCSClassifierData data = ((XCSClassifierData) aClassifier
+				.getUpdateDataObject());
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			return data.fitness;
@@ -135,7 +136,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	@Override
 	public void setComparisonValue(Classifier aClassifier, int mode,
 			double comparisonValue) {
-		XCSClassifierData data = ((XCSClassifierData) aClassifier.updateData);
+		XCSClassifierData data = ((XCSClassifierData) aClassifier
+				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: Mode changes?
 
 	}
@@ -157,7 +159,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			Classifier cl = setA.getClassifier(i);
 
 			// Get update data object
-			XCSClassifierData data = ((XCSClassifierData) cl.updateData);
+			XCSClassifierData data = ((XCSClassifierData) cl
+					.getUpdateDataObject());
 			cl.experience++; // Increase Experience
 
 			double payOff; // the classifier's payoff
@@ -203,11 +206,46 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			Classifier cl = setA.getClassifier(i);
 
 			// Get update data object
-			XCSClassifierData data = ((XCSClassifierData) cl.updateData);
+			XCSClassifierData data = ((XCSClassifierData) cl
+					.getUpdateDataObject());
 
 			// per micro-classifier
 			data.fitness += beta * (data.k / accuracySum - data.fitness);
 		}
 
+	}
+
+	/**
+	 * An object representing the classifier data for the XCS update algorithm.
+	 * 
+	 * @author Miltos Allamanis
+	 */
+	public class XCSClassifierData implements Serializable {
+
+		/**
+		 * Serialization Id.
+		 */
+		private static final long serialVersionUID = -4348877142305226957L;
+
+		public double predictionError = 0;
+
+		public double actionSet = 1;
+
+		public double predictedPayOff = 5;
+
+		public double k;
+
+		public double fitness = .5;
+
+	}
+
+	@Override
+	public String getData(Classifier aClassifier) {
+		String response;
+		XCSClassifierData data = ((XCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		response = "predictionError:" + data.predictionError
+				+ ", predictedPayOff:" + data.predictedPayOff;
+		return response;
 	}
 }

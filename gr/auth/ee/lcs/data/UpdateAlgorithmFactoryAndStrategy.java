@@ -107,4 +107,12 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 */
 	protected abstract void updateSet(ClassifierSet setA, ClassifierSet setB);
 
+	/**
+	 * Returns a string with the update specific data.
+	 * 
+	 * @param aClassifier
+	 * @return
+	 */
+	public abstract String getData(Classifier aClassifier);
+
 }

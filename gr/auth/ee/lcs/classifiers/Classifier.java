@@ -6,7 +6,8 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import java.io.Serializable;
 
 /**
- * Represents a single classifier/ rule.
+ * Represents a single classifier/ rule. Connects to the representation through
+ * a visitor pattern.
  * 
  * @author Miltos Allamanis
  */
@@ -44,7 +45,14 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * An object (of undefined type) that is used by the update algorithms.
 	 */
-	public Serializable updateData;
+	private Serializable updateData;
+
+	/**
+	 * @return the update object
+	 */
+	public final Serializable getUpdateDataObject() {
+		return updateData;
+	}
 
 	/**
 	 * A boolean array indicating which dataset instances the rule matches.
@@ -89,20 +97,23 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
 	 * Getter for the subsumption ability.
+	 * 
 	 * @return true if the classifier is strong enough to subsume
 	 */
-	public final boolean canSubsume(){
+	public final boolean canSubsume() {
 		return canSubsume;
 	}
-	
+
 	/**
 	 * Sets the classifier's subsumption ability.
-	 * @param canSubsumeAbility true if the classifier is able to subsume
+	 * 
+	 * @param canSubsumeAbility
+	 *            true if the classifier is able to subsume
 	 */
 	public final void setSubsumptionAbility(final boolean canSubsumeAbility) {
 		canSubsume = canSubsumeAbility;
 	}
-	
+
 	/**
 	 * An object for saving the transformation specific data.
 	 */

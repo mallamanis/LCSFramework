@@ -19,7 +19,7 @@ import weka.core.Instances;
 public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 	/**
-	 * A inner abstract class that represents a single attribute
+	 * A inner abstract class that represents a single attribute.
 	 * 
 	 * @author Miltos Allamanis
 	 */

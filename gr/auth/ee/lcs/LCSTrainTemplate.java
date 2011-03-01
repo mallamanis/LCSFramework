@@ -62,7 +62,8 @@ public class LCSTrainTemplate {
 		 * Cover if necessary
 		 */
 		if (correctSet.getNumberOfMacroclassifiers() == 0) {
-			Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+			Classifier coveringClassifier = ClassifierTransformBridge
+					.getInstance()
 					.createRandomCoveringClassifier(
 							ClassifierTransformBridge.instances[dataInstanceIndex],
 							expectedAction);

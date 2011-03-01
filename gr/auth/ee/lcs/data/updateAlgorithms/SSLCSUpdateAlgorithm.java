@@ -2,7 +2,6 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
 
 /**
  * SS-LCS Update Algorithm.
@@ -49,8 +48,9 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	@Override
 	public final double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		GenericSLCSClassifierData data = (GenericSLCSClassifierData) aClassifier.updateData;
-		;
+		SLCSClassifierData data = (SLCSClassifierData) aClassifier
+				.getUpdateDataObject();
+
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
@@ -75,7 +75,8 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	@Override
 	public final void updateFitness(final Classifier aClassifier,
 			final int numerosity, final ClassifierSet correctSet) {
-		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
+		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+				.getUpdateDataObject());
 
 		if (correctSet.getClassifierNumerosity(aClassifier) > 0) {
 			// aClassifier belongs to correctSet

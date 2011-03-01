@@ -3,7 +3,6 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
 
 import java.io.Serializable;
 
@@ -34,7 +33,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	@Override
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial parameters
-		return new GenericSLCSClassifierData();
+		return new SLCSClassifierData();
 	}
 
 	/*
@@ -47,7 +46,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	@Override
 	public final void setComparisonValue(Classifier aClassifier, int mode,
 			double comparisonValue) {
-		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
+		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: More generic
 
 	}
@@ -79,7 +79,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			final ClassifierSet setB) {
 		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
 			Classifier cl = setA.getClassifier(i);
-			GenericSLCSClassifierData data = ((GenericSLCSClassifierData) cl.updateData);
+			SLCSClassifierData data = ((SLCSClassifierData) cl
+					.getUpdateDataObject());
 			data.ns = (data.ns * data.msa + setB.getTotalNumerosity())
 					/ (data.msa + 1);
 
@@ -90,7 +91,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		}
 
 	}
-	
+
 	/**
 	 * The fitness threshold for subsumption.
 	 */
@@ -99,7 +100,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * The experience threshold for subsumption.
 	 */
 	private final int subsumptionExperienceThreshold;
-	
+
 	/**
 	 * Implementation of the subsumption strength.
 	 * 
@@ -107,9 +108,62 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 *            the classifier, whose subsumption ability is to be updated
 	 */
 	protected final void updateSubsumption(final Classifier aClassifier) {
-		aClassifier.setSubsumptionAbility( (aClassifier
-				.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
-				&& (aClassifier.experience > subsumptionExperienceThreshold));
+		aClassifier
+				.setSubsumptionAbility((aClassifier
+						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
+						&& (aClassifier.experience > subsumptionExperienceThreshold));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
+	 */
+	public String getData(Classifier aClassifier) {
+		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		return "tp:" + data.tp + "msa:" + data.msa;
+	}
+
+	class SLCSClassifierData implements Serializable {
+
+		/**
+		 * serial for versions.
+		 */
+		private static final long serialVersionUID = -20798032843413916L;
+
+		/**
+		 *
+		 */
+		public double fitness = .5;
+
+		/**
+		 * niche set size estimation.
+		 */
+		public double ns = 1;
+
+		/**
+		 * Match Set Appearances.
+		 */
+		public int msa = 1;
+
+		/**
+		 * true positives.
+		 */
+		public int tp = 1;
+
+		/**
+		 * false positives.
+		 */
+		public int fp = 0;
+
+		/**
+		 * Strength.
+		 */
+		public double str = 0;
+
 	}
 
 }

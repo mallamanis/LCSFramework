@@ -12,7 +12,6 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
-import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
@@ -100,9 +99,9 @@ public class ComplexRepresentationLCSTest {
 							+ "cov:"
 							+ rulePopulation.getClassifier(i).getCoverage());
 			// System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
-			System.out.println("tp: "
-					+ ((GenericSLCSClassifierData) (rulePopulation
-							.getClassifier(i).updateData)).tp);
+			System.out
+					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
+							.getData((rulePopulation.getClassifier(i))));
 		}
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
