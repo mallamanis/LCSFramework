@@ -32,7 +32,7 @@ public class MacroclassifierTest {
 		test = new SimpleBooleanRepresentation(0.5, 4);
 		ClassifierTransformBridge.setInstance(test);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				.1, 10, .99, .1, .99, 50);
+				.1, 10, .99, .1, 50);
 	}
 
 	@Test

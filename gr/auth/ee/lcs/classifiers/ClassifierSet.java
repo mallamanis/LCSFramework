@@ -130,7 +130,7 @@ public class ClassifierSet implements Serializable {
 			Classifier aClassifier = macro.myClassifier;
 			for (int i = 0; i < myMacroclassifiers.size(); i++) {
 				Classifier theClassifier = myMacroclassifiers.elementAt(i).myClassifier;
-				if (theClassifier.canSubsume) {
+				if (theClassifier.canSubsume()) {
 					if (theClassifier.isMoreGeneral(aClassifier)) {
 						// Subsume and control size...
 						myMacroclassifiers.elementAt(i).numerosity += numerosity;

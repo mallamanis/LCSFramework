@@ -19,9 +19,15 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * Private variables: the UCS parameter sharing.
+	 * accuracy0 is considered the subsumption fitness threshold
 	 */
 	private final double a, accuracy0, n, b;
-
+	
+	/**
+	 * The experience threshold for subsumption.
+	 */
+	private final int subsumptionExperienceThreshold;
+	
 	/**
 	 * Default constructor.
 	 * 
@@ -41,12 +47,12 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
-			final double fitnessThreshold, final int experienceThreshold) {
-		super(fitnessThreshold, experienceThreshold);
+			final int experienceThreshold) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
 		this.b = learningRate;
+		subsumptionExperienceThreshold = experienceThreshold;
 	}
 
 	/*
@@ -105,21 +111,27 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * match set setB is the correct set
 	 */
 	@Override
-	protected void updateSet(final ClassifierSet matchSet,
+	protected final void updateSet(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		double strengthSum = 0;
 		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
 			Classifier cl = matchSet.getClassifier(i);
 			GenericSLCSClassifierData data = ((GenericSLCSClassifierData) cl.updateData);
-
+			cl.experience++;
 			data.msa += 1;
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1;
-				double accuracy = ((double) data.tp) / ((double) cl.experience);
+				double accuracy = ((double) data.tp) / ((double) data.msa);
 				if (accuracy > accuracy0) {
 					data.str = 1;
+					
+					//Check subsumption					 
+					if (cl.experience >= this.subsumptionExperienceThreshold)
+						cl.setSubsumptionAbility(true);
+					
 				} else {
 					data.str = a * Math.pow(accuracy / accuracy0, n);
+					cl.setSubsumptionAbility(false);
 				}
 
 				strengthSum += data.str * matchSet.getClassifierNumerosity(i);
@@ -128,8 +140,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				data.str = 0;
 			}
 
-			this.updateSubsumption(cl);
-			cl.experience++;
+			
+			
 		}
 
 		// Fix for avoiding problems...

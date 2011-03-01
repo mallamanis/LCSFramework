@@ -66,29 +66,6 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	}
 
 	/**
-	 * The fitness threshold for subsumption.
-	 */
-	private final double subsumptionFitnessThreshold;
-	/**
-	 * The experience threshold for subsumption.
-	 */
-	private final int subsumptionExperienceThreshold;
-
-	/**
-	 * The constructor.
-	 * 
-	 * @param subsumptionFitness
-	 *            the fitness threshold for subsumption
-	 * @param subsumptionExperience
-	 *            the experience threshold for subsumption
-	 */
-	public UpdateAlgorithmFactoryAndStrategy(final double subsumptionFitness,
-			final int subsumptionExperience) {
-		subsumptionFitnessThreshold = subsumptionFitness;
-		subsumptionExperienceThreshold = subsumptionExperience;
-	}
-
-	/**
 	 * Returns the implementation specific attribute that represents the
 	 * classifier's comparison to the other's.
 	 * 
@@ -129,17 +106,5 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 *            The second set to take into consideration during update
 	 */
 	protected abstract void updateSet(ClassifierSet setA, ClassifierSet setB);
-
-	/**
-	 * Concrete implementation of the subsumption strength.
-	 * 
-	 * @param aClassifier
-	 *            the classifier, whose subsumption ability is to be updated
-	 */
-	protected void updateSubsumption(final Classifier aClassifier) {
-		aClassifier.canSubsume = (aClassifier
-				.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
-				&& (aClassifier.experience > subsumptionExperienceThreshold);
-	}
 
 }

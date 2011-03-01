@@ -124,7 +124,7 @@ public class ClassifierSetTest {
 		ClassifierSet testSet = new ClassifierSet(null);
 		Classifier subsumableClassifier = new Classifier(new ExtendedBitSet(
 				"10010110"));
-		subsumableClassifier.canSubsume = true;
+		subsumableClassifier.setSubsumptionAbility(true);
 		testSet.addClassifier(new Macroclassifier(subsumableClassifier, 1),
 				false);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);

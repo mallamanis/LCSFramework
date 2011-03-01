@@ -16,10 +16,6 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-/**
- * @author miltiadis
- * 
- */
 public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 	/**

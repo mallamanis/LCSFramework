@@ -21,7 +21,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 */
 	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
 			final int subsumptionExperience) {
-		super(subsumptionFitness, subsumptionExperience);
+		this.subsumptionFitnessThreshold = subsumptionFitness;
+		this.subsumptionExperienceThreshold = subsumptionExperience;
 	}
 
 	/*
@@ -88,6 +89,27 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			cl.experience++;
 		}
 
+	}
+	
+	/**
+	 * The fitness threshold for subsumption.
+	 */
+	private final double subsumptionFitnessThreshold;
+	/**
+	 * The experience threshold for subsumption.
+	 */
+	private final int subsumptionExperienceThreshold;
+	
+	/**
+	 * Implementation of the subsumption strength.
+	 * 
+	 * @param aClassifier
+	 *            the classifier, whose subsumption ability is to be updated
+	 */
+	protected final void updateSubsumption(final Classifier aClassifier) {
+		aClassifier.setSubsumptionAbility( (aClassifier
+				.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
+				&& (aClassifier.experience > subsumptionExperienceThreshold));
 	}
 
 }

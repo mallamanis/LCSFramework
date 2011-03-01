@@ -85,8 +85,24 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * A boolean representing the classifier's ability to subsume.
 	 */
-	public boolean canSubsume = false;
+	private boolean canSubsume = false;
 
+	/**
+	 * Getter for the subsumption ability.
+	 * @return true if the classifier is strong enough to subsume
+	 */
+	public final boolean canSubsume(){
+		return canSubsume;
+	}
+	
+	/**
+	 * Sets the classifier's subsumption ability.
+	 * @param canSubsumeAbility true if the classifier is able to subsume
+	 */
+	public final void setSubsumptionAbility(final boolean canSubsumeAbility) {
+		canSubsume = canSubsumeAbility;
+	}
+	
 	/**
 	 * An object for saving the transformation specific data.
 	 */

@@ -40,6 +40,15 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	private final double alpha;
 
 	/**
+	 * The fitness threshold for subsumption.
+	 */
+	private final double subsumptionFitnessThreshold;
+	/**
+	 * The experience threshold for subsumption.
+	 */
+	private final int subsumptionExperienceThreshold;
+	
+	/**
 	 * n factor.
 	 */
 	private final double n;
@@ -65,7 +74,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	public XCSUpdateAlgorithm(final double beta, final double P,
 			final double e0, final double alpha, final double n,
 			final double fitnessThreshold, final int experienceThreshold) {
-		super(fitnessThreshold, experienceThreshold);
+		this.subsumptionFitnessThreshold = fitnessThreshold;
+		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.beta = beta;
 		this.payoff = P;
 		this.e0 = e0;
@@ -83,6 +93,18 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial Parameters
 		return new XCSClassifierData();
+	}
+	
+	/**
+	 * Implementation of the subsumption strength.
+	 * 
+	 * @param aClassifier
+	 *            the classifier, whose subsumption ability is to be updated
+	 */
+	protected final void updateSubsumption(final Classifier aClassifier) {
+		aClassifier.setSubsumptionAbility( (aClassifier
+				.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
+				&& (aClassifier.experience > subsumptionExperienceThreshold));
 	}
 
 	/*
