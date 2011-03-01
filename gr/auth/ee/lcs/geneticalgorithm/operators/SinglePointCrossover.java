@@ -2,6 +2,7 @@ package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 
 /**
@@ -28,7 +29,14 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 				.round(Math.random() * chromosomeSize - 1);
 		child = new Classifier(performCrossover(classifierA, classifierB,
 				mutationPoint));
-		child.fitness = (classifierA.fitness + classifierB.fitness) / 2;
+		double newFitness = classifierA
+				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+				+ classifierB
+						.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+		newFitness /= 2;
+		child.setComparisonValue(
+				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION,
+				newFitness);
 		// TODO: Set specific update data
 		return child;
 	}

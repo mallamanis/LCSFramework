@@ -22,27 +22,27 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * XCS learning rate.
 	 */
-	private double beta;
+	private final double beta;
 
 	/**
 	 * Correct classification payoff.
 	 */
-	private double payoff;
+	private final double payoff;
 
 	/**
 	 * Accepted Error e0 (accuracy function parameter).
 	 */
-	private double e0;
+	private final double e0;
 
 	/**
 	 * alpha rate (accuracy function parameter).
 	 */
-	private double alpha;
+	private final double alpha;
 
 	/**
 	 * n factor.
 	 */
-	private double n;
+	private final double n;
 
 	/**
 	 * Constructor.
@@ -83,6 +83,39 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial Parameters
 		return new XCSClassifierData();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
+	@Override
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		final XCSClassifierData data = ((XCSClassifierData) aClassifier.updateData);
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness;
+		case COMPARISON_MODE_DELETION:
+
+			return data.k; // TODO: Something else?
+		case COMPARISON_MODE_EXPLOITATION:
+
+			return data.predictedPayOff;
+		default:
+			return 0;
+		}
+	}
+
+	@Override
+	public void setComparisonValue(Classifier aClassifier, int mode,
+			double comparisonValue) {
+		XCSClassifierData data = ((XCSClassifierData) aClassifier.updateData);
+		data.fitness = comparisonValue; // TODO: Mode changes?
+
 	}
 
 	/**
@@ -151,33 +184,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			XCSClassifierData data = ((XCSClassifierData) cl.updateData);
 
 			// per micro-classifier
-			cl.fitness += beta * (data.k / accuracySum - cl.fitness);
+			data.fitness += beta * (data.k / accuracySum - data.fitness);
 		}
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
-	 */
-	@Override
-	public double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		final XCSClassifierData data;
-		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.fitness;
-		case COMPARISON_MODE_DELETION:
-			data = ((XCSClassifierData) aClassifier.updateData);
-			return data.k; // TODO: Something else?
-		case COMPARISON_MODE_EXPLOITATION:
-			data = ((XCSClassifierData) aClassifier.updateData);
-			return data.predictedPayOff;
-		default:
-			return 0;
-		}
 	}
 }

@@ -14,7 +14,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	/**
 	 * Reward and penalty percentage parameters.
 	 */
-	private double strengthReward, penalty;
+	private final double strengthReward, penalty;
 
 	/**
 	 * Constructor of update algorithm.
@@ -42,6 +42,32 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
+	@Override
+	public final double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		GenericSLCSClassifierData data = (GenericSLCSClassifierData) aClassifier.updateData;
+		;
+		switch (mode) {
+		case COMPARISON_MODE_DELETION:
+			// TODO: Something else?
+			return data.fitness / data.ns;
+		case COMPARISON_MODE_EXPLOITATION:
+			return data.str;
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness;
+		default:
+			return 0;
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm#
 	 * updateFitness(gr.auth.ee.lcs.classifiers.Classifier, int,
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
@@ -60,34 +86,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 			data.str -= penalty * strengthReward / data.ns;
 		}
 
-		aClassifier.fitness = (data.str / data.msa);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
-	 */
-	@Override
-	public final double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		GenericSLCSClassifierData data;
-		switch (mode) {
-		case COMPARISON_MODE_DELETION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			// TODO: Something else?
-			return aClassifier.fitness / data.ns;
-		case COMPARISON_MODE_EXPLOITATION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return data.str;
-		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.fitness;
-		default:
-			return 0;
-		}
+		data.fitness = (data.str / data.msa);
 
 	}
 

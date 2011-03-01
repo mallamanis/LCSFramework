@@ -28,7 +28,10 @@ public class BestFitnessTournamentSelectorTest {
 		population = new ClassifierSet(null);
 		for (int i = 0; i < 3; i++) {
 			Classifier aClassifier = new Classifier();
-			aClassifier.fitness = i + 1;
+			aClassifier
+					.setComparisonValue(
+							UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION,
+							i + 1);
 			aClassifier.setActionAdvocated(i);
 			aClassifier.experience = 100;
 			population.addClassifier(new Macroclassifier(aClassifier, i + 1),

@@ -15,7 +15,7 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	/**
 	 * The strictness factor for updating.
 	 */
-	private double n;
+	private final double n;
 
 	/**
 	 * Object's Constuctor.
@@ -36,6 +36,33 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
+	@Override
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		GenericSLCSClassifierData data = (GenericSLCSClassifierData) aClassifier.updateData;
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
+		case COMPARISON_MODE_DELETION:
+			return data.fitness
+					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
+							.isNaN(data.ns) ? 1 : data.ns) + 1))
+					* (((aClassifier.getCoverage() == 0) && (aClassifier.experience == 1)) ? 0.
+							: 1);
+			// TODO: Something else?
+		case COMPARISON_MODE_EXPLOITATION:
+			return (((double) (data.tp)) / (double) (data.msa));
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm#
 	 * updateFitness(gr.auth.ee.lcs.classifiers.Classifier, int,
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
@@ -50,38 +77,8 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 			data.fp += 1;
 
 		// Niche set sharing heuristic...
-		aClassifier.fitness = Math.pow(((double) (data.tp))
-				/ (double) (data.msa), n);
+		data.fitness = Math.pow(((double) (data.tp)) / (double) (data.msa), n);
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
-	 */
-	@Override
-	public double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		GenericSLCSClassifierData data;
-		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.fitness * (aClassifier.experience < 8 ? 0 : 1);
-		case COMPARISON_MODE_DELETION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return aClassifier.fitness
-					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1))
-					* (((aClassifier.getCoverage() == 0) && aClassifier.experience == 1) ? 0.
-							: 1);
-			// TODO: Something else?
-		case COMPARISON_MODE_EXPLOITATION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return (((double) (data.tp)) / (double) (data.msa));
-		}
-		return 0;
 	}
 
 }

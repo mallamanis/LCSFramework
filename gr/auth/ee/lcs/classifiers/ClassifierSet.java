@@ -1,5 +1,7 @@
 package gr.auth.ee.lcs.classifiers;
 
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -86,7 +88,7 @@ public class ClassifierSet implements Serializable {
 	/**
 	 * Macroclassifier vector.
 	 */
-	private Vector<Macroclassifier> myMacroclassifiers;
+	private final Vector<Macroclassifier> myMacroclassifiers;
 
 	/**
 	 * An interface for a strategy on deleting classifiers from the set. This
@@ -280,8 +282,9 @@ public class ClassifierSet implements Serializable {
 	public final void postProcessThreshold(final int minExperience,
 			final float minFitness) {
 		for (int i = this.myMacroclassifiers.size() - 1; i >= 0; i--) {
-			if (this.myMacroclassifiers.elementAt(i).myClassifier.experience < minExperience
-					|| this.myMacroclassifiers.elementAt(i).myClassifier.fitness < minFitness)
+			if ((this.myMacroclassifiers.elementAt(i).myClassifier.experience < minExperience)
+					|| (this.myMacroclassifiers.elementAt(i).myClassifier
+							.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION) < minFitness))
 				this.myMacroclassifiers.removeElementAt(i);
 		}
 

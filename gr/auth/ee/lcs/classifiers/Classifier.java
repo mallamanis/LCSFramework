@@ -39,7 +39,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * The fitness of the classifier.
 	 */
-	public double fitness = .5; // TODO: Through setters-getters
+	private double fitness = .5; // TODO: Through setters-getters
 
 	/**
 	 * An object (of undefined type) that is used by the update algorithms.
@@ -267,6 +267,20 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	public final void setActionAdvocated(final int action) {
 		transformBridge.setClassification(this, action);
 		actionCache = -1;
+	}
+
+	/**
+	 * Call the update strategy for setting value.
+	 * 
+	 * @param mode
+	 *            the mode to set
+	 * @param comparisonValue
+	 *            the comparison value to set
+	 */
+	public final void setComparisonValue(final int mode,
+			final double comparisonValue) {
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy.setComparisonValue(
+				this, mode, comparisonValue);
 	}
 
 	/**

@@ -15,6 +15,11 @@ public class GenericSLCSClassifierData implements Serializable {
 	private static final long serialVersionUID = -20798032843413916L;
 
 	/**
+	 *
+	 */
+	public double fitness = .5;
+
+	/**
 	 * niche set size estimation.
 	 */
 	public double ns = 1;

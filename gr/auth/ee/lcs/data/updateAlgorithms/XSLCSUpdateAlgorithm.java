@@ -15,13 +15,28 @@ import gr.auth.ee.lcs.data.updateAlgorithms.data.GenericSLCSClassifierData;
 @Deprecated
 public class XSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
+	private final double beta = 0.1;
+
 	public XSLCSUpdateAlgorithm(double subsumptionFitness,
 			int subsumptionExperience) {
 		super(subsumptionFitness, subsumptionExperience);
 
 	}
 
-	private double beta = 0.1;
+	@Override
+	public double getComparisonValue(Classifier aClassifier, int mode) {
+		GenericSLCSClassifierData data = (GenericSLCSClassifierData) aClassifier.updateData;
+		;
+		switch (mode) {
+		case COMPARISON_MODE_DELETION:
+			return data.fitness / data.ns; // TODO: Something else?
+		case COMPARISON_MODE_EXPLOITATION:
+			return (((double) (data.tp)) / (double) (data.msa));
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness;
+		}
+		return 0;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -47,25 +62,9 @@ public class XSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 			data.fp += (beta * (Math.abs(acc - data.fp) - data.fp)) * 100;
 
-			aClassifier.fitness = 1 / data.ns / (data.fp + .01);
+			data.fitness = 1 / data.ns / (data.fp + .01);
 
 		}
-	}
-
-	@Override
-	public double getComparisonValue(Classifier aClassifier, int mode) {
-		GenericSLCSClassifierData data;
-		switch (mode) {
-		case COMPARISON_MODE_DELETION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return aClassifier.fitness / data.ns; // TODO: Something else?
-		case COMPARISON_MODE_EXPLOITATION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return (((double) (data.tp)) / (double) (data.msa));
-		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.fitness;
-		}
-		return 0;
 	}
 
 }

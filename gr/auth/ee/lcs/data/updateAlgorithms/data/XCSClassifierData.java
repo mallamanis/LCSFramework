@@ -22,4 +22,6 @@ public class XCSClassifierData implements Serializable {
 
 	public double k;
 
+	public double fitness = .5;
+
 }

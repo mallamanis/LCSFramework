@@ -67,7 +67,10 @@ public class SimpleBoolTest {
 									.println(rulePopulation.getClassifier(i)
 											.toString()
 											+ " fit:"
-											+ rulePopulation.getClassifier(i).fitness
+											+ rulePopulation
+													.getClassifier(i)
+													.getComparisonValue(
+															UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
 											+ " exp:"
 											+ rulePopulation.getClassifier(i).experience
 											+ " num:"
@@ -80,18 +83,6 @@ public class SimpleBoolTest {
 
 		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
-	}
-
-	private static void fillSet(int trainSet[][][]) {
-		// Fill with (aANDb)OR(aXORc)
-		trainSet[0][0][0] = 0;
-		trainSet[0][0][1] = 1;
-		trainSet[0][1][0] = 2;
-		trainSet[0][1][1] = 2;
-		trainSet[1][0][0] = 3;
-		trainSet[1][0][1] = 3;
-		trainSet[1][1][0] = 3;
-		trainSet[1][1][1] = 3;
 	}
 
 	private static void fillInstance() {
@@ -127,6 +118,18 @@ public class SimpleBoolTest {
 		ClassifierTransformBridge.instances[7][1] = 1;
 		ClassifierTransformBridge.instances[7][2] = 1;
 
+	}
+
+	private static void fillSet(int trainSet[][][]) {
+		// Fill with (aANDb)OR(aXORc)
+		trainSet[0][0][0] = 0;
+		trainSet[0][0][1] = 1;
+		trainSet[0][1][0] = 2;
+		trainSet[0][1][1] = 2;
+		trainSet[1][0][0] = 3;
+		trainSet[1][0][1] = 3;
+		trainSet[1][1][0] = 3;
+		trainSet[1][1][1] = 3;
 	}
 
 }

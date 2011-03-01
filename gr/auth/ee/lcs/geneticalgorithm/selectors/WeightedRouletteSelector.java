@@ -14,6 +14,27 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 public class WeightedRouletteSelector implements INaturalSelector {
 
 	/**
+	 * The comparison mode
+	 */
+	private final int mode;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param comparisonMode
+	 *            the comparison mode
+	 */
+	WeightedRouletteSelector(final int comparisonMode) {
+		mode = comparisonMode;
+	}
+
+	@Override
+	public int select(ClassifierSet fromPopulation) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
 	 * Roulette Wheel selection strategy.
 	 * 
 	 * @param howManyToSelect
@@ -25,13 +46,13 @@ public class WeightedRouletteSelector implements INaturalSelector {
 	 *            added
 	 */
 	@Override
-	public void select(int howManyToSelect, ClassifierSet fromPopulation,
-			ClassifierSet toPopulation) {
+	public void select(final int howManyToSelect,
+			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
 		// Find total sum
 		double fitnessSum = 0;
 		for (int i = 0; i < fromPopulation.getNumberOfMacroclassifiers(); i++) {
 			fitnessSum += fromPopulation.getClassifierNumerosity(i)
-					* fromPopulation.getClassifier(i).fitness;
+					* fromPopulation.getClassifier(i).getComparisonValue(mode);
 		}
 
 		// Repeat roulette for howManyToSelect times
@@ -44,7 +65,8 @@ public class WeightedRouletteSelector implements INaturalSelector {
 				selectedIndex++;
 				tempSum += fromPopulation
 						.getClassifierNumerosity(selectedIndex)
-						* fromPopulation.getClassifier(selectedIndex).fitness;
+						* fromPopulation.getClassifier(selectedIndex)
+								.getComparisonValue(mode);
 			} while (tempSum < rand);
 			// Add selectedIndex
 			toPopulation.addClassifier(
@@ -52,12 +74,6 @@ public class WeightedRouletteSelector implements INaturalSelector {
 							.getClassifier(selectedIndex), 1), false);
 		} // next roulette
 
-	}
-
-	@Override
-	public int select(ClassifierSet fromPopulation) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }

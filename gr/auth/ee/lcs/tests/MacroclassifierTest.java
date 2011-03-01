@@ -9,7 +9,9 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,8 @@ public class MacroclassifierTest {
 	public void setUp() throws Exception {
 		test = new SimpleBooleanRepresentation(0.5, 4);
 		ClassifierTransformBridge.setInstance(test);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
+				.1, 10, .99, .1, .99, 50);
 	}
 
 	@Test
@@ -39,7 +43,9 @@ public class MacroclassifierTest {
 		assertTrue(clone.equals(parentClassifier));
 		assertTrue(parentClassifier.equals(clone));
 		assertEquals(clone.experience, 1);
-		assertTrue(clone.fitness == parentClassifier.fitness);
+		assertTrue(clone
+				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
+				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION));
 
 		ExtendedBitSet a = parentClassifier;
 		ExtendedBitSet b = clone;

@@ -20,7 +20,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Private variables: the UCS parameter sharing.
 	 */
-	private double a, accuracy0, n, b;
+	private final double a, accuracy0, n, b;
 
 	/**
 	 * Default constructor.
@@ -44,9 +44,44 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			final double fitnessThreshold, final int experienceThreshold) {
 		super(fitnessThreshold, experienceThreshold);
 		this.a = alpha;
-		this.n = n;
+		this.n = nParameter;
 		this.accuracy0 = acc0;
 		this.b = learningRate;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
+	@Override
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		GenericSLCSClassifierData data = (GenericSLCSClassifierData) aClassifier.updateData;
+
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
+		case COMPARISON_MODE_DELETION:
+			return data.fitness
+					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
+							.isNaN(data.ns) ? 1 : data.ns) + 1))
+					* (((aClassifier.getCoverage() == 0) && (aClassifier.experience == 1)) ? 0.
+							: 1);
+			// TODO: Something else?
+		case COMPARISON_MODE_EXPLOITATION:
+			return (((double) (data.tp)) / (double) (data.msa));
+		}
+		return 0;
+	}
+
+	@Override
+	public void setComparisonValue(Classifier aClassifier, int mode,
+			double comparisonValue) {
+		GenericSLCSClassifierData data = ((GenericSLCSClassifierData) aClassifier.updateData);
+		data.fitness = comparisonValue;
 	}
 
 	/*
@@ -82,7 +117,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				data.tp += 1;
 				double accuracy = ((double) data.tp) / ((double) cl.experience);
 				if (accuracy > accuracy0) {
-					data.str = (cl.getCoverage() + 1);
+					data.str = 1;
 				} else {
 					data.str = a * Math.pow(accuracy / accuracy0, n);
 				}
@@ -104,38 +139,9 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
 			Classifier cl = matchSet.getClassifier(i);
 			GenericSLCSClassifierData data = ((GenericSLCSClassifierData) cl.updateData);
-			cl.fitness += b * (data.str / strengthSum - cl.fitness);
+			data.fitness += b * (data.str / strengthSum - data.fitness);
 		}
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
-	 */
-	@Override
-	public double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		GenericSLCSClassifierData data;
-		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.fitness * (aClassifier.experience < 8 ? 0 : 1);
-		case COMPARISON_MODE_DELETION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return aClassifier.fitness
-					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1))
-					* (((aClassifier.getCoverage() == 0) && aClassifier.experience == 1) ? 0.
-							: 1);
-			// TODO: Something else?
-		case COMPARISON_MODE_EXPLOITATION:
-			data = (GenericSLCSClassifierData) aClassifier.updateData;
-			return (((double) (data.tp)) / (double) (data.msa));
-		}
-		return 0;
 	}
 
 }

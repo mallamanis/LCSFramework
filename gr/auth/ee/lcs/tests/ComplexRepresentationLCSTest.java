@@ -70,20 +70,35 @@ public class ComplexRepresentationLCSTest {
 		trainer.train(myExample, 1000, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
-			System.out.println(rulePopulation.getClassifier(i).toString()
-					+ " fit:" + rulePopulation.getClassifier(i).fitness
-					+ " exp:" + rulePopulation.getClassifier(i).experience
-					+ " num:" + rulePopulation.getClassifierNumerosity(i));
+			System.out
+					.println(rulePopulation.getClassifier(i).toString()
+							+ " fit:"
+							+ rulePopulation
+									.getClassifier(i)
+									.getComparisonValue(
+											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+							+ " exp:"
+							+ rulePopulation.getClassifier(i).experience
+							+ " num:"
+							+ rulePopulation.getClassifierNumerosity(i));
 			// System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
 		}
 		System.out.println("Post process...");
 		// rulePopulation.postProcessThreshold(4, (float)0);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
-			System.out.println(rulePopulation.getClassifier(i).toString()
-					+ " fit:" + rulePopulation.getClassifier(i).fitness
-					+ " exp:" + rulePopulation.getClassifier(i).experience
-					+ " num:" + rulePopulation.getClassifierNumerosity(i)
-					+ "cov:" + rulePopulation.getClassifier(i).getCoverage());
+			System.out
+					.println(rulePopulation.getClassifier(i).toString()
+							+ " fit:"
+							+ rulePopulation
+									.getClassifier(i)
+									.getComparisonValue(
+											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+							+ " exp:"
+							+ rulePopulation.getClassifier(i).experience
+							+ " num:"
+							+ rulePopulation.getClassifierNumerosity(i)
+							+ "cov:"
+							+ rulePopulation.getClassifier(i).getCoverage());
 			// System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
 			System.out.println("tp: "
 					+ ((GenericSLCSClassifierData) (rulePopulation
