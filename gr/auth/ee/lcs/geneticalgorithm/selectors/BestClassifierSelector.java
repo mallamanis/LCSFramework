@@ -27,9 +27,9 @@ public class BestClassifierSelector implements INaturalSelector {
 	/**
 	 * Default constructor.
 	 * 
-	 * @param max
+	 * @param maximum
 	 *            if by best we mean the max fitness then true, else false
-	 * @param mode
+	 * @param comparisonMode
 	 *            the mode of the values taken
 	 */
 	public BestClassifierSelector(final boolean maximum,
@@ -71,7 +71,8 @@ public class BestClassifierSelector implements INaturalSelector {
 				: Double.POSITIVE_INFINITY;
 		int bestExp = 0;
 		int bestIndex = -1;
-		for (int i = 0; i < fromPopulation.getNumberOfMacroclassifiers(); i++) {
+		final int popSize = fromPopulation.getNumberOfMacroclassifiers();
+		for (int i = 0; i < popSize; i++) {
 			double temp = fromPopulation.getClassifier(i).getComparisonValue(
 					mode);
 			if ((max ? 1. : -1.) * (temp - bestFitness) > 0) {

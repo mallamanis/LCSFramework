@@ -14,11 +14,6 @@ import java.io.Serializable;
 public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
-	 * the initial parameters of the data object.
-	 */
-	public static XCSClassifierData initialParameters;
-
-	/**
 	 * XCS learning rate.
 	 */
 	private final double beta;
@@ -115,7 +110,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier,
+	public final double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		final XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -133,9 +128,16 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#setComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
+	 */
 	@Override
-	public void setComparisonValue(Classifier aClassifier, int mode,
-			double comparisonValue) {
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
 		XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: Mode changes?
@@ -152,7 +154,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the correct set
 	 */
 	@Override
-	public void updateSet(final ClassifierSet setA, final ClassifierSet setB) {
+	public final void updateSet(final ClassifierSet setA,
+			final ClassifierSet setB) {
 		double accuracySum = 0;
 
 		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
@@ -239,8 +242,15 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
+	 */
 	@Override
-	public String getData(Classifier aClassifier) {
+	public final String getData(final Classifier aClassifier) {
 		String response;
 		XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());

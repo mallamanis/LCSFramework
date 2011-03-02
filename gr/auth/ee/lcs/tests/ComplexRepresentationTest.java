@@ -40,10 +40,9 @@ public class ComplexRepresentationTest {
 
 	@Test
 	public void coverageMatches() {
-		double visionVector[] = { 0, 1.1256, 2 };
+		double visionVector[] = { 0, 1.1256, 2, 0 };
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
-			Classifier cover = rep.createRandomCoveringClassifier(visionVector,
-					0);
+			Classifier cover = rep.createRandomCoveringClassifier(visionVector);
 			assertTrue(rep.isMatch(visionVector, cover));
 		}
 	}

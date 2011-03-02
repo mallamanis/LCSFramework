@@ -46,9 +46,7 @@ public class SimpleBoolTest {
 								false,
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 
-		int trainSet[][][] = new int[2][2][2];
-		fillSet(trainSet);
-		ClassifierTransformBridge.instances = new double[8][3];
+		ClassifierTransformBridge.instances = new double[8][4];
 		fillInstance();
 
 		for (int rep = 0; rep < 8000; rep++) {// Iterate
@@ -57,7 +55,7 @@ public class SimpleBoolTest {
 					for (int c = 0; c < 2; c++) {
 
 						myExample.trainWithInstance(rulePopulation, 4 * a + 2
-								* b + c, trainSet[a][b][c]);
+								* b + c);
 
 						System.out.println("Iteration " + rep + "Trained:" + a
 								+ b + c);
@@ -89,47 +87,43 @@ public class SimpleBoolTest {
 		ClassifierTransformBridge.instances[0][0] = 0;
 		ClassifierTransformBridge.instances[0][1] = 0;
 		ClassifierTransformBridge.instances[0][2] = 0;
+		ClassifierTransformBridge.instances[0][3] = 0;
 
 		ClassifierTransformBridge.instances[1][0] = 1;
 		ClassifierTransformBridge.instances[1][1] = 0;
 		ClassifierTransformBridge.instances[1][2] = 0;
+		ClassifierTransformBridge.instances[1][3] = 1;
 
 		ClassifierTransformBridge.instances[2][0] = 0;
 		ClassifierTransformBridge.instances[2][1] = 1;
 		ClassifierTransformBridge.instances[2][2] = 0;
+		ClassifierTransformBridge.instances[2][3] = 2;
 
 		ClassifierTransformBridge.instances[3][0] = 1;
 		ClassifierTransformBridge.instances[3][1] = 1;
 		ClassifierTransformBridge.instances[3][2] = 0;
+		ClassifierTransformBridge.instances[3][3] = 2;
 
 		ClassifierTransformBridge.instances[4][0] = 0;
 		ClassifierTransformBridge.instances[4][1] = 0;
 		ClassifierTransformBridge.instances[4][2] = 1;
+		ClassifierTransformBridge.instances[4][3] = 3;
 
 		ClassifierTransformBridge.instances[5][0] = 1;
 		ClassifierTransformBridge.instances[5][1] = 0;
 		ClassifierTransformBridge.instances[5][2] = 1;
+		ClassifierTransformBridge.instances[5][3] = 3;
 
 		ClassifierTransformBridge.instances[6][0] = 0;
 		ClassifierTransformBridge.instances[6][1] = 1;
 		ClassifierTransformBridge.instances[6][2] = 1;
+		ClassifierTransformBridge.instances[6][3] = 3;
 
 		ClassifierTransformBridge.instances[7][0] = 1;
 		ClassifierTransformBridge.instances[7][1] = 1;
 		ClassifierTransformBridge.instances[7][2] = 1;
+		ClassifierTransformBridge.instances[7][3] = 3;
 
-	}
-
-	private static void fillSet(int trainSet[][][]) {
-		// Fill with (aANDb)OR(aXORc)
-		trainSet[0][0][0] = 0;
-		trainSet[0][0][1] = 1;
-		trainSet[0][1][0] = 2;
-		trainSet[0][1][1] = 2;
-		trainSet[1][0][0] = 3;
-		trainSet[1][0][1] = 3;
-		trainSet[1][1][0] = 3;
-		trainSet[1][1][1] = 3;
 	}
 
 }

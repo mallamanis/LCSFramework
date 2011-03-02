@@ -99,8 +99,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier(double[],int)
 	 */
 	@Override
-	public Classifier createRandomCoveringClassifier(double[] visionVector,
-			int advocatingAction) {
+	public Classifier createRandomCoveringClassifier(double[] visionVector) {
 		Classifier coverClassifier = new Classifier();
 
 		// Transform visionVector to BitSet (generalization not-set)
@@ -244,6 +243,16 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public void setClassification(Classifier aClassifier, int action) {
 		((int[]) (aClassifier.transformData))[0] = action;
 
+	}
+
+	@Override
+	public boolean classifiesCorrectly(Classifier aClassifier, int instanceIndex) {
+		return this.instances[instanceIndex][this.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0];
+	}
+
+	@Override
+	public boolean classifiesCorrectly(Classifier aClassifier, double[] vision) {
+		return ((int[]) (aClassifier.transformData))[0] == vision[vision.length - 1];
 	}
 
 }

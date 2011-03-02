@@ -75,12 +75,10 @@ public abstract class ClassifierTransformBridge {
 	 * 
 	 * @param visionVector
 	 *            the vision vector to cover
-	 * @param advocatingAction
-	 *            the action the random classifier will advocate for
 	 * @return a random covering classifier
 	 */
 	public abstract Classifier createRandomCoveringClassifier(
-			double[] visionVector, int advocatingAction);
+			double[] visionVector);
 
 	/**
 	 * Fixes a chromosome bit representation in the correct value range (e.g.
@@ -95,6 +93,12 @@ public abstract class ClassifierTransformBridge {
 	 * @return the size of the chromosome (used for the chromosome construction)
 	 */
 	public abstract int getChromosomeSize();
+
+	public abstract boolean classifiesCorrectly(Classifier aClassifier,
+			int instanceIndex);
+
+	public abstract boolean classifiesCorrectly(Classifier aClassifier,
+			double[] vision);
 
 	/**
 	 * Gets the classification as specified by the representation.

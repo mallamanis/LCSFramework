@@ -77,7 +77,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	@Override
 	public final void updateSet(final ClassifierSet setA,
 			final ClassifierSet setB) {
-		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
+		int matchSetSize = setA.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
 			Classifier cl = setA.getClassifier(i);
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
@@ -127,6 +128,12 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		return "tp:" + data.tp + "msa:" + data.msa;
 	}
 
+	/**
+	 * A data object for the *SLCS update algorithms.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
 	class SLCSClassifierData implements Serializable {
 
 		/**

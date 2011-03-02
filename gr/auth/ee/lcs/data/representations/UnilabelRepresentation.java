@@ -7,6 +7,9 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 
 import java.io.IOException;
+import java.util.Enumeration;
+
+import weka.core.Instances;
 
 /**
  * A unilabel representation.
@@ -26,7 +29,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 */
 	public UnilabelRepresentation(Attribute[] attributes,
 			String[] ruleConsequents) {
-		super(attributes, ruleConsequents);
+		super(attributes, ruleConsequents, 1);
 	}
 
 	/**
@@ -41,7 +44,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 */
 	public UnilabelRepresentation(String inputArff, int precision)
 			throws IOException {
-		super(inputArff, precision);
+		super(inputArff, precision, 1);
 	}
 
 	/*
@@ -51,7 +54,17 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * gr.auth.ee.lcs.data.ComplexRepresentation#createClassRepresentation()
 	 */
 	@Override
-	protected void createClassRepresentation() {
+	protected void createClassRepresentation(Instances instances) {
+
+		if (instances.classIndex() < 0)
+			instances.setClassIndex(instances.numAttributes() - 1);
+
+		// Rule Consequents
+		Enumeration<?> classNames = instances.classAttribute()
+				.enumerateValues();
+		String[] ruleConsequents = new String[instances.numClasses()];
+		for (int i = 0; i < instances.numClasses(); i++)
+			ruleConsequents[i] = (String) classNames.nextElement();
 
 		attributeList[attributeList.length - 1] = new UniLabel(chromosomeSize,
 				"class", ruleConsequents);
@@ -163,6 +176,18 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 			chromosome.setIntAt(positionInChromosome, lengthInBits, value);
 		}
 
+	}
+
+	@Override
+	public boolean classifiesCorrectly(Classifier aClassifier, int instanceIndex) {
+		return ((UniLabel) attributeList[attributeList.length - 1])
+				.getValue(aClassifier) == instances[instanceIndex][instances[instanceIndex].length - 1];
+	}
+
+	@Override
+	public boolean classifiesCorrectly(Classifier aClassifier, double[] vision) {
+		return ((UniLabel) attributeList[attributeList.length - 1])
+				.getValue(aClassifier) == vision[vision.length - 1];
 	}
 
 }

@@ -19,6 +19,19 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	private static ClassifierTransformBridge transformBridge;
 
 	/**
+	 * The initial Fitness of a classifier.
+	 */
+	private static final double INITIAL_FITNESS = 0.5;
+
+	public boolean classifyCorrectly(int instanceIndex) {
+		return transformBridge.classifiesCorrectly(this, instanceIndex);
+	}
+
+	public boolean classifyCorrectly(double[] visionVector) {
+		return transformBridge.classifiesCorrectly(this, visionVector);
+	}
+
+	/**
 	 * Set the transform bridge.
 	 * 
 	 * @param bridge
@@ -36,11 +49,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * Serialization code for versioning.
 	 */
 	private static final long serialVersionUID = 8628765535406768159L;
-
-	/**
-	 * The fitness of the classifier.
-	 */
-	private double fitness = .5; // TODO: Through setters-getters
 
 	/**
 	 * An object (of undefined type) that is used by the update algorithms.
@@ -63,12 +71,12 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * A float showing the number of instances that the rule has covered. Used
 	 * for calculating coverage.
 	 */
-	transient protected int covered = 0;
+	private transient int covered = 0;
 
 	/**
 	 * The number of instances we have checked so far. Used for coverage
 	 */
-	transient protected int checked = 0;
+	private transient int checked = 0;
 
 	/**
 	 * The serial number of last classifier (start from the lowest & increment).
@@ -155,7 +163,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	@Override
 	public final Object clone() {
 		Classifier clone = new Classifier(this);
-		clone.fitness = this.fitness;
 		return clone;
 	}
 
@@ -214,18 +221,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final double getCoverage() {
 		if (this.checked == 0)
-			return .5;
+			return INITIAL_FITNESS;
 		return ((double) this.covered) / ((double) this.checked);
 
-	}
-
-	/**
-	 * a getter for the fitness of the classifier.
-	 * 
-	 * @return the classifier's fitness
-	 */
-	public final double getFitness() {
-		return fitness;
 	}
 
 	/**

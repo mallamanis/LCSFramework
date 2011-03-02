@@ -40,7 +40,7 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier,
+	public final double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		SLCSClassifierData data = (SLCSClassifierData) aClassifier
 				.getUpdateDataObject();

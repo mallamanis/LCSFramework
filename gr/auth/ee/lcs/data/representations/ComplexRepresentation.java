@@ -170,7 +170,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public void fixAttributeRepresentation(
+		public final void fixAttributeRepresentation(
 				final ExtendedBitSet generatedClassifier) {
 			return;
 		}
@@ -184,7 +184,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isEqual(final ExtendedBitSet baseChromosome,
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 
 			// if the base classifier is specific and the test is # return false
@@ -207,7 +207,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isMatch(final float attributeVision,
+		public final boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
 
 			if (testedChromosome.get(this.positionInChromosome)) {
@@ -230,7 +230,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			// if the base classifier is specific and the test is # return false
 			if (baseChromosome.get(positionInChromosome)
@@ -252,7 +252,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
-		public void randomCoveringValue(final float attributeValue,
+		public final void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
 			if (attributeValue == 0)
 				generatedClassifier.getChromosome().clear(
@@ -277,7 +277,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public String toString(final ExtendedBitSet convertingClassifier) {
+		public final String toString(final ExtendedBitSet convertingClassifier) {
 			if (convertingClassifier.get(this.positionInChromosome)) {
 				return convertingClassifier.get(this.positionInChromosome + 1) ? "1"
 						: "0";
@@ -352,7 +352,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public void fixAttributeRepresentation(final ExtendedBitSet chromosome) {
+		public final void fixAttributeRepresentation(
+				final ExtendedBitSet chromosome) {
 			if (getLowBoundValue(chromosome) > getHighBoundValue(chromosome)) {
 				// Swap
 				ExtendedBitSet low = chromosome.getSubSet(
@@ -375,7 +376,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isEqual(final ExtendedBitSet baseChromosome,
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 
 			if (baseChromosome.get(positionInChromosome) != testChromosome
@@ -401,7 +402,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isMatch(final float attributeVision,
+		public final boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
 
 			if (!testedChromosome.get(positionInChromosome)) // if rule inactive
@@ -420,7 +421,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			if (!baseChromosome.get(positionInChromosome))
 				return true;
@@ -440,7 +441,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
-		public void randomCoveringValue(final float attributeValue,
+		public final void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
 			// First find a random value that is smaller than the attribute
 			// value & convert it to fraction
@@ -472,7 +473,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public String toString(final ExtendedBitSet convertingChromosome) {
+		public final String toString(final ExtendedBitSet convertingChromosome) {
 			// Check if condition active
 			if (!convertingChromosome.get(positionInChromosome))
 				return nameOfAttribute + ":#";
@@ -523,7 +524,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	public class NominalAttribute extends Attribute {
 
 		/**
-		 * The names of the nominal values
+		 * The names of the nominal values.
 		 */
 		private final String[] nominalValuesNames;
 
@@ -559,7 +560,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public void fixAttributeRepresentation(final ExtendedBitSet chromosome) {
+		public final void fixAttributeRepresentation(
+				final ExtendedBitSet chromosome) {
 			int ones = 0;
 			if (chromosome.get(positionInChromosome)) // Specific
 				for (int i = 1; i < this.lengthInBits; i++)
@@ -580,7 +582,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isEqual(final ExtendedBitSet baseChromosome,
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			if (baseChromosome.get(positionInChromosome) != testChromosome
 					.get(positionInChromosome))
@@ -605,7 +607,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isMatch(final float attributeVision,
+		public final boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
 			// if condition is not active
 			if (!testedChromosome.get(positionInChromosome))
@@ -625,7 +627,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			if (!baseChromosome.get(positionInChromosome))
 				return true;
@@ -648,7 +650,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
-		public void randomCoveringValue(final float attributeValue,
+		public final void randomCoveringValue(final float attributeValue,
 				final Classifier myChromosome) {
 			// Clear everything
 			myChromosome.clear(positionInChromosome, this.lengthInBits);
@@ -678,7 +680,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
-		public String toString(final ExtendedBitSet convertingChromosome) {
+		public final String toString(final ExtendedBitSet convertingChromosome) {
 			// Check if attribute is active
 			if (!convertingChromosome.get(positionInChromosome))
 				return nameOfAttribute + ":#";
@@ -712,9 +714,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	protected int chromosomeSize = 0;
 
 	/**
-	 * The string (names) of the rule consequents.
+	 * The number of labels used.
 	 */
-	protected String[] ruleConsequents;
+	private int numberOfLabels;
 
 	/**
 	 * Constructor.
@@ -723,11 +725,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the attribute objects of the representation
 	 * @param ruleConsequentsNames
 	 *            the rule consequents
+	 * @param labels
+	 *            the number of labels
 	 */
 	public ComplexRepresentation(final Attribute[] attributes,
-			final String[] ruleConsequentsNames) {
+			final String[] ruleConsequentsNames, int labels) {
 		this.attributeList = attributes;
-		this.ruleConsequents = ruleConsequentsNames;
+		this.numberOfLabels = labels;
 	}
 
 	/**
@@ -737,29 +741,20 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the input .arff
 	 * @param precision
 	 *            bits used for precision
+	 * @param labels
+	 *            the number of labels (classes) in the set
 	 * @throws IOException
 	 *             when .arff not found
 	 */
-	public ComplexRepresentation(final String inputArff, final int precision)
-			throws IOException {
+	public ComplexRepresentation(final String inputArff, final int precision,
+			final int labels) throws IOException {
 		FileReader reader = new FileReader(inputArff);
 		Instances instances = new Instances(reader);
-		// TODO: Change 4 ml
-		if (instances.classIndex() < 0)
-			instances.setClassIndex(instances.numAttributes() - 1);
 
+		this.numberOfLabels = labels;
 		attributeList = new Attribute[instances.numAttributes()];
 
-		// Rule Consequents
-		Enumeration<?> classNames = instances.classAttribute()
-				.enumerateValues();
-		ruleConsequents = new String[instances.numClasses()];
-		for (int i = 0; i < instances.numClasses(); i++)
-			ruleConsequents[i] = (String) classNames.nextElement();
-
-		for (int i = 0; i < instances.numAttributes(); i++) {
-			if (i == instances.classIndex())
-				continue; // TODO: Change 4 ml
+		for (int i = 0; i < instances.numAttributes() - labels; i++) {
 
 			String attributeName = instances.attribute(i).name();
 
@@ -803,7 +798,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		}
 
 		// Build class into gene
-		createClassRepresentation();
+		createClassRepresentation(instances);
 
 	}
 
@@ -847,14 +842,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public final Classifier createRandomCoveringClassifier(
-			final double[] visionVector, final int advocatingAction) {
+			final double[] visionVector) {
 		Classifier generatedClassifier = new Classifier();
-		for (int i = 0; i < attributeList.length - 1; i++)
+		for (int i = 0; i < attributeList.length; i++)
 			attributeList[i].randomCoveringValue((float) visionVector[i],
 					generatedClassifier);
-
-		attributeList[attributeList.length - 1].randomCoveringValue(
-				advocatingAction, generatedClassifier);
 		return generatedClassifier;
 	}
 
@@ -891,7 +883,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final boolean isMatch(final double[] visionVector,
 			final ExtendedBitSet chromosome) {
-		for (int i = 0; i < attributeList.length - 1; i++)
+		for (int i = 0; i < attributeList.length - numberOfLabels; i++)
 			if (!attributeList[i].isMatch((float) visionVector[i], chromosome))
 				return false;
 		return true;
@@ -907,16 +899,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final boolean isMoreGeneral(final Classifier baseClassifier,
 			final Classifier testClassifier) {
-		// If classifiers advocate for different actions, return false
-		if (baseClassifier.getActionAdvocated() != testClassifier
-				.getActionAdvocated())
-			return false;
-
-		ExtendedBitSet baseChromosome = baseClassifier.getChromosome();
-		ExtendedBitSet testChromosome = testClassifier.getChromosome();
-
-		for (int i = 0; i < attributeList.length - 1; i++)
-			if (!attributeList[i].isMoreGeneral(baseChromosome, testChromosome))
+		// Start from labels to the attributes
+		for (int i = attributeList.length - 1; i >= 0; i--)
+			if (!attributeList[i].isMoreGeneral(baseClassifier, testClassifier))
 				return false;
 
 		return true;
@@ -958,17 +943,18 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final String toNaturalLanguageString(final Classifier aClassifier) {
 		String nlRule = "";
-		for (int i = 0; i < attributeList.length - 1; i++)
+		for (int i = 0; i < attributeList.length - numberOfLabels; i++)
 			nlRule += attributeList[i].toString(aClassifier) + " AND ";
 
 		// Add consequence
-		nlRule += "=>"
-				+ attributeList[attributeList.length - 1].toString(aClassifier);
+		nlRule += "=>";
+		for (int i = attributeList.length - numberOfLabels; i < attributeList.length; i++)
+			nlRule += attributeList[i].toString(aClassifier);
 		return nlRule;
 	}
 
 	/**
 	 * Create the class representation depending on the problem.
 	 */
-	protected abstract void createClassRepresentation();
+	protected abstract void createClassRepresentation(Instances instances);
 }

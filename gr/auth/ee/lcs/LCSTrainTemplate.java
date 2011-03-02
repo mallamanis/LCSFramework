@@ -27,7 +27,7 @@ public class LCSTrainTemplate {
 	private double matchSetRunProbability;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param gaMatchSetRunProbability
 	 */
@@ -36,7 +36,7 @@ public class LCSTrainTemplate {
 	}
 
 	public void trainWithInstance(ClassifierSet population,
-			int dataInstanceIndex, int expectedAction) {
+			int dataInstanceIndex) {
 
 		/*
 		 * Generate match and correct set
@@ -45,7 +45,8 @@ public class LCSTrainTemplate {
 		ClassifierSet correctSet = new ClassifierSet(null);
 
 		// TODO: Parallelize for performance increase
-		for (int i = 0; i < population.getNumberOfMacroclassifiers(); i++) {
+		final int populationSize = population.getNumberOfMacroclassifiers();
+		for (int i = 0; i < populationSize; i++) {
 			if (population.getClassifier(i).isMatch(dataInstanceIndex)) {
 				Macroclassifier cl = population.getMacroclassifier(i);
 
@@ -53,7 +54,7 @@ public class LCSTrainTemplate {
 				matchSet.addClassifier(cl, false);
 
 				// Generate Correct Set
-				if (cl.myClassifier.getActionAdvocated() == expectedAction)
+				if (cl.myClassifier.classifyCorrectly(dataInstanceIndex))
 					correctSet.addClassifier(cl, false);
 			}
 		}
@@ -65,8 +66,7 @@ public class LCSTrainTemplate {
 			Classifier coveringClassifier = ClassifierTransformBridge
 					.getInstance()
 					.createRandomCoveringClassifier(
-							ClassifierTransformBridge.instances[dataInstanceIndex],
-							expectedAction);
+							ClassifierTransformBridge.instances[dataInstanceIndex]);
 
 			population.addClassifier(
 					new Macroclassifier(coveringClassifier, 1), false);

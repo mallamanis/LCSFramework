@@ -38,9 +38,6 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            used in fitness sharing: the minimum "good" accuracy
 	 * @param learningRate
 	 *            the beta of UCS
-	 * 
-	 * @param fitnessThreshold
-	 *            the fitness threshold for subsumption
 	 * @param experienceThreshold
 	 *            the experience threshold for subsumption
 	 */
@@ -62,7 +59,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier,
+	public final double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		UCSClassifierData data = (UCSClassifierData) aClassifier
 				.getUpdateDataObject();
@@ -85,15 +82,29 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		return 0;
 	}
 
-	public String getData(Classifier aClassifier) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
+	 */
+	public final String getData(final Classifier aClassifier) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#setComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
+	 */
 	@Override
-	public void setComparisonValue(Classifier aClassifier, int mode,
-			double comparisonValue) {
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
@@ -106,7 +117,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * createStateClassifierObject()
 	 */
 	@Override
-	protected Serializable createStateClassifierObject() {
+	protected final Serializable createStateClassifierObject() {
 		return new UCSClassifierData();
 	}
 
@@ -123,7 +134,9 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	protected final void updateSet(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		double strengthSum = 0;
-		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
+		final int matchSetMacroclassifiers = matchSet
+				.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetMacroclassifiers; i++) {
 			Classifier cl = matchSet.getClassifier(i);
 			UCSClassifierData data = ((UCSClassifierData) cl
 					.getUpdateDataObject());
@@ -157,7 +170,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		if (strengthSum == 0)
 			strengthSum = 1;
 
-		for (int i = 0; i < matchSet.getNumberOfMacroclassifiers(); i++) {
+		final int msSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < msSize; i++) {
 			Classifier cl = matchSet.getClassifier(i);
 			UCSClassifierData data = ((UCSClassifierData) cl
 					.getUpdateDataObject());
@@ -166,6 +180,12 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	}
 
+	/**
+	 * A data object for the UCS update algorithm.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
 	class UCSClassifierData implements Serializable {
 
 		/**

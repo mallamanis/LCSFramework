@@ -14,7 +14,6 @@ import weka.core.Instances;
  */
 public class ArffTrainer {
 
-	private int[] advocatedActions;
 	Instances testSet;
 
 	public void loadInstances(String filename) throws IOException {
@@ -30,28 +29,25 @@ public class ArffTrainer {
 		// testSet = set.testCV(10, 9);
 
 		ClassifierTransformBridge.instances = new double[trainSet
-				.numInstances()][trainSet.numAttributes() - 1];
-		advocatedActions = new int[trainSet.numInstances()];
+				.numInstances()][trainSet.numAttributes()];
 
 		// Load instances
 		for (int i = 0; i < trainSet.numInstances(); i++) {
-			for (int j = 0; j < trainSet.numAttributes() - 1; j++) {
+			for (int j = 0; j < trainSet.numAttributes(); j++) {
 				ClassifierTransformBridge.instances[i][j] = trainSet
 						.instance(i).value(j);
 			}
-			advocatedActions[i] = (int) trainSet.instance(i).value(
-					trainSet.classIndex());
 		}
 
 	}
 
 	public void train(LCSTrainTemplate lcs, int iterations,
 			ClassifierSet population) {
-		int numInstances = advocatedActions.length;
+		int numInstances = ClassifierTransformBridge.instances.length;
 		for (int repetition = 0; repetition < iterations; repetition++) {// Iterate
 			System.out.println("Iteration " + repetition);
 			for (int i = 0; i < numInstances; i++)
-				lcs.trainWithInstance(population, i, advocatedActions[i]);
+				lcs.trainWithInstance(population, i);
 			// if (repetition % 10==0) population.selfSubsume();
 		}
 		// population.selfSubsume();
@@ -64,8 +60,8 @@ public class ArffTrainer {
 		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++) { // for
 																				// each
 																				// instance
-			if (eval.classify(ClassifierTransformBridge.instances[i],
-					population) == advocatedActions[i])
+			if (eval.classifyCorrectly(ClassifierTransformBridge.instances[i],
+					population))
 				tp++;
 			else if (eval.classify(ClassifierTransformBridge.instances[i],
 					population) != -1)
@@ -80,7 +76,7 @@ public class ArffTrainer {
 	}
 
 	/**
-	 * Evaluate on testset
+	 * Evaluate on testset.
 	 * 
 	 * @param population
 	 *            the population on with the rules will be evaluated
@@ -92,10 +88,10 @@ public class ArffTrainer {
 		for (int i = 0; i < testSet.numInstances(); i++) {
 			double[] instance = new double[testSet.numAttributes() - 1];
 
-			for (int j = 0; j < testSet.numAttributes() - 1; j++) {
+			for (int j = 0; j < testSet.numAttributes(); j++) {
 				instance[j] = testSet.instance(i).value(j);
 			}
-			if (eval.classify(instance, population) == advocatedActions[i]) {
+			if (eval.classifyCorrectly(instance, population)) {
 				tp++;
 			} else if (eval.classify(instance, population) != -1) {
 				fp++;

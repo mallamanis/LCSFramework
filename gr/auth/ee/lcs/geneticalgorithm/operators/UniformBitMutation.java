@@ -21,7 +21,7 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	/**
 	 * The default constructor.
 	 * 
-	 * @param mutationRate
+	 * @param rate
 	 *            the probability that a bit will be flipped Initializes the
 	 *            operator's attributes.
 	 */
@@ -30,8 +30,10 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	}
 
 	/**
-	 * operates on the given classifier by mutating its bits
+	 * operates on the given classifier by mutating its bits.
 	 * 
+	 * @param aClassifier
+	 *            the classifier to operate on
 	 * @return the mutated classifier
 	 */
 	@Override
