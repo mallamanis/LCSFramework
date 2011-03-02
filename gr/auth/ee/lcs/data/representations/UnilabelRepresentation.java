@@ -179,15 +179,15 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public boolean classifiesCorrectly(Classifier aClassifier, int instanceIndex) {
+	public float classifyAbility(Classifier aClassifier, int instanceIndex) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier) == instances[instanceIndex][instances[instanceIndex].length - 1];
+				.getValue(aClassifier) == instances[instanceIndex][instances[instanceIndex].length - 1]?1:0;
 	}
 
 	@Override
-	public boolean classifiesCorrectly(Classifier aClassifier, double[] vision) {
+	public float classifyAbility(Classifier aClassifier, double[] vision) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier) == vision[vision.length - 1];
+				.getValue(aClassifier) == vision[vision.length - 1]?1:0;
 	}
 
 }

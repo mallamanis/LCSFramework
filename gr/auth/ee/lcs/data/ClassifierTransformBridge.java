@@ -94,10 +94,10 @@ public abstract class ClassifierTransformBridge {
 	 */
 	public abstract int getChromosomeSize();
 
-	public abstract boolean classifiesCorrectly(Classifier aClassifier,
+	public abstract float classifyAbility(Classifier aClassifier,
 			int instanceIndex);
 
-	public abstract boolean classifiesCorrectly(Classifier aClassifier,
+	public abstract float classifyAbility(Classifier aClassifier,
 			double[] vision);
 
 	/**

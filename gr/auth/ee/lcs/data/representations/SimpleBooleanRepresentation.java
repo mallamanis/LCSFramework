@@ -246,13 +246,13 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	}
 
 	@Override
-	public boolean classifiesCorrectly(Classifier aClassifier, int instanceIndex) {
-		return this.instances[instanceIndex][this.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0];
+	public float classifyAbility(Classifier aClassifier, int instanceIndex) {
+		return this.instances[instanceIndex][this.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0]?1:0;
 	}
 
 	@Override
-	public boolean classifiesCorrectly(Classifier aClassifier, double[] vision) {
-		return ((int[]) (aClassifier.transformData))[0] == vision[vision.length - 1];
+	public float classifyAbility(Classifier aClassifier, double[] vision) {
+		return ((int[]) (aClassifier.transformData))[0] == vision[vision.length - 1]?1:0;
 	}
 
 }

@@ -54,7 +54,7 @@ public class LCSTrainTemplate {
 				matchSet.addClassifier(cl, false);
 
 				// Generate Correct Set
-				if (cl.myClassifier.classifyCorrectly(dataInstanceIndex))
+				if (cl.myClassifier.classifyCorrectly(dataInstanceIndex)==1)
 					correctSet.addClassifier(cl, false);
 			}
 		}

@@ -23,12 +23,12 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	private static final double INITIAL_FITNESS = 0.5;
 
-	public boolean classifyCorrectly(int instanceIndex) {
-		return transformBridge.classifiesCorrectly(this, instanceIndex);
+	public float classifyCorrectly(int instanceIndex) {
+		return transformBridge.classifyAbility(this, instanceIndex);
 	}
 
-	public boolean classifyCorrectly(double[] visionVector) {
-		return transformBridge.classifiesCorrectly(this, visionVector);
+	public float classifyCorrectly(double[] visionVector) {
+		return transformBridge.classifyAbility(this, visionVector);
 	}
 
 	/**
