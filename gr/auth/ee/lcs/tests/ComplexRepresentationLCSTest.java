@@ -45,11 +45,10 @@ public class ComplexRepresentationLCSTest {
 		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				10, .99, 10, .01, ga);
-		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
-		// UCSUpdateAlgorithm(
-		// .1, 10, .99, .1, 50, 0.01, ga);
+		//UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
+		//		10, .99, 10, .01, ga);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
+			UCSUpdateAlgorithm(.1, 10, .99, .1, 50, 0.01, ga);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 
