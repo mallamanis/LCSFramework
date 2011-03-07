@@ -24,7 +24,7 @@ public class BestFitnessTournamentSelectorTest {
 		ClassifierTransformBridge.setInstance(new SimpleBooleanRepresentation(
 				.33, 2));
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				5, .99, 50);
+				5, .99, 50, 0.01, null);
 		population = new ClassifierSet(null);
 		for (int i = 0; i < 3; i++) {
 			Classifier aClassifier = new Classifier();

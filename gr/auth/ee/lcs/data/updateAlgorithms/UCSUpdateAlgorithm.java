@@ -5,7 +5,10 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
 
@@ -17,10 +20,21 @@ import java.io.Serializable;
 public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
+	 * Genetic Algorithm.
+	 */
+	public IGeneticAlgorithmStrategy ga;
+
+	/**
 	 * Private variables: the UCS parameter sharing. accuracy0 is considered the
 	 * subsumption fitness threshold
 	 */
 	private final double a, accuracy0, n, b;
+
+	/**
+	 * A double indicating the probability that the GA will run on the matchSet
+	 * (and not on the correct set).
+	 */
+	private double matchSetRunProbability;
 
 	/**
 	 * The experience threshold for subsumption.
@@ -40,15 +54,20 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the beta of UCS
 	 * @param experienceThreshold
 	 *            the experience threshold for subsumption
+	 * @param gaMatchSetRunProbability
+	 *            the probability of running the GA at the matchset
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
-			final int experienceThreshold) {
+			final int experienceThreshold, double gaMatchSetRunProbability,
+			IGeneticAlgorithmStrategy geneticAlgorithm) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
 		this.b = learningRate;
 		subsumptionExperienceThreshold = experienceThreshold;
+		this.matchSetRunProbability = gaMatchSetRunProbability;
+		this.ga = geneticAlgorithm;
 	}
 
 	/*
@@ -80,6 +99,21 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			return (((double) (data.tp)) / (double) (data.msa));
 		}
 		return 0;
+	}
+
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	private final void cover(final ClassifierSet population,
+			final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
 	}
 
 	/*
@@ -121,6 +155,27 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		return new UCSClassifierData();
 	}
 
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,11 +186,47 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * match set setB is the correct set
 	 */
 	@Override
-	protected final void updateSet(final ClassifierSet matchSet,
+	protected final void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex) {
+		/*
+		 * Generate correct set
+		 */
+		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+
+		/*
+		 * Cover if necessary
+		 */
+		if (correctSet.getNumberOfMacroclassifiers() == 0) {
+			cover(population, instanceIndex);
+			return;
+		}
+
+		/*
+		 * Update
+		 */
+		performUpdate(matchSet, correctSet);
+
+		/*
+		 * Run GA
+		 */
+		if (Math.random() < matchSetRunProbability)
+			ga.evolveSet(matchSet, population);
+		else
+			ga.evolveSet(correctSet, population);
+
+	}
+
+	/**
+	 * 
+	 * @param matchSet
+	 * @param correctSet
+	 */
+	private void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		double strengthSum = 0;
 		final int matchSetMacroclassifiers = matchSet
 				.getNumberOfMacroclassifiers();
+
 		for (int i = 0; i < matchSetMacroclassifiers; i++) {
 			Classifier cl = matchSet.getClassifier(i);
 			UCSClassifierData data = ((UCSClassifierData) cl
@@ -144,7 +235,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			data.msa += 1;
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1;
-				double accuracy = ((double) data.tp) / ((double) data.msa);
+				final double accuracy = ((double) data.tp)
+						/ ((double) data.msa);
 				if (accuracy > accuracy0) {
 					data.fitness0 = 1;
 
@@ -189,7 +281,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	class UCSClassifierData implements Serializable {
 
 		/**
-		 * Serial code for serialization
+		 * Serial code for serialization.
 		 */
 		private static final long serialVersionUID = 3098073593334379507L;
 

@@ -2,6 +2,7 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 /**
  * The update algorithm for the AS-LCS.
@@ -25,10 +26,17 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 *            the fitness threshold for subsumption
 	 * @param experienceThreshold
 	 *            the experience threshold for subsumption
+	 * @param gaMatchSetRunProbability
+	 *            the probability of running the GA on the match set
+	 * @param geneticAlgorithm
+	 *            the GA
 	 */
 	public ASLCSUpdateAlgorithm(final double nParameter,
-			final double fitnessThreshold, final int experienceThreshold) {
-		super(fitnessThreshold, experienceThreshold);
+			final double fitnessThreshold, final int experienceThreshold,
+			double gaMatchSetRunProbability,
+			IGeneticAlgorithmStrategy geneticAlgorithm) {
+		super(fitnessThreshold, experienceThreshold, gaMatchSetRunProbability,
+				geneticAlgorithm);
 		this.n = nParameter;
 	}
 

@@ -2,6 +2,7 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 /**
  * SS-LCS Update Algorithm.
@@ -32,8 +33,10 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 */
 	public SSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final double fitnessThreshold,
-			final int experienceThreshold) {
-		super(fitnessThreshold, experienceThreshold);
+			final int experienceThreshold, double gaMatchSetRunProbability,
+			IGeneticAlgorithmStrategy geneticAlgorithm) {
+		super(fitnessThreshold, experienceThreshold, gaMatchSetRunProbability,
+				geneticAlgorithm);
 		strengthReward = reward;
 		penalty = penaltyPercent;
 	}

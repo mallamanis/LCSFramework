@@ -2,7 +2,10 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
 
@@ -19,10 +22,18 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 *            the experience threshold for subsumption
 	 */
 	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
-			final int subsumptionExperience) {
+			final int subsumptionExperience, double gaMatchSetRunProbability,
+			IGeneticAlgorithmStrategy geneticAlgorithm) {
 		this.subsumptionFitnessThreshold = subsumptionFitness;
 		this.subsumptionExperienceThreshold = subsumptionExperience;
+		this.matchSetRunProbability = gaMatchSetRunProbability;
+		this.ga = geneticAlgorithm;
 	}
+
+	/**
+	 * Genetic Algorithm
+	 */
+	public IGeneticAlgorithmStrategy ga;
 
 	/*
 	 * (non-Javadoc)
@@ -66,6 +77,48 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			ClassifierSet correctSet);
 
 	/**
+	 * Generates the correct set
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	private final void cover(final ClassifierSet population,
+			final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
+	/**
+	 * A double indicating the probability that the GA will run on the matchSet
+	 * (and not on the correct set).
+	 */
+	private double matchSetRunProbability;
+
+	/**
 	 * Updates the set. setA is the match set setB is the correct set
 	 * 
 	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmAndStrategy.updateSet
@@ -75,22 +128,46 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 *            correct set
 	 */
 	@Override
-	public final void updateSet(final ClassifierSet setA,
-			final ClassifierSet setB) {
-		int matchSetSize = setA.getNumberOfMacroclassifiers();
+	public final void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex) {
+
+		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+
+		/*
+		 * Cover if necessary
+		 */
+		if (correctSet.getNumberOfMacroclassifiers() == 0) {
+			cover(population, instanceIndex);
+			return;
+		}
+
+		updateData(matchSet, correctSet);
+
+		/*
+		 * Run GA
+		 */
+		if (Math.random() < matchSetRunProbability)
+			ga.evolveSet(matchSet, population);
+		else
+			ga.evolveSet(correctSet, population);
+
+	}
+
+	private void updateData(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
-			Classifier cl = setA.getClassifier(i);
+			Classifier cl = matchSet.getClassifier(i);
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			data.ns = (data.ns * data.msa + setB.getTotalNumerosity())
+			data.ns = (data.ns * data.msa + correctSet.getTotalNumerosity())
 					/ (data.msa + 1);
 
 			data.msa++;
-			updateFitness(cl, setA.getClassifierNumerosity(i), setB);
+			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);
 			this.updateSubsumption(cl);
 			cl.experience++;
 		}
-
 	}
 
 	/**

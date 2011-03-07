@@ -11,7 +11,9 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
@@ -30,10 +32,12 @@ public class ComplexRepresentationLCSTest {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(0.01);
-		myExample.ga = new SteadyStateGeneticAlgorithm(new TournamentSelector(
-				10, true,
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+		LCSTrainTemplate myExample = new LCSTrainTemplate();
+		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+				new TournamentSelector(
+						10,
+						true,
+						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), (float) .8, new UniformBitMutation(
 						.04), 50);
 
@@ -41,10 +45,11 @@ public class ComplexRepresentationLCSTest {
 		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
 		ClassifierTransformBridge.setInstance(rep);
 
-		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
-		// ASLCSUpdateAlgorithm(10);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				.1, 10, .99, .1, 50);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
+				10, .99, 10, .01, ga);
+		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
+		// UCSUpdateAlgorithm(
+		// .1, 10, .99, .1, 50, 0.01, ga);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 

@@ -52,15 +52,17 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * A bridge between update data and the actual implementation.
 	 * 
-	 * @param setA
+	 * @param population
+	 *            the current population
+	 * @param matchSet
 	 *            the match set
 	 * @param setB
 	 *            the correct set
 	 */
-	public static void updateData(final ClassifierSet setA,
-			final ClassifierSet setB) {
+	public static void updateData(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex) {
 		if (currentStrategy != null) {
-			currentStrategy.updateSet(setA, setB);
+			currentStrategy.updateSet(population, matchSet, instanceIndex);
 
 		}
 	}
@@ -100,12 +102,15 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Updates classifiers of a setA taking into consideration setB.
 	 * 
-	 * @param setA
+	 * @param population
+	 *            The problem population
+	 * @param matchSet
 	 *            The first set to take into consideration during update
-	 * @param setB
-	 *            The second set to take into consideration during update
+	 * @param instanceIndex
+	 *            The instance to take into consideration when updating
 	 */
-	protected abstract void updateSet(ClassifierSet setA, ClassifierSet setB);
+	protected abstract void updateSet(ClassifierSet population,
+			ClassifierSet matchSet, int instanceIndex);
 
 	/**
 	 * Returns a string with the update specific data.

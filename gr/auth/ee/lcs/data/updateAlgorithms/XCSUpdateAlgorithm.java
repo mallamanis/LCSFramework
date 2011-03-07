@@ -2,7 +2,10 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
 
@@ -48,6 +51,17 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	private final double n;
 
 	/**
+	 * A double indicating the probability that the GA will run on the matchSet
+	 * (and not on the correct set).
+	 */
+	private double matchSetRunProbability;
+
+	/**
+	 * Genetic Algorithm.
+	 */
+	public IGeneticAlgorithmStrategy ga;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param beta
@@ -67,7 +81,9 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 */
 	public XCSUpdateAlgorithm(final double beta, final double P,
 			final double e0, final double alpha, final double n,
-			final double fitnessThreshold, final int experienceThreshold) {
+			final double fitnessThreshold, final int experienceThreshold,
+			double gaMatchSetRunProbability,
+			IGeneticAlgorithmStrategy geneticAlgorithm) {
 		this.subsumptionFitnessThreshold = fitnessThreshold;
 		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.beta = beta;
@@ -75,6 +91,8 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		this.e0 = e0;
 		this.alpha = alpha;
 		this.n = n;
+		this.ga = geneticAlgorithm;
+		this.matchSetRunProbability = gaMatchSetRunProbability;
 	}
 
 	/*
@@ -145,21 +163,94 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	}
 
 	/**
-	 * Implementing abstract method.
+	 * Calls covering operator.
+	 * @param population the population to cover
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	private void cover(final ClassifierSet population,
+			final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
+	/**
+	 * Generates the correct set.
 	 * 
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy
-	 * @param setA
-	 *            the action set
-	 * @param setB
-	 *            the correct set
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#updateSet(gr.auth
+	 * .ee.lcs.classifiers.ClassifierSet,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	public final void updateSet(final ClassifierSet setA,
-			final ClassifierSet setB) {
+	protected final void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex) {
+		/*
+		 * Generate correct set
+		 */
+		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+
+		/*
+		 * Cover if necessary
+		 */
+		if (correctSet.getNumberOfMacroclassifiers() == 0) {
+			cover(population, instanceIndex);
+			return;
+		}
+
+		/*
+		 * Update
+		 */
+		performUpdate(matchSet, correctSet);
+
+		/*
+		 * Run GA
+		 */
+		if (Math.random() < matchSetRunProbability)
+			ga.evolveSet(matchSet, population);
+		else
+			ga.evolveSet(correctSet, population);
+
+	}
+
+	/**
+	 * Perform Update
+	 * 
+	 * @param actionSet
+	 *            the action set
+	 * @param correctSet
+	 *            the correct set
+	 */
+	public final void performUpdate(final ClassifierSet actionSet,
+			final ClassifierSet correctSet) {
 		double accuracySum = 0;
 
-		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
-			Classifier cl = setA.getClassifier(i);
+		for (int i = 0; i < actionSet.getNumberOfMacroclassifiers(); i++) {
+			Classifier cl = actionSet.getClassifier(i);
 
 			// Get update data object
 			XCSClassifierData data = ((XCSClassifierData) cl
@@ -167,7 +258,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			cl.experience++; // Increase Experience
 
 			double payOff; // the classifier's payoff
-			if (setB.getClassifierNumerosity(cl) > 0)
+			if (correctSet.getClassifierNumerosity(cl) > 0)
 				payOff = payoff;
 			else
 				payOff = 0;
@@ -190,23 +281,23 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 			// Update Action Set Estimate
 			if (cl.experience < 1 / beta)
-				data.actionSet += (setA.getTotalNumerosity() - data.actionSet)
+				data.actionSet += (actionSet.getTotalNumerosity() - data.actionSet)
 						/ cl.experience;
 			else
 				data.actionSet += beta
-						* (setA.getTotalNumerosity() - data.actionSet);
+						* (actionSet.getTotalNumerosity() - data.actionSet);
 
 			// Fitness Update Step 1
 			if (data.predictionError < e0)
 				data.k = 1;
 			else
 				data.k = alpha * Math.pow(data.predictionError / e0, -n);
-			accuracySum += data.k * setA.getClassifierNumerosity(i);
+			accuracySum += data.k * actionSet.getClassifierNumerosity(i);
 		}
 
 		// Update Fitness Step 2
-		for (int i = 0; i < setA.getNumberOfMacroclassifiers(); i++) {
-			Classifier cl = setA.getClassifier(i);
+		for (int i = 0; i < actionSet.getNumberOfMacroclassifiers(); i++) {
+			Classifier cl = actionSet.getClassifier(i);
 
 			// Get update data object
 			XCSClassifierData data = ((XCSClassifierData) cl

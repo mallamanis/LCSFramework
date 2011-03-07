@@ -12,6 +12,10 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
+import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +36,19 @@ public class MacroclassifierTest {
 		test = new SimpleBooleanRepresentation(0.5, 4);
 		ClassifierTransformBridge.setInstance(test);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				.1, 10, .99, .1, 50);
+				.1,
+				10,
+				.99,
+				.1,
+				50,
+				0,
+				new SteadyStateGeneticAlgorithm(
+						new TournamentSelector(
+								10,
+								true,
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+						new SinglePointCrossover(), (float) .8,
+						new UniformBitMutation(.04), 50));
 	}
 
 	@Test

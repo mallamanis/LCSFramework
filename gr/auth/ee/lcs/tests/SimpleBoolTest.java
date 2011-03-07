@@ -10,6 +10,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
@@ -17,7 +18,7 @@ import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 /**
  * @author Miltos Allamanis
- * 
+ * @deprecated
  */
 public class SimpleBoolTest {
 
@@ -25,16 +26,18 @@ public class SimpleBoolTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(0);
-		myExample.ga = new SteadyStateGeneticAlgorithm(new TournamentSelector(
-				10, true,
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+		LCSTrainTemplate myExample = new LCSTrainTemplate();
+		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+				new TournamentSelector(
+						10,
+						true,
+						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), 1, new UniformBitMutation(.04), 15);
 
 		ClassifierTransformBridge.setInstance(new SimpleBooleanRepresentation(
 				.33, 3));
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				5, .99, 50);
+				5, .99, 50, .01, ga);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 
