@@ -11,13 +11,12 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.WeightedRouletteSelector;
 
 import java.io.IOException;
 
@@ -34,31 +33,40 @@ public class ComplexRepresentationLCSTest {
 	public static void main(String[] args) throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate();
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector(
-						10,
-						true,
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
-				new SinglePointCrossover(), (float) .8, new UniformBitMutation(
-						.04), 50);
+		/*
+		 * new TournamentSelector( 10, true,
+		 * UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+		 */
+		new WeightedRouletteSelector(
+				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
+				true), new SinglePointCrossover(), (float) .8,
+				new UniformBitMutation(.04), 50);
 
 		String filename = "/home/miltiadis/Desktop/position9.arff";
 		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
 		ClassifierTransformBridge.setInstance(rep);
 
-		//UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-		//		10, .99, 10, .01, ga);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
-			UCSUpdateAlgorithm(.1, 10, .99, .1, 50, 0.01, ga);
+		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
+		// ASLCSUpdateAlgorithm(
+		// 10, .99, 10, .01, ga);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
+				.1, 10, .99, .1, 50, 0.01, ga);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						1000,
-						new TournamentSelector(
-								40,
-								false,
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+
+						/*
+						 * new TournamentSelector( 40, false,
+						 * UpdateAlgorithmFactoryAndStrategy
+						 * .COMPARISON_MODE_DELETION)
+						 */
+
+						new WeightedRouletteSelector(
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+								false)));
 		// ClassifierSet rulePopulation=new ClassifierSet(new
 		// FixedSizeSetWorstFitnessDeletion(
 		// 1000,new
