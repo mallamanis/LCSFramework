@@ -20,17 +20,17 @@ public class TournamentSelector implements INaturalSelector {
 	/**
 	 * The size of the tournaments.
 	 */
-	private int tournamentSize;
+	private final int tournamentSize;
 
 	/**
 	 * The type of the tournaments.
 	 */
-	private boolean max;
+	private final boolean max;
 
 	/**
 	 * The comparison mode for the tournaments.
 	 */
-	private int mode;
+	private final int mode;
 
 	/**
 	 * The default constructor of the selector.
@@ -49,6 +49,18 @@ public class TournamentSelector implements INaturalSelector {
 		this.tournamentSize = sizeOfTournaments;
 		this.max = max;
 		this.mode = comparisonMode;
+	}
+
+	@Override
+	public int select(ClassifierSet fromPopulation) {
+		int[] participants = new int[tournamentSize];
+		// Create random participants
+		for (int j = 0; j < tournamentSize; j++) {
+			participants[j] = (int) Math.floor((Math.random() * fromPopulation
+					.getTotalNumerosity()));
+		}
+		return this.tournament(fromPopulation, participants);
+
 	}
 
 	/*
@@ -75,7 +87,7 @@ public class TournamentSelector implements INaturalSelector {
 	/**
 	 * Runs a tournament in the fromPopulation with the size defined in
 	 * tournamentSize (during construction) The winner of the tournament is
-	 * added to the toPopulation
+	 * added to the toPopulation.
 	 * 
 	 * @param fromPopulation
 	 *            the source population to run the tournament in
@@ -109,8 +121,8 @@ public class TournamentSelector implements INaturalSelector {
 		do {
 			currentBestParticipantIndex += fromPopulation
 					.getClassifierNumerosity(currentMacroclassifierIndex);
-			while (currentClassifierIndex < tournamentSize
-					&& participants[currentClassifierIndex] <= currentBestParticipantIndex) {
+			while ((currentClassifierIndex < tournamentSize)
+					&& (participants[currentClassifierIndex] <= currentBestParticipantIndex)) {
 
 				// currentParicipant is in this macroclassifier
 				double fitness = fromPopulation.getClassifier(
@@ -126,18 +138,6 @@ public class TournamentSelector implements INaturalSelector {
 		} while (currentClassifierIndex < tournamentSize);
 
 		return bestMacroclassifierParticipant;
-
-	}
-
-	@Override
-	public int select(ClassifierSet fromPopulation) {
-		int[] participants = new int[tournamentSize];
-		// Create random participants
-		for (int j = 0; j < tournamentSize; j++) {
-			participants[j] = (int) Math.floor((Math.random() * fromPopulation
-					.getTotalNumerosity()));
-		}
-		return this.tournament(fromPopulation, participants);
 
 	}
 
