@@ -8,14 +8,17 @@ import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.WeightedRouletteSelector;
 
 import java.io.IOException;
@@ -58,15 +61,16 @@ public class ComplexRepresentationLCSTest {
 				new FixedSizeSetWorstFitnessDeletion(
 						1000,
 
-						/*
-						 * new TournamentSelector( 40, false,
-						 * UpdateAlgorithmFactoryAndStrategy
-						 * .COMPARISON_MODE_DELETION)
-						 */
+						new TournamentSelector(
+								40,
+								false,
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)
 
-						new WeightedRouletteSelector(
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
-								false)));
+				/*
+				 * new WeightedRouletteSelector(
+				 * UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+				 * false)
+				 */));
 		// ClassifierSet rulePopulation=new ClassifierSet(new
 		// FixedSizeSetWorstFitnessDeletion(
 		// 1000,new
@@ -116,8 +120,8 @@ public class ComplexRepresentationLCSTest {
 							.getData((rulePopulation.getClassifier(i))));
 		}
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
-		trainer.selfEvaluate(rulePopulation);
+		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
+		eval.evaluateSet(rulePopulation);
 		// trainer.evaluateOnTest(rulePopulation);
 
 	}

@@ -16,6 +16,36 @@ public class ArffTrainer {
 
 	Instances testSet;
 
+	/**
+	 * Evaluate on testset.
+	 * 
+	 * @param population
+	 *            the population on with the rules will be evaluated
+	 */
+	public void evaluateOnTest(ClassifierSet population) {
+		LCSExploitTemplate eval = new LCSExploitTemplate();
+		int tp = 0, fp = 0;
+
+		for (int i = 0; i < testSet.numInstances(); i++) {
+			double[] instance = new double[testSet.numAttributes() - 1];
+
+			for (int j = 0; j < testSet.numAttributes(); j++) {
+				instance[j] = testSet.instance(i).value(j);
+			}
+			if (eval.classifyCorrectly(instance, population)) {
+				tp++;
+			} else if (eval.classify(instance, population) != -1) {
+				fp++;
+			}
+
+		}
+
+		double errorRate = ((double) fp) / ((double) (fp + tp));
+		System.out.println("tp:" + tp + " fp:" + fp + " errorRate:" + errorRate
+				+ " total instances:" + testSet.numInstances());
+
+	}
+
 	public void loadInstances(String filename) throws IOException {
 		// Open .arff
 		FileReader reader = new FileReader(filename);
@@ -51,58 +81,6 @@ public class ArffTrainer {
 			// if (repetition % 10==0) population.selfSubsume();
 		}
 		// population.selfSubsume();
-	}
-
-	public void selfEvaluate(ClassifierSet population) {
-		LCSExploitTemplate eval = new LCSExploitTemplate();
-		// int confusionMatrix[][]=new int[][];
-		int tp = 0, fp = 0;
-		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++) { // for
-																				// each
-																				// instance
-			if (eval.classifyCorrectly(ClassifierTransformBridge.instances[i],
-					population))
-				tp++;
-			else if (eval.classify(ClassifierTransformBridge.instances[i],
-					population) != -1)
-				fp++;
-		}
-
-		double errorRate = ((double) fp) / ((double) (fp + tp));
-		System.out.println("tp:" + tp + " fp:" + fp + " errorRate:" + errorRate
-				+ " total instances:"
-				+ ClassifierTransformBridge.instances.length);
-
-	}
-
-	/**
-	 * Evaluate on testset.
-	 * 
-	 * @param population
-	 *            the population on with the rules will be evaluated
-	 */
-	public void evaluateOnTest(ClassifierSet population) {
-		LCSExploitTemplate eval = new LCSExploitTemplate();
-		int tp = 0, fp = 0;
-
-		for (int i = 0; i < testSet.numInstances(); i++) {
-			double[] instance = new double[testSet.numAttributes() - 1];
-
-			for (int j = 0; j < testSet.numAttributes(); j++) {
-				instance[j] = testSet.instance(i).value(j);
-			}
-			if (eval.classifyCorrectly(instance, population)) {
-				tp++;
-			} else if (eval.classify(instance, population) != -1) {
-				fp++;
-			}
-
-		}
-
-		double errorRate = ((double) fp) / ((double) (fp + tp));
-		System.out.println("tp:" + tp + " fp:" + fp + " errorRate:" + errorRate
-				+ " total instances:" + testSet.numInstances());
-
 	}
 
 }
