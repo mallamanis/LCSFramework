@@ -43,7 +43,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Cache for action.
 	 */
-	private int actionCache = -1;
+	private int actionCache[] = null;
 
 	/**
 	 * Serialization code for versioning.
@@ -187,9 +187,10 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the advocated action
 	 */
-	public final int getActionAdvocated() {
-		if (actionCache < 0)
+	public final int[] getActionAdvocated() {
+		if (actionCache == null){
 			actionCache = transformBridge.getClassification(this);
+		}
 		return actionCache;
 	}
 
@@ -291,7 +292,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final void setActionAdvocated(final int action) {
 		transformBridge.setClassification(this, action);
-		actionCache = -1;
+		actionCache = null;
 	}
 
 	/**

@@ -134,16 +134,16 @@ public class ComplexRepresentationTest {
 				"0111111111111110111111111111010");
 		Classifier ex1 = new Classifier(set1);
 
-		assertEquals(ex1.getActionAdvocated(), 1);
+		assertEquals(ex1.getActionAdvocated()[0], 1);
 
 		ex1.setActionAdvocated(2);
-		assertEquals(ex1.getActionAdvocated(), 2);
+		assertEquals(ex1.getActionAdvocated()[0], 2);
 
 		ex1.setActionAdvocated(3);
-		assertEquals(ex1.getActionAdvocated(), 3);
+		assertEquals(ex1.getActionAdvocated()[0], 3);
 
 		ex1.setActionAdvocated(10);
-		assertEquals(ex1.getActionAdvocated(), 2);
+		assertEquals(ex1.getActionAdvocated()[0], 2);
 		assertEquals(ex1.getChromosome().size(), rep.getChromosomeSize());
 	}
 

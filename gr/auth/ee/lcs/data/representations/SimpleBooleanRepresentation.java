@@ -89,7 +89,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				output = "#" + output;
 			}
 		}
-		output += "=>" + aClassifier.getActionAdvocated();
+		output += "=>" + aClassifier.getActionAdvocated()[0];
 		return output;
 	}
 
@@ -132,8 +132,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public boolean isMoreGeneral(Classifier baseClassifier,
 			Classifier testClassifier) {
 		// If classifiers advocate for different actions, return false
-		if (baseClassifier.getActionAdvocated() != testClassifier
-				.getActionAdvocated())
+		if (baseClassifier.getActionAdvocated()[0] != testClassifier
+				.getActionAdvocated()[0])
 			return false;
 
 		ExtendedBitSet baseChromosome = baseClassifier.getChromosome();
@@ -215,7 +215,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs.classifiers.Classifier,gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	public boolean areEqual(Classifier cl1, Classifier cl2) {
-		if (cl1.getActionAdvocated() != cl2.getActionAdvocated())
+		if (cl1.getActionAdvocated()[0] != cl2.getActionAdvocated()[0])
 			return false;
 
 		ExtendedBitSet baseChromosome = cl1.getChromosome();
@@ -235,8 +235,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	}
 
 	@Override
-	public int getClassification(Classifier aClassifier) {
-		return ((int[]) (aClassifier.transformData))[0];
+	public int[] getClassification(Classifier aClassifier) {
+		return ((int[]) (aClassifier.transformData));
 	}
 
 	@Override

@@ -72,9 +72,11 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public int getClassification(Classifier aClassifier) {
-		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier);
+	public int[] getClassification(Classifier aClassifier) {
+		int[] result = new int[1];
+		result[0] = ((UniLabel) attributeList[attributeList.length - 1])
+			.getValue(aClassifier);
+		return result;
 	}
 
 	@Override

@@ -107,7 +107,7 @@ public abstract class ClassifierTransformBridge {
 	 *            the classifier from which to obtain the classification
 	 * @return the class TODO: Pending changes on ml
 	 */
-	public abstract int getClassification(Classifier aClassifier);
+	public abstract int[] getClassification(Classifier aClassifier);
 
 	/**
 	 * Checks if the visionVector matches the condition of the given chromosome.
