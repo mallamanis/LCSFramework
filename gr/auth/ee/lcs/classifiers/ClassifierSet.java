@@ -56,6 +56,40 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
+	 * Generate a match set for a given instance.
+	 * @param dataInstance the instance to be matched
+	 * @return a ClassifierSet containing the match set
+	 */
+	public final ClassifierSet generateMatchSet(double[] dataInstance){
+		ClassifierSet matchSet = new ClassifierSet(null);
+		final int populationSize = this.getNumberOfMacroclassifiers();
+		// TODO: Parallelize for performance increase
+		for (int i = 0; i < populationSize; i++) {
+			if (this.getClassifier(i).isMatch(dataInstance)) {
+				matchSet.addClassifier(this.getMacroclassifier(i), false);
+			}
+		}
+		return matchSet;
+	}
+	
+	/**
+	 * Generate match set from data instance.
+	 * @param dataInstanceIndex the index of the instance
+	 * @return the match set
+	 */
+	public final ClassifierSet generateMatchSet(int dataInstanceIndex){
+		ClassifierSet matchSet = new ClassifierSet(null);
+		final int populationSize = this.getNumberOfMacroclassifiers();
+		// TODO: Parallelize for performance increase
+		for (int i = 0; i < populationSize; i++) {
+			if (this.getClassifier(i).isMatch(dataInstanceIndex)) {
+				matchSet.addClassifier(this.getMacroclassifier(i), false);
+			}
+		}
+		return matchSet;
+	}
+	
+	/**
 	 * A static function to save the classifier set.
 	 * 
 	 * @param toSave
