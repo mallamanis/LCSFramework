@@ -23,14 +23,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	private static final double INITIAL_FITNESS = 0.5;
 
-	public float classifyCorrectly(int instanceIndex) {
-		return transformBridge.classifyAbility(this, instanceIndex);
-	}
-
-	public float classifyCorrectly(double[] visionVector) {
-		return transformBridge.classifyAbility(this, visionVector);
-	}
-
 	/**
 	 * Set the transform bridge.
 	 * 
@@ -56,13 +48,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	private Serializable updateData;
 
 	/**
-	 * @return the update object
-	 */
-	public final Serializable getUpdateDataObject() {
-		return updateData;
-	}
-
-	/**
 	 * A boolean array indicating which dataset instances the rule matches.
 	 */
 	private transient byte[] matchInstances;
@@ -82,6 +67,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * The serial number of last classifier (start from the lowest & increment).
 	 */
 	private static int currentSerial = Integer.MIN_VALUE;
+
 	/**
 	 * The serial number of the classifier.
 	 */
@@ -97,30 +83,10 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * GA Evolution.
 	 */
 	public int timestamp = 0;
-
 	/**
 	 * A boolean representing the classifier's ability to subsume.
 	 */
 	private boolean canSubsume = false;
-
-	/**
-	 * Getter for the subsumption ability.
-	 * 
-	 * @return true if the classifier is strong enough to subsume
-	 */
-	public final boolean canSubsume() {
-		return canSubsume;
-	}
-
-	/**
-	 * Sets the classifier's subsumption ability.
-	 * 
-	 * @param canSubsumeAbility
-	 *            true if the classifier is able to subsume
-	 */
-	public final void setSubsumptionAbility(final boolean canSubsumeAbility) {
-		canSubsume = canSubsumeAbility;
-	}
 
 	/**
 	 * An object for saving the transformation specific data.
@@ -147,12 +113,29 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Build matches vector and initialize it.
+	 * Build matches vector (with train instances) and initialize it.
 	 */
 	public final void buildMatches() {
 		this.matchInstances = new byte[ClassifierTransformBridge.instances.length];
 		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++)
 			matchInstances[i] = -1;
+	}
+
+	/**
+	 * Getter for the subsumption ability.
+	 * 
+	 * @return true if the classifier is strong enough to subsume
+	 */
+	public final boolean canSubsume() {
+		return canSubsume;
+	}
+
+	public float classifyCorrectly(double[] visionVector) {
+		return transformBridge.classifyAbility(this, visionVector);
+	}
+
+	public float classifyCorrectly(int instanceIndex) {
+		return transformBridge.classifyAbility(this, instanceIndex);
 	}
 
 	/**
@@ -188,7 +171,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return the advocated action
 	 */
 	public final int[] getActionAdvocated() {
-		if (actionCache == null){
+		if (actionCache == null) {
 			actionCache = transformBridge.getClassification(this);
 		}
 		return actionCache;
@@ -234,6 +217,13 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final int getSerial() {
 		return this.serial;
+	}
+
+	/**
+	 * @return the update object
+	 */
+	public final Serializable getUpdateDataObject() {
+		return updateData;
 	}
 
 	/**
@@ -307,6 +297,16 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 			final double comparisonValue) {
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy.setComparisonValue(
 				this, mode, comparisonValue);
+	}
+
+	/**
+	 * Sets the classifier's subsumption ability.
+	 * 
+	 * @param canSubsumeAbility
+	 *            true if the classifier is able to subsume
+	 */
+	public final void setSubsumptionAbility(final boolean canSubsumeAbility) {
+		canSubsume = canSubsumeAbility;
 	}
 
 	/**
