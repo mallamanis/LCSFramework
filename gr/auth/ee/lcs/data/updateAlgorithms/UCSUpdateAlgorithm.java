@@ -20,6 +20,56 @@ import java.io.Serializable;
 public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
+	 * A data object for the UCS update algorithm.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	class UCSClassifierData implements Serializable {
+
+		/**
+		 * Serial code for serialization.
+		 */
+		private static final long serialVersionUID = 3098073593334379507L;
+
+		/**
+		 *
+		 */
+		private double fitness = .5;
+
+		/**
+		 * niche set size estimation.
+		 */
+		private double cs = 1;
+
+		/**
+		 * 
+		 */
+		private double msAvgFitness;
+
+		/**
+		 * Match Set Appearances.
+		 */
+		private int msa = 1;
+
+		/**
+		 * true positives.
+		 */
+		private int tp = 1;
+
+		/**
+		 * false positives.
+		 */
+		private int fp = 0;
+
+		/**
+		 * Strength.
+		 */
+		private double fitness0 = 0;
+
+	}
+
+	/**
 	 * Genetic Algorithm.
 	 */
 	public IGeneticAlgorithmStrategy ga;
@@ -34,7 +84,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * A double indicating the probability that the GA will run on the matchSet
 	 * (and not on the correct set).
 	 */
-	private double matchSetRunProbability;
+	private final double matchSetRunProbability;
 
 	/**
 	 * The experience threshold for subsumption.
@@ -56,6 +106,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the experience threshold for subsumption
 	 * @param gaMatchSetRunProbability
 	 *            the probability of running the GA at the matchset
+	 * @param geneticAlgorithm
+	 *            the genetic algorithm to be used for evolving
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
@@ -68,6 +120,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		subsumptionExperienceThreshold = experienceThreshold;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
 		this.ga = geneticAlgorithm;
+
 	}
 
 	/*
@@ -87,33 +140,22 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		case COMPARISON_MODE_EXPLORATION:
 			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
 		case COMPARISON_MODE_DELETION:
-			return data.fitness
-					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1)) // TODO:
-																	// Correct
-																	// ns
-					* (((aClassifier.getCoverage() == 0) && (aClassifier.experience == 1)) ? 0.
-							: 1);
-			// TODO: Something else?
+
+			if ((aClassifier.experience < 15))
+				return data.cs / data.fitness;
+
+			return data.cs;
+
+			/*
+			 * return data.fitness ((aClassifier.experience < 20) ? 100. :
+			 * Math.exp(-(Double .isNaN(data.ns) ? 1 : data.ns) + 1)) // TODO:
+			 * // Correct // ns (((aClassifier.getCoverage() == 0) &&
+			 * (aClassifier.experience == 1)) ? 0. : 1);
+			 */
 		case COMPARISON_MODE_EXPLOITATION:
 			return (((double) (data.tp)) / (double) (data.msa));
 		}
 		return 0;
-	}
-
-	/**
-	 * Calls covering operator.
-	 * 
-	 * @param instanceIndex
-	 *            the index of the current sample
-	 */
-	private final void cover(final ClassifierSet population,
-			final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
-		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
-				false);
 	}
 
 	/*
@@ -123,6 +165,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
 	 * .ee.lcs.classifiers.Classifier)
 	 */
+	@Override
 	public final String getData(final Classifier aClassifier) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -144,15 +187,18 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		data.fitness = comparisonValue;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Calls covering operator.
 	 * 
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
-	 * createStateClassifierObject()
+	 * @param instanceIndex
+	 *            the index of the current sample
 	 */
-	@Override
-	protected final Serializable createStateClassifierObject() {
-		return new UCSClassifierData();
+	private void cover(final ClassifierSet population, final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
 	}
 
 	/**
@@ -174,6 +220,79 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				correctSet.addClassifier(cl, false);
 		}
 		return correctSet;
+	}
+
+	/**
+	 * Perform an update to the set.
+	 * 
+	 * @param matchSet
+	 * @param correctSet
+	 */
+	private void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
+		double strengthSum = 0;
+		final int matchSetMacroclassifiers = matchSet
+				.getNumberOfMacroclassifiers();
+		final int correctSetSize = correctSet.getTotalNumerosity();
+		for (int i = 0; i < matchSetMacroclassifiers; i++) {
+			Classifier cl = matchSet.getClassifier(i);
+			UCSClassifierData data = ((UCSClassifierData) cl
+					.getUpdateDataObject());
+			cl.experience++;
+			data.msa += 1;
+			data.cs = data.cs + 0.1 * (correctSetSize - data.cs);
+			if (correctSet.getClassifierNumerosity(cl) > 0) {
+				data.tp += 1;
+				final double accuracy = ((double) data.tp)
+						/ ((double) data.msa);
+				if (accuracy > accuracy0) {
+					data.fitness0 = 1;
+
+					// Check subsumption
+					if (cl.experience >= this.subsumptionExperienceThreshold)
+						cl.setSubsumptionAbility(true);
+
+				} else {
+					data.fitness0 = a * Math.pow(accuracy / accuracy0, n);
+					cl.setSubsumptionAbility(false);
+				}
+
+				strengthSum += data.fitness0
+						* matchSet.getClassifierNumerosity(i);
+			} else {
+				data.fp += 1;
+				data.fitness0 = 0;
+			}
+
+		}
+
+		// Fix for avoiding problems...
+		if (strengthSum == 0)
+			strengthSum = 1;
+
+		// double fitnessSum = 0;
+		final int msSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < msSize; i++) {
+			Classifier cl = matchSet.getClassifier(i);
+			UCSClassifierData data = ((UCSClassifierData) cl
+					.getUpdateDataObject());
+			data.fitness += b * (data.fitness0 / strengthSum - data.fitness);// TODO:
+																				// Something
+																				// else?
+			// fitnessSum += data.fitness * matchSet.getClassifierNumerosity(i);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
+	 * createStateClassifierObject()
+	 */
+	@Override
+	protected final Serializable createStateClassifierObject() {
+		return new UCSClassifierData();
 	}
 
 	/*
@@ -213,107 +332,6 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			ga.evolveSet(matchSet, population);
 		else
 			ga.evolveSet(correctSet, population);
-
-	}
-
-	/**
-	 * 
-	 * @param matchSet
-	 * @param correctSet
-	 */
-	private void performUpdate(final ClassifierSet matchSet,
-			final ClassifierSet correctSet) {
-		double strengthSum = 0;
-		final int matchSetMacroclassifiers = matchSet
-				.getNumberOfMacroclassifiers();
-
-		for (int i = 0; i < matchSetMacroclassifiers; i++) {
-			Classifier cl = matchSet.getClassifier(i);
-			UCSClassifierData data = ((UCSClassifierData) cl
-					.getUpdateDataObject());
-			cl.experience++;
-			data.msa += 1;
-			if (correctSet.getClassifierNumerosity(cl) > 0) {
-				data.tp += 1;
-				final double accuracy = ((double) data.tp)
-						/ ((double) data.msa);
-				if (accuracy > accuracy0) {
-					data.fitness0 = 1;
-
-					// Check subsumption
-					if (cl.experience >= this.subsumptionExperienceThreshold)
-						cl.setSubsumptionAbility(true);
-
-				} else {
-					data.fitness0 = a * Math.pow(accuracy / accuracy0, n);
-					cl.setSubsumptionAbility(false);
-				}
-
-				strengthSum += data.fitness0
-						* matchSet.getClassifierNumerosity(i);
-			} else {
-				data.fp += 1;
-				data.fitness0 = 0;
-			}
-
-		}
-
-		// Fix for avoiding problems...
-		if (strengthSum == 0)
-			strengthSum = 1;
-
-		final int msSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < msSize; i++) {
-			Classifier cl = matchSet.getClassifier(i);
-			UCSClassifierData data = ((UCSClassifierData) cl
-					.getUpdateDataObject());
-			data.fitness += b * (data.fitness0 / strengthSum - data.fitness);
-		}
-
-	}
-
-	/**
-	 * A data object for the UCS update algorithm.
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	class UCSClassifierData implements Serializable {
-
-		/**
-		 * Serial code for serialization.
-		 */
-		private static final long serialVersionUID = 3098073593334379507L;
-
-		/**
-		 *
-		 */
-		private double fitness = .5;
-
-		/**
-		 * niche set size estimation.
-		 */
-		private double ns = 1;
-
-		/**
-		 * Match Set Appearances.
-		 */
-		private int msa = 1;
-
-		/**
-		 * true positives.
-		 */
-		private int tp = 1;
-
-		/**
-		 * false positives.
-		 */
-		private int fp = 0;
-
-		/**
-		 * Strength.
-		 */
-		private double fitness0 = 0;
 
 	}
 
