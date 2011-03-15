@@ -122,8 +122,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 			classes = classNames;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public String toString(ExtendedBitSet convertingClassifier) {
@@ -132,8 +136,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 			return classes[index];
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMatch(float attributeVision,
@@ -142,8 +150,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
 		 */
 		@Override
 		public void randomCoveringValue(float attributeValue,
@@ -153,8 +165,13 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 					coverClass);
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#fixAttributeRepresentation(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #fixAttributeRepresentation
+		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public void fixAttributeRepresentation(
@@ -170,8 +187,13 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isMoreGeneral(ExtendedBitSet baseChromosome,
@@ -183,8 +205,13 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 				return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute#isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
 		 */
 		@Override
 		public boolean isEqual(ExtendedBitSet baseChromosome,
@@ -195,7 +222,9 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 
 		/**
 		 * Gets the label value.
-		 * @param chromosome the chromosome
+		 * 
+		 * @param chromosome
+		 *            the chromosome
 		 * @return the value of the label at the chromosome
 		 */
 		public int getValue(ExtendedBitSet chromosome) {
@@ -204,8 +233,11 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 
 		/**
 		 * Sets the label value.
-		 * @param chromosome the chromosome to set the label
-		 * @param value the value to set 
+		 * 
+		 * @param chromosome
+		 *            the chromosome to set the label
+		 * @param value
+		 *            the value to set
 		 */
 		public void setValue(ExtendedBitSet chromosome, int value) {
 			chromosome.setIntAt(positionInChromosome, lengthInBits, value);
@@ -250,8 +282,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	public class BestFitnessClassificationStrategy implements
 			IClassificationStrategy {
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.IClassificationStrategy#classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.
+		 * IClassificationStrategy
+		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
 		 */
 		@Override
 		public int[] classify(ClassifierSet aSet, double[] visionVector) {
@@ -281,8 +317,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	public class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
-		/* (non-Javadoc)
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.IClassificationStrategy#classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.
+		 * IClassificationStrategy
+		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
 		 */
 		@Override
 		public int[] classify(ClassifierSet aSet, double[] visionVector) {
@@ -317,11 +357,11 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 					maxVotes = votingTable[i];
 				}
 			}
-			
-			if (maxVotes == 0){
-				//TODO: Select majority class
+
+			if (maxVotes == 0) {
+				// TODO: Select majority class
 			}
-			
+
 			// Wrap it
 			int[] results = new int[1];
 			results[0] = maxIndex;
