@@ -10,7 +10,6 @@ import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
@@ -18,7 +17,6 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.WeightedRouletteSelector;
 
 import java.io.IOException;
@@ -82,7 +80,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train( 1000, rulePopulation);
+		myExample.train(1000, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
