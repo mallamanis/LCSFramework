@@ -1,7 +1,5 @@
 package gr.auth.ee.lcs.classifiers;
 
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -302,26 +300,6 @@ public class ClassifierSet implements Serializable {
 	 */
 	public final boolean isEmpty() {
 		return this.myMacroclassifiers.isEmpty();
-	}
-
-	/**
-	 * Postprocessing in the classifier set. Simply remove all classifiers with
-	 * less than a minimum experience and minimum fitness
-	 * 
-	 * @param minExperience
-	 *            the minimum experience of the classifiers
-	 * @param minFitness
-	 *            the minimum fitness of the classifiers
-	 */
-	public final void postProcessThreshold(final int minExperience,
-			final float minFitness) {
-		for (int i = this.myMacroclassifiers.size() - 1; i >= 0; i--) {
-			if ((this.myMacroclassifiers.elementAt(i).myClassifier.experience < minExperience)
-					|| (this.myMacroclassifiers.elementAt(i).myClassifier
-							.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION) < minFitness))
-				this.myMacroclassifiers.removeElementAt(i);
-		}
-
 	}
 
 	/**
