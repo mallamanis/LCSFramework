@@ -28,9 +28,22 @@ public class TournamentSelector implements INaturalSelector {
 	private final boolean max;
 
 	/**
+	 * The percentage of population size, used for tournament selection.
+	 */
+	private final double percentSize;
+
+	/**
 	 * The comparison mode for the tournaments.
 	 */
 	private final int mode;
+
+	public TournamentSelector(final double sizeOfTournaments,
+			final boolean max, final int comparisonMode) {
+		this.tournamentSize = 0;
+		this.max = max;
+		this.mode = comparisonMode;
+		percentSize = sizeOfTournaments;
+	}
 
 	/**
 	 * The default constructor of the selector.
@@ -49,13 +62,21 @@ public class TournamentSelector implements INaturalSelector {
 		this.tournamentSize = sizeOfTournaments;
 		this.max = max;
 		this.mode = comparisonMode;
+		percentSize = 0;
 	}
 
 	@Override
 	public int select(ClassifierSet fromPopulation) {
-		int[] participants = new int[tournamentSize];
+		int size;
+		if (tournamentSize == 0)
+			size = (int) Math.floor(fromPopulation.getTotalNumerosity()
+					* percentSize);
+		else
+			size = tournamentSize;
+
+		int[] participants = new int[size];
 		// Create random participants
-		for (int j = 0; j < tournamentSize; j++) {
+		for (int j = 0; j < participants.length; j++) {
 			participants[j] = (int) Math.floor((Math.random() * fromPopulation
 					.getTotalNumerosity()));
 		}
@@ -91,10 +112,9 @@ public class TournamentSelector implements INaturalSelector {
 	 * 
 	 * @param fromPopulation
 	 *            the source population to run the tournament in
-	 * @param toPopulation
-	 *            the destination population of the tournament winners
 	 * @param participants
 	 *            the int[] of indexes of participants
+	 * @return the index of the tournament winner
 	 */
 	public final int tournament(final ClassifierSet fromPopulation,
 			final int[] participants) {
@@ -121,7 +141,7 @@ public class TournamentSelector implements INaturalSelector {
 		do {
 			currentBestParticipantIndex += fromPopulation
 					.getClassifierNumerosity(currentMacroclassifierIndex);
-			while ((currentClassifierIndex < tournamentSize)
+			while ((currentClassifierIndex < participants.length)
 					&& (participants[currentClassifierIndex] <= currentBestParticipantIndex)) {
 
 				// currentParicipant is in this macroclassifier
@@ -135,7 +155,7 @@ public class TournamentSelector implements INaturalSelector {
 				currentClassifierIndex++; // Next!
 			}
 			currentMacroclassifierIndex++;
-		} while (currentClassifierIndex < tournamentSize);
+		} while (currentClassifierIndex < participants.length);
 
 		return bestMacroclassifierParticipant;
 

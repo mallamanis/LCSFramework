@@ -45,7 +45,7 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/position9.arff";
+		String filename = "/home/miltiadis/Desktop/dec9.arff";
 		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -63,13 +63,13 @@ public class ComplexRepresentationLCSTest {
 
 						new TournamentSelector(
 								40,
-								false,
+								true,
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)
 
 				/*
 				 * new WeightedRouletteSelector(
 				 * UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
-				 * false)
+				 * true)
 				 */));
 		// ClassifierSet rulePopulation=new ClassifierSet(new
 		// FixedSizeSetWorstFitnessDeletion(
