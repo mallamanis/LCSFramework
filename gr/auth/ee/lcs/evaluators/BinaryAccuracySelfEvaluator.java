@@ -56,7 +56,7 @@ public class BinaryAccuracySelfEvaluator implements IEvaluator {
 		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++) { // for
 																				// each
 																				// instance
-			int[] classes = bridge.classify(population,
+			final int[] classes = bridge.classify(population,
 					ClassifierTransformBridge.instances[i]);
 			if (classes == null)
 				continue;
