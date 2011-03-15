@@ -1,7 +1,6 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 
 /**
@@ -19,7 +18,7 @@ public class LCSTrainTemplate {
 			int dataInstanceIndex) {
 
 		ClassifierSet matchSet = population.generateMatchSet(dataInstanceIndex);
-		
+
 		UpdateAlgorithmFactoryAndStrategy.updateData(population, matchSet,
 				dataInstanceIndex);
 

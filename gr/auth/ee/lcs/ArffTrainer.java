@@ -20,31 +20,27 @@ public class ArffTrainer {
 	 * Evaluate on testset.
 	 * 
 	 * @param population
-	 *            the population on with the rules will be evaluated
+	 *            the population on with the rules will be evaluated TODO: Move
+	 *            to evaluator & correct public void
+	 *            evaluateOnTest(ClassifierSet population) { LCSExploitTemplate
+	 *            eval = new LCSExploitTemplate(); int tp = 0, fp = 0;
+	 * 
+	 *            for (int i = 0; i < testSet.numInstances(); i++) { double[]
+	 *            instance = new double[testSet.numAttributes() - 1];
+	 * 
+	 *            for (int j = 0; j < testSet.numAttributes(); j++) {
+	 *            instance[j] = testSet.instance(i).value(j); } if
+	 *            (eval.classifyCorrectly(instance, population)) { tp++; } else
+	 *            if (eval.classify(instance, population) != -1) { fp++; }
+	 * 
+	 *            }
+	 * 
+	 *            double errorRate = ((double) fp) / ((double) (fp + tp));
+	 *            System.out.println("tp:" + tp + " fp:" + fp + " errorRate:" +
+	 *            errorRate + " total instances:" + testSet.numInstances());
+	 * 
+	 *            }
 	 */
-	public void evaluateOnTest(ClassifierSet population) {
-		LCSExploitTemplate eval = new LCSExploitTemplate();
-		int tp = 0, fp = 0;
-
-		for (int i = 0; i < testSet.numInstances(); i++) {
-			double[] instance = new double[testSet.numAttributes() - 1];
-
-			for (int j = 0; j < testSet.numAttributes(); j++) {
-				instance[j] = testSet.instance(i).value(j);
-			}
-			if (eval.classifyCorrectly(instance, population)) {
-				tp++;
-			} else if (eval.classify(instance, population) != -1) {
-				fp++;
-			}
-
-		}
-
-		double errorRate = ((double) fp) / ((double) (fp + tp));
-		System.out.println("tp:" + tp + " fp:" + fp + " errorRate:" + errorRate
-				+ " total instances:" + testSet.numInstances());
-
-	}
 
 	public void loadInstances(String filename) throws IOException {
 		// Open .arff

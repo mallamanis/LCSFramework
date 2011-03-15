@@ -164,12 +164,13 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * Calls covering operator.
-	 * @param population the population to cover
+	 * 
+	 * @param population
+	 *            the population to cover
 	 * @param instanceIndex
 	 *            the index of the current sample
 	 */
-	private void cover(final ClassifierSet population,
-			final int instanceIndex) {
+	private void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);

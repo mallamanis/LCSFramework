@@ -957,4 +957,5 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * Create the class representation depending on the problem.
 	 */
 	protected abstract void createClassRepresentation(Instances instances);
+
 }

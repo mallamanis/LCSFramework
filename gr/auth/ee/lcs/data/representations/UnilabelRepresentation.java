@@ -4,7 +4,11 @@
 package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -75,7 +79,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	public int[] getClassification(Classifier aClassifier) {
 		int[] result = new int[1];
 		result[0] = ((UniLabel) attributeList[attributeList.length - 1])
-			.getValue(aClassifier);
+				.getValue(aClassifier);
 		return result;
 	}
 
@@ -191,6 +195,29 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	public float classifyAbility(Classifier aClassifier, double[] vision) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
 				.getValue(aClassifier) == vision[vision.length - 1] ? 1 : 0;
+	}
+
+	@Override
+	public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		INaturalSelector selector = new BestClassifierSelector(true,
+				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+
+		// Generate MatchSet
+		ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+
+		if (matchSet.getTotalNumerosity() == 0)
+			return null;
+		ClassifierSet results = new ClassifierSet(null);
+		selector.select(1, matchSet, results);
+
+		return results.getClassifier(0).getActionAdvocated();
+	}
+
+	@Override
+	public int[] getDataInstanceLabels(double[] dataInstances) {
+		int[] classes = new int[1];
+		classes[0] = (int) dataInstances[dataInstances.length - 1];
+		return classes;
 	}
 
 }

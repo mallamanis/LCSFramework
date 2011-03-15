@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs.data;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 
 /**
@@ -105,9 +106,11 @@ public abstract class ClassifierTransformBridge {
 	 * 
 	 * @param aClassifier
 	 *            the classifier from which to obtain the classification
-	 * @return the class TODO: Pending changes on ml
+	 * @return the class
 	 */
 	public abstract int[] getClassification(Classifier aClassifier);
+
+	public abstract int[] classify(ClassifierSet aSet, double[] visionVector);
 
 	/**
 	 * Checks if the visionVector matches the condition of the given chromosome.
@@ -120,6 +123,15 @@ public abstract class ClassifierTransformBridge {
 	 */
 	public abstract boolean isMatch(double[] visionVector,
 			ExtendedBitSet chromosome);
+
+	/**
+	 * Returns all the labels of the specific data instance
+	 * 
+	 * @param dataInstances
+	 *            the data instance
+	 * @return a array of instances
+	 */
+	public abstract int[] getDataInstanceLabels(final double[] dataInstances);
 
 	/**
 	 * Tests the given chromosomes if the baseClassifier is a more general

@@ -130,10 +130,15 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 		return canSubsume;
 	}
 
-	public float classifyCorrectly(double[] visionVector) {
-		return transformBridge.classifyAbility(this, visionVector);
-	}
-
+	/**
+	 * A representation specific method representing the classifier's ability to
+	 * correctly classify a train instance.
+	 * 
+	 * @param instanceIndex
+	 *            the index of the train instance
+	 * @return a number that represents the correctness. This number may be 0,1
+	 *         for unilabel classification but it may also be in the range [0,1]
+	 */
 	public float classifyCorrectly(int instanceIndex) {
 		return transformBridge.classifyAbility(this, instanceIndex);
 	}

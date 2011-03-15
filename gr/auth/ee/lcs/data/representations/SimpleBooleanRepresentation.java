@@ -4,8 +4,12 @@
 package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 
 /**
  * Implements the a simple boolean representation of the chromosomes. Each bit
@@ -47,7 +51,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs.classifiers.Classifier,gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	public boolean areEqual(Classifier cl1, Classifier cl2) {
-		if (getClassification(cl1) != getClassification(cl2))
+		if (getClassification(cl1)[0] != getClassification(cl2)[0])
 			return false;
 
 		ExtendedBitSet baseChromosome = cl1.getChromosome();
@@ -253,8 +257,33 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				output = "#" + output;
 			}
 		}
-		output += "=>" + aClassifier.getActionAdvocated()[0];
+		output += "=>" + getClassification(aClassifier)[0];
 		return output;
+	}
+
+	@Override
+	public int[] classify(ClassifierSet aSet, double[] dataInstance) {
+
+		INaturalSelector selector = new BestClassifierSelector(true,
+				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+
+		// Generate MatchSet
+		ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);
+
+		if (matchSet.getTotalNumerosity() == 0)
+			return null;
+		ClassifierSet results = new ClassifierSet(null);
+		selector.select(1, matchSet, results);
+
+		return results.getClassifier(0).getActionAdvocated();
+
+	}
+
+	@Override
+	public int[] getDataInstanceLabels(double[] dataInstances) {
+		int[] classes = new int[1];
+		classes[0] = (int) dataInstances[dataInstances.length - 1];
+		return classes;
 	}
 
 }

@@ -50,16 +50,21 @@ public class BinaryAccuracySelfEvaluator implements IEvaluator {
 	 */
 	@Override
 	public double evaluateSet(ClassifierSet population) {
+		ClassifierTransformBridge bridge = ClassifierTransformBridge
+				.getInstance();
 		LCSExploitTemplate eval = new LCSExploitTemplate();
 		int tp = 0, fp = 0;
 		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++) { // for
 																				// each
 																				// instance
-			if (eval.classifyCorrectly(ClassifierTransformBridge.instances[i],
-					population))
+			int[] classes = bridge.classify(population,
+					ClassifierTransformBridge.instances[i]);
+			if (classes == null)
+				continue;
+			if (classes[0] == bridge
+					.getDataInstanceLabels(ClassifierTransformBridge.instances[i])[0])
 				tp++;
-			else if (eval.classify(ClassifierTransformBridge.instances[i],
-					population) != -1)
+			else
 				fp++;
 		}
 
