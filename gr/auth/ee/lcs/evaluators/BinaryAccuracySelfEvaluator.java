@@ -3,7 +3,6 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
-import gr.auth.ee.lcs.LCSExploitTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -52,7 +51,7 @@ public class BinaryAccuracySelfEvaluator implements IEvaluator {
 	public double evaluateSet(ClassifierSet population) {
 		ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
-		LCSExploitTemplate eval = new LCSExploitTemplate();
+
 		int tp = 0, fp = 0;
 		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++) { // for
 																				// each
