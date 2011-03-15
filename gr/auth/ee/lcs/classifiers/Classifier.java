@@ -183,15 +183,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Getter of the ExtendedBitSet.
-	 * 
-	 * @return the classifier's chromosome as an extendedBitSet
-	 */
-	public final ExtendedBitSet getChromosome() {
-		return this;
-	}
-
-	/**
 	 * Returns a numeric value for comparing the classifier.
 	 * 
 	 * @param mode

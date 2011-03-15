@@ -54,8 +54,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		if (getClassification(cl1)[0] != getClassification(cl2)[0])
 			return false;
 
-		ExtendedBitSet baseChromosome = cl1.getChromosome();
-		ExtendedBitSet testChromosome = cl2.getChromosome();
+		ExtendedBitSet baseChromosome = cl1;
+		ExtendedBitSet testChromosome = cl2;
 
 		// For each chromosome
 		for (int i = 0; i < chromosomeSize; i += 2) {
@@ -104,7 +104,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		Classifier coverClassifier = new Classifier();
 
 		// Transform visionVector to BitSet (generalization not-set)
-		ExtendedBitSet chromosome = coverClassifier.getChromosome();
+		ExtendedBitSet chromosome = coverClassifier;
 		for (int i = 1; i < chromosomeSize; i += 2) {
 			if (visionVector[i / 2] == 0)
 				chromosome.clear(i);
@@ -180,8 +180,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 				.getActionAdvocated()[0])
 			return false;
 
-		ExtendedBitSet baseChromosome = baseClassifier.getChromosome();
-		ExtendedBitSet testChromosome = testClassifier.getChromosome();
+		ExtendedBitSet baseChromosome = baseClassifier;
+		ExtendedBitSet testChromosome = testClassifier;
 
 		// For each chromosome
 		for (int i = 0; i < chromosomeSize; i += 2) {
@@ -249,7 +249,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public String toNaturalLanguageString(Classifier aClassifier) {
 		String output = "";
 		// Get Chromosome
-		ExtendedBitSet chromosome = aClassifier.getChromosome();
+		ExtendedBitSet chromosome = aClassifier;
 		for (int i = 0; i < chromosomeSize; i += 2) {
 			if (chromosome.get(i)) {
 				output = (chromosome.get(i + 1) ? "1" : "0") + output;

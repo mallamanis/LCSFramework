@@ -161,8 +161,7 @@ public class SimpleBooleanRepresentationTest {
 		// visionVector[4] = 0; // 01100
 		for (int i = 0; i < 10; i++) { // Generate 10 random
 			testClassifier = test.createRandomCoveringClassifier(visionVector);
-			assertTrue(test.isMatch(visionVector,
-					testClassifier.getChromosome()));
+			assertTrue(test.isMatch(visionVector, testClassifier));
 		}
 
 		visionVector[0] = 1;
@@ -172,8 +171,7 @@ public class SimpleBooleanRepresentationTest {
 		// visionVector[4] = 0; // 01010
 		for (int i = 0; i < 10; i++) { // Generate 10 random
 			testClassifier = test.createRandomCoveringClassifier(visionVector);
-			assertTrue(test.isMatch(visionVector,
-					testClassifier.getChromosome()));
+			assertTrue(test.isMatch(visionVector, testClassifier));
 		}
 	}
 

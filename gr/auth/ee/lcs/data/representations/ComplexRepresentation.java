@@ -255,17 +255,15 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		public final void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
 			if (attributeValue == 0)
-				generatedClassifier.getChromosome().clear(
-						positionInChromosome + 1);
+				generatedClassifier.clear(positionInChromosome + 1);
 			else
-				generatedClassifier.getChromosome().set(
-						positionInChromosome + 1);
+				generatedClassifier.set(positionInChromosome + 1);
 
 			if (Math.random() < generalizationRate) // TODO: Configurable
 													// generalization rate
-				generatedClassifier.getChromosome().clear(positionInChromosome);
+				generatedClassifier.clear(positionInChromosome);
 			else
-				generatedClassifier.getChromosome().set(positionInChromosome);
+				generatedClassifier.set(positionInChromosome);
 
 		}
 
@@ -811,8 +809,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public final boolean areEqual(final Classifier cl1, final Classifier cl2) {
-		ExtendedBitSet baseChromosome = cl1.getChromosome();
-		ExtendedBitSet testChromosome = cl2.getChromosome();
+		ExtendedBitSet baseChromosome = cl1;
+		ExtendedBitSet testChromosome = cl2;
 
 		// Check for equality starting with class
 		for (int i = attributeList.length - 1; i >= 0; i--)

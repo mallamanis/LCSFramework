@@ -144,7 +144,7 @@ public class ComplexRepresentationTest {
 
 		ex1.setActionAdvocated(10);
 		assertEquals(ex1.getActionAdvocated()[0], 2);
-		assertEquals(ex1.getChromosome().size(), rep.getChromosomeSize());
+		assertEquals(ex1.size(), rep.getChromosomeSize());
 	}
 
 }
