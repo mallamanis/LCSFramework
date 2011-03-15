@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 
@@ -955,5 +956,49 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * Create the class representation depending on the problem.
 	 */
 	protected abstract void createClassRepresentation(Instances instances);
+
+	/**
+	 * A classification strategy interface
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public interface IClassificationStrategy {
+		public int[] classify(ClassifierSet aSet, double[] visionVector);
+	}
+
+	/**
+	 * The default classification strategy.
+	 */
+	private IClassificationStrategy defaultClassificationStrategy = null;
+
+	/**
+	 * Classify using another classification Strategy
+	 * 
+	 * @param aSet
+	 * @param visionVector
+	 * @param strategy
+	 * @return
+	 */
+	public int[] classify(ClassifierSet aSet, double[] visionVector,
+			IClassificationStrategy strategy) {
+		return strategy.classify(aSet, visionVector);
+	}
+
+	public void setClassificationStrategy(IClassificationStrategy strategy) {
+		defaultClassificationStrategy = strategy;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classify(gr.auth.ee.lcs
+	 * .classifiers.ClassifierSet, double[])
+	 */
+	@Override
+	public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		return defaultClassificationStrategy.classify(aSet, visionVector);
+	}
 
 }

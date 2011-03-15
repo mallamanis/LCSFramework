@@ -95,11 +95,18 @@ public abstract class ClassifierTransformBridge {
 	 */
 	public abstract int getChromosomeSize();
 
+	/**
+	 * The ability of the classifier to correctly classify the instance at the
+	 * given index.
+	 * 
+	 * @param aClassifier
+	 *            the classifier
+	 * @param instanceIndex
+	 *            the index of the instance
+	 * @return a float representing the classification ability
+	 */
 	public abstract float classifyAbility(Classifier aClassifier,
 			int instanceIndex);
-
-	public abstract float classifyAbility(Classifier aClassifier,
-			double[] vision);
 
 	/**
 	 * Gets the classification as specified by the representation.
@@ -110,6 +117,16 @@ public abstract class ClassifierTransformBridge {
 	 */
 	public abstract int[] getClassification(Classifier aClassifier);
 
+	/**
+	 * Classify a specific vision vector form a set of classifiers.
+	 * 
+	 * @param aSet
+	 *            the set of classifiers used for classification
+	 * @param visionVector
+	 *            the vision vector of the instance used for classification
+	 * @return an int[] containing the classes/ labels that the vision Vector
+	 *         has been classified
+	 */
 	public abstract int[] classify(ClassifierSet aSet, double[] visionVector);
 
 	/**

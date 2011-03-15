@@ -45,8 +45,9 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/position9.arff";
-		ComplexRepresentation rep = new UnilabelRepresentation(filename, 7);
+		String filename = "/home/miltiadis/Desktop/dec9.arff";
+		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
@@ -61,16 +62,15 @@ public class ComplexRepresentationLCSTest {
 				new FixedSizeSetWorstFitnessDeletion(
 						1000,
 
-						new TournamentSelector(
-								40,
-								true,
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)
+						/*
+						 * new TournamentSelector( 40, true,
+						 * UpdateAlgorithmFactoryAndStrategy
+						 * .COMPARISON_MODE_DELETION)
+						 */
 
-				/*
-				 * new WeightedRouletteSelector(
-				 * UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
-				 * true)
-				 */));
+						new WeightedRouletteSelector(
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+								true)));
 		// ClassifierSet rulePopulation=new ClassifierSet(new
 		// FixedSizeSetWorstFitnessDeletion(
 		// 1000,new
@@ -82,7 +82,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		trainer.train(myExample, 1000, rulePopulation);
+		trainer.train(myExample, 500, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
