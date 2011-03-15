@@ -694,15 +694,6 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	}
 
 	/**
-	 * The rate by which the createRandomCoveringClassifier considers a specific
-	 * condition as Don't Care.
-	 * 
-	 * @deprecated
-	 */
-	@Deprecated
-	public double coveringGeneralizationRate;
-
-	/**
 	 * The list of all attributes.
 	 */
 	protected Attribute[] attributeList;
