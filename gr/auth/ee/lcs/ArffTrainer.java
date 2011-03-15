@@ -16,7 +16,7 @@ public class ArffTrainer {
 
 	Instances testSet;
 
-	/**
+	/*
 	 * Evaluate on testset.
 	 * 
 	 * @param population
@@ -67,16 +67,6 @@ public class ArffTrainer {
 
 	}
 
-	public void train(LCSTrainTemplate lcs, int iterations,
-			ClassifierSet population) {
-		int numInstances = ClassifierTransformBridge.instances.length;
-		for (int repetition = 0; repetition < iterations; repetition++) {// Iterate
-			System.out.println("Iteration " + repetition);
-			for (int i = 0; i < numInstances; i++)
-				lcs.trainWithInstance(population, i);
-			// if (repetition % 10==0) population.selfSubsume();
-		}
-		// population.selfSubsume();
-	}
+	
 
 }

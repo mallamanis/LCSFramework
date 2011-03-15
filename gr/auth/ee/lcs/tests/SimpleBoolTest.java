@@ -26,7 +26,7 @@ public class SimpleBoolTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LCSTrainTemplate myExample = new LCSTrainTemplate();
+		LCSTrainTemplate myExample = new LCSTrainTemplate(10);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(
 						10,

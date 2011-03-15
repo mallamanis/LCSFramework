@@ -317,7 +317,11 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 					maxVotes = votingTable[i];
 				}
 			}
-
+			
+			if (maxVotes == 0){
+				//TODO: Select majority class
+			}
+			
 			// Wrap it
 			int[] results = new int[1];
 			results[0] = maxIndex;
