@@ -50,12 +50,12 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		/**
 		 * Match Set Appearances.
 		 */
-		private int msa = 1;
+		private int msa = 0;
 
 		/**
 		 * true positives.
 		 */
-		private int tp = 1;
+		private int tp = 0;
 
 		/**
 		 * false positives.
@@ -138,7 +138,9 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
-			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
+			final double value = data.fitness
+					* (aClassifier.experience < 10 ? 0 : 1);
+			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
 			if ((aClassifier.experience < 15))
@@ -146,14 +148,11 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 			return data.cs;
 
-			/*
-			 * return data.fitness ((aClassifier.experience < 20) ? 100. :
-			 * Math.exp(-(Double .isNaN(data.ns) ? 1 : data.ns) + 1)) // TODO:
-			 * // Correct // ns (((aClassifier.getCoverage() == 0) &&
-			 * (aClassifier.experience == 1)) ? 0. : 1);
-			 */
 		case COMPARISON_MODE_EXPLOITATION:
-			return (((double) (data.tp)) / (double) (data.msa));
+			final double acc = (((double) (data.tp)) / (double) (data.msa));
+			final double exploitValue = acc
+					* (aClassifier.experience < 10 ? 0 : 1);
+			return Double.isNaN(exploitValue) ? 0 : exploitValue;
 		}
 		return 0;
 	}
