@@ -75,8 +75,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
 	public int[] getClassification(Classifier aClassifier) {
@@ -86,8 +90,12 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#setClassification(gr.auth.ee.lcs.classifiers.Classifier, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#setClassification(gr.auth
+	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
 	public void setClassification(Classifier aClassifier, int action) {
