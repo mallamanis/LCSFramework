@@ -218,7 +218,8 @@ public class ClassifierSet implements Serializable {
 
 	/**
 	 * Deletes a classifier with the given index. If the macroclassifier at the
-	 * given index contains more than one classifier the numerosity is increased
+	 * given index contains more than one classifier the numerosity is decreased
+	 * by one.
 	 * 
 	 * @param index
 	 *            the index of the classifier's macroclassifier to delete
