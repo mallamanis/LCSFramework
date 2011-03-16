@@ -9,7 +9,7 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * @author Miltos Allamanis
  * 
  */
-public class FixedSizeSetWorstFitnessDeletion implements ISizeControlStrategy {
+public class FixedSizeSetWorstFitnessDeletion implements IPopulationControlStrategy {
 
 	/**
 	 * The Natural Selector used to select the the classifier to be deleted.
@@ -38,10 +38,10 @@ public class FixedSizeSetWorstFitnessDeletion implements ISizeControlStrategy {
 	/**
 	 * @param aSet
 	 *            the set to control
-	 * @see gr.auth.ee.lcs.classifiers.ISizeControlStrategy#controlSize(gr.auth.ee.lcs.classifiers.ClassifierSet)
+	 * @see gr.auth.ee.lcs.classifiers.IPopulationControlStrategy#controlPopulation(gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public final void controlSize(final ClassifierSet aSet) {
+	public final void controlPopulation(final ClassifierSet aSet) {
 		ClassifierSet toBeDeleted = new ClassifierSet(null);
 		while (aSet.getTotalNumerosity() > populationSize) {
 			mySelector.select(1, aSet, toBeDeleted);

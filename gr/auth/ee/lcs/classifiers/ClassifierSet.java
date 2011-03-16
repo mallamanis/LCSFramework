@@ -31,7 +31,7 @@ public class ClassifierSet implements Serializable {
 	 * @return the opened classifier set
 	 */
 	public static ClassifierSet openClassifierSet(final String path,
-			final ISizeControlStrategy sizeControlStrategy) {
+			final IPopulationControlStrategy sizeControlStrategy) {
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
 		ClassifierSet opened = null;
@@ -130,7 +130,7 @@ public class ClassifierSet implements Serializable {
 	 * An interface for a strategy on deleting classifiers from the set. This
 	 * attribute is transient and therefore not serializable
 	 */
-	private transient ISizeControlStrategy myISizeControlStrategy;
+	private transient IPopulationControlStrategy myISizeControlStrategy;
 
 	/**
 	 * The default ClassifierSet constructor.
@@ -138,7 +138,7 @@ public class ClassifierSet implements Serializable {
 	 * @param sizeControlStrategy
 	 *            the size control strategy to use for controlling the set
 	 */
-	public ClassifierSet(final ISizeControlStrategy sizeControlStrategy) {
+	public ClassifierSet(final IPopulationControlStrategy sizeControlStrategy) {
 		this.myISizeControlStrategy = sizeControlStrategy;
 		this.myMacroclassifiers = new Vector<Macroclassifier>();
 
@@ -171,7 +171,7 @@ public class ClassifierSet implements Serializable {
 						// Subsume and control size...
 						myMacroclassifiers.elementAt(i).numerosity += numerosity;
 						if (myISizeControlStrategy != null)
-							myISizeControlStrategy.controlSize(this);
+							myISizeControlStrategy.controlPopulation(this);
 						return;
 					}
 				} else if (theClassifier.equals(aClassifier)) { // Or it can't
@@ -179,7 +179,7 @@ public class ClassifierSet implements Serializable {
 																// it is equal
 					myMacroclassifiers.elementAt(i).numerosity += numerosity;
 					if (myISizeControlStrategy != null)
-						myISizeControlStrategy.controlSize(this);
+						myISizeControlStrategy.controlPopulation(this);
 					return;
 				}
 			}
@@ -191,7 +191,7 @@ public class ClassifierSet implements Serializable {
 		 */
 		this.myMacroclassifiers.add(macro);
 		if (myISizeControlStrategy != null)
-			myISizeControlStrategy.controlSize(this);
+			myISizeControlStrategy.controlPopulation(this);
 	}
 
 	/**

@@ -5,7 +5,7 @@ package gr.auth.ee.lcs.classifiers;
  * 
  * @author Miltos Allamanis
  */
-public interface ISizeControlStrategy {
+public interface IPopulationControlStrategy {
 
 	/**
 	 * The abstract function that is used to control the size of the population.
@@ -13,6 +13,6 @@ public interface ISizeControlStrategy {
 	 * @param aSet
 	 *            the set to control
 	 */
-	void controlSize(ClassifierSet aSet);
+	void controlPopulation(ClassifierSet aSet);
 
 }
