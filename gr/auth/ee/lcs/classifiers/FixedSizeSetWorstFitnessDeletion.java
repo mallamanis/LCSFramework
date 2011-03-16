@@ -9,7 +9,8 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * @author Miltos Allamanis
  * 
  */
-public class FixedSizeSetWorstFitnessDeletion implements IPopulationControlStrategy {
+public class FixedSizeSetWorstFitnessDeletion implements
+		IPopulationControlStrategy {
 
 	/**
 	 * The Natural Selector used to select the the classifier to be deleted.
