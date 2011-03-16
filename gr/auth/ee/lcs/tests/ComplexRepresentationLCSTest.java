@@ -7,6 +7,7 @@ import gr.auth.ee.lcs.ArffTrainer;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
+import gr.auth.ee.lcs.classifiers.PostProcessPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
@@ -97,7 +98,10 @@ public class ComplexRepresentationLCSTest {
 			// System.out.println("Predicted Payoff: "+((XCSClassifierData)(rulePopulation.getClassifier(i).updateData)).predictedPayOff);
 		}
 		System.out.println("Post process...");
-		// rulePopulation.postProcessThreshold(4, (float)0);
+		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+				10, 0, .5,
+				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+		postProcess.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
 					.println(rulePopulation.getClassifier(i).toString()
@@ -118,6 +122,7 @@ public class ComplexRepresentationLCSTest {
 							.getData((rulePopulation.getClassifier(i))));
 		}
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+				
 		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
 		eval.evaluateSet(rulePopulation);
 		// trainer.evaluateOnTest(rulePopulation);
