@@ -67,6 +67,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		Enumeration<?> classNames = instances.classAttribute()
 				.enumerateValues();
 		String[] ruleConsequents = new String[instances.numClasses()];
+		this.ruleConsequents = ruleConsequents;
 		for (int i = 0; i < instances.numClasses(); i++)
 			ruleConsequents[i] = (String) classNames.nextElement();
 

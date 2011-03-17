@@ -19,6 +19,8 @@ public abstract class ClassifierTransformBridge {
 	 */
 	private static ClassifierTransformBridge instance;
 
+	public abstract String[] getLabelNames();
+
 	/**
 	 * The instances of the current problem.
 	 */

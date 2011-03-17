@@ -287,4 +287,12 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		return classes;
 	}
 
+	@Override
+	public String[] getLabelNames() {
+		String[] str = new String[2];
+		str[0] = "0";
+		str[1] = "1";
+		return str;
+	}
+
 }

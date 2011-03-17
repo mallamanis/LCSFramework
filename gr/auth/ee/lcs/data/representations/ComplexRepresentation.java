@@ -722,6 +722,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			final String[] ruleConsequentsNames, int labels) {
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
+		ruleConsequents = ruleConsequentsNames;
+	}
+
+	protected String[] ruleConsequents;
+
+	public final String[] getLabelNames() {
+		return ruleConsequents;
 	}
 
 	/**
