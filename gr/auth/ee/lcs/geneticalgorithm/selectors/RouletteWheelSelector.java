@@ -13,7 +13,7 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * 
  */
 
-public class WeightedRouletteSelector implements INaturalSelector {
+public class RouletteWheelSelector implements INaturalSelector {
 
 	/**
 	 * The comparison mode used for fitness selecting.
@@ -34,7 +34,7 @@ public class WeightedRouletteSelector implements INaturalSelector {
 	 *            whether the selector selects min or max fitness (when max,
 	 *            max=true)
 	 */
-	public WeightedRouletteSelector(final int comparisonMode, final boolean max) {
+	public RouletteWheelSelector(final int comparisonMode, final boolean max) {
 		mode = comparisonMode;
 		this.max = max;
 	}

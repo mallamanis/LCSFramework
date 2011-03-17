@@ -19,7 +19,7 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.WeightedRouletteSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 
 import java.io.IOException;
 
@@ -40,7 +40,7 @@ public class ComplexRepresentationLCSTest {
 		 * new TournamentSelector( 10, true,
 		 * UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 		 */
-		new WeightedRouletteSelector(
+		new RouletteWheelSelector(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 50);
@@ -68,7 +68,7 @@ public class ComplexRepresentationLCSTest {
 						 * .COMPARISON_MODE_DELETION)
 						 */
 
-						new WeightedRouletteSelector(
+						new RouletteWheelSelector(
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 								true)));
 		// ClassifierSet rulePopulation=new ClassifierSet(new
