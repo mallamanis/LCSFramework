@@ -122,7 +122,7 @@ public class ComplexRepresentationLCSTest {
 							.getData((rulePopulation.getClassifier(i))));
 		}
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-				
+
 		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
 		eval.evaluateSet(rulePopulation);
 		// trainer.evaluateOnTest(rulePopulation);
