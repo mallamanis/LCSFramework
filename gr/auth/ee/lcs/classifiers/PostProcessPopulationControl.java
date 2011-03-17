@@ -71,13 +71,13 @@ public class PostProcessPopulationControl implements IPopulationControlStrategy 
 			final boolean lowCoverage = (currentClassifier.getCoverage() < coverageThreshold);
 			final boolean lowFitness = (currentClassifier
 					.getComparisonValue(comparisonMode) < minimumFitness);
-			
-			if (notExperienced || lowCoverage || lowFitness) {				
+
+			if (notExperienced || lowCoverage || lowFitness) {
 				while (aSet.getClassifierNumerosity(currentClassifier) > 0)
 					aSet.deleteClassifier(currentClassifier);
 			}
 		}
-		
+
 		aSet.selfSubsume();
 
 	}

@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
+import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -44,7 +45,7 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/position9.arff";
+		String filename = "/home/miltiadis/Desktop/iris.arff";
 		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
@@ -125,6 +126,9 @@ public class ComplexRepresentationLCSTest {
 
 		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
 		eval.evaluateSet(rulePopulation);
+		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
+				rep.getLabelNames(), ClassifierTransformBridge.instances);
+		conf.evaluateSet(rulePopulation);
 		// trainer.evaluateOnTest(rulePopulation);
 
 	}
