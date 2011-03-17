@@ -8,6 +8,7 @@ import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.PostProcessPopulationControl;
+import gr.auth.ee.lcs.classifiers.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
@@ -45,7 +46,7 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/iris.arff";
+		String filename = "/home/miltiadis/Desktop/position9.arff";
 		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
@@ -102,7 +103,9 @@ public class ComplexRepresentationLCSTest {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				10, 0, .5,
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+		SortPopulationControl sort = new SortPopulationControl(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
+		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
 					.println(rulePopulation.getClassifier(i).toString()
