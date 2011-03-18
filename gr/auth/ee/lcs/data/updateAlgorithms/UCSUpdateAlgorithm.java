@@ -143,7 +143,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
-			if ((aClassifier.experience < 15)) {
+			if (aClassifier.experience < 15 ) {
 				final double result = data.cs / data.fitness;
 				return Double.isNaN(result) ? 1 : result;
 			}
