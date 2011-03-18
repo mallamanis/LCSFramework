@@ -64,6 +64,15 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	private transient int checked = 0;
 
 	/**
+	 * Getter of the number of instances the classifier has seen.
+	 * 
+	 * @return the number of instances the classifier has checked
+	 */
+	public int getCheckedInstances() {
+		return checked;
+	}
+
+	/**
 	 * The serial number of last classifier (start from the lowest & increment).
 	 */
 	private static int currentSerial = Integer.MIN_VALUE;
