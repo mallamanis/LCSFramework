@@ -61,7 +61,5 @@ public class Macroclassifier implements Serializable {
 	public final boolean equals(final Macroclassifier macroClassifier) {
 		return this.myClassifier.equals(macroClassifier.myClassifier);
 	}
-	
-
 
 }

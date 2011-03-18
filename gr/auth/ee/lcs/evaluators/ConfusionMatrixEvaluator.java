@@ -51,8 +51,8 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 		}
 
 		System.out.println(conf);
-		System.out.println("Error rate: "+conf.errorRate());
-		
+		System.out.println("Error rate: " + conf.errorRate());
+
 		return conf.errorRate();
 	}
 

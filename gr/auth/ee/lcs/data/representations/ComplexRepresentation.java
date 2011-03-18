@@ -476,10 +476,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			// Check if condition active
 			if (!convertingChromosome.get(positionInChromosome))
 				return nameOfAttribute + ":#";
-			
-			String value = nameOfAttribute + " in ["
-					+ String.format("%.3f", getLowBoundValue(convertingChromosome)) + ","
-					+ String.format("%.3f", getHighBoundValue(convertingChromosome)) + "]";
+
+			String value = nameOfAttribute
+					+ " in ["
+					+ String.format("%.3f",
+							getLowBoundValue(convertingChromosome))
+					+ ","
+					+ String.format("%.3f",
+							getHighBoundValue(convertingChromosome)) + "]";
 			return value;
 		}
 

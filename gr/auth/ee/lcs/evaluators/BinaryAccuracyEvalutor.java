@@ -45,7 +45,7 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 
 		int tp = 0, fp = 0;
 		for (int i = 0; i < instanceSet.numInstances(); i++) {
-			final double[] instance = new double[instanceSet.numAttributes() - 1];
+			final double[] instance = new double[instanceSet.numAttributes() ];
 			for (int j = 0; j < instanceSet.numAttributes(); j++) {
 				instance[j] = instanceSet.instance(i).value(j);
 			}
