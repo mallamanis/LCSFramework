@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
 import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -44,10 +45,10 @@ public class ComplexRepresentationLCSTest {
 		new RouletteWheelSelector(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
 				true), new SinglePointCrossover(), (float) .8,
-				new UniformBitMutation(.04), 50);
+				new UniformBitMutation(.04), 300);
 
-		String filename = "/home/miltiadis/Desktop/position9.arff";
-		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
+		String filename = "/home/miltiadis/Desktop/audiology.arff";
+		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 6);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -61,7 +62,7 @@ public class ComplexRepresentationLCSTest {
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
-						1000,
+						6400,
 
 						/*
 						 * new TournamentSelector( 40, true,
@@ -83,7 +84,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(1000, rulePopulation);
+		myExample.train(500, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
@@ -103,7 +104,8 @@ public class ComplexRepresentationLCSTest {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				10, 0, .5,
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+		SortPopulationControl sort = new SortPopulationControl(
+				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
@@ -132,7 +134,12 @@ public class ComplexRepresentationLCSTest {
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(), ClassifierTransformBridge.instances);
 		conf.evaluateSet(rulePopulation);
-		// trainer.evaluateOnTest(rulePopulation);
+
+		System.out.println("Evaluating on test set");
+		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
+				trainer.testSet, true);
+		testEval.evaluateSet(rulePopulation);
+		
 
 	}
 

@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import weka.core.Instances;
  */
 public class ArffTrainer {
 
+	public Instances testSet;
+
 	public void loadInstances(String filename) throws IOException {
 		// Open .arff
 		FileReader reader = new FileReader(filename);
@@ -20,10 +23,10 @@ public class ArffTrainer {
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 
-		// set.stratify(10);
+		set.stratify(10);
 
-		Instances trainSet = set;// set.trainCV(10, 9);
-		// testSet = set.testCV(10, 9);
+		Instances trainSet = set.trainCV(10, 3);
+		testSet = set.testCV(10, 3);
 
 		ClassifierTransformBridge.instances = new double[trainSet
 				.numInstances()][trainSet.numAttributes()];

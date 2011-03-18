@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.InadequeteClassifierDeletionStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
@@ -92,7 +93,11 @@ public class LCSTrainTemplate {
 	 *            the population of the classifiers to train.
 	 */
 	public void train(int iterations, ClassifierSet population) {
+
 		int numInstances = ClassifierTransformBridge.instances.length;
+		InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
+				numInstances);
+
 		for (int repetition = 0; repetition < iterations; repetition++) {
 			for (int j = 0; j < hookCallbackFrequency; j++) {
 				System.out.println("Iteration " + repetition);
@@ -101,6 +106,7 @@ public class LCSTrainTemplate {
 				repetition++;
 			}
 			executeCallbacks(population);
+			del.controlPopulation(population);
 		}
 
 	}
