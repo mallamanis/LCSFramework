@@ -1,10 +1,10 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 
 import weka.core.Instances;
 
@@ -22,7 +22,7 @@ public class ArffTrainer {
 		Instances set = new Instances(reader);
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
-
+		set.randomize(new Random());
 		set.stratify(10);
 
 		Instances trainSet = set.trainCV(10, 3);
@@ -40,5 +40,4 @@ public class ArffTrainer {
 		}
 
 	}
-
 }
