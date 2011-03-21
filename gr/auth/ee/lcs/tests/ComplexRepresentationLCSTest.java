@@ -38,17 +38,19 @@ public class ComplexRepresentationLCSTest {
 	public static void main(String[] args) throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(10);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+
 		/*
-		 * new TournamentSelector( 10, true,
+		 * new TournamentSelector(50, true,
 		 * UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 		 */
+
 		new RouletteWheelSelector(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
 				true), new SinglePointCrossover(), (float) .8,
-				new UniformBitMutation(.04), 300);
+				new UniformBitMutation(.04), 50);
 
-		String filename = "/home/miltiadis/Desktop/audiology.arff";
-		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 6);
+		String filename = "/home/miltiadis/Desktop/datasets/iris.arff";
+		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -62,7 +64,7 @@ public class ComplexRepresentationLCSTest {
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
-						6400,
+						1000,
 
 						/*
 						 * new TournamentSelector( 40, true,
@@ -84,7 +86,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(500, rulePopulation);
+		myExample.train(2000, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
@@ -107,7 +109,7 @@ public class ComplexRepresentationLCSTest {
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
-		sort.controlPopulation(rulePopulation);
+		// sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
 					.println(rulePopulation.getClassifier(i).toString()
@@ -139,8 +141,6 @@ public class ComplexRepresentationLCSTest {
 		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
 				trainer.testSet, true);
 		testEval.evaluateSet(rulePopulation);
-		
 
 	}
-
 }
