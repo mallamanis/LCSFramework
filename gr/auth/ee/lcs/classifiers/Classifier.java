@@ -64,15 +64,6 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	private transient int checked = 0;
 
 	/**
-	 * Getter of the number of instances the classifier has seen.
-	 * 
-	 * @return the number of instances the classifier has checked
-	 */
-	public int getCheckedInstances() {
-		return checked;
-	}
-
-	/**
 	 * The serial number of last classifier (start from the lowest & increment).
 	 */
 	private static int currentSerial = Integer.MIN_VALUE;
@@ -85,18 +76,18 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * The classifier's experience.
 	 */
-	public int experience = 1;
+	public int experience = 0;
 
 	/**
 	 * The timestamp is the last iteration the classifier has participated in a
 	 * GA Evolution.
 	 */
 	public int timestamp = 0;
+
 	/**
 	 * A boolean representing the classifier's ability to subsume.
 	 */
 	private boolean canSubsume = false;
-
 	/**
 	 * An object for saving the transformation specific data.
 	 */
@@ -189,6 +180,15 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 			actionCache = transformBridge.getClassification(this);
 		}
 		return actionCache;
+	}
+
+	/**
+	 * Getter of the number of instances the classifier has seen.
+	 * 
+	 * @return the number of instances the classifier has checked
+	 */
+	public int getCheckedInstances() {
+		return checked;
 	}
 
 	/**
