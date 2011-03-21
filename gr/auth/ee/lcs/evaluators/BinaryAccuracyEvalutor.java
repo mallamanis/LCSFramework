@@ -9,7 +9,7 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import weka.core.Instances;
 
 /**
- * An evaluator using an Weka Instance
+ * An evaluator using an Weka Instance.
  * 
  * @author Miltos Allamanis
  * 
@@ -19,14 +19,22 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 	/**
 	 * The set of instances to evaluate on.
 	 */
-	final Instances instanceSet;
+	private final Instances instanceSet;
 
 	/**
 	 * A boolean indicating if the evaluator is going to print the results.
 	 */
 	private final boolean printResults;
 
-	public BinaryAccuracyEvalutor(Instances instances, boolean print) {
+	/**
+	 * The constructor.
+	 * 
+	 * @param instances
+	 *            the set of instances to evaluate on
+	 * @param print
+	 *            true to turn printing on
+	 */
+	public BinaryAccuracyEvalutor(final Instances instances, final boolean print) {
 		instanceSet = instances;
 		printResults = print;
 	}
@@ -39,13 +47,13 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public final double evaluateSet(final ClassifierSet classifiers) {
 		ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
 
 		int tp = 0, fp = 0;
 		for (int i = 0; i < instanceSet.numInstances(); i++) {
-			final double[] instance = new double[instanceSet.numAttributes() ];
+			final double[] instance = new double[instanceSet.numAttributes()];
 			for (int j = 0; j < instanceSet.numAttributes(); j++) {
 				instance[j] = instanceSet.instance(i).value(j);
 			}
