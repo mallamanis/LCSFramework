@@ -13,7 +13,7 @@ import gr.auth.ee.lcs.data.representations.ComplexRepresentation.IClassification
 import weka.core.Instances;
 
 /**
- * @author miltiadis
+ * @author Miltos Allamanis
  * 
  */
 public class StrictMultiLabelRepresentation extends ComplexRepresentation {
@@ -140,7 +140,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	/**
-	 * A simple 0/1 label
+	 * A simple 0/1 label.
 	 * 
 	 * @author Miltos Allamanis
 	 * 
