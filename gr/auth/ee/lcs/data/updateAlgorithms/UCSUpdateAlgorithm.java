@@ -74,6 +74,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 */
 	public IGeneticAlgorithmStrategy ga;
 
+	private final int deleteAge;
+
 	/**
 	 * Private variables: the UCS parameter sharing. accuracy0 is considered the
 	 * subsumption fitness threshold
@@ -108,11 +110,13 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the probability of running the GA at the matchset
 	 * @param geneticAlgorithm
 	 *            the genetic algorithm to be used for evolving
+	 * @param thetaDel
+	 *            the theta del UCS parameter (deletion age)
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
 			final int experienceThreshold, double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm) {
+			IGeneticAlgorithmStrategy geneticAlgorithm, int thetaDel) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -120,6 +124,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		subsumptionExperienceThreshold = experienceThreshold;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
 		this.ga = geneticAlgorithm;
+		deleteAge = thetaDel;
 
 	}
 
@@ -139,11 +144,11 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			final double value = data.fitness
-					* (aClassifier.experience < 10 ? 0 : 1);
+					* (aClassifier.experience < deleteAge ? 0 : 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
-			if (aClassifier.experience < 15 ) {
+			if (aClassifier.experience < deleteAge) {
 				final double result = data.cs / data.fitness;
 				return Double.isNaN(result) ? 1 : result;
 			}
@@ -153,7 +158,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		case COMPARISON_MODE_EXPLOITATION:
 			final double acc = (((double) (data.tp)) / (double) (data.msa));
 			final double exploitValue = acc
-					* (aClassifier.experience < 10 ? 0 : 1);
+					* (aClassifier.experience < deleteAge ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
 		}
 		return 0;
