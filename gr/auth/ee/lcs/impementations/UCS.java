@@ -72,22 +72,47 @@ public class UCS {
 	 */
 	private final int PRECISION_BITS = 7;
 	
+	/**
+	 * The UCS alpha parameter.
+	 */
 	private final double UCS_ALPHA = .1; 
 	
+	/**
+	 * The UCS n power parameter.
+	 */
 	private final int UCS_N = 10;
 	
+	/**
+	 * The accuracy threshold parameter.
+	 */
 	private final double UCS_ACC0 = .99;
 	
+	/**
+	 * The learning rate (beta) parameter.
+	 */
 	private final double UCS_LEARNING_RATE = .1;
 	
+	/**
+	 * The UCS experience threshold.
+	 */
 	private final int UCS_EXPERIENCE_THRESHOLD = 50;
 	
+	/**
+	 * The UCS constructor.
+	 * @param filename the filename to open
+	 * @param iterations the number of iterations to run the training
+	 * @param populationSize the population size to use
+	 */
 	public UCS(String filename, int iterations, int populationSize) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize =  populationSize;
 	}
 	
+	/**
+	 * Run the UCS.
+	 * @throws IOException if file not found
+	 */
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
