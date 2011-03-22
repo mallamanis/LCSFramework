@@ -12,6 +12,7 @@ import gr.auth.ee.lcs.classifiers.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
@@ -49,8 +50,9 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 100);
 
-		String filename = "/home/miltiadis/Desktop/datasets/cmc.arff";
-		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
+		String filename = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		//UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
+		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 6);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -64,7 +66,7 @@ public class ComplexRepresentationLCSTest {
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
-						1000,
+						1500,
 
 						/*
 						 * new TournamentSelector( 40, true,
@@ -86,7 +88,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(300, rulePopulation);
+		myExample.train(500, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
@@ -109,7 +111,7 @@ public class ComplexRepresentationLCSTest {
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
-		// sort.controlPopulation(rulePopulation);
+		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
 					.println(rulePopulation.getClassifier(i).toString()
@@ -133,9 +135,9 @@ public class ComplexRepresentationLCSTest {
 
 		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
 		eval.evaluateSet(rulePopulation);
-		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), ClassifierTransformBridge.instances);
-		conf.evaluateSet(rulePopulation);
+		//ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
+		//		rep.getLabelNames(), ClassifierTransformBridge.instances);
+		//conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
 		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
