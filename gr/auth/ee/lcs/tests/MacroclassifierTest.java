@@ -58,7 +58,7 @@ public class MacroclassifierTest {
 		Classifier clone = (Classifier) parentClassifier.clone();
 		assertTrue(clone.equals(parentClassifier));
 		assertTrue(parentClassifier.equals(clone));
-		assertEquals(clone.experience, 1);
+		assertEquals(clone.experience, 0);
 		assertTrue(clone
 				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
 				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION));
