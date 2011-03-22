@@ -13,12 +13,9 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
-import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -51,10 +48,9 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 100);
 
-		String filename = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		//UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
-		//StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 6);
-		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation (filename,6,6);
+		String filename = "/home/miltiadis/Desktop/datasets/test.arff";
+		//StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 2);
+		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation (filename,6,2);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -90,7 +86,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(100, rulePopulation);
+		myExample.train(500, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
