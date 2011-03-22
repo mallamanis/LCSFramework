@@ -47,9 +47,9 @@ public class ComplexRepresentationLCSTest {
 		new RouletteWheelSelector(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
 				true), new SinglePointCrossover(), (float) .8,
-				new UniformBitMutation(.04), 50);
+				new UniformBitMutation(.04), 100);
 
-		String filename = "/home/miltiadis/Desktop/datasets/iris.arff";
+		String filename = "/home/miltiadis/Desktop/datasets/cmc.arff";
 		UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
@@ -58,7 +58,7 @@ public class ComplexRepresentationLCSTest {
 		// ASLCSUpdateAlgorithm(
 		// 10, .99, 10, .01, ga);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				.1, 10, .99, .1, 50, 0.01, ga);
+				.1, 10, .99, .1, 50, 0.01, ga, 100);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 
@@ -86,7 +86,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(2000, rulePopulation);
+		myExample.train(300, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
