@@ -3,6 +3,8 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import java.util.Arrays;
+
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -58,10 +60,8 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 				instance[j] = instanceSet.instance(i).value(j);
 			}
 			final int[] classes = bridge.classify(classifiers, instance);
-			if (classes == null)
-				continue;
-			if (classes[0] == bridge
-					.getDataInstanceLabels(ClassifierTransformBridge.instances[i])[0])
+			final int[] classification  = bridge.getDataInstanceLabels(instance);
+			if (Arrays.equals(classes, classification))
 				tp++;
 			else
 				fp++;
