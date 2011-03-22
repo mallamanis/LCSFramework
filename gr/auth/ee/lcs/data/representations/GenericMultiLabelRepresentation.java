@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation.Label;
 import weka.core.Instances;
 
 /**
+ * A class for representing multilabel rules. For each rule each label can be represented as 0,1,#.
  * @author Miltos Allamanis
  *
  */
@@ -58,7 +59,17 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 					aClassifier))
 				return 0;
 		}
-		return 1;
+		
+		//Check for overgeneral
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String value = attributeList[currentLabelIndex].toString(aClassifier);
+			if (value!="#") 
+				return 1;
+		}
+		
+		return 0;
 	}
 
 	/* (non-Javadoc)
@@ -71,7 +82,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
-			if (attributeList[currentLabelIndex].toString()=="1") {
+			final String value = attributeList[currentLabelIndex].toString(aClassifier);
+			if (value=="1") {
 				labels[labelIndex] = i;
 				labelIndex++;
 			}
