@@ -146,11 +146,11 @@ public abstract class ClassifierTransformBridge {
 	/**
 	 * Returns all the labels of the specific data instance
 	 * 
-	 * @param dataInstances
+	 * @param dataInstance
 	 *            the data instance
 	 * @return a array of instances
 	 */
-	public abstract int[] getDataInstanceLabels(final double[] dataInstances);
+	public abstract int[] getDataInstanceLabels(final double[] dataInstance);
 
 	/**
 	 * Tests the given chromosomes if the baseClassifier is a more general
