@@ -282,9 +282,9 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * [])
 	 */
 	@Override
-	public int[] getDataInstanceLabels(double[] dataInstances) {
+	public int[] getDataInstanceLabels(double[] dataInstance) {
 		int[] classes = new int[1];
-		classes[0] = (int) dataInstances[dataInstances.length - 1];
+		classes[0] = (int) dataInstance[dataInstance.length - 1];
 		return classes;
 	}
 
