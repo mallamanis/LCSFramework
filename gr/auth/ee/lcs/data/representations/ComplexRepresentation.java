@@ -711,7 +711,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	/**
 	 * The number of labels used.
 	 */
-	private int numberOfLabels;
+	protected int numberOfLabels;
 
 	/**
 	 * Constructor.
