@@ -12,6 +12,7 @@ import gr.auth.ee.lcs.classifiers.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -52,7 +53,8 @@ public class ComplexRepresentationLCSTest {
 
 		String filename = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
 		//UnilabelRepresentation rep = new UnilabelRepresentation(filename, 7);
-		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 6);
+		//StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 6);
+		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation (filename,6,6);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -66,7 +68,7 @@ public class ComplexRepresentationLCSTest {
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
-						1500,
+						1000,
 
 						/*
 						 * new TournamentSelector( 40, true,
@@ -88,7 +90,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(500, rulePopulation);
+		myExample.train(100, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
