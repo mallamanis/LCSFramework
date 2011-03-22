@@ -296,6 +296,7 @@ public class ClassifierSet implements Serializable {
 	 */
 	public final void removeAllMacroclassifiers() {
 		this.myMacroclassifiers.clear();
+		this.totalNumerosity = 0;
 	}
 
 	/**
