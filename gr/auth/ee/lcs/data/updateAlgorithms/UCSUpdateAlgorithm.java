@@ -241,7 +241,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				.getNumberOfMacroclassifiers();
 		final int correctSetSize = correctSet.getTotalNumerosity();
 		for (int i = 0; i < matchSetMacroclassifiers; i++) {
-			Classifier cl = matchSet.getClassifier(i);
+			final Classifier cl = matchSet.getClassifier(i);
 			UCSClassifierData data = ((UCSClassifierData) cl
 					.getUpdateDataObject());
 			cl.experience++;
