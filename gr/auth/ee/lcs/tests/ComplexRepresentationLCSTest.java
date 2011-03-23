@@ -13,6 +13,8 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.GenericUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
@@ -49,16 +51,17 @@ public class ComplexRepresentationLCSTest {
 				new UniformBitMutation(.04), 100);
 
 		String filename = "/home/miltiadis/Desktop/datasets/test.arff";
-		//StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 2);
-		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation (filename,6,2);
+		//StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 2, StrictMultiLabelRepresentation.HAMMING_LOSS);
+		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation (filename,6,2, GenericMultiLabelRepresentation.HAMMING_LOSS);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
 		// ASLCSUpdateAlgorithm(
 		// 10, .99, 10, .01, ga);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				.1, 10, .99, .1, 50, 0.01, ga, 100);
+		//UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
+		//		.1, 10, .99, .1, 50, 0.01, ga, 100);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(ga,.1);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 
