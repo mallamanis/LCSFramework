@@ -20,14 +20,22 @@ import weka.core.Instances;
  */
 public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 
+	private final int metricType;
+	
+	public static final int ABSOLUTE_ACCURACY=0;
+	public static final int RELATIVE_ACCURACY=1;
+	public static final int HAMMING_LOSS=2;
+	
 	public GenericMultiLabelRepresentation(String inputArff, int precision,
-			int labels) throws IOException {
+			int labels, int type) throws IOException {
 		super(inputArff, precision, labels);
+		metricType = type;
 	}
 	
 	public GenericMultiLabelRepresentation(Attribute[] attributes,
-			String[] ruleConsequentsNames, int labels) {
+			String[] ruleConsequentsNames, int labels, int type) {
 		super(attributes, ruleConsequentsNames, labels);
+		metricType = type;
 	}
 
 	/* (non-Javadoc)
@@ -51,6 +59,49 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 	 */
 	@Override
 	public float classifyAbility(Classifier aClassifier, int instanceIndex) {
+		switch(metricType){
+			case ABSOLUTE_ACCURACY:
+				return classifyAbsolute(aClassifier,instanceIndex);
+			case RELATIVE_ACCURACY:
+				return 0; //TODO
+			case HAMMING_LOSS:
+				return classifyHamming(aClassifier,instanceIndex);
+		}
+		return 0;
+	}
+	
+	private float classifyHamming(Classifier aClassifier, int instanceIndex) {
+		float result = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			if (attributeList[currentLabelIndex].isMatch(
+					(float) instances[instanceIndex][currentLabelIndex],
+					aClassifier))
+				result++;
+		}
+		
+		boolean overgeneral = true;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String value = attributeList[currentLabelIndex].toString(aClassifier);
+			if (value=="#") 
+				result +=.01;
+			else 
+				overgeneral = false;
+		}
+		
+		return overgeneral?0:result/numberOfLabels;
+	}
+	
+	/**
+	 * Absolute Classification
+	 * @param aClassifier
+	 * @param instanceIndex
+	 * @return
+	 */
+	private float classifyAbsolute(Classifier aClassifier, int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
@@ -69,7 +120,7 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 				return 1;
 		}
 		
-		return 0;
+		return 0;		
 	}
 
 	/* (non-Javadoc)
