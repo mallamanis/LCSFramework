@@ -289,6 +289,16 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	}
 
 	/**
+	 * A classification strategy interface
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public interface IClassificationStrategy {
+		public int[] classify(ClassifierSet aSet, double[] visionVector);
+	}
+
+	/**
 	 * A private inner abstract class that represents a numeric interval.
 	 * 
 	 * @author Miltos Allamanis
@@ -713,6 +723,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	protected int numberOfLabels;
 
+	protected String[] ruleConsequents;
+
+	/**
+	 * The default classification strategy.
+	 */
+	private IClassificationStrategy defaultClassificationStrategy = null;
+
 	/**
 	 * Constructor.
 	 * 
@@ -728,12 +745,6 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
 		ruleConsequents = ruleConsequentsNames;
-	}
-
-	protected String[] ruleConsequents;
-
-	public final String[] getLabelNames() {
-		return ruleConsequents;
 	}
 
 	/**
@@ -755,6 +766,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		this.numberOfLabels = labels;
 		attributeList = new Attribute[instances.numAttributes()];
+		final double generalizationRate = .33;
 
 		for (int i = 0; i < instances.numAttributes() - labels; i++) {
 
@@ -773,10 +785,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				if (attributeNames.length > 2)
 					attributeList[i] = new ComplexRepresentation.NominalAttribute(
 							this.chromosomeSize, attributeName, attributeNames,
-							0.33);
+							generalizationRate);
 				else
 					attributeList[i] = new ComplexRepresentation.BooleanAttribute(
-							chromosomeSize, attributeName, 0.33);
+							chromosomeSize, attributeName, generalizationRate);
 
 			} else if (instances.attribute(i).isNumeric()) {
 				// Find min-max values
@@ -794,7 +806,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 				attributeList[i] = new ComplexRepresentation.IntervalAttribute(
 						this.chromosomeSize + 1, attributeName, minValue,
-						maxValue, precision, 0.33);
+						maxValue, precision, generalizationRate);
 			}
 
 		}
@@ -839,6 +851,31 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classify(gr.auth.ee.lcs
+	 * .classifiers.ClassifierSet, double[])
+	 */
+	@Override
+	public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		return defaultClassificationStrategy.classify(aSet, visionVector);
+	}
+
+	/**
+	 * Classify using another classification Strategy
+	 * 
+	 * @param aSet
+	 * @param visionVector
+	 * @param strategy
+	 * @return
+	 */
+	public int[] classify(ClassifierSet aSet, double[] visionVector,
+			IClassificationStrategy strategy) {
+		return strategy.classify(aSet, visionVector);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier
 	 * (double[], int)
 	 */
@@ -876,6 +913,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return chromosomeSize;
 	}
 
+	@Override
+	public final String[] getLabelNames() {
+		return ruleConsequents;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -907,6 +949,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				return false;
 
 		return true;
+	}
+
+	public void setClassificationStrategy(IClassificationStrategy strategy) {
+		defaultClassificationStrategy = strategy;
 	}
 
 	/*
@@ -959,49 +1005,5 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * Create the class representation depending on the problem.
 	 */
 	protected abstract void createClassRepresentation(Instances instances);
-
-	/**
-	 * A classification strategy interface
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	public interface IClassificationStrategy {
-		public int[] classify(ClassifierSet aSet, double[] visionVector);
-	}
-
-	/**
-	 * The default classification strategy.
-	 */
-	private IClassificationStrategy defaultClassificationStrategy = null;
-
-	/**
-	 * Classify using another classification Strategy
-	 * 
-	 * @param aSet
-	 * @param visionVector
-	 * @param strategy
-	 * @return
-	 */
-	public int[] classify(ClassifierSet aSet, double[] visionVector,
-			IClassificationStrategy strategy) {
-		return strategy.classify(aSet, visionVector);
-	}
-
-	public void setClassificationStrategy(IClassificationStrategy strategy) {
-		defaultClassificationStrategy = strategy;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classify(gr.auth.ee.lcs
-	 * .classifiers.ClassifierSet, double[])
-	 */
-	@Override
-	public int[] classify(ClassifierSet aSet, double[] visionVector) {
-		return defaultClassificationStrategy.classify(aSet, visionVector);
-	}
 
 }
