@@ -13,9 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.GenericUCSUpdateAlgorithm;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -50,18 +48,24 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 100);
 
-		String filename = "/home/miltiadis/Desktop/datasets/test.arff";
-		//StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(filename, 6, 2, StrictMultiLabelRepresentation.HAMMING_LOSS);
-		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation (filename,6,2, GenericMultiLabelRepresentation.HAMMING_LOSS);
+		String filename = "/home/miltiadis/Desktop/datasets/emotions.arff";
+		// StrictMultiLabelRepresentation rep = new
+		// StrictMultiLabelRepresentation(
+		// filename, 4, 2, StrictMultiLabelRepresentation.HAMMING_LOSS);
+		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
+				filename, 6, 6,
+				GenericMultiLabelRepresentation.ABSOLUTE_ACCURACY);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
 		// ASLCSUpdateAlgorithm(
 		// 10, .99, 10, .01, ga);
-		//UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-		//		.1, 10, .99, .1, 50, 0.01, ga, 100);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(ga,.1);
+		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
+		// UCSUpdateAlgorithm(
+		// .1, 10, .99, .1, 50, 0.01, ga, 100);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(
+				ga, .1);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
 
@@ -89,7 +93,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffTrainer trainer = new ArffTrainer();
 		trainer.loadInstances(filename);
-		myExample.train(500, rulePopulation);
+		myExample.train(100, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
@@ -107,7 +111,7 @@ public class ComplexRepresentationLCSTest {
 		}
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				10, 0, .5,
+				0, 0, 0.01,
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
@@ -136,9 +140,9 @@ public class ComplexRepresentationLCSTest {
 
 		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
 		eval.evaluateSet(rulePopulation);
-		//ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-		//		rep.getLabelNames(), ClassifierTransformBridge.instances);
-		//conf.evaluateSet(rulePopulation);
+		// ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
+		// rep.getLabelNames(), ClassifierTransformBridge.instances);
+		// conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
 		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
