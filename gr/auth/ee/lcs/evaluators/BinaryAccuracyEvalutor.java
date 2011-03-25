@@ -3,11 +3,12 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
-import java.util.Arrays;
-
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
+
+import java.util.Arrays;
+
 import weka.core.Instances;
 
 /**
@@ -60,7 +61,7 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 				instance[j] = instanceSet.instance(i).value(j);
 			}
 			final int[] classes = bridge.classify(classifiers, instance);
-			final int[] classification  = bridge.getDataInstanceLabels(instance);
+			final int[] classification = bridge.getDataInstanceLabels(instance);
 			if (Arrays.equals(classes, classification))
 				tp++;
 			else
