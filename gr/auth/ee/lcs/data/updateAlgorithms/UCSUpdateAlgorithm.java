@@ -93,6 +93,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 */
 	private final int subsumptionExperienceThreshold;
 
+	private final double correctSetThreshold;
+
 	/**
 	 * Default constructor.
 	 * 
@@ -112,11 +114,14 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the genetic algorithm to be used for evolving
 	 * @param thetaDel
 	 *            the theta del UCS parameter (deletion age)
+	 * @param correctSet
+	 *            Threshold the threshold used to set a rule in the correct set
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
 			final int experienceThreshold, double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm, int thetaDel) {
+			IGeneticAlgorithmStrategy geneticAlgorithm, int thetaDel,
+			double correctSetTheshold) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -125,6 +130,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		this.matchSetRunProbability = gaMatchSetRunProbability;
 		this.ga = geneticAlgorithm;
 		deleteAge = thetaDel;
+		this.correctSetThreshold = correctSetTheshold;
 
 	}
 
@@ -222,7 +228,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
 				correctSet.addClassifier(cl, false);
 		}
 		return correctSet;
