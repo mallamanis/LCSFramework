@@ -140,7 +140,12 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *         for unilabel classification but it may also be in the range [0,1]
 	 */
 	public float classifyCorrectly(int instanceIndex) {
-		return transformBridge.classifyAbility(this, instanceIndex);
+		return transformBridge.classifyAbilityAll(this, instanceIndex);
+	}
+
+	public float classifyLabelCorrectly(int instanceIndex, int labelIndex) {
+		return transformBridge.classifyAbilityLabel(this, instanceIndex,
+				labelIndex);
 	}
 
 	/**
