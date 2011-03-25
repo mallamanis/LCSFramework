@@ -8,7 +8,6 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm.UCSClassifierData;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -16,9 +15,10 @@ import java.util.Random;
 
 /**
  * @author Miltos Allamanis
- *
+ * 
  */
-public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
+public class SequentialMlUCSUpdateAlgorithm extends
+		UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * A data object for the UCS update algorithm.
@@ -87,7 +87,7 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 	 * The experience threshold for subsumption.
 	 */
 	private final int subsumptionExperienceThreshold;
-	
+
 	/**
 	 * Number of labels used
 	 */
@@ -110,18 +110,19 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 	 *            the genetic algorithm to be used for evolving
 	 * @param thetaDel
 	 *            the theta del UCS parameter (deletion age)
-	 * @param correctSet Threshold
-	 *            the threshold used to set a rule in the correct set
+	 * @param correctSet
+	 *            Threshold the threshold used to set a rule in the correct set
 	 */
-	public SequentialMlUCSUpdateAlgorithm(final double alpha, final double nParameter,
-			final double acc0, final double learningRate,
-			final int experienceThreshold, 
-			IGeneticAlgorithmStrategy geneticAlgorithm, int thetaDel, int numberOfLabels) {
+	public SequentialMlUCSUpdateAlgorithm(final double alpha,
+			final double nParameter, final double acc0,
+			final double learningRate, final int experienceThreshold,
+			IGeneticAlgorithmStrategy geneticAlgorithm, int thetaDel,
+			int numberOfLabels) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
 		this.b = learningRate;
-		subsumptionExperienceThreshold = experienceThreshold;		
+		subsumptionExperienceThreshold = experienceThreshold;
 		this.ga = geneticAlgorithm;
 		deleteAge = thetaDel;
 		this.numberOfLabels = numberOfLabels;
@@ -214,7 +215,7 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 	 * @param instanceIndex
 	 *            the global instance index
 	 * @param labelIndex
-	 * 			  the label index
+	 *            the label index
 	 * @return the correct set
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
@@ -228,13 +229,17 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 		}
 		return correctSet;
 	}
-	
+
 	/**
-	 * Generates the set of classifier that advocate clearly against or for 
-	 * the label at the given index.
-	 * @param matchSet the matchSet
-	 * @param instanceIndex the instance we are trying to match
-	 * @param labelIndex the label index we are trying to match
+	 * Generates the set of classifier that advocate clearly against or for the
+	 * label at the given index.
+	 * 
+	 * @param matchSet
+	 *            the matchSet
+	 * @param instanceIndex
+	 *            the instance we are trying to match
+	 * @param labelIndex
+	 *            the label index we are trying to match
 	 * @return
 	 */
 	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
@@ -243,7 +248,8 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex, labelIndex) != 0)
+			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
+					labelIndex) != 0)
 				labelMatchSet.addClassifier(cl, false);
 		}
 		return labelMatchSet;
@@ -306,7 +312,7 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 			data.fitness += b * (data.fitness0 / strengthSum - data.fitness);// TODO:
 																				// Something
 																				// else?
-			
+
 		}
 
 	}
@@ -336,11 +342,11 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 			final ClassifierSet matchSet, final int instanceIndex) {
 		// Generate random labels
 		final int[] labelSequence = new int[numberOfLabels];
-		for (int i = 0; i < numberOfLabels; i++){
+		for (int i = 0; i < numberOfLabels; i++) {
 			labelSequence[i] = i;
 		}
-		
-		//Shuffle
+
+		// Shuffle
 		final Random rgen = new Random();
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int randomPosition = rgen.nextInt(numberOfLabels);
@@ -348,19 +354,21 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 			labelSequence[i] = labelSequence[randomPosition];
 			labelSequence[randomPosition] = temp;
 		}
-		
-		//for each label loop
+
+		// for each label loop
 		for (int label = 0; label < this.numberOfLabels; label++) {
 			/*
 			 * Generate label set
 			 */
-			final ClassifierSet labelSet = generateLabelMatchSet(matchSet, instanceIndex,label);
-			
+			final ClassifierSet labelSet = generateLabelMatchSet(matchSet,
+					instanceIndex, label);
+
 			/*
 			 * Generate correct set
 			 */
-			final ClassifierSet correctSet = generateCorrectSet(labelSet, instanceIndex,label);
-	
+			final ClassifierSet correctSet = generateCorrectSet(labelSet,
+					instanceIndex, label);
+
 			/*
 			 * Cover if necessary
 			 */
@@ -368,7 +376,7 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 				cover(population, instanceIndex);
 				continue;
 			}
-	
+
 			/*
 			 * Update
 			 */
@@ -378,11 +386,9 @@ public class SequentialMlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStr
 		/*
 		 * Run GA
 		 */
-		if (matchSet.getNumberOfMacroclassifiers()>0)
+		if (matchSet.getNumberOfMacroclassifiers() > 0)
 			ga.evolveSet(matchSet, population);
-		
 
 	}
 
-	
 }

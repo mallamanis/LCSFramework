@@ -97,9 +97,9 @@ public class LCSTrainTemplate {
 		int numInstances = ClassifierTransformBridge.instances.length;
 		InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
 				numInstances);
-		
+
 		int repetition = 0;
-		while ( repetition < iterations) {
+		while (repetition < iterations) {
 			for (int j = 0; j < hookCallbackFrequency; j++) {
 				System.out.println("Iteration " + repetition);
 				for (int i = 0; i < numInstances; i++)

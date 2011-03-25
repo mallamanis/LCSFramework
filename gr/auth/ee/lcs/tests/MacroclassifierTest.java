@@ -48,7 +48,7 @@ public class MacroclassifierTest {
 								true,
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 						new SinglePointCrossover(), (float) .8,
-						new UniformBitMutation(.04), 50), 100);
+						new UniformBitMutation(.04), 50), 100, 1);
 	}
 
 	@Test
