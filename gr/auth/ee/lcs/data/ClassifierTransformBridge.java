@@ -107,8 +107,22 @@ public abstract class ClassifierTransformBridge {
 	 *            the index of the instance
 	 * @return a float representing the classification ability
 	 */
-	public abstract float classifyAbility(Classifier aClassifier,
+	public abstract float classifyAbilityAll(Classifier aClassifier,
 			int instanceIndex);
+
+	/**
+	 * The ability of a classifier to classify a specific instance label.
+	 * 
+	 * @param aClassifier
+	 *            the classifier
+	 * @param instanceIndex
+	 *            the index of the instance.
+	 * @param label
+	 *            the label index
+	 * @return a float representing the classification ability
+	 */
+	public abstract float classifyAbilityLabel(Classifier aClassifier,
+			int instanceIndex, int label);
 
 	/**
 	 * Gets the classification as specified by the representation.

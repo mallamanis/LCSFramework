@@ -90,7 +90,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public float classifyAbility(Classifier aClassifier, int instanceIndex) {
+	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
 		return this.instances[instanceIndex][this.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0] ? 1
 				: 0;
 	}
@@ -287,12 +287,30 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		return classes;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#getLabelNames()
+	 */
 	@Override
 	public String[] getLabelNames() {
 		String[] str = new String[2];
 		str[0] = "0";
 		str[1] = "1";
 		return str;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbilityLabel(gr
+	 * .auth.ee.lcs.classifiers.Classifier, int, int)
+	 */
+	@Override
+	public float classifyAbilityLabel(Classifier aClassifier,
+			int instanceIndex, int label) {
+		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
 
 }

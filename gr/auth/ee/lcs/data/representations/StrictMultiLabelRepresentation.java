@@ -3,28 +3,31 @@
  */
 package gr.auth.ee.lcs.data.representations;
 
-import java.io.IOException;
-
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation.IClassificationStrategy;
+
+import java.io.IOException;
+
 import weka.core.Instances;
 
 /**
- * A strict multi-label representation. Each labels uses one bit that it may be 0/1 to either classify or not a sample to a label
+ * A strict multi-label representation. Each labels uses one bit that it may be
+ * 0/1 to either classify or not a sample to a label
+ * 
  * @author Miltos Allamanis
  * 
  */
 public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 	private final int metricType;
-	
-	public static final int ABSOLUTE_ACCURACY=0;
-	public static final int RELATIVE_ACCURACY=1;
-	public static final int HAMMING_LOSS=2;
-	
+
+	public static final int EXACT_MATCH = 0;
+	public static final int ACCURACY = 1;
+	public static final int F_MEASURE = 2;
+	public static final int HAMMING_LOSS = 3;
+
 	public StrictMultiLabelRepresentation(Attribute[] attributes,
 			String[] ruleConsequentsNames, int labels, int type) {
 		super(attributes, ruleConsequentsNames, labels);
@@ -65,38 +68,43 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public float classifyAbility(Classifier aClassifier, int instanceIndex) {
-		switch(metricType){
-			case ABSOLUTE_ACCURACY:
-				return classifyAbsolute(aClassifier,instanceIndex);
-			case RELATIVE_ACCURACY:
-				return 0; //TODO
-			case HAMMING_LOSS:
-				return classifyHamming(aClassifier,instanceIndex);
+	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
+		switch (metricType) {
+		case EXACT_MATCH:
+			return classifyExact(aClassifier, instanceIndex);
+		case ACCURACY:
+			return 0; // TODO
+		case HAMMING_LOSS:
+			return classifyHamming(aClassifier, instanceIndex);
 		}
 		return 0;
-		
+
 	}
-	
+
 	private float classifyHamming(Classifier aClassifier, int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels + i;
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
 			if (attributeList[currentLabelIndex].isMatch(
 					(float) instances[instanceIndex][currentLabelIndex],
 					aClassifier))
-				result++;			
+				result++;
 		}
-		return result/numberOfLabels;
+		return result / numberOfLabels;
 	}
-	
+
 	/**
-	 * Classify absolutely as 0/1 
-	 * @param aClassifier the classifier used to classify
-	 * @param instanceIndex the instance to classify
-	 * @return 0 if classifier does not classify the instance correctly, 1 otherwise
+	 * Classify absolutely as 0/1
+	 * 
+	 * @param aClassifier
+	 *            the classifier used to classify
+	 * @param instanceIndex
+	 *            the instance to classify
+	 * @return 0 if classifier does not classify the instance correctly, 1
+	 *         otherwise
 	 */
-	private float classifyAbsolute(Classifier aClassifier, int instanceIndex) {
+	private float classifyExact(Classifier aClassifier, int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
@@ -301,6 +309,19 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 			return result;
 		}
 
+	}
+
+	@Override
+	public float classifyAbilityLabel(Classifier aClassifier,
+			int instanceIndex, int label) {
+		final int currentLabelIndex = attributeList.length - numberOfLabels
+				+ label;
+		if (attributeList[currentLabelIndex].isMatch(
+				(float) instances[instanceIndex][currentLabelIndex],
+				aClassifier)) {
+			return 1;
+		}
+		return -1;
 	}
 
 }

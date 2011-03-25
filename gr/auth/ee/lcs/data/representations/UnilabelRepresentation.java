@@ -268,7 +268,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public float classifyAbility(Classifier aClassifier, int instanceIndex) {
+	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
 				.getValue(aClassifier) == instances[instanceIndex][instances[instanceIndex].length - 1] ? 1
 				: 0;
@@ -383,6 +383,19 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 			return results;
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbilityLabel(gr
+	 * .auth.ee.lcs.classifiers.Classifier, int, int)
+	 */
+	@Override
+	public float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
+		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
 
 }
