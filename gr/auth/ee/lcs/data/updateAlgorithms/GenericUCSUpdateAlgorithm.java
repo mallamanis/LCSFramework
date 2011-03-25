@@ -172,11 +172,6 @@ public class GenericUCSUpdateAlgorithm extends
 			int instanceIndex) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
-		if (matchSetSize == 0) {
-			cover(population, instanceIndex);
-			return;
-		}
-
 		double sumOfFitness = 0;
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);
@@ -186,8 +181,16 @@ public class GenericUCSUpdateAlgorithm extends
 			data.ms = data.ms + 0.1 * (matchSetSize - data.ms);
 			final double metric = cl.classifyCorrectly(instanceIndex);
 			data.metricSum += metric;
-			data.fitness0 = Math.pow(data.metricSum / cl.experience, 5); // TODO:
+			data.fitness0 = Math.pow(data.metricSum / cl.experience, 10); // TODO:
+			if (data.fitness0 > 0.99)
+				cl.setSubsumptionAbility(true);
 			sumOfFitness += data.fitness0 * matchSet.getClassifierNumerosity(i);
+		}
+
+		if (matchSetSize == 0) {
+			cover(population, instanceIndex);
+		} else if (sumOfFitness / matchSetSize < .7) {
+			cover(population, instanceIndex);
 		}
 
 		for (int i = 0; i < matchSetSize; i++) {
@@ -198,8 +201,8 @@ public class GenericUCSUpdateAlgorithm extends
 			data.fitness += b * (k - data.fitness);
 
 		}
-
-		ga.evolveSet(matchSet, population);
+		if (matchSetSize > 0)
+			ga.evolveSet(matchSet, population);
 
 	}
 
