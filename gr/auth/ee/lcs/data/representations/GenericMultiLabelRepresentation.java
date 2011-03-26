@@ -20,6 +20,10 @@ import weka.core.Instances;
  */
 public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 
+	/**
+	 * The metric type used for calculating classifier's ability to classify an
+	 * instance.
+	 */
 	private final int metricType;
 
 	public static final int EXACT_MATCH = 0;
@@ -38,14 +42,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		metricType = type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
-	 * createClassRepresentation(weka.core.Instances)
-	 */
 	@Override
-	protected void createClassRepresentation(Instances instances) {
+	protected final void createClassRepresentation(final Instances instances) {
 		for (int i = 0; i < numberOfLabels; i++) {
 
 			final int labelIndex = attributeList.length - numberOfLabels + i;
@@ -57,15 +55,9 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbility(gr.auth
-	 * .ee.lcs.classifiers.Classifier, int)
-	 */
+
 	@Override
-	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
+	public final float classifyAbilityAll(final Classifier aClassifier, final int instanceIndex) {
 		switch (metricType) {
 		case EXACT_MATCH:
 			return classifyAbsolute(aClassifier, instanceIndex);
@@ -77,7 +69,7 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		return 0;
 	}
 
-	private float classifyHamming(Classifier aClassifier, int instanceIndex) {
+	private float classifyHamming(final Classifier aClassifier, final int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -104,13 +96,13 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	/**
-	 * Absolute Classification
+	 * Absolute Classification.
 	 * 
 	 * @param aClassifier
 	 * @param instanceIndex
 	 * @return
 	 */
-	private float classifyAbsolute(Classifier aClassifier, int instanceIndex) {
+	private float classifyAbsolute(final Classifier aClassifier, final int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
@@ -133,15 +125,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth
-	 * .ee.lcs.classifiers.Classifier)
-	 */
 	@Override
-	public int[] getClassification(Classifier aClassifier) {
+	public int[] getClassification(final Classifier aClassifier) {
 		int[] labels = new int[numberOfLabels];
 		int labelIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -163,15 +148,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getDataInstanceLabels(double
-	 * [])
-	 */
 	@Override
-	public int[] getDataInstanceLabels(double[] dataInstance) {
+	public final int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -192,25 +170,23 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#setClassification(gr.auth
-	 * .ee.lcs.classifiers.Classifier, int)
-	 */
 	@Override
-	public void setClassification(Classifier aClassifier, int action) {
+	public final void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 	}
 
-	public class VotingClassificationStrategy implements
+	/**
+	 * A Voting Classification Strategy.
+	 * @author Miltos Allamanis
+	 *
+	 */
+	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
 		@Override
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
-			double[] votingTable = new double[numberOfLabels];
+		public int[] classify(final ClassifierSet aSet, final double[] visionVector) {
+			final double[] votingTable = new double[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++)
 				votingTable[i] = 0;
 
@@ -244,7 +220,7 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 				if (votingTable[i] > 0)
 					numberOfActiveLabels++;
 
-			int[] result = new int[numberOfActiveLabels];
+			final int[] result = new int[numberOfActiveLabels];
 
 			int currentIndex = 0;
 			for (int i = 0; i < votingTable.length; i++)
@@ -259,8 +235,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public float classifyAbilityLabel(Classifier aClassifier,
-			int instanceIndex, int label) {
+	public float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
 		final int currentLabelIndex = attributeList.length - numberOfLabels
 				+ label;
 		if (attributeList[currentLabelIndex].isMatch(

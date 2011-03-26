@@ -35,17 +35,12 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		/**
 		 *
 		 */
-		private double fitness = .5;
+		private double fitness = 1 / 2;
 
 		/**
 		 * niche set size estimation.
 		 */
 		private double cs = 1;
-
-		/**
-		 * 
-		 */
-		private double msAvgFitness;
 
 		/**
 		 * Match Set Appearances.
@@ -72,8 +67,11 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Genetic Algorithm.
 	 */
-	public IGeneticAlgorithmStrategy ga;
+	private IGeneticAlgorithmStrategy ga;
 
+	/**
+	 * The \theta_{DEL} parameter of UCS.
+	 */
 	private final int deleteAge;
 
 	/**
@@ -93,6 +91,10 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 */
 	private final int subsumptionExperienceThreshold;
 
+	/**
+	 * A threshold of the classification ability of a classifier in order to be
+	 * classified as correct (and added to the correct set).
+	 */
 	private final double correctSetThreshold;
 
 	/**
@@ -114,14 +116,14 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the genetic algorithm to be used for evolving
 	 * @param thetaDel
 	 *            the theta del UCS parameter (deletion age)
-	 * @param correctSet
+	 * @param correctSetTheshold
 	 *            Threshold the threshold used to set a rule in the correct set
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
-			final int experienceThreshold, double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm, int thetaDel,
-			double correctSetTheshold) {
+			final int experienceThreshold, final double gaMatchSetRunProbability,
+			final IGeneticAlgorithmStrategy geneticAlgorithm, final int thetaDel,
+			final double correctSetTheshold) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -148,35 +150,30 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				.getUpdateDataObject();
 
 		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? 0 : 1);
-			return Double.isNaN(value) ? 0 : value;
-		case COMPARISON_MODE_DELETION:
-
-			if (aClassifier.experience < deleteAge) {
-				final double result = data.cs / data.fitness;
-				return Double.isNaN(result) ? 1 : result;
-			}
-
-			return data.cs;
-
-		case COMPARISON_MODE_EXPLOITATION:
-			final double acc = (((double) (data.tp)) / (double) (data.msa));
-			final double exploitValue = acc
-					* (aClassifier.experience < deleteAge ? 0 : 1);
-			return Double.isNaN(exploitValue) ? 0 : exploitValue;
+			case COMPARISON_MODE_EXPLORATION:
+				final double value = data.fitness
+						* (aClassifier.experience < deleteAge ? 0 : 1);
+				return Double.isNaN(value) ? 0 : value;
+			case COMPARISON_MODE_DELETION:
+	
+				if (aClassifier.experience < deleteAge) {
+					final double result = data.cs / data.fitness;
+					return Double.isNaN(result) ? 1 : result;
+				}
+	
+				return data.cs;
+	
+			case COMPARISON_MODE_EXPLOITATION:
+				final double acc = (((double) (data.tp)) / (double) (data.msa));
+				final double exploitValue = acc
+						* (aClassifier.experience < deleteAge ? 0 : 1);
+				return Double.isNaN(exploitValue) ? 0 : exploitValue;
+			default:
+				return 0;
 		}
-		return 0;
+		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
-	 * .ee.lcs.classifiers.Classifier)
-	 */
 	@Override
 	public final String getData(final Classifier aClassifier) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
@@ -184,13 +181,6 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		return "tp:" + data.tp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#setComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
-	 */
 	@Override
 	public final void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
@@ -201,7 +191,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * Calls covering operator.
-	 * 
+	 * @param population the population where the covering classifier will be added
 	 * @param instanceIndex
 	 *            the index of the current sample
 	 */
@@ -237,8 +227,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Perform an update to the set.
 	 * 
-	 * @param matchSet
-	 * @param correctSet
+	 * @param matchSet the match set used for the update
+	 * @param correctSet the correct set used for the update
 	 */
 	private void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
@@ -252,7 +242,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 					.getUpdateDataObject());
 			cl.experience++;
 			data.msa += 1;
-			data.cs = data.cs + 0.1 * (correctSetSize - data.cs);
+			data.cs = data.cs + b * (correctSetSize - data.cs);
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1;
 				final double accuracy = ((double) data.tp)
@@ -340,10 +330,11 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		/*
 		 * Run GA
 		 */
-		if (Math.random() < matchSetRunProbability)
+		if (Math.random() < matchSetRunProbability) {
 			ga.evolveSet(matchSet, population);
-		else
+		} else {
 			ga.evolveSet(correctSet, population);
+		}
 
 	}
 

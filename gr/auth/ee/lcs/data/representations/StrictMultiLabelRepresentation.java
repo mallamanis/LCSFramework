@@ -21,21 +21,69 @@ import weka.core.Instances;
  */
 public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
+	/**
+	 * The type of metric used to calculate a rule's (classifier) ability to
+	 * classify a specific instance.
+	 */
 	private final int metricType;
 
+	/**
+	 * Exact Match Metric type.
+	 */
 	public static final int EXACT_MATCH = 0;
+
+	/**
+	 * Accuracy metric type.
+	 */
 	public static final int ACCURACY = 1;
+
+	/**
+	 * F-Measure Metric type.
+	 */
 	public static final int F_MEASURE = 2;
+
+	/**
+	 * Hamming Loss Metric Type
+	 */
 	public static final int HAMMING_LOSS = 3;
 
-	public StrictMultiLabelRepresentation(Attribute[] attributes,
-			String[] ruleConsequentsNames, int labels, int type) {
+	/**
+	 * Constructor for directly creating object.
+	 * 
+	 * @param attributes
+	 *            the attributes of the representation
+	 * @param ruleConsequentsNames
+	 *            the names of the rule consequents (labels)
+	 * @param labels
+	 *            the number of labels
+	 * @param type
+	 *            the type of the metric used
+	 */
+	public StrictMultiLabelRepresentation(final Attribute[] attributes,
+			final String[] ruleConsequentsNames, final int labels,
+			final int type) {
 		super(attributes, ruleConsequentsNames, labels);
 		metricType = type;
 	}
 
-	public StrictMultiLabelRepresentation(String inputArff, int precision,
-			int labels, int type) throws IOException {
+	/**
+	 * Constructor for creating object through file input.
+	 * 
+	 * @param inputArff
+	 *            the .arff input filename
+	 * @param precision
+	 *            the number of bits to be used for representing continuous
+	 *            variables.
+	 * @param labels
+	 *            the number of labels of the probel
+	 * @param type
+	 *            the type of metric used for evaluating whole classifiers
+	 * @throws IOException
+	 *             if file is not found
+	 */
+	public StrictMultiLabelRepresentation(final String inputArff,
+			final int precision, final int labels, final int type)
+			throws IOException {
 		super(inputArff, precision, labels);
 		metricType = type;
 	}
@@ -47,15 +95,14 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * createClassRepresentation(weka.core.Instances)
 	 */
 	@Override
-	protected void createClassRepresentation(Instances instances) {
+	protected final void createClassRepresentation(final Instances instances) {
 		for (int i = 0; i < numberOfLabels; i++) {
 
 			final int labelIndex = attributeList.length - numberOfLabels + i;
 
 			String attributeName = instances.attribute(labelIndex).name();
 
-			attributeList[labelIndex] = new Label(chromosomeSize,
-					attributeName, 0);
+			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
 		}
 
 	}
@@ -68,7 +115,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
+	public final float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
 		switch (metricType) {
 		case EXACT_MATCH:
 			return classifyExact(aClassifier, instanceIndex);
@@ -76,12 +124,25 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 			return 0; // TODO
 		case HAMMING_LOSS:
 			return classifyHamming(aClassifier, instanceIndex);
+		default:
+			return 0;
 		}
-		return 0;
 
 	}
 
-	private float classifyHamming(Classifier aClassifier, int instanceIndex) {
+	/**
+	 * Finds the (1 - HammingDistance) of the classifier and the instance at the
+	 * given index.
+	 * 
+	 * @param aClassifier
+	 *            the classifier used to classify the instance
+	 * @param instanceIndex
+	 *            the index of the train instance
+	 * @return a float representing the (1 - HammingDistance) of the
+	 *         classification
+	 */
+	private float classifyHamming(final Classifier aClassifier,
+			final int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -95,7 +156,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	/**
-	 * Classify absolutely as 0/1
+	 * Classify with exact match as 0/1.
 	 * 
 	 * @param aClassifier
 	 *            the classifier used to classify
@@ -104,7 +165,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @return 0 if classifier does not classify the instance correctly, 1
 	 *         otherwise
 	 */
-	private float classifyExact(Classifier aClassifier, int instanceIndex) {
+	private float classifyExact(final Classifier aClassifier,
+			final int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
@@ -124,7 +186,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public int[] getClassification(Classifier aClassifier) {
+	public final int[] getClassification(final Classifier aClassifier) {
 		int[] labels = new int[numberOfLabels];
 		int labelIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -152,7 +214,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * [])
 	 */
 	@Override
-	public int[] getDataInstanceLabels(double[] dataInstance) {
+	public final int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -181,7 +243,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public void setClassification(Classifier aClassifier, int action) {
+	public final void setClassification(final Classifier aClassifier,
+			final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 
@@ -193,50 +256,64 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class Label extends Attribute {
+	public final class Label extends Attribute {
 
-		public Label(int startPosition, String attributeName,
-				double generalizationRate) {
-			super(startPosition, attributeName, generalizationRate);
+		/**
+		 * The Label Attribute Constructor.
+		 * 
+		 * @param startPosition
+		 *            the starting position of the attribute in the chrosmosome.
+		 * @param attributeName
+		 *            the name of the attribute.
+		 */
+		public Label(final int startPosition, final String attributeName) {
+			super(startPosition, attributeName, 0);
 			lengthInBits = 1;
 			chromosomeSize += lengthInBits;
 		}
 
 		@Override
 		public void fixAttributeRepresentation(
-				ExtendedBitSet generatedClassifier) {
+				final ExtendedBitSet generatedClassifier) {
 			return;
 		}
 
 		@Override
-		public boolean isEqual(ExtendedBitSet baseChromosome,
-				ExtendedBitSet testChromosome) {
+		public boolean isEqual(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 			return (baseChromosome.get(positionInChromosome) == testChromosome
 					.get(positionInChromosome));
 		}
 
-		public boolean getValue(ExtendedBitSet chromosome) {
+		/**
+		 * Get the value of the label of the given chromosome.
+		 * 
+		 * @param chromosome
+		 *            the chromosome
+		 * @return the value of the label (0/1)
+		 */
+		public boolean getValue(final ExtendedBitSet chromosome) {
 			return chromosome.get(positionInChromosome);
 		}
 
 		@Override
-		public boolean isMatch(float attributeVision,
-				ExtendedBitSet testedChromosome) {
+		public boolean isMatch(final float attributeVision,
+				final ExtendedBitSet testedChromosome) {
 			return (testedChromosome.get(positionInChromosome) == (attributeVision == 1 ? true
 					: false));
 
 		}
 
 		@Override
-		public boolean isMoreGeneral(ExtendedBitSet baseChromosome,
-				ExtendedBitSet testChromosome) {
+		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 			return baseChromosome.get(positionInChromosome) == testChromosome
 					.get(positionInChromosome);
 		}
 
 		@Override
-		public void randomCoveringValue(float attributeValue,
-				Classifier generatedClassifier) {
+		public void randomCoveringValue(final float attributeValue,
+				final Classifier generatedClassifier) {
 			if (attributeValue == 1)
 				generatedClassifier.set(positionInChromosome);
 			else
@@ -245,7 +322,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		}
 
 		@Override
-		public String toString(ExtendedBitSet convertingClassifier) {
+		public String toString(final ExtendedBitSet convertingClassifier) {
 			return convertingClassifier.get(positionInChromosome) ? "1" : "0";
 		}
 
@@ -260,11 +337,12 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class VotingClassificationStrategy implements
+	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
 		@Override
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 			double[] votingTable = new double[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++)
 				votingTable[i] = 0;
@@ -312,8 +390,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public float classifyAbilityLabel(Classifier aClassifier,
-			int instanceIndex, int label) {
+	public final float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
 		final int currentLabelIndex = attributeList.length - numberOfLabels
 				+ label;
 		if (attributeList[currentLabelIndex].isMatch(

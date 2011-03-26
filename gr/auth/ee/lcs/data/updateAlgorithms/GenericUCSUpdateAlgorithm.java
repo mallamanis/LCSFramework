@@ -13,6 +13,9 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import java.io.Serializable;
 
 /**
+ * A generalized UCS Update Algorithm. This UCS tries to estimate a given metric
+ * (not just accuracy)
+ * 
  * @author Miltos Allamanis
  * 
  */
@@ -41,41 +44,50 @@ public class GenericUCSUpdateAlgorithm extends
 		 */
 		private double fitness0 = 0;
 
+		/**
+		 * Match Set mean size.
+		 */
 		private double ms = 1;
 
 		/**
-		 *
+		 * Fitness.
 		 */
 		private double fitness = .5;
 	}
 
+	/**
+	 * The theta_DEL parameter of UCS.
+	 */
 	private final int deleteAge = 20;
 
 	/**
 	 * The learning rate.
 	 */
-	final double b;
+	private final double b;
 
 	/**
 	 * Genetic Algorithm.
 	 */
-	public IGeneticAlgorithmStrategy ga;
+	private IGeneticAlgorithmStrategy ga;
 
+	/**
+	 * The constructor.
+	 * 
+	 * @param geneticAlgorithm
+	 *            the GA to be used
+	 * @param learningRate
+	 *            the learning rate to be applied at each iteration
+	 */
 	public GenericUCSUpdateAlgorithm(
-			IGeneticAlgorithmStrategy geneticAlgorithm, double learningRate) {
+			final IGeneticAlgorithmStrategy geneticAlgorithm,
+			final double learningRate) {
 		this.ga = geneticAlgorithm;
 		this.b = learningRate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
-	 */
 	@Override
-	public double getComparisonValue(Classifier aClassifier, int mode) {
+	public final double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
 		GenericUCSClassifierData data = (GenericUCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
@@ -102,8 +114,10 @@ public class GenericUCSUpdateAlgorithm extends
 			final double exploitValue = acc
 					* (aClassifier.experience < deleteAge ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
+		default:
+			return 0;
 		}
-		return 0;
+
 	}
 
 	/*
@@ -114,22 +128,15 @@ public class GenericUCSUpdateAlgorithm extends
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public String getData(Classifier aClassifier) {
+	public final String getData(final Classifier aClassifier) {
 		GenericUCSClassifierData data = ((GenericUCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		return "Fitness: " + data.fitness;
+		return "Fitness: " + data.fitness; // TODO more
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#setComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
-	 */
 	@Override
-	public void setComparisonValue(Classifier aClassifier, int mode,
-			double comparisonValue) {
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
 		// TODO Auto-generated method stub
 
 	}
@@ -137,6 +144,8 @@ public class GenericUCSUpdateAlgorithm extends
 	/**
 	 * Calls covering operator.
 	 * 
+	 * @param population
+	 *            the population where the new covering classifier will be added
 	 * @param instanceIndex
 	 *            the index of the current sample
 	 */
@@ -148,28 +157,14 @@ public class GenericUCSUpdateAlgorithm extends
 				false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
-	 * createStateClassifierObject()
-	 */
 	@Override
-	protected Serializable createStateClassifierObject() {
+	protected final Serializable createStateClassifierObject() {
 		return new GenericUCSClassifierData();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#updateSet(gr.auth
-	 * .ee.lcs.classifiers.ClassifierSet,
-	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
-	 */
 	@Override
-	protected void updateSet(ClassifierSet population, ClassifierSet matchSet,
-			int instanceIndex) {
+	protected final void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
 		double sumOfFitness = 0;
@@ -178,7 +173,7 @@ public class GenericUCSUpdateAlgorithm extends
 			GenericUCSClassifierData data = ((GenericUCSClassifierData) cl
 					.getUpdateDataObject());
 			cl.experience++;
-			data.ms = data.ms + 0.1 * (matchSetSize - data.ms);
+			data.ms = data.ms + b * (matchSetSize - data.ms);
 			final double metric = cl.classifyCorrectly(instanceIndex);
 			data.metricSum += metric;
 			data.fitness0 = Math.pow(data.metricSum / cl.experience, 10); // TODO:

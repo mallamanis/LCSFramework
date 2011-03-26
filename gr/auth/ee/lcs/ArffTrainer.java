@@ -9,11 +9,15 @@ import java.util.Random;
 import weka.core.Instances;
 
 /**
+ * A simple trainer using an .arff file.
  * @author Miltos Allamanis
  * 
  */
 public class ArffTrainer {
 
+	/**
+	 * A test set
+	 */
 	public Instances testSet;
 
 	public void loadInstances(String filename) throws IOException {
@@ -25,8 +29,8 @@ public class ArffTrainer {
 		set.randomize(new Random());
 		set.stratify(10);
 
-		Instances trainSet = set.trainCV(10, 3);
-		testSet = set.testCV(10, 3);
+		Instances trainSet = set;// .trainCV(10, 3);
+		// testSet = set.testCV(10, 3);
 
 		ClassifierTransformBridge.instances = new double[trainSet
 				.numInstances()][trainSet.numAttributes()];

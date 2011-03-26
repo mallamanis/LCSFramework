@@ -16,8 +16,14 @@ import java.util.Vector;
  */
 public class LCSTrainTemplate {
 
+	/**
+	 * A vector of all evaluator hooks.
+	 */
 	private Vector<IEvaluator> hooks;
 
+	/**
+	 * Frequency of the hook callback execution.
+	 */
 	private final int hookCallbackFrequency;
 
 	/**
@@ -26,7 +32,7 @@ public class LCSTrainTemplate {
 	 * @param callbackFrequency
 	 *            the frequency at which to call the callbacks
 	 */
-	public LCSTrainTemplate(int callbackFrequency) {
+	public LCSTrainTemplate(final int callbackFrequency) {
 		hooks = new Vector<IEvaluator>();
 		hookCallbackFrequency = callbackFrequency;
 	}
@@ -38,7 +44,7 @@ public class LCSTrainTemplate {
 	 *            the evaluator to register
 	 * @return true if the evaluator has been registered successfully
 	 */
-	public boolean registerHook(IEvaluator evaluator) {
+	public final boolean registerHook(final IEvaluator evaluator) {
 		return hooks.add(evaluator);
 	}
 
@@ -49,7 +55,7 @@ public class LCSTrainTemplate {
 	 *            the evaluator to register
 	 * @return true if the evaluator has been unregisterd successfully
 	 */
-	public boolean unregisterEvaluator(IEvaluator evaluator) {
+	public final boolean unregisterEvaluator(final IEvaluator evaluator) {
 		return hooks.remove(evaluator);
 	}
 
@@ -59,7 +65,7 @@ public class LCSTrainTemplate {
 	 * @param aSet
 	 *            the set on which to run the callbacks
 	 */
-	private void executeCallbacks(ClassifierSet aSet) {
+	private void executeCallbacks(final ClassifierSet aSet) {
 		for (int i = 0; i < hooks.size(); i++)
 			hooks.elementAt(i).evaluateSet(aSet);
 	}
@@ -73,10 +79,11 @@ public class LCSTrainTemplate {
 	 * @param dataInstanceIndex
 	 *            the index of the training data instance
 	 */
-	public void trainWithInstance(ClassifierSet population,
-			int dataInstanceIndex) {
+	public final void trainWithInstance(final ClassifierSet population,
+			final int dataInstanceIndex) {
 
-		ClassifierSet matchSet = population.generateMatchSet(dataInstanceIndex);
+		final ClassifierSet matchSet = population
+				.generateMatchSet(dataInstanceIndex);
 
 		UpdateAlgorithmFactoryAndStrategy.updateData(population, matchSet,
 				dataInstanceIndex);
@@ -92,10 +99,10 @@ public class LCSTrainTemplate {
 	 * @param population
 	 *            the population of the classifiers to train.
 	 */
-	public void train(int iterations, ClassifierSet population) {
+	public final void train(final int iterations, final ClassifierSet population) {
 
-		int numInstances = ClassifierTransformBridge.instances.length;
-		InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
+		final int numInstances = ClassifierTransformBridge.instances.length;
+		final InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
 				numInstances);
 
 		int repetition = 0;
