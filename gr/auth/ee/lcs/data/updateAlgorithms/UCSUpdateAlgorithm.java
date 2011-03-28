@@ -121,9 +121,10 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
-			final int experienceThreshold, final double gaMatchSetRunProbability,
-			final IGeneticAlgorithmStrategy geneticAlgorithm, final int thetaDel,
-			final double correctSetTheshold) {
+			final int experienceThreshold,
+			final double gaMatchSetRunProbability,
+			final IGeneticAlgorithmStrategy geneticAlgorithm,
+			final int thetaDel, final double correctSetTheshold) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -150,28 +151,28 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				.getUpdateDataObject();
 
 		switch (mode) {
-			case COMPARISON_MODE_EXPLORATION:
-				final double value = data.fitness
-						* (aClassifier.experience < deleteAge ? 0 : 1);
-				return Double.isNaN(value) ? 0 : value;
-			case COMPARISON_MODE_DELETION:
-	
-				if (aClassifier.experience < deleteAge) {
-					final double result = data.cs / data.fitness;
-					return Double.isNaN(result) ? 1 : result;
-				}
-	
-				return data.cs;
-	
-			case COMPARISON_MODE_EXPLOITATION:
-				final double acc = (((double) (data.tp)) / (double) (data.msa));
-				final double exploitValue = acc
-						* (aClassifier.experience < deleteAge ? 0 : 1);
-				return Double.isNaN(exploitValue) ? 0 : exploitValue;
-			default:
-				return 0;
+		case COMPARISON_MODE_EXPLORATION:
+			final double value = data.fitness
+					* (aClassifier.experience < deleteAge ? 0 : 1);
+			return Double.isNaN(value) ? 0 : value;
+		case COMPARISON_MODE_DELETION:
+
+			if (aClassifier.experience < deleteAge) {
+				final double result = data.cs / data.fitness;
+				return Double.isNaN(result) ? 1 : result;
+			}
+
+			return data.cs;
+
+		case COMPARISON_MODE_EXPLOITATION:
+			final double acc = (((double) (data.tp)) / (double) (data.msa));
+			final double exploitValue = acc
+					* (aClassifier.experience < deleteAge ? 0 : 1);
+			return Double.isNaN(exploitValue) ? 0 : exploitValue;
+		default:
+			return 0;
 		}
-		
+
 	}
 
 	@Override
@@ -191,7 +192,9 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * Calls covering operator.
-	 * @param population the population where the covering classifier will be added
+	 * 
+	 * @param population
+	 *            the population where the covering classifier will be added
 	 * @param instanceIndex
 	 *            the index of the current sample
 	 */
@@ -227,8 +230,10 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Perform an update to the set.
 	 * 
-	 * @param matchSet the match set used for the update
-	 * @param correctSet the correct set used for the update
+	 * @param matchSet
+	 *            the match set used for the update
+	 * @param correctSet
+	 *            the correct set used for the update
 	 */
 	private void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
@@ -242,8 +247,9 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 					.getUpdateDataObject());
 			cl.experience++;
 			data.msa += 1;
-			data.cs = data.cs + b * (correctSetSize - data.cs);
+
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
+				data.cs = data.cs + b * (correctSetSize - data.cs);
 				data.tp += 1;
 				final double accuracy = ((double) data.tp)
 						/ ((double) data.msa);

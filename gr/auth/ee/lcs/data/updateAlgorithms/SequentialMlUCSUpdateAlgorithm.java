@@ -273,8 +273,10 @@ public class SequentialMlUCSUpdateAlgorithm extends
 					.getUpdateDataObject());
 			cl.experience++;
 			data.msa += 1;
-			data.cs = data.cs + 0.1 * (correctSetSize - data.cs);
+
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
+				data.cs = (data.cs * (cl.experience - 1) + correctSetSize)
+						/ cl.experience;
 				data.tp += 1;
 				final double accuracy = ((double) data.tp)
 						/ ((double) data.msa);
@@ -317,26 +319,11 @@ public class SequentialMlUCSUpdateAlgorithm extends
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
-	 * createStateClassifierObject()
-	 */
 	@Override
 	protected final Serializable createStateClassifierObject() {
 		return new UCSClassifierData();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#updateSet(gr.auth
-	 * .ee.lcs.classifiers.ClassifierSet,
-	 * gr.auth.ee.lcs.classifiers.ClassifierSet) Updates the set setA is the
-	 * match set setB is the correct set
-	 */
 	@Override
 	protected final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
