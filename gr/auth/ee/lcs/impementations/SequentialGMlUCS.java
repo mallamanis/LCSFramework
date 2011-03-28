@@ -41,8 +41,8 @@ public class SequentialGMlUCS {
 	 */
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 200;
+		final int numOfLabels = 7;
+		final int iterations = 100;
 		final int populationSize = 2000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .03);
@@ -245,7 +245,7 @@ public class SequentialGMlUCS {
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				loader.testSet, true);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,true);
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
 
 	}

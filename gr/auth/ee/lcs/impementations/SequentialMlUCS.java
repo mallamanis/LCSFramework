@@ -235,7 +235,7 @@ public class SequentialMlUCS {
 				true);
 		testEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true);
+				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
 
 	}
