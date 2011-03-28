@@ -21,6 +21,12 @@ public class ArffLoader {
 	 */
 	public Instances testSet;
 
+	/**
+	 * Load instances into the global train store and create test set
+	 * @param filename the .arff filename to be used
+	 * @param generateTestSet true if a test set is going to be generated
+	 * @throws IOException if the input file is not found
+	 */
 	public void loadInstances(String filename, boolean generateTestSet)
 			throws IOException {
 		// Open .arff

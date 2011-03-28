@@ -27,6 +27,9 @@ public final class GenericMultiLabelRepresentation extends
 	 */
 	private final int metricType;
 
+	/**
+	 * The label generalization rate.
+	 */
 	private final double labelGeneralizationRate;
 
 	public static final int EXACT_MATCH = 0;
