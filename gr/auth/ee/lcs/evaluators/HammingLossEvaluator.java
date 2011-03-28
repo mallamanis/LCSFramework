@@ -3,14 +3,15 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.IEvaluator;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
 import weka.core.Instances;
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
 
 /**
  * Evaluates a ruleset on an instance set using the hamming loss metric.
@@ -29,20 +30,43 @@ public class HammingLossEvaluator implements IEvaluator {
 	 * A boolean indicating if the evaluator is going to print the results.
 	 */
 	private final boolean printResults;
-	
+
 	/**
 	 * The number of labels used.
 	 */
 	private final int numberOfLabels;
 
-	public HammingLossEvaluator(final Instances instances, final boolean print, final int numOfLabels) {
+	/**
+	 * Constructor of the hamming loss evaluator.
+	 * 
+	 * @param instances
+	 *            the set of Weka instances
+	 * @param print
+	 *            true to print results to stdout during evaluation
+	 * @param numOfLabels
+	 *            the number of labels
+	 */
+	public HammingLossEvaluator(final Instances instances, final boolean print,
+			final int numOfLabels) {
 		instanceSet = instances;
 		printResults = print;
 		numberOfLabels = numOfLabels;
 	}
 
-	public HammingLossEvaluator(final String arffFileName, final boolean print, final int numOfLabels)
-			throws IOException {
+	/**
+	 * Constructor of evaluator.
+	 * 
+	 * @param arffFileName
+	 *            the data file input
+	 * @param print
+	 *            true to print results to stdout
+	 * @param numOfLabels
+	 *            the number of labels for the problem
+	 * @throws IOException
+	 *             if file is not found
+	 */
+	public HammingLossEvaluator(final String arffFileName, final boolean print,
+			final int numOfLabels) throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
 		instanceSet = new Instances(reader);

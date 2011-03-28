@@ -35,6 +35,8 @@ import java.io.IOException;
  */
 public class SequentialMlUCS {
 	/**
+	 * Main for running the SMl-UCS
+	 * 
 	 * @param args
 	 * @throws IOException
 	 */
@@ -145,8 +147,6 @@ public class SequentialMlUCS {
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
-	 * @param labelGeneralizationProbability
-	 *            the probability of generalizing a label (during coverage)
 	 */
 	public SequentialMlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) {
@@ -156,6 +156,11 @@ public class SequentialMlUCS {
 		this.numberOfLabels = numOfLabels;
 	}
 
+	/**
+	 * Run Sequential ML UCS
+	 * 
+	 * @throws IOException
+	 */
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(

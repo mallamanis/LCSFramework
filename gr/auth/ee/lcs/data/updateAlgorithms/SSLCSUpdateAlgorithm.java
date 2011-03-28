@@ -30,6 +30,11 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 *            the fitness threshold for subsumption
 	 * @param experienceThreshold
 	 *            the experience threshold for subsumption
+	 * 
+	 * @param gaMatchSetRunProbability
+	 *            the probability to run the GA on the matchset
+	 * @param geneticAlgorithm
+	 *            the GA to be used for exploration
 	 */
 	public SSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final double fitnessThreshold,

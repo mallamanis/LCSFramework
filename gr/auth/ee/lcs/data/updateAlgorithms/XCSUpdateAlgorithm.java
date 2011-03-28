@@ -28,14 +28,29 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		 */
 		private static final long serialVersionUID = -4348877142305226957L;
 
+		/**
+		 * XCS Prediction Error
+		 */
 		public double predictionError = 0;
 
+		/**
+		 * Action set size
+		 */
 		public double actionSet = 1;
 
+		/**
+		 * Predicted pay-off
+		 */
 		public double predictedPayOff = 5;
 
+		/**
+		 * k XCS parameter
+		 */
 		public double k;
 
+		/**
+		 * XCS Parameter
+		 */
 		public double fitness = .5;
 
 	}
@@ -102,12 +117,16 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 *            the fitness threshold for subsumption
 	 * @param experienceThreshold
 	 *            the experience threshold for subsumption
+	 * @param gaMatchSetRunProbability
+	 *            the probability of running the GA at the matchSet
+	 * @param geneticAlgorithm
+	 *            the GA object to be used
 	 */
 	public XCSUpdateAlgorithm(final double beta, final double P,
 			final double e0, final double alpha, final double n,
 			final double fitnessThreshold, final int experienceThreshold,
-			double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm) {
+			final double gaMatchSetRunProbability,
+			final IGeneticAlgorithmStrategy geneticAlgorithm) {
 		this.subsumptionFitnessThreshold = fitnessThreshold;
 		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.beta = beta;

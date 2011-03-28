@@ -166,6 +166,11 @@ public class SequentialGMlUCS {
 		this.labelGeneralizationRate = labelGeneralizationProbability;
 	}
 
+	/**
+	 * Run the SGmlUCS
+	 * 
+	 * @throws IOException
+	 */
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(

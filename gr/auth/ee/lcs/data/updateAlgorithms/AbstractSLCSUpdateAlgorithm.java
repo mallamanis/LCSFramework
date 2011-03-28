@@ -86,10 +86,15 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 *            the fitness threshold for subsumption
 	 * @param subsumptionExperience
 	 *            the experience threshold for subsumption
+	 * @param gaMatchSetRunProbability
+	 *            the probability of running the GA at the matchset
+	 * @param geneticAlgorithm
+	 *            the GA to use
 	 */
 	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
-			final int subsumptionExperience, double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm) {
+			final int subsumptionExperience,
+			final double gaMatchSetRunProbability,
+			final IGeneticAlgorithmStrategy geneticAlgorithm) {
 		this.subsumptionFitnessThreshold = subsumptionFitness;
 		this.subsumptionExperienceThreshold = subsumptionExperience;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
@@ -185,15 +190,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	public abstract void updateFitness(Classifier aClassifier, int numerosity,
 			ClassifierSet correctSet);
 
-	/**
-	 * Updates the set. setA is the match set setB is the correct set
-	 * 
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmAndStrategy.updateSet
-	 * @param setA
-	 *            match set
-	 * @param setB
-	 *            correct set
-	 */
 	@Override
 	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {

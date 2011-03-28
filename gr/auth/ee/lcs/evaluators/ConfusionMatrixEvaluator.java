@@ -17,14 +17,24 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	/**
 	 * A weka confusion matrix.
 	 */
-	private ConfusionMatrix conf;
+	private final ConfusionMatrix conf;
 
 	/**
 	 * The instances.
 	 */
-	private double[][] instances;
+	private final double[][] instances;
 
-	public ConfusionMatrixEvaluator(String[] classNames, double[][] set) {
+	/**
+	 * Constructor for creating a confusion matrix
+	 * 
+	 * @param classNames
+	 *            the class names
+	 * @param set
+	 *            the set of instances to be used for creating the confusion
+	 *            matrix
+	 */
+	public ConfusionMatrixEvaluator(final String[] classNames,
+			final double[][] set) {
 		conf = new ConfusionMatrix(classNames);
 		this.instances = set;
 	}

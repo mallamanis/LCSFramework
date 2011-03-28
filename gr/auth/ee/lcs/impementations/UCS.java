@@ -14,9 +14,9 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
-import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -33,6 +33,20 @@ import java.io.IOException;
  * 
  */
 public class UCS {
+
+	/**
+	 * The main for running UCS
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
+		final String file = "/home/miltiadis/Desktop/datasets/car.arff";
+		final int iterations = 500;
+		final int populationSize = 2000;
+		UCS ucs = new UCS(file, iterations, populationSize);
+		ucs.run();
+	}
 
 	/**
 	 * The input file used (.arff).
@@ -130,14 +144,6 @@ public class UCS {
 		this.populationSize = populationSize;
 	}
 
-	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/car.arff";
-		final int iterations = 500;
-		final int populationSize = 2000;
-		UCS ucs = new UCS(file, iterations, populationSize);
-		ucs.run();
-	}
-
 	/**
 	 * Run the UCS.
 	 * 
@@ -152,8 +158,8 @@ public class UCS {
 						true), new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
-		SingleClassRepresentation rep = new SingleClassRepresentation(inputFile,
-				PRECISION_BITS);
+		SingleClassRepresentation rep = new SingleClassRepresentation(
+				inputFile, PRECISION_BITS);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -222,8 +228,8 @@ public class UCS {
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				trainer.testSet, true);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
+				true);
 		testEval.evaluateSet(rulePopulation);
 
 	}

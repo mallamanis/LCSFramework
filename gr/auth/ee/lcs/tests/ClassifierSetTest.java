@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * A test for a ClassifierSet
+ * 
  * @author Miltos Allamanis
  * 
  */
@@ -80,25 +82,6 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getTotalNumerosity(), 13 + 5 + 2);
 	}
 
-	@Test
-	public void testRemoveAll() {
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
-				"10010111"));
-		ClassifierSet testSet = new ClassifierSet(null);
-		for (int i = 0; i < 10; i++)
-			testSet.addClassifier(new Macroclassifier(testClassifier, 1), true);
-		assertEquals(testSet.getClassifierNumerosity(testClassifier), 10);
-		assertEquals(testSet.getTotalNumerosity(), 10);
-		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
-
-		testSet.removeAllMacroclassifiers();
-
-		assertEquals(testSet.getClassifierNumerosity(testClassifier), 0);
-		assertEquals(testSet.getTotalNumerosity(), 0);
-		assertEquals(testSet.getNumberOfMacroclassifiers(), 0);
-
-	}
-
 	/**
 	 * Test method for
 	 * {@link gr.auth.ee.lcs.classifiers.ClassifierSet#deleteClassifier(gr.auth.ee.lcs.classifiers.Classifier)}
@@ -131,6 +114,25 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getClassifierNumerosity(testClassifier), 0);
 		assertEquals(testSet.getTotalNumerosity(), 0);
 		assertTrue(testSet.isEmpty());
+	}
+
+	@Test
+	public void testRemoveAll() {
+		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+				"10010111"));
+		ClassifierSet testSet = new ClassifierSet(null);
+		for (int i = 0; i < 10; i++)
+			testSet.addClassifier(new Macroclassifier(testClassifier, 1), true);
+		assertEquals(testSet.getClassifierNumerosity(testClassifier), 10);
+		assertEquals(testSet.getTotalNumerosity(), 10);
+		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
+
+		testSet.removeAllMacroclassifiers();
+
+		assertEquals(testSet.getClassifierNumerosity(testClassifier), 0);
+		assertEquals(testSet.getTotalNumerosity(), 0);
+		assertEquals(testSet.getNumberOfMacroclassifiers(), 0);
+
 	}
 
 	/**

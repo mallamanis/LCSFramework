@@ -14,6 +14,12 @@ import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests for Best Fitness Tournament Selector
+ * 
+ * @author Miltos Allamanis
+ * 
+ */
 public class BestFitnessTournamentSelectorTest {
 
 	TournamentSelector mySelector;
