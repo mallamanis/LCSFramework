@@ -67,7 +67,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * Genetic Algorithm.
 	 */
-	private IGeneticAlgorithmStrategy ga;
+	private final IGeneticAlgorithmStrategy ga;
 
 	/**
 	 * The \theta_{DEL} parameter of UCS.
@@ -137,6 +137,34 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	}
 
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param population
+	 *            the population where the covering classifier will be added
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	@Override
+	public void cover(final ClassifierSet population, final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
+	 * createStateClassifierObject()
+	 */
+	@Override
+	public final Serializable createStateClassifierObject() {
+		return new UCSClassifierData();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -182,51 +210,6 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		return "tp:" + data.tp;
 	}
 
-	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
-			final int mode, final double comparisonValue) {
-		UCSClassifierData data = ((UCSClassifierData) aClassifier
-				.getUpdateDataObject());
-		data.fitness = comparisonValue;
-	}
-
-	/**
-	 * Calls covering operator.
-	 * 
-	 * @param population
-	 *            the population where the covering classifier will be added
-	 * @param instanceIndex
-	 *            the index of the current sample
-	 */
-	private void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
-		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
-				false);
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/**
 	 * Perform an update to the set.
 	 * 
@@ -235,7 +218,8 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * @param correctSet
 	 *            the correct set used for the update
 	 */
-	private void performUpdate(final ClassifierSet matchSet,
+	@Override
+	public void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		double strengthSum = 0;
 		final int matchSetMacroclassifiers = matchSet
@@ -292,15 +276,33 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#
-	 * createStateClassifierObject()
-	 */
 	@Override
-	protected final Serializable createStateClassifierObject() {
-		return new UCSClassifierData();
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
+		UCSClassifierData data = ((UCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		data.fitness = comparisonValue;
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/*

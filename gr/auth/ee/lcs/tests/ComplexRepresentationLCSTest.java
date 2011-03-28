@@ -13,8 +13,8 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
@@ -67,8 +67,10 @@ public class ComplexRepresentationLCSTest {
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
 		// UCSUpdateAlgorithm(
 		// .1, 10, .99, .1, 50, 0.01, ga, 100,.9);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUCSUpdateAlgorithm(
-				.1, 10, .99, .1, 50, ga, 100, numOfLabels);
+		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(.1, 10, .99, .1,
+				50, 0.01, ga, 100, 1);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
+				updateObj, ga, 7);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
 		// GenericUCSUpdateAlgorithm(
 		// ga, .1);

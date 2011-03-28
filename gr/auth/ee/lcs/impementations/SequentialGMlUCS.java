@@ -13,7 +13,8 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -41,10 +42,10 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 100;
-		final int populationSize = 2000;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 300;
+		final int populationSize = 1000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .03);
 		sgmlucs.run();
@@ -180,9 +181,11 @@ public class SequentialGMlUCS {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUCSUpdateAlgorithm(
-				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, ga, THETA_GA, numberOfLabels);
+		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
+				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, 0.01,
+				ga, THETA_GA, 1);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
+				updateObj, ga, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -241,14 +244,15 @@ public class SequentialGMlUCS {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		
+
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				loader.testSet, true);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
+				true);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,true, numberOfLabels);
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
+				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,true);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
 
 	}

@@ -68,7 +68,7 @@ public class GenericUCSUpdateAlgorithm extends
 	/**
 	 * Genetic Algorithm.
 	 */
-	private IGeneticAlgorithmStrategy ga;
+	private final IGeneticAlgorithmStrategy ga;
 
 	/**
 	 * The constructor.
@@ -83,6 +83,28 @@ public class GenericUCSUpdateAlgorithm extends
 			final double learningRate) {
 		this.ga = geneticAlgorithm;
 		this.b = learningRate;
+	}
+
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param population
+	 *            the population where the new covering classifier will be added
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	@Override
+	public void cover(final ClassifierSet population, final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
+	@Override
+	public final Serializable createStateClassifierObject() {
+		return new GenericUCSClassifierData();
 	}
 
 	@Override
@@ -135,31 +157,16 @@ public class GenericUCSUpdateAlgorithm extends
 	}
 
 	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
-			final int mode, final double comparisonValue) {
+	public void performUpdate(ClassifierSet matchSet, ClassifierSet correctSet) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/**
-	 * Calls covering operator.
-	 * 
-	 * @param population
-	 *            the population where the new covering classifier will be added
-	 * @param instanceIndex
-	 *            the index of the current sample
-	 */
-	private void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
-		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
-				false);
-	}
-
 	@Override
-	protected final Serializable createStateClassifierObject() {
-		return new GenericUCSClassifierData();
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override

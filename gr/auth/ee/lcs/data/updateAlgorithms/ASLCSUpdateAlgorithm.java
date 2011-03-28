@@ -18,7 +18,7 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	private final double n;
 
 	/**
-	 * Object's Constuctor.
+	 * Object's Constructor.
 	 * 
 	 * @param nParameter
 	 *            the strictness factor ν used in updating

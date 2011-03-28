@@ -96,6 +96,22 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		this.ga = geneticAlgorithm;
 	}
 
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	@Override
+	public final void cover(final ClassifierSet population,
+			final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -120,6 +136,24 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa;
+	}
+
+	@Override
+	public void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Classifier cl = matchSet.getClassifier(i);
+			SLCSClassifierData data = ((SLCSClassifierData) cl
+					.getUpdateDataObject());
+			data.ns = (data.ns * data.msa + correctSet.getTotalNumerosity())
+					/ (data.msa + 1);
+
+			data.msa++;
+			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);
+			this.updateSubsumption(cl);
+			cl.experience++;
+		}
 	}
 
 	/*
@@ -174,7 +208,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			return;
 		}
 
-		updateData(matchSet, correctSet);
+		performUpdate(matchSet, correctSet);
 
 		/*
 		 * Run GA
@@ -184,21 +218,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		else
 			ga.evolveSet(correctSet, population);
 
-	}
-
-	/**
-	 * Calls covering operator.
-	 * 
-	 * @param instanceIndex
-	 *            the index of the current sample
-	 */
-	private final void cover(final ClassifierSet population,
-			final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
-		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
-				false);
 	}
 
 	/**
@@ -220,23 +239,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 				correctSet.addClassifier(cl, false);
 		}
 		return correctSet;
-	}
-
-	private void updateData(final ClassifierSet matchSet,
-			final ClassifierSet correctSet) {
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Classifier cl = matchSet.getClassifier(i);
-			SLCSClassifierData data = ((SLCSClassifierData) cl
-					.getUpdateDataObject());
-			data.ns = (data.ns * data.msa + correctSet.getTotalNumerosity())
-					/ (data.msa + 1);
-
-			data.msa++;
-			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);
-			this.updateSubsumption(cl);
-			cl.experience++;
-		}
 	}
 
 	/**

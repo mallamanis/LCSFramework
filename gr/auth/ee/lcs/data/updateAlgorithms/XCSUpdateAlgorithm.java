@@ -17,6 +17,30 @@ import java.io.Serializable;
 public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
+	 * An object representing the classifier data for the XCS update algorithm.
+	 * 
+	 * @author Miltos Allamanis
+	 */
+	public class XCSClassifierData implements Serializable {
+
+		/**
+		 * Serialization Id.
+		 */
+		private static final long serialVersionUID = -4348877142305226957L;
+
+		public double predictionError = 0;
+
+		public double actionSet = 1;
+
+		public double predictedPayOff = 5;
+
+		public double k;
+
+		public double fitness = .5;
+
+	}
+
+	/**
 	 * XCS learning rate.
 	 */
 	private final double beta;
@@ -35,11 +59,11 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * alpha rate (accuracy function parameter).
 	 */
 	private final double alpha;
-
 	/**
 	 * The fitness threshold for subsumption.
 	 */
 	private final double subsumptionFitnessThreshold;
+
 	/**
 	 * The experience threshold for subsumption.
 	 */
@@ -54,7 +78,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * A double indicating the probability that the GA will run on the matchSet
 	 * (and not on the correct set).
 	 */
-	private double matchSetRunProbability;
+	private final double matchSetRunProbability;
 
 	/**
 	 * Genetic Algorithm.
@@ -95,6 +119,23 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		this.matchSetRunProbability = gaMatchSetRunProbability;
 	}
 
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param population
+	 *            the population to cover
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	@Override
+	public void cover(final ClassifierSet population, final int instanceIndex) {
+		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+				.createRandomCoveringClassifier(
+						ClassifierTransformBridge.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -105,19 +146,6 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	public Serializable createStateClassifierObject() {
 		// TODO: Initial Parameters
 		return new XCSClassifierData();
-	}
-
-	/**
-	 * Implementation of the subsumption strength.
-	 * 
-	 * @param aClassifier
-	 *            the classifier, whose subsumption ability is to be updated
-	 */
-	protected final void updateSubsumption(final Classifier aClassifier) {
-		aClassifier
-				.setSubsumptionAbility((aClassifier
-						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
-						&& (aClassifier.experience > subsumptionExperienceThreshold));
 	}
 
 	/*
@@ -150,92 +178,17 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#setComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
-			final int mode, final double comparisonValue) {
+	public final String getData(final Classifier aClassifier) {
+		String response;
 		XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		data.fitness = comparisonValue; // TODO: Mode changes?
-
-	}
-
-	/**
-	 * Calls covering operator.
-	 * 
-	 * @param population
-	 *            the population to cover
-	 * @param instanceIndex
-	 *            the index of the current sample
-	 */
-	private void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
-		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
-				false);
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#updateSet(gr.auth
-	 * .ee.lcs.classifiers.ClassifierSet,
-	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
-	 */
-	@Override
-	protected final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
-		/*
-		 * Generate correct set
-		 */
-		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
-
-		/*
-		 * Cover if necessary
-		 */
-		if (correctSet.getNumberOfMacroclassifiers() == 0) {
-			cover(population, instanceIndex);
-			return;
-		}
-
-		/*
-		 * Update
-		 */
-		performUpdate(matchSet, correctSet);
-
-		/*
-		 * Run GA
-		 */
-		if (Math.random() < matchSetRunProbability)
-			ga.evolveSet(matchSet, population);
-		else
-			ga.evolveSet(correctSet, population);
-
+		response = "predictionError:" + data.predictionError
+				+ ", predictedPayOff:" + data.predictedPayOff;
+		return response;
 	}
 
 	/**
@@ -246,6 +199,7 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * @param correctSet
 	 *            the correct set
 	 */
+	@Override
 	public final void performUpdate(final ClassifierSet actionSet,
 			final ClassifierSet correctSet) {
 		double accuracySum = 0;
@@ -310,44 +264,92 @@ public class XCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	}
 
-	/**
-	 * An object representing the classifier data for the XCS update algorithm.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @author Miltos Allamanis
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#setComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
 	 */
-	public class XCSClassifierData implements Serializable {
+	@Override
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
+		XCSClassifierData data = ((XCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		data.fitness = comparisonValue; // TODO: Mode changes?
 
-		/**
-		 * Serialization Id.
-		 */
-		private static final long serialVersionUID = -4348877142305226957L;
+	}
 
-		public double predictionError = 0;
-
-		public double actionSet = 1;
-
-		public double predictedPayOff = 5;
-
-		public double k;
-
-		public double fitness = .5;
-
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
-	 * .ee.lcs.classifiers.Classifier)
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#updateSet(gr.auth
+	 * .ee.lcs.classifiers.ClassifierSet,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	public final String getData(final Classifier aClassifier) {
-		String response;
-		XCSClassifierData data = ((XCSClassifierData) aClassifier
-				.getUpdateDataObject());
-		response = "predictionError:" + data.predictionError
-				+ ", predictedPayOff:" + data.predictedPayOff;
-		return response;
+	protected final void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex) {
+		/*
+		 * Generate correct set
+		 */
+		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+
+		/*
+		 * Cover if necessary
+		 */
+		if (correctSet.getNumberOfMacroclassifiers() == 0) {
+			cover(population, instanceIndex);
+			return;
+		}
+
+		/*
+		 * Update
+		 */
+		performUpdate(matchSet, correctSet);
+
+		/*
+		 * Run GA
+		 */
+		if (Math.random() < matchSetRunProbability)
+			ga.evolveSet(matchSet, population);
+		else
+			ga.evolveSet(correctSet, population);
+
+	}
+
+	/**
+	 * Implementation of the subsumption strength.
+	 * 
+	 * @param aClassifier
+	 *            the classifier, whose subsumption ability is to be updated
+	 */
+	protected final void updateSubsumption(final Classifier aClassifier) {
+		aClassifier
+				.setSubsumptionAbility((aClassifier
+						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
+						&& (aClassifier.experience > subsumptionExperienceThreshold));
 	}
 }

@@ -68,6 +68,24 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	}
 
 	/**
+	 * Covers an instance adding it to the population
+	 * 
+	 * @param population
+	 *            the population
+	 * @param instanceIndex
+	 *            the instance index to cover
+	 */
+	public abstract void cover(final ClassifierSet population,
+			final int instanceIndex);
+
+	/**
+	 * Creates a data object for a classifier.
+	 * 
+	 * @return the data object
+	 */
+	public abstract Serializable createStateClassifierObject();
+
+	/**
 	 * Returns the implementation specific attribute that represents the
 	 * classifier's comparison to the other's.
 	 * 
@@ -78,6 +96,17 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 * @return the numeric value
 	 */
 	public abstract double getComparisonValue(Classifier aClassifier, int mode);
+
+	/**
+	 * Returns a string with the update specific data.
+	 * 
+	 * @param aClassifier
+	 * @return
+	 */
+	public abstract String getData(Classifier aClassifier);
+
+	public abstract void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet);
 
 	/**
 	 * Set an update specific comparison value.
@@ -93,13 +122,6 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 			double comparisonValue);
 
 	/**
-	 * Creates a data object for a classifier.
-	 * 
-	 * @return the data object
-	 */
-	protected abstract Serializable createStateClassifierObject();
-
-	/**
 	 * Updates classifiers of a setA taking into consideration setB.
 	 * 
 	 * @param population
@@ -111,13 +133,5 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 */
 	protected abstract void updateSet(ClassifierSet population,
 			ClassifierSet matchSet, int instanceIndex);
-
-	/**
-	 * Returns a string with the update specific data.
-	 * 
-	 * @param aClassifier
-	 * @return
-	 */
-	public abstract String getData(Classifier aClassifier);
 
 }

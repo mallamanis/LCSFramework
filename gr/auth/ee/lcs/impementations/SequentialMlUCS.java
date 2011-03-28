@@ -13,7 +13,8 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
@@ -38,7 +39,7 @@ public class SequentialMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
 		final int numOfLabels = 6;
 		final int iterations = 200;
 		final int populationSize = 2000;
@@ -164,13 +165,16 @@ public class SequentialMlUCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH);
+				inputFile, PRECISION_BITS, numberOfLabels,
+				StrictMultiLabelRepresentation.EXACT_MATCH);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUCSUpdateAlgorithm(
-				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, ga, THETA_GA, numberOfLabels);
+		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
+				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, 0.01,
+				ga, THETA_GA, 1);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
+				updateObj, ga, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -239,5 +243,4 @@ public class SequentialMlUCS {
 		hamEval.evaluateSet(rulePopulation);
 
 	}
-
 }
