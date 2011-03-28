@@ -18,7 +18,8 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class GenericMultiLabelRepresentation extends ComplexRepresentation {
+public final class GenericMultiLabelRepresentation extends
+		ComplexRepresentation {
 
 	/**
 	 * The metric type used for calculating classifier's ability to classify an
@@ -26,24 +27,30 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 	 */
 	private final int metricType;
 
+	private final double labelGeneralizationRate;
+
 	public static final int EXACT_MATCH = 0;
 	public static final int RELATIVE_ACCURACY = 1;
 	public static final int HAMMING_LOSS = 2;
 
 	public GenericMultiLabelRepresentation(String inputArff, int precision,
-			int labels, int type) throws IOException {
+			int labels, int type, final double generalizationRate)
+			throws IOException {
 		super(inputArff, precision, labels);
 		metricType = type;
+		labelGeneralizationRate = generalizationRate;
 	}
 
-	public GenericMultiLabelRepresentation(Attribute[] attributes,
-			String[] ruleConsequentsNames, int labels, int type) {
+	public GenericMultiLabelRepresentation(final Attribute[] attributes,
+			final String[] ruleConsequentsNames, final int labels,
+			final int type, final double generalizationRate) {
 		super(attributes, ruleConsequentsNames, labels);
 		metricType = type;
+		labelGeneralizationRate = generalizationRate;
 	}
 
 	@Override
-	protected final void createClassRepresentation(final Instances instances) {
+	protected void createClassRepresentation(final Instances instances) {
 		for (int i = 0; i < numberOfLabels; i++) {
 
 			final int labelIndex = attributeList.length - numberOfLabels + i;
@@ -51,13 +58,13 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 			String attributeName = instances.attribute(labelIndex).name();
 
 			attributeList[labelIndex] = new BooleanAttribute(chromosomeSize,
-					attributeName, .03); // TODO: Parametrize
+					attributeName, labelGeneralizationRate);
 		}
 	}
 
-
 	@Override
-	public final float classifyAbilityAll(final Classifier aClassifier, final int instanceIndex) {
+	public float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
 		switch (metricType) {
 		case EXACT_MATCH:
 			return classifyAbsolute(aClassifier, instanceIndex);
@@ -69,7 +76,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 		return 0;
 	}
 
-	private float classifyHamming(final Classifier aClassifier, final int instanceIndex) {
+	private float classifyHamming(final Classifier aClassifier,
+			final int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -102,7 +110,8 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 	 * @param instanceIndex
 	 * @return
 	 */
-	private float classifyAbsolute(final Classifier aClassifier, final int instanceIndex) {
+	private float classifyAbsolute(final Classifier aClassifier,
+			final int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
@@ -171,21 +180,24 @@ public class GenericMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public final void setClassification(final Classifier aClassifier, final int action) {
+	public final void setClassification(final Classifier aClassifier,
+			final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 	}
 
 	/**
 	 * A Voting Classification Strategy.
+	 * 
 	 * @author Miltos Allamanis
-	 *
+	 * 
 	 */
 	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
 		@Override
-		public int[] classify(final ClassifierSet aSet, final double[] visionVector) {
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 			final double[] votingTable = new double[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++)
 				votingTable[i] = 0;

@@ -28,7 +28,7 @@ public class FileLogger implements IEvaluator {
 	private final IEvaluator actualEvaluator;
 
 	/**
-	 * FileLogger constructor
+	 * FileLogger constructor.
 	 * 
 	 * @param filename
 	 *            the filename of the file where log will be output.
@@ -50,15 +50,8 @@ public class FileLogger implements IEvaluator {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
-	 * .ClassifierSet)
-	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public final double evaluateSet(final ClassifierSet classifiers) {
 		final double evalResult = actualEvaluator.evaluateSet(classifiers);
 		try {
 			FileWriter fstream = new FileWriter(file, true);

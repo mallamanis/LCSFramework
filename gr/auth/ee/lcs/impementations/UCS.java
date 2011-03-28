@@ -3,7 +3,7 @@
  */
 package gr.auth.ee.lcs.impementations;
 
-import gr.auth.ee.lcs.ArffTrainer;
+import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
@@ -17,6 +17,7 @@ import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
 import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
+import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -99,6 +100,21 @@ public class UCS {
 	private final int UCS_EXPERIENCE_THRESHOLD = 50;
 
 	/**
+	 * The post-process experince threshold used.
+	 */
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+
+	/**
+	 * Coverage threshold for post processing.
+	 */
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+
+	/**
+	 * Post-process threshold for fitness;
+	 */
+	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+
+	/**
 	 * The UCS constructor.
 	 * 
 	 * @param filename
@@ -112,6 +128,14 @@ public class UCS {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
+	}
+
+	public static void main(String[] args) throws IOException {
+		final String file = "/home/miltiadis/Desktop/datasets/car.arff";
+		final int iterations = 500;
+		final int populationSize = 2000;
+		UCS ucs = new UCS(file, iterations, populationSize);
+		ucs.run();
 	}
 
 	/**
@@ -144,8 +168,10 @@ public class UCS {
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffTrainer trainer = new ArffTrainer();
-		trainer.loadInstances(inputFile);
+		ArffLoader trainer = new ArffLoader();
+		trainer.loadInstances(inputFile, true);
+		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
+		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
@@ -163,7 +189,8 @@ public class UCS {
 		}
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				10, 0, .5,
+				POSTPROCESS_EXPERIENCE_THRESHOLD,
+				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
@@ -189,7 +216,6 @@ public class UCS {
 		}
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
-		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(), ClassifierTransformBridge.instances);

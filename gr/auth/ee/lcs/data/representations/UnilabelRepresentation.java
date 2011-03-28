@@ -21,7 +21,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class UnilabelRepresentation extends ComplexRepresentation {
+public final class UnilabelRepresentation extends ComplexRepresentation {
 
 	/**
 	 * Call superclass's constructor.
@@ -31,8 +31,8 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * @param ruleConsequents
 	 *            the names of the rule consequents
 	 */
-	public UnilabelRepresentation(Attribute[] attributes,
-			String[] ruleConsequents) {
+	public UnilabelRepresentation(final Attribute[] attributes,
+			final String[] ruleConsequents) {
 		super(attributes, ruleConsequents, 1);
 	}
 
@@ -46,7 +46,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * @throws IOException
 	 *             when file cannot be read
 	 */
-	public UnilabelRepresentation(String inputArff, int precision)
+	public UnilabelRepresentation(final String inputArff, final int precision)
 			throws IOException {
 		super(inputArff, precision, 1);
 	}
@@ -58,7 +58,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * gr.auth.ee.lcs.data.ComplexRepresentation#createClassRepresentation()
 	 */
 	@Override
-	protected void createClassRepresentation(Instances instances) {
+	protected void createClassRepresentation(final Instances instances) {
 
 		if (instances.classIndex() < 0)
 			instances.setClassIndex(instances.numAttributes() - 1);
@@ -84,7 +84,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public int[] getClassification(Classifier aClassifier) {
+	public int[] getClassification(final Classifier aClassifier) {
 		int[] result = new int[1];
 		result[0] = ((UniLabel) attributeList[attributeList.length - 1])
 				.getValue(aClassifier);
@@ -99,14 +99,14 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public void setClassification(Classifier aClassifier, int action) {
+	public void setClassification(final Classifier aClassifier, final int action) {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
 				aClassifier, action);
 
 	}
 
 	/**
-	 * A representation of the class "attribute"
+	 * A representation of the class "attribute".
 	 * 
 	 * @author Miltos Allamanis
 	 * 
@@ -128,8 +128,8 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		 * @param classNames
 		 *            a String[] containing the names of the classes.
 		 */
-		public UniLabel(int startPosition, String attributeName,
-				String[] classNames) {
+		public UniLabel(final int startPosition, final String attributeName,
+				final String[] classNames) {
 			super(startPosition, attributeName, 0);
 			lengthInBits = (int) Math.ceil(Math.log10(classNames.length)
 					/ Math.log10(2));
@@ -137,60 +137,31 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 			classes = classNames;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
-		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
-		 */
 		@Override
-		public String toString(ExtendedBitSet convertingClassifier) {
+		public final String toString(final ExtendedBitSet convertingClassifier) {
 			int index = convertingClassifier.getIntAt(positionInChromosome,
 					lengthInBits);
 			return classes[index];
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
-		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
-		 */
 		@Override
-		public boolean isMatch(float attributeVision,
-				ExtendedBitSet testedChromosome) {
+		public final boolean isMatch(final float attributeVision,
+				final ExtendedBitSet testedChromosome) {
 			return testedChromosome
 					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
-		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
-		 */
 		@Override
-		public void randomCoveringValue(float attributeValue,
-				Classifier generatedClassifier) {
+		public final void randomCoveringValue(final float attributeValue,
+				final Classifier generatedClassifier) {
 			int coverClass = (int) attributeValue;
 			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
 					coverClass);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
-		 * #fixAttributeRepresentation
-		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
-		 */
 		@Override
-		public void fixAttributeRepresentation(
-				ExtendedBitSet generatedClassifier) {
+		public final void fixAttributeRepresentation(
+				final ExtendedBitSet generatedClassifier) {
 			if (generatedClassifier
 					.getIntAt(positionInChromosome, lengthInBits) >= classes.length) {
 
@@ -202,17 +173,9 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
-		 * #isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
-		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
-		 */
 		@Override
-		public boolean isMoreGeneral(ExtendedBitSet baseChromosome,
-				ExtendedBitSet testChromosome) {
+		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
 					.getIntAt(positionInChromosome, lengthInBits))
 				return true;
@@ -220,17 +183,9 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 				return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
-		 * #isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
-		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
-		 */
 		@Override
-		public boolean isEqual(ExtendedBitSet baseChromosome,
-				ExtendedBitSet testChromosome) {
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
 					.getIntAt(positionInChromosome, lengthInBits));
 		}
@@ -242,7 +197,7 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		 *            the chromosome
 		 * @return the value of the label at the chromosome
 		 */
-		public int getValue(ExtendedBitSet chromosome) {
+		public final int getValue(final ExtendedBitSet chromosome) {
 			return chromosome.getIntAt(positionInChromosome, lengthInBits);
 		}
 
@@ -254,19 +209,13 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 		 * @param value
 		 *            the value to set
 		 */
-		public void setValue(ExtendedBitSet chromosome, int value) {
+		public final void setValue(final ExtendedBitSet chromosome,
+				final int value) {
 			chromosome.setIntAt(positionInChromosome, lengthInBits, value);
 		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbility(gr.auth
-	 * .ee.lcs.classifiers.Classifier, int)
-	 */
 	@Override
 	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
@@ -274,13 +223,6 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 				: 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getDataInstanceLabels(double
-	 * [])
-	 */
 	@Override
 	public int[] getDataInstanceLabels(double[] dataInstance) {
 		int[] classes = new int[1];
@@ -332,13 +274,6 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 	public class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.
-		 * IClassificationStrategy
-		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
-		 */
 		@Override
 		public int[] classify(ClassifierSet aSet, double[] visionVector) {
 
@@ -385,15 +320,8 @@ public class UnilabelRepresentation extends ComplexRepresentation {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbilityLabel(gr
-	 * .auth.ee.lcs.classifiers.Classifier, int, int)
-	 */
 	@Override
-	public float classifyAbilityLabel(final Classifier aClassifier,
+	public final float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
 		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
