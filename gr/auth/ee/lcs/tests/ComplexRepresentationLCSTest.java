@@ -15,8 +15,8 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
+import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
+import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -99,7 +99,7 @@ public class ComplexRepresentationLCSTest {
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 		ArffLoader trainer = new ArffLoader();
 		trainer.loadInstances(filename, false);
-		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
+		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger("test3.txt", eval));
 		myExample.train(500, rulePopulation);
 
@@ -152,7 +152,7 @@ public class ComplexRepresentationLCSTest {
 		// conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				trainer.testSet, true);
 		testEval.evaluateSet(rulePopulation);
 

@@ -14,9 +14,10 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
+import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
+import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
+import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -44,7 +45,7 @@ public class SequentialGMlUCS {
 		final int iterations = 200;
 		final int populationSize = 2000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
-				populationSize, numOfLabels, .33);
+				populationSize, numOfLabels, .03);
 		sgmlucs.run();
 
 	}
@@ -189,9 +190,9 @@ public class SequentialGMlUCS {
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader trainer = new ArffLoader();
-		trainer.loadInstances(inputFile, true);
-		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
+		ArffLoader loader = new ArffLoader();
+		loader.loadInstances(inputFile, true);
+		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
@@ -239,11 +240,13 @@ public class SequentialGMlUCS {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-
+		
 		System.out.println("Evaluating on test set");
-		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
-				trainer.testSet, true);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				loader.testSet, true);
 		testEval.evaluateSet(rulePopulation);
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,true);
+		hamEval.evaluateSet(rulePopulation);
 
 	}
 

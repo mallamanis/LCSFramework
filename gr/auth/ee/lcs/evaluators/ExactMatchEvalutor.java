@@ -7,6 +7,8 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 
 import weka.core.Instances;
@@ -17,7 +19,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class BinaryAccuracyEvalutor implements IEvaluator {
+public class ExactMatchEvalutor implements IEvaluator {
 
 	/**
 	 * The set of instances to evaluate on.
@@ -37,18 +39,28 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 	 * @param print
 	 *            true to turn printing on
 	 */
-	public BinaryAccuracyEvalutor(final Instances instances, final boolean print) {
+	public ExactMatchEvalutor(final Instances instances, final boolean print) {
 		instanceSet = instances;
 		printResults = print;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Construct an evaluator using an .arff test file.
 	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
-	 * .ClassifierSet)
+	 * @param arffFileName
+	 *            the name of the test file
+	 * @param print
+	 *            true to turn printing on
+	 * @throws IOException
+	 *             when file not found
 	 */
+	public ExactMatchEvalutor(final String arffFileName, final boolean print)
+			throws IOException {
+		printResults = print;
+		FileReader reader = new FileReader(arffFileName);
+		instanceSet = new Instances(reader);
+	}
+
 	@Override
 	public final double evaluateSet(final ClassifierSet classifiers) {
 		ClassifierTransformBridge bridge = ClassifierTransformBridge

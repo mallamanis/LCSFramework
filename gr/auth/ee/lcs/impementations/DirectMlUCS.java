@@ -14,9 +14,8 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
-import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
-import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
+import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
+import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -181,7 +180,7 @@ public class DirectMlUCS {
 
 		ArffLoader trainer = new ArffLoader();
 		trainer.loadInstances(inputFile, true);
-		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
+		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -230,7 +229,7 @@ public class DirectMlUCS {
 		eval.evaluateSet(rulePopulation);
 		
 		System.out.println("Evaluating on test set");
-		BinaryAccuracyEvalutor testEval = new BinaryAccuracyEvalutor(
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				trainer.testSet, true);
 		testEval.evaluateSet(rulePopulation);
 

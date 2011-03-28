@@ -15,7 +15,7 @@ import java.util.Arrays;
  * @author Miltos Allamanis
  * 
  */
-public class BinaryAccuracySelfEvaluator implements IEvaluator {
+public class ExactMatchSelfEvaluator implements IEvaluator {
 
 	/**
 	 * A boolean indicating if the evaluator is going to print the results.
@@ -36,7 +36,7 @@ public class BinaryAccuracySelfEvaluator implements IEvaluator {
 	 * @param confusionMatrix
 	 *            true if evaluator is going to print confusion matrix
 	 */
-	public BinaryAccuracySelfEvaluator(final boolean print,
+	public ExactMatchSelfEvaluator(final boolean print,
 			final boolean confusionMatrix) {
 		printResults = print;
 		printConfusionMatrix = confusionMatrix;
@@ -71,8 +71,8 @@ public class BinaryAccuracySelfEvaluator implements IEvaluator {
 		double errorRate = ((double) fp) / ((double) (fp + tp));
 
 		if (printResults) {
-			System.out.println("tp:" + tp + " fp:" + fp + " errorRate:"
-					+ errorRate + " total instances:"
+			System.out.println("Exact Match: tp:" + tp + " fp:" + fp
+					+ " errorRate:" + errorRate + " total instances:"
 					+ ClassifierTransformBridge.instances.length);
 		}
 		return errorRate;
