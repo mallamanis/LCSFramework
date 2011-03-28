@@ -19,6 +19,11 @@ public abstract class ClassifierTransformBridge {
 	 */
 	private static ClassifierTransformBridge instance;
 
+	/**
+	 * Get the name of all labels (or classes).
+	 * 
+	 * @return a String array containing all label names
+	 */
 	public abstract String[] getLabelNames();
 
 	/**
@@ -158,7 +163,7 @@ public abstract class ClassifierTransformBridge {
 			ExtendedBitSet chromosome);
 
 	/**
-	 * Returns all the labels of the specific data instance
+	 * Returns all the labels of the specific data instance.
 	 * 
 	 * @param dataInstance
 	 *            the data instance
