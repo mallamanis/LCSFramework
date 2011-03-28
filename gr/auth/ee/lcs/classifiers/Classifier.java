@@ -143,6 +143,16 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 		return transformBridge.classifyAbilityAll(this, instanceIndex);
 	}
 
+	/**
+	 * Returns the classification ability of classifier for a specific label.
+	 * 
+	 * @param instanceIndex
+	 *            the instance of the index
+	 * @param labelIndex
+	 *            the index of the label
+	 * @return a float representing the classifier's ability to classify for
+	 *         this instance
+	 */
 	public float classifyLabelCorrectly(int instanceIndex, int labelIndex) {
 		return transformBridge.classifyAbilityLabel(this, instanceIndex,
 				labelIndex);
@@ -230,6 +240,8 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
+	 * Returns the data object saved at the classifier.
+	 * 
 	 * @return the update object
 	 */
 	public final Serializable getUpdateDataObject() {

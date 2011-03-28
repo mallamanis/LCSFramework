@@ -5,7 +5,7 @@ package gr.auth.ee.lcs.tests;
 
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
+import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
