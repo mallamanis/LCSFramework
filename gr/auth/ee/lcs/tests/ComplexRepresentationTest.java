@@ -18,7 +18,7 @@ public class ComplexRepresentationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		UnilabelRepresentation.Attribute list[] = new Attribute[4];
+		SingleClassRepresentation.Attribute list[] = new Attribute[4];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new SingleClassRepresentation(list, names);
 		ClassifierTransformBridge.setInstance(rep);
