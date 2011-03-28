@@ -3,7 +3,7 @@
  */
 package gr.auth.ee.lcs.tests;
 
-import gr.auth.ee.lcs.ArffTrainer;
+import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.FixedSizeSetWorstFitnessDeletion;
@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracyEvalutor;
 import gr.auth.ee.lcs.evaluators.BinaryAccuracySelfEvaluator;
@@ -49,14 +50,14 @@ public class ComplexRepresentationLCSTest {
 				true), new SinglePointCrossover(), (float) .8,
 				new UniformBitMutation(.04), 100);
 
-		String filename = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
+		String filename = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
+		final int numOfLabels = 7;
 		// StrictMultiLabelRepresentation rep = new
 		// StrictMultiLabelRepresentation(
 		// filename, 4, 7, StrictMultiLabelRepresentation.EXACT_MATCH);
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				filename, 6, numOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH);
+				GenericMultiLabelRepresentation.EXACT_MATCH, .33);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -76,7 +77,7 @@ public class ComplexRepresentationLCSTest {
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
-						2000,
+						1000,
 
 						/*
 						 * new TournamentSelector( 40, true,
@@ -96,10 +97,10 @@ public class ComplexRepresentationLCSTest {
 		// new FixedSizeSetWorstFitnessDeletion(
 		// 600,new
 		// TournamentSelector(50,false,UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
-		ArffTrainer trainer = new ArffTrainer();
-		trainer.loadInstances(filename);
+		ArffLoader trainer = new ArffLoader();
+		trainer.loadInstances(filename, false);
 		final IEvaluator eval = new BinaryAccuracySelfEvaluator(true, true);
-		myExample.registerHook(new FileLogger("test2.txt", eval));
+		myExample.registerHook(new FileLogger("test3.txt", eval));
 		myExample.train(500, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
