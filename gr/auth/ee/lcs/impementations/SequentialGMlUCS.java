@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
@@ -41,7 +42,7 @@ public class SequentialGMlUCS {
 	 */
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 7;
+		final int numOfLabels = 6;
 		final int iterations = 100;
 		final int populationSize = 2000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
@@ -247,6 +248,8 @@ public class SequentialGMlUCS {
 		testEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,true);
+		accEval.evaluateSet(rulePopulation);
 
 	}
 
