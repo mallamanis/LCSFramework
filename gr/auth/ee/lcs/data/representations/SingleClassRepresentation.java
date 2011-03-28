@@ -51,6 +51,11 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		super(inputArff, precision, 1);
 	}
 
+	public SingleClassRepresentation(final String inputArff, final int precision, final int attributeToIgnore)
+	throws IOException {
+		super(inputArff, precision, attributeToIgnore);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
