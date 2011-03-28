@@ -152,8 +152,8 @@ public class ComplexRepresentationLCSTest {
 		// conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				trainer.testSet, true);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
+				true);
 		testEval.evaluateSet(rulePopulation);
 
 	}

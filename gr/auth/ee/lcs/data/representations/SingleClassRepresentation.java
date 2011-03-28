@@ -21,7 +21,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public final class UnilabelRepresentation extends ComplexRepresentation {
+public final class SingleClassRepresentation extends ComplexRepresentation {
 
 	/**
 	 * Call superclass's constructor.
@@ -31,7 +31,7 @@ public final class UnilabelRepresentation extends ComplexRepresentation {
 	 * @param ruleConsequents
 	 *            the names of the rule consequents
 	 */
-	public UnilabelRepresentation(final Attribute[] attributes,
+	public SingleClassRepresentation(final Attribute[] attributes,
 			final String[] ruleConsequents) {
 		super(attributes, ruleConsequents, 1);
 	}
@@ -46,7 +46,7 @@ public final class UnilabelRepresentation extends ComplexRepresentation {
 	 * @throws IOException
 	 *             when file cannot be read
 	 */
-	public UnilabelRepresentation(final String inputArff, final int precision)
+	public SingleClassRepresentation(final String inputArff, final int precision)
 			throws IOException {
 		super(inputArff, precision, 1);
 	}

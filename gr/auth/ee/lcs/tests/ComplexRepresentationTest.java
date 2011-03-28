@@ -7,20 +7,20 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute;
-import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
+import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class ComplexRepresentationTest {
 
-	UnilabelRepresentation rep;
+	SingleClassRepresentation rep;
 
 	@Before
 	public void setUp() throws Exception {
 		UnilabelRepresentation.Attribute list[] = new Attribute[4];
 		String[] names = { "Good", "Mediocre", "Bad" };
-		rep = new UnilabelRepresentation(list, names);
+		rep = new SingleClassRepresentation(list, names);
 		ClassifierTransformBridge.setInstance(rep);
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",

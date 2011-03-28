@@ -12,7 +12,7 @@ import gr.auth.ee.lcs.classifiers.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.representations.UnilabelRepresentation;
+import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -152,7 +152,7 @@ public class UCS {
 						true), new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
-		UnilabelRepresentation rep = new UnilabelRepresentation(inputFile,
+		SingleClassRepresentation rep = new SingleClassRepresentation(inputFile,
 				PRECISION_BITS);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
