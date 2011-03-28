@@ -1,7 +1,11 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.classifiers;
+package gr.auth.ee.lcs.classifiers.populationcontrol;
+
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 
 import java.util.Arrays;
 import java.util.Comparator;

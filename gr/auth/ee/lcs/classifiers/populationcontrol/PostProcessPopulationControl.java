@@ -1,7 +1,11 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.classifiers;
+package gr.auth.ee.lcs.classifiers.populationcontrol;
+
+import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
 
 /**
  * A population control strategy post processing all classifiers. This strategy
