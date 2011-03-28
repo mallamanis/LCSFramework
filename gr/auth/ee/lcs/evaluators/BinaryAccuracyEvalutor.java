@@ -74,7 +74,7 @@ public class BinaryAccuracyEvalutor implements IEvaluator {
 		if (printResults) {
 			System.out.println("tp:" + tp + " fp:" + fp + " errorRate:"
 					+ errorRate + " total instances:"
-					+ ClassifierTransformBridge.instances.length);
+					+ instanceSet.numInstances());
 		}
 		return errorRate;
 	}
