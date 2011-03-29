@@ -156,7 +156,7 @@ public class TournamentSelector implements INaturalSelector {
 			}
 			currentMacroclassifierIndex++;
 		} while (currentClassifierIndex < participants.length);
-		
+
 		if (bestMacroclassifierParticipant >= 0)
 			return bestMacroclassifierParticipant;
 		else

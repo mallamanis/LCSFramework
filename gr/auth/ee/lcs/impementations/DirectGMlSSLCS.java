@@ -184,8 +184,8 @@ public class DirectGMlSSLCS {
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
-		myExample.registerHook(new FileLogger(inputFile + "_resultDGMlSSLCS.txt",
-				eval));
+		myExample.registerHook(new FileLogger(inputFile
+				+ "_resultDGMlSSLCS.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {

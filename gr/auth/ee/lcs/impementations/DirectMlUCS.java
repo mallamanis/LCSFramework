@@ -136,10 +136,15 @@ public class DirectMlUCS {
 
 	/**
 	 * Constructor.
-	 * @param filename the filename of the UCS
-	 * @param iterations the number of iterations to run
-	 * @param populationSize the size of the population to use
-	 * @param numOfLabels the number of labels in the problem
+	 * 
+	 * @param filename
+	 *            the filename of the UCS
+	 * @param iterations
+	 *            the number of iterations to run
+	 * @param populationSize
+	 *            the size of the population to use
+	 * @param numOfLabels
+	 *            the number of labels in the problem
 	 */
 	public DirectMlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) {
@@ -151,6 +156,7 @@ public class DirectMlUCS {
 
 	/**
 	 * Runs the Direct-ML-UCS.
+	 * 
 	 * @throws IOException
 	 */
 	public void run() throws IOException {
@@ -227,10 +233,10 @@ public class DirectMlUCS {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		
+
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				trainer.testSet, true);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
+				true);
 		testEval.evaluateSet(rulePopulation);
 
 	}

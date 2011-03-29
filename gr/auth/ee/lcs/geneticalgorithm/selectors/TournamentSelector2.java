@@ -123,19 +123,24 @@ public class TournamentSelector2 implements INaturalSelector {
 		// Sort by order
 		Arrays.sort(participants);
 
-		//Construct cumulative numerosity
+		// Construct cumulative numerosity
 		final int populationSize = fromPopulation.getNumberOfMacroclassifiers();
 		int[] cumulativeNum = new int[populationSize];
 		cumulativeNum[0] = fromPopulation.getClassifierNumerosity(0);
 		for (int i = 1; i < populationSize; i++)
-			cumulativeNum[i]= cumulativeNum[i-1]+fromPopulation.getClassifierNumerosity(i);
+			cumulativeNum[i] = cumulativeNum[i - 1]
+					+ fromPopulation.getClassifierNumerosity(i);
 
 		int bestMacroclassifierParticipant = 0;
-		double winnerFitness = fromPopulation.getClassifier(getMacroIndex(participants[0],cumulativeNum)).getComparisonValue(mode);
+		double winnerFitness = fromPopulation.getClassifier(
+				getMacroIndex(participants[0], cumulativeNum))
+				.getComparisonValue(mode);
 		for (int i = 1; i < participants.length; i++) {
-			final int currentMacro = getMacroIndex(participants[i],cumulativeNum);
-			final double currentFitness = fromPopulation.getClassifier(currentMacro).getComparisonValue(mode);
-			if (((currentFitness - winnerFitness) * (max?1:-1)) > 0 ){
+			final int currentMacro = getMacroIndex(participants[i],
+					cumulativeNum);
+			final double currentFitness = fromPopulation.getClassifier(
+					currentMacro).getComparisonValue(mode);
+			if (((currentFitness - winnerFitness) * (max ? 1 : -1)) > 0) {
 				winnerFitness = currentFitness;
 				bestMacroclassifierParticipant = currentMacro;
 			}
@@ -143,10 +148,10 @@ public class TournamentSelector2 implements INaturalSelector {
 		return bestMacroclassifierParticipant;
 
 	}
-	
+
 	private int getMacroIndex(int microIndex, int[] cumulativeNumerosity) {
-		int macroIndex=0;
-		for (int i = 0; i < cumulativeNumerosity.length; i++){
+		int macroIndex = 0;
+		for (int i = 0; i < cumulativeNumerosity.length; i++) {
 			if (cumulativeNumerosity[i] > microIndex)
 				break;
 			macroIndex++;

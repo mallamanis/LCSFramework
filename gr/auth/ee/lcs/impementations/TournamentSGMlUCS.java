@@ -173,7 +173,7 @@ public class TournamentSGMlUCS {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(
-						(int)50,
+						(int) 50,
 						true,
 						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), CROSSOVER_RATE,
@@ -196,7 +196,7 @@ public class TournamentSGMlUCS {
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new TournamentSelector(
-								(int)40,
+								(int) 40,
 								true,
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 

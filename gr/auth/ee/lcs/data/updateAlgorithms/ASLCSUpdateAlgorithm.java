@@ -56,11 +56,11 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		case COMPARISON_MODE_EXPLORATION:
 			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
 		case COMPARISON_MODE_DELETION:
-			return 1/(data.fitness
+			return 1 / (data.fitness
 					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1))
-					* (((aClassifier.getCoverage() == 0) && (aClassifier.experience == 1)) ? 0.
-							: 1));
+							.isNaN(data.ns) ? 1 : data.ns) + 1)) * (((aClassifier
+					.getCoverage() == 0) && (aClassifier.experience == 1)) ? 0.
+					: 1));
 			// TODO: Something else?
 		case COMPARISON_MODE_EXPLOITATION:
 			return (((double) (data.tp)) / (double) (data.msa));

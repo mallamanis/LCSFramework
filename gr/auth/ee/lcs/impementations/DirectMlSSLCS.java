@@ -12,9 +12,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlSSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -31,8 +29,9 @@ import java.io.IOException;
 
 /**
  * A Direct ml-SS-LCS using the mlSS-LCS
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class DirectMlSSLCS {
 	/**
@@ -139,7 +138,7 @@ public class DirectMlSSLCS {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
-		this.numberOfLabels = numOfLabels;		
+		this.numberOfLabels = numOfLabels;
 	}
 
 	/**
@@ -177,8 +176,8 @@ public class DirectMlSSLCS {
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
-		myExample.registerHook(new FileLogger(inputFile + "_resultDGMlSSLCS.txt",
-				eval));
+		myExample.registerHook(new FileLogger(inputFile
+				+ "_resultDGMlSSLCS.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
