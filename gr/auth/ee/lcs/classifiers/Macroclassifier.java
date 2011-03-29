@@ -37,6 +37,11 @@ public class Macroclassifier implements Serializable {
 		numerosity = classifierNumerosity;
 	}
 
+	public Macroclassifier(Macroclassifier copy) {
+		myClassifier = copy.myClassifier;
+		numerosity = copy.numerosity;
+	}
+
 	/**
 	 * A wrapper of the equals method.
 	 * 
