@@ -90,7 +90,7 @@ public class ClassifierSet implements Serializable {
 
 	/**
 	 * An interface for a strategy on deleting classifiers from the set. This
-	 * attribute is transient and therefore not serializable
+	 * attribute is transient and therefore not serializable.
 	 */
 	private transient IPopulationControlStrategy myISizeControlStrategy;
 
@@ -279,7 +279,7 @@ public class ClassifierSet implements Serializable {
 	 * @return the macroclassifier at a given index
 	 */
 	public final Macroclassifier getMacroclassifier(final int index) {
-		return this.myMacroclassifiers.elementAt(index);
+		return new Macroclassifier(this.myMacroclassifiers.elementAt(index));
 	}
 
 	/**
