@@ -5,6 +5,7 @@ package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 
 import java.io.IOException;
@@ -22,171 +23,156 @@ public final class GenericMultiLabelRepresentation extends
 		ComplexRepresentation {
 
 	/**
-	 * The metric type used for calculating classifier's ability to classify an
-	 * instance.
-	 */
-	private final int metricType;
-
-	/**
-	 * The label generalization rate.
-	 */
-	private final double labelGeneralizationRate;
-
-	public static final int EXACT_MATCH = 0;
-	public static final int RELATIVE_ACCURACY = 1;
-	public static final int HAMMING_LOSS = 2;
-
-	public GenericMultiLabelRepresentation(String inputArff, int precision,
-			int labels, int type, final double generalizationRate)
-			throws IOException {
-		super(inputArff, precision, labels);
-		metricType = type;
-		labelGeneralizationRate = generalizationRate;
-	}
-
-	public GenericMultiLabelRepresentation(final Attribute[] attributes,
-			final String[] ruleConsequentsNames, final int labels,
-			final int type, final double generalizationRate) {
-		super(attributes, ruleConsequentsNames, labels);
-		metricType = type;
-		labelGeneralizationRate = generalizationRate;
-	}
-
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		for (int i = 0; i < numberOfLabels; i++) {
-
-			final int labelIndex = attributeList.length - numberOfLabels + i;
-
-			String attributeName = instances.attribute(labelIndex).name();
-
-			attributeList[labelIndex] = new BooleanAttribute(chromosomeSize,
-					attributeName, labelGeneralizationRate);
-		}
-	}
-
-	@Override
-	public float classifyAbilityAll(final Classifier aClassifier,
-			final int instanceIndex) {
-		switch (metricType) {
-		case EXACT_MATCH:
-			return classifyAbsolute(aClassifier, instanceIndex);
-		case RELATIVE_ACCURACY:
-			return 0; // TODO
-		case HAMMING_LOSS:
-			return classifyHamming(aClassifier, instanceIndex);
-		}
-		return 0;
-	}
-
-	private float classifyHamming(final Classifier aClassifier,
-			final int instanceIndex) {
-		float result = 0;
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			if (attributeList[currentLabelIndex].isMatch(
-					(float) instances[instanceIndex][currentLabelIndex],
-					aClassifier))
-				result++;
-		}
-
-		boolean overgeneral = true;
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			final String value = attributeList[currentLabelIndex]
-					.toString(aClassifier);
-			if (value == "#")
-				result -= .99;// 1;
-			else
-				overgeneral = false;
-		}
-
-		return overgeneral ? 0 : result / numberOfLabels;
-	}
-
-	/**
-	 * Absolute Classification.
+	 * A boolean label representation with dont'cares. The only difference
+	 * between this class an the BooleanAttribute is that generalization is
+	 * reversed
 	 * 
-	 * @param aClassifier
-	 * @param instanceIndex
-	 * @return
+	 * @author Miltos Allamanis
+	 * 
 	 */
-	private float classifyAbsolute(final Classifier aClassifier,
-			final int instanceIndex) {
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			if (!attributeList[currentLabelIndex].isMatch(
-					(float) instances[instanceIndex][currentLabelIndex],
-					aClassifier))
-				return 0;
+	public class GenericLabel extends Attribute {
+
+		/**
+		 * The constructor.
+		 * 
+		 * @param startPosition
+		 *            the position attribute gene starts in chromosome
+		 * @param attributeName
+		 *            the name of the attribute
+		 * @param generalizationRate
+		 *            the generalization rate, used at covering
+		 */
+		public GenericLabel(final int startPosition,
+				final String attributeName, final double generalizationRate) {
+			super(startPosition, attributeName, generalizationRate);
+			lengthInBits = 2;
+			chromosomeSize += lengthInBits;
 		}
 
-		// Check for overgeneral
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			final String value = attributeList[currentLabelIndex]
-					.toString(aClassifier);
-			if (value != "#")
-				return 1;
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #fixAttributeRepresentation
+		 * (gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		 */
+		@Override
+		public final void fixAttributeRepresentation(
+				final ExtendedBitSet generatedClassifier) {
+			return;
 		}
 
-		return 0;
-	}
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isEqual(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		 */
+		@Override
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 
-	@Override
-	public int[] getClassification(final Classifier aClassifier) {
-		int[] labels = new int[numberOfLabels];
-		int labelIndex = 0;
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			final String value = attributeList[currentLabelIndex]
-					.toString(aClassifier);
-			if (value == "1") {
-				labels[labelIndex] = i;
-				labelIndex++;
+			// if the base classifier is specific and the test is # return false
+			if (baseChromosome.get(positionInChromosome) != testChromosome
+					.get(positionInChromosome))
+				return false;
+			else if ((baseChromosome.get(positionInChromosome + 1) != testChromosome
+					.get(positionInChromosome + 1))
+					&& baseChromosome.get(positionInChromosome))
+				return false;
+
+			return true;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMatch(float, gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		 */
+		@Override
+		public final boolean isMatch(final float attributeVision,
+				final ExtendedBitSet testedChromosome) {
+
+			if (testedChromosome.get(this.positionInChromosome)) {
+				if ((attributeVision == 0 ? false : true) == testedChromosome
+						.get(this.positionInChromosome + 1))
+					return true;
+				else
+					return false;
+			} else {
+				return true;
 			}
 		}
-		int[] result = new int[labelIndex];
 
-		for (int i = 0; i < labelIndex; i++) {
-			result[i] = labels[i];
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #isMoreGeneral(gr.auth.ee.lcs.classifiers.ExtendedBitSet,
+		 * gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		 */
+		@Override
+		public final boolean isMoreGeneral(final ExtendedBitSet testChromosome,
+				final ExtendedBitSet baseChromosome) {
+			// if the base classifier is specific and the test is # return false
+			if (baseChromosome.get(positionInChromosome)
+					&& !testChromosome.get(positionInChromosome))
+				return false;
+			if ((baseChromosome.get(positionInChromosome + 1) != testChromosome
+					.get(positionInChromosome + 1))
+					&& baseChromosome.get(positionInChromosome))
+				return false;
+
+			return true;
 		}
 
-		return result;
-	}
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #randomCoveringValue(float, gr.auth.ee.lcs.classifiers.Classifier)
+		 */
+		@Override
+		public final void randomCoveringValue(final float attributeValue,
+				final Classifier generatedClassifier) {
+			if (attributeValue == 0)
+				generatedClassifier.clear(positionInChromosome + 1);
+			else
+				generatedClassifier.set(positionInChromosome + 1);
 
-	@Override
-	public final int[] getDataInstanceLabels(final double[] dataInstance) {
-		int numOfLabels = 0;
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			if (dataInstance[currentLabelIndex] == 1)
-				numOfLabels++;
+			if (Math.random() < generalizationRate) // TODO: Configurable
+													// generalization rate
+				generatedClassifier.clear(positionInChromosome);
+			else
+				generatedClassifier.set(positionInChromosome);
+
 		}
-		int[] result = new int[numOfLabels];
-		int resultIndex = 0;
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			if (dataInstance[currentLabelIndex] == 1) {
-				result[resultIndex] = i;
-				resultIndex++;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute
+		 * #toString(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+		 */
+		@Override
+		public final String toString(final ExtendedBitSet convertingClassifier) {
+			if (convertingClassifier.get(this.positionInChromosome)) {
+				return convertingClassifier.get(this.positionInChromosome + 1) ? "1"
+						: "0";
+			} else {
+				return "#";
 			}
-		}
-		return result;
-	}
 
-	@Override
-	public final void setClassification(final Classifier aClassifier,
-			final int action) {
-		final int labelIndex = attributeList.length - numberOfLabels + action;
-		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
+		}
+
 	}
 
 	/**
@@ -249,6 +235,51 @@ public final class GenericMultiLabelRepresentation extends
 
 	}
 
+	/**
+	 * The metric type used for calculating classifier's ability to classify an
+	 * instance.
+	 */
+	private final int metricType;
+	/**
+	 * The label generalization rate.
+	 */
+	private final double labelGeneralizationRate;
+	public static final int EXACT_MATCH = 0;
+
+	public static final int RELATIVE_ACCURACY = 1;
+
+	public static final int HAMMING_LOSS = 2;
+
+	public GenericMultiLabelRepresentation(final Attribute[] attributes,
+			final String[] ruleConsequentsNames, final int labels,
+			final int type, final double generalizationRate) {
+		super(attributes, ruleConsequentsNames, labels);
+		metricType = type;
+		labelGeneralizationRate = generalizationRate;
+	}
+
+	public GenericMultiLabelRepresentation(String inputArff, int precision,
+			int labels, int type, final double generalizationRate)
+			throws IOException {
+		super(inputArff, precision, labels);
+		metricType = type;
+		labelGeneralizationRate = generalizationRate;
+	}
+
+	@Override
+	public float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
+		switch (metricType) {
+		case EXACT_MATCH:
+			return classifyAbsolute(aClassifier, instanceIndex);
+		case RELATIVE_ACCURACY:
+			return classifyAccuracy(aClassifier, instanceIndex);
+		case HAMMING_LOSS:
+			return classifyHamming(aClassifier, instanceIndex);
+		}
+		return 0;
+	}
+
 	@Override
 	public float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
@@ -264,6 +295,163 @@ public final class GenericMultiLabelRepresentation extends
 			return 0;
 		}
 		return -1;
+	}
+
+	/**
+	 * Absolute Classification.
+	 * 
+	 * @param aClassifier
+	 * @param instanceIndex
+	 * @return
+	 */
+	private float classifyAbsolute(final Classifier aClassifier,
+			final int instanceIndex) {
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			if (!attributeList[currentLabelIndex].isMatch(
+					(float) instances[instanceIndex][currentLabelIndex],
+					aClassifier))
+				return 0;
+		}
+
+		// Check for overgeneral
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String value = attributeList[currentLabelIndex]
+					.toString(aClassifier);
+			if (value != "#")
+				return 1;
+		}
+
+		return 0;
+	}
+
+	private float classifyAccuracy(final Classifier aClassifier,
+			final int instanceIndex) {
+		float correct = 0;
+		float wrong = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
+					: "0";
+			if (attributeList[currentLabelIndex].toString() == "#"
+					&& actualLabel == "1")
+				correct += .5;
+			else if (attributeList[currentLabelIndex].toString() == actualLabel) {
+				if (actualLabel == "1")
+					correct++;
+			} else
+				wrong++;
+
+		}
+		if (wrong + correct > 0)
+			return ((float) correct) / ((float) (wrong + correct));
+		else
+			return 0;
+	}
+
+	/**
+	 * Evaluate classify ability of an instance through Hamming distance.
+	 * 
+	 * @param aClassifier
+	 *            the classifier to evaluatre
+	 * @param instanceIndex
+	 *            the index of the instance
+	 * @return the hamming distance of the classifier and the instance.
+	 */
+	private float classifyHamming(final Classifier aClassifier,
+			final int instanceIndex) {
+		float result = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			if (attributeList[currentLabelIndex].isMatch(
+					(float) instances[instanceIndex][currentLabelIndex],
+					aClassifier))
+				result++;
+		}
+
+		boolean overgeneral = true;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String value = attributeList[currentLabelIndex]
+					.toString(aClassifier);
+			if (value == "#")
+				result -= 0;// 1;
+			else
+				overgeneral = false;
+		}
+
+		return overgeneral ? 0 : result / numberOfLabels;
+	}
+
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		for (int i = 0; i < numberOfLabels; i++) {
+
+			final int labelIndex = attributeList.length - numberOfLabels + i;
+
+			String attributeName = instances.attribute(labelIndex).name();
+
+			attributeList[labelIndex] = new GenericLabel(chromosomeSize,
+					attributeName, labelGeneralizationRate);
+		}
+	}
+
+	@Override
+	public int[] getClassification(final Classifier aClassifier) {
+		int[] labels = new int[numberOfLabels];
+		int labelIndex = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String value = attributeList[currentLabelIndex]
+					.toString(aClassifier);
+			if (value == "1") {
+				labels[labelIndex] = i;
+				labelIndex++;
+			}
+		}
+		int[] result = new int[labelIndex];
+
+		for (int i = 0; i < labelIndex; i++) {
+			result[i] = labels[i];
+		}
+
+		return result;
+	}
+
+	@Override
+	public final int[] getDataInstanceLabels(final double[] dataInstance) {
+		int numOfLabels = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			if (dataInstance[currentLabelIndex] == 1)
+				numOfLabels++;
+		}
+		int[] result = new int[numOfLabels];
+		int resultIndex = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			if (dataInstance[currentLabelIndex] == 1) {
+				result[resultIndex] = i;
+				resultIndex++;
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public final void setClassification(final Classifier aClassifier,
+			final int action) {
+		final int labelIndex = attributeList.length - numberOfLabels + action;
+		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 	}
 
 }
