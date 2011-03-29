@@ -81,11 +81,11 @@ public class MlSSLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
-			return aClassifier.experience < 0?1:1/data.fitness ;
+			return aClassifier.experience < 0?1: 1 /(data.fitness * data.activeLabels / numberOfLabels);
 		case COMPARISON_MODE_EXPLOITATION:
 			return data.str; //TODO: Or maybe tp/(tp+fp)?
 		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.experience < 10?0:data.fitness;
+			return aClassifier.experience < 10?0: (data.fitness);
 		default:
 			return 0;
 		}
@@ -142,14 +142,17 @@ public class MlSSLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				final MlSSLCSClassifierData data = ((MlSSLCSClassifierData) currentClassifier
 						.getUpdateDataObject());
 				final float classificationAbility = currentClassifier.classifyLabelCorrectly(instanceIndex, lbl);
+				
 				data.ns[lbl] = (data.ns[lbl] + totalCorrectRules) / (data.msa + 1);
-				if ( classificationAbility == 1) {
+				if ( classificationAbility >= 0) {
 					data.str += ((double)strengthReward) / ((double)totalCorrectRules);
-					data.tp += 1;
+					if (Double.isInfinite(data.str)) data.str = 10;
+					data.tp += 1;					
 				} else if (classificationAbility == -1) {
 					data.str -= penalty * ((double)strengthReward) / ((double) data.ns[lbl]);
 					data.fp += 1;
 				}
+				
 			}
 			
 			if (totalCorrectRules == 0) {
@@ -161,9 +164,17 @@ public class MlSSLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			final Classifier currentClassifier = matchSet.getClassifier(i);
 			final MlSSLCSClassifierData data = ((MlSSLCSClassifierData) currentClassifier
 					.getUpdateDataObject());
+			data.activeLabels = 0;
+			for (int lbl =0; lbl < numberOfLabels;lbl++){
+				final float classificationAbility = currentClassifier.classifyLabelCorrectly(instanceIndex, lbl);
+				if (classificationAbility != 0)
+					data.activeLabels += 1;
+			}
+			
+			
 			data.msa += 1;
 			currentClassifier.experience++;
-			data.fitness = data.str / data.msa ;	
+			data.fitness = data.str<0?0:(data.str / data.msa) ;	
 			if (((double) data.tp)/((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold && currentClassifier.experience > subsumptionExperienceThreshold)
 				currentClassifier.setSubsumptionAbility(true);
 			else
@@ -189,13 +200,15 @@ public class MlSSLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		/**
 		 *
 		 */
-		public double fitness = .5;
+		public double fitness = Double.NEGATIVE_INFINITY;
 
 		/**
 		 * niche set size estimation.
 		 */
 		public double[] ns;
 
+		
+		
 		/**
 		 * Match Set Appearances.
 		 */
@@ -215,7 +228,13 @@ public class MlSSLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		 * Strength.
 		 */
 		public double str = 0;
-
+		
+		/**
+		 * Number of active labels
+		 */
+		public int activeLabels = -1;
+		
+		
 	}
 
 }
