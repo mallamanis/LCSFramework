@@ -42,12 +42,12 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 100;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 1000;
 		final int populationSize = 2000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
-				populationSize, numOfLabels, .08);
+				populationSize, numOfLabels, .33);
 		sgmlucs.run();
 
 	}

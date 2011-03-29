@@ -90,7 +90,7 @@ public class BestFitnessTournamentSelectorTest {
 		mySelector = new TournamentSelector(3, true,
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION);
 
-		assertEquals(mySelector.tournament(population, participants), 0);
+		assertEquals(mySelector.tournament(population, participants), 2);
 	}
 
 	@Test

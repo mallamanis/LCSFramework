@@ -13,10 +13,12 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.GenericUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
+import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -26,23 +28,21 @@ import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import java.io.IOException;
 
 /**
- * Multilabel UCS with direct usage of the UCS update algorithm and the strict
- * ml repesentation.
+ * A strict representation UCS with the genericUCS update.
  * 
  * @author Miltos Allamanis
  * 
  */
 public class DirectMlUCS {
-
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 200;
-		final int populationSize = 2000;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 1000;
+		final int populationSize = 1000;
 		DirectMlUCS dmlucs = new DirectMlUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -115,7 +115,7 @@ public class DirectMlUCS {
 	private final int UCS_EXPERIENCE_THRESHOLD = 50;
 
 	/**
-	 * The post-process experince threshold used.
+	 * The post-process experience threshold used.
 	 */
 	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
 
@@ -169,13 +169,12 @@ public class DirectMlUCS {
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH);
+				StrictMultiLabelRepresentation.HAMMING_LOSS);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
-				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, 0.01, ga, THETA_GA, 1);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(
+				ga, .1);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -184,8 +183,8 @@ public class DirectMlUCS {
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader trainer = new ArffLoader();
-		trainer.loadInstances(inputFile, true);
+		ArffLoader loader = new ArffLoader();
+		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
@@ -210,7 +209,7 @@ public class DirectMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
+		// postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
@@ -235,10 +234,14 @@ public class DirectMlUCS {
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);
 		testEval.evaluateSet(rulePopulation);
-
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
+				true, numberOfLabels);
+		hamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		accEval.evaluateSet(rulePopulation);
 	}
 
 }
