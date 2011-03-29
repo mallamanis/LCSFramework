@@ -158,8 +158,7 @@ public class GenericUCSUpdateAlgorithm extends
 
 	@Override
 	public void performUpdate(ClassifierSet matchSet, ClassifierSet correctSet) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override

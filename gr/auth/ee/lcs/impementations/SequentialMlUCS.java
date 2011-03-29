@@ -15,6 +15,7 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
@@ -41,10 +42,10 @@ public class SequentialMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
-		final int numOfLabels = 6;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
 		final int iterations = 200;
-		final int populationSize = 2000;
+		final int populationSize = 3000;
 		SequentialMlUCS sgmlucs = new SequentialMlUCS(file, iterations,
 				populationSize, numOfLabels);
 		sgmlucs.run();
@@ -191,7 +192,7 @@ public class SequentialMlUCS {
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
-		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
+		myExample.registerHook(new FileLogger(inputFile + "_resultSMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -246,6 +247,7 @@ public class SequentialMlUCS {
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
-
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		accEval.evaluateSet(rulePopulation);
 	}
 }

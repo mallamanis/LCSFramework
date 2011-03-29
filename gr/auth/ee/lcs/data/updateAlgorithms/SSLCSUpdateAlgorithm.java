@@ -62,7 +62,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
-			return data.fitness / data.ns;
+			return data.ns / data.fitness;
 		case COMPARISON_MODE_EXPLOITATION:
 			return data.str;
 		case COMPARISON_MODE_EXPLORATION:

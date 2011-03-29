@@ -13,8 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.MlSSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -24,30 +23,28 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 import java.io.IOException;
 
 /**
- * An implementation of a multi-label UCS, using the generic Multi-label
- * representation and a per-label (sequential) update UCS.
+ * A generic-representation SS-LCS like LCS.
  * 
  * @author Miltos Allamanis
  * 
  */
-public class SequentialGMlUCS {
-
+public class DirectGMlSSLCS {
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 100;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 50;
 		final int populationSize = 2000;
-		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
-				populationSize, numOfLabels, .08);
+		DirectGMlSSLCS sgmlucs = new DirectGMlSSLCS(file, iterations,
+				populationSize, numOfLabels, .07);
 		sgmlucs.run();
 
 	}
@@ -93,32 +90,17 @@ public class SequentialGMlUCS {
 	private final int PRECISION_BITS = 7;
 
 	/**
-	 * The UCS alpha parameter.
-	 */
-	private final double UCS_ALPHA = .1;
-
-	/**
 	 * The UCS n power parameter.
 	 */
-	private final int UCS_N = 10;
+	private final int SSLCS_PENALTY = 10;
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
+	private final double SSLCS_REWARD = 1;
 
 	/**
-	 * The learning rate (beta) parameter.
-	 */
-	private final double UCS_LEARNING_RATE = .1;
-
-	/**
-	 * The UCS experience threshold.
-	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
-
-	/**
-	 * The post-process experince threshold used.
+	 * The post-process experience threshold used.
 	 */
 	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
 
@@ -156,7 +138,7 @@ public class SequentialGMlUCS {
 	 * @param labelGeneralizationProbability
 	 *            the probability of generalizing a label (during coverage)
 	 */
-	public SequentialGMlUCS(final String filename, final int iterations,
+	public DirectGMlSSLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
 			final double labelGeneralizationProbability) {
 		inputFile = filename;
@@ -174,9 +156,11 @@ public class SequentialGMlUCS {
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(), CROSSOVER_RATE,
+				new TournamentSelector(
+						50,
+						true,
+						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+				new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
@@ -186,23 +170,21 @@ public class SequentialGMlUCS {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
-				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, 0.01,
-				ga, THETA_GA, 1);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
-				updateObj, ga, numberOfLabels);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlSSLCSUpdateAlgorithm(
+				SSLCS_REWARD, SSLCS_PENALTY, numberOfLabels, ga, 50, .99);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new RouletteWheelSelector(
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
-								true)));
+						new TournamentSelector(
+								40,
+								true,
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
-		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
+		myExample.registerHook(new FileLogger(inputFile + "_resultDGMlSSLCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -261,5 +243,4 @@ public class SequentialGMlUCS {
 		accEval.evaluateSet(rulePopulation);
 
 	}
-
 }
