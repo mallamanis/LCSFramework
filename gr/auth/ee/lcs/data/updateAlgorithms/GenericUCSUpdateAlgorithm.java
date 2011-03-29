@@ -153,7 +153,7 @@ public class GenericUCSUpdateAlgorithm extends
 	public final String getData(final Classifier aClassifier) {
 		GenericUCSClassifierData data = ((GenericUCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		return "Fitness: " + data.fitness; // TODO more
+		return "Fitness: " + data.fitness + " metric:"+ data.metricSum / aClassifier.experience; // TODO more
 	}
 
 	@Override
@@ -181,7 +181,8 @@ public class GenericUCSUpdateAlgorithm extends
 			cl.experience++;
 			data.ms = data.ms + b * (matchSetSize - data.ms);
 			final double metric = cl.classifyCorrectly(instanceIndex);
-			data.metricSum += metric;
+			
+			data.metricSum += Double.isNaN(metric)?0:metric;
 			data.fitness0 = Math.pow(data.metricSum / cl.experience, 10); // TODO:
 			if (data.fitness0 > 0.99)
 				cl.setSubsumptionAbility(true);
@@ -194,6 +195,9 @@ public class GenericUCSUpdateAlgorithm extends
 			cover(population, instanceIndex);
 		}
 
+		if (sumOfFitness == 0)
+			sumOfFitness = 1;
+		
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);
 			GenericUCSClassifierData data = ((GenericUCSClassifierData) cl
