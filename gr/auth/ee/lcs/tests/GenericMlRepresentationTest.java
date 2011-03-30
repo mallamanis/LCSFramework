@@ -209,5 +209,44 @@ public class GenericMlRepresentationTest {
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 	}
+	
+	@Test
+	public void classificationMethods() {
+		double[][] instances = { { 1, 1, 0, 0, 1 } };
+		ClassifierTransformBridge.instances = instances; 
+		int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
+		
+		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
+		Classifier ex = new Classifier(set);
+		
+		assertTrue(rep.classifyAbsolute(ex, 0)==1);
+		assertTrue(rep.classifyHamming(ex, 0)==1);
+		assertTrue(rep.classifyAccuracy(ex, 0)==1);
+		
+		
+		set = new ExtendedBitSet("11000001010101");
+		ex = new Classifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0)==1);
+		assertTrue(rep.classifyHamming(ex, 0)==1);
+		assertTrue(rep.classifyAccuracy(ex, 0)==1);
+		
+		set = new ExtendedBitSet("10000001010101");
+		ex = new Classifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0)==0);
+		assertTrue(rep.classifyHamming(ex, 0)==0);
+		assertTrue(rep.classifyAccuracy(ex, 0)==1);
+		
+		set = new ExtendedBitSet("11110001010101");
+		ex = new Classifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0)==0);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2./3.)) < 0.0001);
+		assertTrue(rep.classifyAccuracy(ex, 0)==.5);
+		
+		set = new ExtendedBitSet("11110101010101");
+		ex = new Classifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0)==0);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2./3.)) < 0.0001);
+		assertTrue(rep.classifyAccuracy(ex, 0)==.5);
+	}
 
 }
