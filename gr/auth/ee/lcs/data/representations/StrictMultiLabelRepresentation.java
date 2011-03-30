@@ -121,7 +121,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		case EXACT_MATCH:
 			return classifyExact(aClassifier, instanceIndex);
 		case ACCURACY:
-			return 0; // TODO
+			return classifyAccuracy(aClassifier, instanceIndex); 
 		case HAMMING_LOSS:
 			return classifyHamming(aClassifier, instanceIndex);
 		default:
@@ -130,6 +130,28 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 	}
 
+	public float classifyAccuracy(final Classifier aClassifier,
+			final int instanceIndex) {
+		float correct = 0;
+		float wrong = 0;
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
+					: "0";
+			final String classifiedLabel = attributeList[currentLabelIndex].toString(aClassifier);
+			if (actualLabel != classifiedLabel)
+				wrong++;
+			else if (actualLabel == "1")
+				correct++;
+		}
+		
+		if (wrong + correct > 0)
+			return ((float) correct) / ((float) (wrong + correct));
+		else
+			return 0;
+	}
+	
 	/**
 	 * Finds the (1 - HammingDistance) of the classifier and the instance at the
 	 * given index.
@@ -141,7 +163,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @return a float representing the (1 - HammingDistance) of the
 	 *         classification
 	 */
-	private float classifyHamming(final Classifier aClassifier,
+	public float classifyHamming(final Classifier aClassifier,
 			final int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -165,7 +187,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @return 0 if classifier does not classify the instance correctly, 1
 	 *         otherwise
 	 */
-	private float classifyExact(final Classifier aClassifier,
+	public float classifyExact(final Classifier aClassifier,
 			final int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
