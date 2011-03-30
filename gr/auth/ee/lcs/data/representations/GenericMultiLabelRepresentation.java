@@ -22,6 +22,10 @@ import weka.core.Instances;
 public final class GenericMultiLabelRepresentation extends
 		ComplexRepresentation {
 
+	public static final double ACCURACY_DONT_CARE_VALUE = 0.5;
+	
+	public static final double HAMMING_DONT_CARE_VALUE = 1;
+	
 	/**
 	 * A boolean label representation with dont'cares. The only difference
 	 * between this class an the BooleanAttribute is that generalization is
@@ -304,7 +308,7 @@ public final class GenericMultiLabelRepresentation extends
 	 * @param instanceIndex
 	 * @return
 	 */
-	private float classifyAbsolute(final Classifier aClassifier,
+	public float classifyAbsolute(final Classifier aClassifier,
 			final int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -328,7 +332,7 @@ public final class GenericMultiLabelRepresentation extends
 		return 0;
 	}
 
-	private float classifyAccuracy(final Classifier aClassifier,
+	public float classifyAccuracy(final Classifier aClassifier,
 			final int instanceIndex) {
 		float correct = 0;
 		float wrong = 0;
@@ -337,15 +341,16 @@ public final class GenericMultiLabelRepresentation extends
 					+ i;
 			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
 					: "0";
-			if (attributeList[currentLabelIndex].toString() == "#"
-					&& actualLabel == "1")
-				correct += .5;
-			else if (attributeList[currentLabelIndex].toString() == actualLabel) {
+			final String classifiedLabel = attributeList[currentLabelIndex].toString(aClassifier);
+			if (classifiedLabel == "#") {
+				if (actualLabel == "1")
+					correct += ACCURACY_DONT_CARE_VALUE;
+			} else if (classifiedLabel == actualLabel) {
 				if (actualLabel == "1")
 					correct++;
-			} else
+			} else {
 				wrong++;
-
+			}
 		}
 		if (wrong + correct > 0)
 			return ((float) correct) / ((float) (wrong + correct));
@@ -362,7 +367,7 @@ public final class GenericMultiLabelRepresentation extends
 	 *            the index of the instance
 	 * @return the hamming distance of the classifier and the instance.
 	 */
-	private float classifyHamming(final Classifier aClassifier,
+	public float classifyHamming(final Classifier aClassifier,
 			final int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -381,7 +386,7 @@ public final class GenericMultiLabelRepresentation extends
 			final String value = attributeList[currentLabelIndex]
 					.toString(aClassifier);
 			if (value == "#")
-				result -= 0;// 1;
+				result -= 1 - HAMMING_DONT_CARE_VALUE;// 1;
 			else
 				overgeneral = false;
 		}
