@@ -41,8 +41,8 @@ public class DirectGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
-		final int numOfLabels = 7;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final int numOfLabels = 6;
 		final int iterations = 1000;
 		final int populationSize = 1000;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
@@ -171,7 +171,7 @@ public class DirectGMlUCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.HAMMING_LOSS,
+				GenericMultiLabelRepresentation.RELATIVE_ACCURACY,
 				labelGeneralizationRate);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
@@ -212,7 +212,7 @@ public class DirectGMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
-		// postProcess.controlPopulation(rulePopulation);
+		 postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
