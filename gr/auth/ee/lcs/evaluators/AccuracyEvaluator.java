@@ -84,7 +84,7 @@ public class AccuracyEvaluator implements IEvaluator {
 			final int[] classes = bridge.classify(classifiers, instance);
 			final int[] classification = bridge.getDataInstanceLabels(instance);
 
-			// Find symetric differences
+			// Find symmetric differences
 			Arrays.sort(classes);
 			Arrays.sort(classification);
 			for (int j = 0; j < classes.length; j++) {
