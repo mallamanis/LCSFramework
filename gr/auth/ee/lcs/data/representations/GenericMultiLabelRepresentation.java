@@ -23,9 +23,9 @@ public final class GenericMultiLabelRepresentation extends
 		ComplexRepresentation {
 
 	public static final double ACCURACY_DONT_CARE_VALUE = 0.5;
-	
+
 	public static final double HAMMING_DONT_CARE_VALUE = 1;
-	
+
 	/**
 	 * A boolean label representation with dont'cares. The only difference
 	 * between this class an the BooleanAttribute is that generalization is
@@ -180,6 +180,69 @@ public final class GenericMultiLabelRepresentation extends
 	}
 
 	/**
+	 * A classification strategy selecting the labels according to the highest
+	 * fitness of a classifier. If a classifier has an # then the next
+	 * classifier is selected.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public final class BestFitnessClassificationStrategy implements
+			IClassificationStrategy {
+
+		@Override
+		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+			final double[] decisionTable = new double[numberOfLabels];
+			final double[] confidenceTable = new double[numberOfLabels];
+			for (int i = 0; i < numberOfLabels; i++) {
+				decisionTable[i] = 0;
+				confidenceTable[i] = 0;
+			}
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			final int setSize = matchSet.getNumberOfMacroclassifiers();
+			for (int i = 0; i < setSize; i++) {
+				// For each classifier
+				for (int label = 0; label < numberOfLabels; label++) {
+					final Classifier currentClassifier = matchSet
+							.getClassifier(i);
+					final double fitness = currentClassifier
+							.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+					if (fitness > confidenceTable[label]) {
+						final String cons = (attributeList[attributeList.length
+								- numberOfLabels + label])
+								.toString(currentClassifier);
+						if (cons == "#")
+							continue;
+						confidenceTable[label] = fitness;
+						if (cons == "1")
+							decisionTable[label] = 1;
+						else
+							decisionTable[label] = 0;
+
+					}
+				}
+			}
+
+			int numberOfActiveLabels = 0;
+			for (int i = 0; i < decisionTable.length; i++)
+				if (decisionTable[i] == 1)
+					numberOfActiveLabels++;
+
+			final int[] result = new int[numberOfActiveLabels];
+			int currentIndex = 0;
+			for (int i = 0; i < decisionTable.length; i++)
+				if (decisionTable[i] == 1) {
+					result[currentIndex] = i;
+					currentIndex++;
+				}
+
+			return result;
+		}
+
+	}
+
+	/**
 	 * A Voting Classification Strategy.
 	 * 
 	 * @author Miltos Allamanis
@@ -191,6 +254,7 @@ public final class GenericMultiLabelRepresentation extends
 		@Override
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
+			final double voteThreshold = 0;
 			final double[] votingTable = new double[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++)
 				votingTable[i] = 0;
@@ -222,14 +286,14 @@ public final class GenericMultiLabelRepresentation extends
 
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++)
-				if (votingTable[i] > 0)
+				if (votingTable[i] > voteThreshold)
 					numberOfActiveLabels++;
 
 			final int[] result = new int[numberOfActiveLabels];
 
 			int currentIndex = 0;
 			for (int i = 0; i < votingTable.length; i++)
-				if (votingTable[i] > 0) {
+				if (votingTable[i] > voteThreshold) {
 					result[currentIndex] = i;
 					currentIndex++;
 				}
@@ -341,7 +405,8 @@ public final class GenericMultiLabelRepresentation extends
 					+ i;
 			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
 					: "0";
-			final String classifiedLabel = attributeList[currentLabelIndex].toString(aClassifier);
+			final String classifiedLabel = attributeList[currentLabelIndex]
+					.toString(aClassifier);
 			if (classifiedLabel == "#") {
 				if (actualLabel == "1")
 					correct += ACCURACY_DONT_CARE_VALUE;
