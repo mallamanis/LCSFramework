@@ -129,6 +129,23 @@ public class ComplexRepresentationTest {
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 	}
 
+	@Test
+	public void realValuesTest() {
+		ExtendedBitSet set1 = new ExtendedBitSet(
+				"11101111111111000000000011010");
+		Classifier ex1 = new Classifier(set1);
+		double[] st = { 1, .1, 2 };
+		assertTrue(rep.isMatch(st, ex1));
+
+		set1 = new ExtendedBitSet("11101111111111001000000011010");
+		ex1 = new Classifier(set1);
+		assertTrue(rep.isMatch(st, ex1));
+
+		set1 = new ExtendedBitSet("11100111111111001000000011010");
+		ex1 = new Classifier(set1);
+		assertTrue(rep.isMatch(st, ex1));
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		SingleClassRepresentation.Attribute list[] = new Attribute[4];
