@@ -42,10 +42,10 @@ public class SequentialMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 200;
-		final int populationSize = 3000;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/part2.arff";
+		final int numOfLabels = 4;
+		final int iterations = 500;
+		final int populationSize = 1000;
 		SequentialMlUCS sgmlucs = new SequentialMlUCS(file, iterations,
 				populationSize, numOfLabels);
 		sgmlucs.run();

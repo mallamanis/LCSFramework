@@ -41,10 +41,10 @@ public class DirectGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
 		final int iterations = 1000;
-		final int populationSize = 1000;
+		final int populationSize = 3000;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
 				populationSize, numOfLabels);
 		dmlucs.run();
@@ -79,12 +79,12 @@ public class DirectGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 950;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 20;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -114,7 +114,7 @@ public class DirectGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 300;
 
 	/**
 	 * The post-process experience threshold used.
@@ -177,7 +177,7 @@ public class DirectGMlUCS {
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(
-				ga, .1);
+				ga, .1, UCS_EXPERIENCE_THRESHOLD);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -212,7 +212,7 @@ public class DirectGMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
-		 postProcess.controlPopulation(rulePopulation);
+		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out

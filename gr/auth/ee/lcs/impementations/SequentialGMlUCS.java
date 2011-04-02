@@ -42,10 +42,10 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 1000;
-		final int populationSize = 2000;
+		final String file = "/home/miltiadis/Desktop/datasets/medical.arff";
+		final int numOfLabels = 45;
+		final int iterations = 200;
+		final int populationSize = 3000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .33);
 		sgmlucs.run();
@@ -80,17 +80,17 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 950;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 50;
 
 	/**
 	 * The number of bits to use for representing continuous variables
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = 5;
 
 	/**
 	 * The UCS alpha parameter.
@@ -115,7 +115,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 700;
 
 	/**
 	 * The post-process experince threshold used.
@@ -183,7 +183,7 @@ public class SequentialGMlUCS {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH,
 				labelGeneralizationRate);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,

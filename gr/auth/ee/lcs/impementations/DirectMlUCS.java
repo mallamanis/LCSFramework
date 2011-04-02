@@ -39,10 +39,10 @@ public class DirectMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlposition7.arff";
-		final int numOfLabels = 7;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
 		final int iterations = 1000;
-		final int populationSize = 1000;
+		final int populationSize = 3000;
 		DirectMlUCS dmlucs = new DirectMlUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -77,7 +77,7 @@ public class DirectMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 500;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -112,7 +112,7 @@ public class DirectMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 200;
 
 	/**
 	 * The post-process experience threshold used.
@@ -174,7 +174,7 @@ public class DirectMlUCS {
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(
-				ga, .1);
+				ga, .1, UCS_EXPERIENCE_THRESHOLD);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -209,7 +209,7 @@ public class DirectMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
-		// postProcess.controlPopulation(rulePopulation);
+		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
 			System.out
