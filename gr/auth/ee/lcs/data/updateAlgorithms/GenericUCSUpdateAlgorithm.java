@@ -58,7 +58,7 @@ public class GenericUCSUpdateAlgorithm extends
 	/**
 	 * The theta_DEL parameter of UCS.
 	 */
-	private final int deleteAge = 20;
+	private final int deleteAge;
 
 	/**
 	 * The learning rate.
@@ -80,9 +80,10 @@ public class GenericUCSUpdateAlgorithm extends
 	 */
 	public GenericUCSUpdateAlgorithm(
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final double learningRate) {
+			final double learningRate, final int ageThreshold) {
 		this.ga = geneticAlgorithm;
 		this.b = learningRate;
+		deleteAge = ageThreshold;
 	}
 
 	/**
