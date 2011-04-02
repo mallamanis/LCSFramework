@@ -3,31 +3,26 @@
  */
 package gr.auth.ee.lcs.tests;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation.NominalAttribute;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.GenericLabel;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
+
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author Miltos Allamanis
- *
+ * 
  */
 public class StrictMlRepresentationTest {
-	
+
 	StrictMultiLabelRepresentation rep;
 
 	/**
@@ -52,7 +47,7 @@ public class StrictMlRepresentationTest {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 	}
-	
+
 	@Test
 	public void testClassifyAbilityAll() {
 		ExtendedBitSet set1 = new ExtendedBitSet("10100111011");
@@ -113,7 +108,7 @@ public class StrictMlRepresentationTest {
 		int[] instanceLabels = rep.getClassification(ex1);
 		int[] expected = { 0, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected));
-	
+
 		set1 = new ExtendedBitSet("00100111011");
 		ex1 = new Classifier(set1);
 		instanceLabels = rep.getClassification(ex1);
@@ -125,7 +120,7 @@ public class StrictMlRepresentationTest {
 		instanceLabels = rep.getClassification(ex1);
 		int[] expected3 = { 0, 1, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected3));
-		
+
 		set1 = new ExtendedBitSet("0000111011");
 		ex1 = new Classifier(set1);
 		instanceLabels = rep.getClassification(ex1);
@@ -196,38 +191,36 @@ public class StrictMlRepresentationTest {
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 	}
-	
+
 	@Test
 	public void classificationMethods() {
 		double[][] instances = { { 1, 1, 0, 0, 1 } };
-		ClassifierTransformBridge.instances = instances; 
-				
+		ClassifierTransformBridge.instances = instances;
+
 		ExtendedBitSet set = new ExtendedBitSet("10001010101");
 		Classifier ex = new Classifier(set);
-		
-		assertTrue(rep.classifyExact(ex, 0)==1);
-		assertTrue(rep.classifyHamming(ex, 0)==1);
-		assertTrue(rep.classifyAccuracy(ex, 0)==1);
-		
-		
+
+		assertTrue(rep.classifyExact(ex, 0) == 1);
+		assertTrue(rep.classifyHamming(ex, 0) == 1);
+		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
+
 		set = new ExtendedBitSet("10001010101");
 		ex = new Classifier(set);
-		assertTrue(rep.classifyExact(ex, 0)==1);
-		assertTrue(rep.classifyHamming(ex, 0)==1);
-		assertTrue(rep.classifyAccuracy(ex, 0)==1);
-		
+		assertTrue(rep.classifyExact(ex, 0) == 1);
+		assertTrue(rep.classifyHamming(ex, 0) == 1);
+		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
+
 		set = new ExtendedBitSet("11001010101");
 		ex = new Classifier(set);
-		assertTrue(rep.classifyExact(ex, 0)==0);
-		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2./3.)) < 0.0001);
-		assertTrue(rep.classifyAccuracy(ex, 0)==.5);
-		
+		assertTrue(rep.classifyExact(ex, 0) == 0);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2. / 3.)) < 0.0001);
+		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
+
 		set = new ExtendedBitSet("00101010101");
 		ex = new Classifier(set);
-		assertTrue(rep.classifyExact(ex, 0)==0);
-		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (1./3.)) < 0.0001);
-		assertTrue(rep.classifyAccuracy(ex, 0)==0);
+		assertTrue(rep.classifyExact(ex, 0) == 0);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (1. / 3.)) < 0.0001);
+		assertTrue(rep.classifyAccuracy(ex, 0) == 0);
 	}
-
 
 }

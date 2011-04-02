@@ -121,7 +121,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		case EXACT_MATCH:
 			return classifyExact(aClassifier, instanceIndex);
 		case ACCURACY:
-			return classifyAccuracy(aClassifier, instanceIndex); 
+			return classifyAccuracy(aClassifier, instanceIndex);
 		case HAMMING_LOSS:
 			return classifyHamming(aClassifier, instanceIndex);
 		default:
@@ -139,19 +139,20 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 					+ i;
 			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
 					: "0";
-			final String classifiedLabel = attributeList[currentLabelIndex].toString(aClassifier);
+			final String classifiedLabel = attributeList[currentLabelIndex]
+					.toString(aClassifier);
 			if (actualLabel != classifiedLabel)
 				wrong++;
 			else if (actualLabel == "1")
 				correct++;
 		}
-		
+
 		if (wrong + correct > 0)
 			return ((float) correct) / ((float) (wrong + correct));
 		else
 			return 0;
 	}
-	
+
 	/**
 	 * Finds the (1 - HammingDistance) of the classifier and the instance at the
 	 * given index.
