@@ -207,13 +207,14 @@ public class SequentialMlUpdateAlgorithm extends
 			 * Update
 			 */
 			performUpdate(labelSet, correctSet);
+			
+			/*
+			 * Run GA
+			 */
+			if (correctSet.getNumberOfMacroclassifiers() > 0)
+				ga.evolveSet(matchSet, population);
 		}
-
-		/*
-		 * Run GA
-		 */
-		if (matchSet.getNumberOfMacroclassifiers() > 0)
-			ga.evolveSet(matchSet, population);
+		
 
 	}
 

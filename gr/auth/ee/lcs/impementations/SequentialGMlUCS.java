@@ -42,10 +42,10 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 500;
-		final int populationSize = 6000;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
+		final int iterations = 300;
+		final int populationSize = 4000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .33);
 		sgmlucs.run();
@@ -80,12 +80,12 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 150;
+	private final int THETA_GA = 50;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 50;
+	private final int CALLBACK_RATE = 40;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -118,7 +118,7 @@ public class SequentialGMlUCS {
 	private final int UCS_EXPERIENCE_THRESHOLD = 100;
 
 	/**
-	 * The post-process experince threshold used.
+	 * The post-process experience threshold used.
 	 */
 	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
 
@@ -215,7 +215,7 @@ public class SequentialGMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		// rulePopulation.print();
+		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
