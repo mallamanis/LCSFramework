@@ -42,10 +42,10 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/medical.arff";
-		final int numOfLabels = 45;
-		final int iterations = 200;
-		final int populationSize = 3000;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final int numOfLabels = 6;
+		final int iterations = 500;
+		final int populationSize = 6000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .33);
 		sgmlucs.run();
@@ -205,20 +205,7 @@ public class SequentialGMlUCS {
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
-
-		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
-			System.out
-					.println(rulePopulation.getClassifier(i).toString()
-							+ " fit:"
-							+ rulePopulation
-									.getClassifier(i)
-									.getComparisonValue(
-											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
-							+ " exp:"
-							+ rulePopulation.getClassifier(i).experience
-							+ " num:"
-							+ rulePopulation.getClassifierNumerosity(i));
-		}
+		
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -228,29 +215,12 @@ public class SequentialGMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
-			System.out
-					.println(rulePopulation.getClassifier(i).toString()
-							+ " fit:"
-							+ rulePopulation
-									.getClassifier(i)
-									.getComparisonValue(
-											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
-							+ " exp:"
-							+ rulePopulation.getClassifier(i).experience
-							+ " num:"
-							+ rulePopulation.getClassifierNumerosity(i)
-							+ "cov:"
-							+ rulePopulation.getClassifier(i).getCoverage());
-			System.out
-					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
-							.getData((rulePopulation.getClassifier(i))));
-		}
+		//rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 
-		System.out.println("Evaluating on test set");
+		System.out.println("Evaluating on test set (best)");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);
 		testEval.evaluateSet(rulePopulation);
@@ -259,7 +229,13 @@ public class SequentialGMlUCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
-
+		
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		ClassifierTransformBridge.setInstance(rep);
+		System.out.println("Evaluating on test set (voting)");
+		testEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
 	}
 
 }

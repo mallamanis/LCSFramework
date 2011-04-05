@@ -189,19 +189,6 @@ public class DirectMlUCS {
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
-		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
-			System.out
-					.println(rulePopulation.getClassifier(i).toString()
-							+ " fit:"
-							+ rulePopulation
-									.getClassifier(i)
-									.getComparisonValue(
-											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
-							+ " exp:"
-							+ rulePopulation.getClassifier(i).experience
-							+ " num:"
-							+ rulePopulation.getClassifierNumerosity(i));
-		}
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -211,24 +198,7 @@ public class DirectMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		for (int i = 0; i < rulePopulation.getNumberOfMacroclassifiers(); i++) {
-			System.out
-					.println(rulePopulation.getClassifier(i).toString()
-							+ " fit:"
-							+ rulePopulation
-									.getClassifier(i)
-									.getComparisonValue(
-											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
-							+ " exp:"
-							+ rulePopulation.getClassifier(i).experience
-							+ " num:"
-							+ rulePopulation.getClassifierNumerosity(i)
-							+ "cov:"
-							+ rulePopulation.getClassifier(i).getCoverage());
-			System.out
-					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
-							.getData((rulePopulation.getClassifier(i))));
-		}
+		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

@@ -1,5 +1,7 @@
 package gr.auth.ee.lcs.classifiers;
 
+import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,6 +78,23 @@ public class ClassifierSet implements Serializable {
 			ex.printStackTrace();
 		}
 
+	}
+
+	public void print() {
+		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
+			System.out
+					.println(this.getClassifier(i).toString()
+							+ " fit:"
+							+ this.getClassifier(i)
+									.getComparisonValue(
+											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+							+ " exp:" + this.getClassifier(i).experience
+							+ " num:" + this.getClassifierNumerosity(i)
+							+ "cov:" + this.getClassifier(i).getCoverage());
+			System.out
+					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
+							.getData((this.getClassifier(i))));
+		}
 	}
 
 	/**
