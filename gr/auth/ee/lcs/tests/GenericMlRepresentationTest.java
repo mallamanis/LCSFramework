@@ -215,7 +215,7 @@ public class GenericMlRepresentationTest {
 		double[][] instances = { { 1, 1, 0, 0, 1 } };
 		ClassifierTransformBridge.instances = instances;
 		int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
-
+		System.out.print(Arrays.toString(instanceLabels1));
 		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
 		Classifier ex = new Classifier(set);
 
@@ -238,7 +238,7 @@ public class GenericMlRepresentationTest {
 		set = new ExtendedBitSet("11110001010101");
 		ex = new Classifier(set);
 		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
-		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2. / 3.)) < 0.0001);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (1. / 2.)) < 0.0001);
 		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
 
 		set = new ExtendedBitSet("11110101010101");

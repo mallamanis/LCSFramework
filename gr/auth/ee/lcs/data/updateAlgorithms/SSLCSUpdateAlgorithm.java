@@ -62,9 +62,10 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
-			return data.ns / data.fitness;
+			return data.fitness * ((data.fitness > 0)? 1/data.ns : data.ns);
 		case COMPARISON_MODE_EXPLOITATION:
-			return data.str;
+			return ((double)data.tp)/((double)data.msa);
+			//return data.str;
 		case COMPARISON_MODE_EXPLORATION:
 			return data.fitness;
 		default:
@@ -85,18 +86,23 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 			final int numerosity, final ClassifierSet correctSet) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
-
+		if (Double.isNaN(data.str) || Double.isInfinite(data.str))
+			data.str = 0;
 		if (correctSet.getClassifierNumerosity(aClassifier) > 0) {
 			// aClassifier belongs to correctSet
-			data.tp++;
 			data.str += strengthReward / correctSet.getTotalNumerosity();
+			data.ns = (data.ns * data.tp + correctSet.getTotalNumerosity())
+			/ ((double)(data.tp + 1.));
+			data.tp++;
 		} else {
 			data.fp++;
-			data.str -= penalty * strengthReward / data.ns;
+			final double punishment = penalty * strengthReward / (data.ns);
+			data.str -= (Double.isNaN(punishment) || Double.isInfinite(punishment) )?penalty * strengthReward : punishment ;
 		}
 
 		data.fitness = (data.str / data.msa);
-
+		if (Double.isNaN(data.fitness))
+			data.fitness = 0;
 	}
 
 }

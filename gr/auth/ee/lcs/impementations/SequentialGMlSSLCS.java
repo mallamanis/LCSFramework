@@ -42,10 +42,10 @@ public class SequentialGMlSSLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
 		final int numOfLabels = 7;
-		final int iterations = 300;
-		final int populationSize = 7000;
+		final int iterations = 100;
+		final int populationSize = 1000;
 		SequentialGMlSSLCS sgmlucs = new SequentialGMlSSLCS(file, iterations,
-				populationSize, numOfLabels, .07);
+				populationSize, numOfLabels, .33);
 		sgmlucs.run();
 
 	}
@@ -93,7 +93,7 @@ public class SequentialGMlSSLCS {
 	/**
 	 * The UCS n power parameter.
 	 */
-	private final int SSLCS_PENALTY = 10;
+	private final int SSLCS_PENALTY = 5;
 
 	/**
 	 * The accuracy threshold parameter.
@@ -166,13 +166,13 @@ public class SequentialGMlSSLCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH,
+				GenericMultiLabelRepresentation.HAMMING_LOSS,
 				labelGeneralizationRate);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		SSLCSUpdateAlgorithm updateObj = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
-				SSLCS_PENALTY, .99, 50, 0.02, ga);
+				SSLCS_PENALTY, .99, 50, 0.01, ga);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 
@@ -181,11 +181,11 @@ public class SequentialGMlSSLCS {
 						populationSize,
 						new TournamentSelector(
 								40,
-								true,
+								false,
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 
 		ArffLoader loader = new ArffLoader();
-		loader.loadInstances(inputFile, true);
+		loader.loadInstances(inputFile, false);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
@@ -198,7 +198,7 @@ public class SequentialGMlSSLCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
+		//postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");

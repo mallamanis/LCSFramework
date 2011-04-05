@@ -117,23 +117,23 @@ public class GenericUCSUpdateAlgorithm extends
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? 0 : 1);
+					* (aClassifier.experience < deleteAge ? 0.1 : 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
 			if (aClassifier.experience < deleteAge) {
 				final double result = 1 / data.fitness; // TODO:Correct?
-				return Double.isNaN(result) ? 1 : result;
+				return Double.isNaN(result) ? 0 : result;
 			}
 
 			// return data.ms;
 			final double result = 1 / data.fitness;//
 			// (aClassifier.getCoverage() / .05);
 			// //TODO:Correct?
-			return Double.isNaN(result) ? 1 : result;
+			return Double.isNaN(result) ? 0 : result;
 
 		case COMPARISON_MODE_EXPLOITATION:
-			final double acc = ((data.metricSum) / (aClassifier.experience));
+			final double acc = ((data.metricSum));
 			final double exploitValue = acc
 					* (aClassifier.experience < deleteAge ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
@@ -179,27 +179,23 @@ public class GenericUCSUpdateAlgorithm extends
 		double sumOfFitness = 0;
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);
-			GenericUCSClassifierData data = ((GenericUCSClassifierData) cl
+			final GenericUCSClassifierData data = ((GenericUCSClassifierData) cl
 					.getUpdateDataObject());
 			cl.experience++;
-			data.ms = data.ms + b * (matchSetSize - data.ms);
+			//data.ms = data.ms + b * (matchSetSize - data.ms);
 			final double metric = cl.classifyCorrectly(instanceIndex);
 
-			data.metricSum += Double.isNaN(metric) ? 0 : metric;
-			data.fitness0 = Math.pow(data.metricSum / cl.experience, 10); // TODO:
+			data.metricSum += b * ((Double.isNaN(metric) ? 0 : metric) - data.metricSum);
+			data.fitness0 = Math.pow(data.metricSum, 10); // TODO:
 			if (data.fitness0 > 0.99)
 				cl.setSubsumptionAbility(true);
 			sumOfFitness += data.fitness0 * matchSet.getClassifierNumerosity(i);
 		}
 
-		if (matchSetSize == 0) {
+		if (matchSetSize == 0 || sumOfFitness == 0) {
 			cover(population, instanceIndex);
-		} else if (sumOfFitness / matchSetSize < .7) {
-			cover(population, instanceIndex);
-		}
-
-		if (sumOfFitness == 0)
-			sumOfFitness = 1;
+			return;
+		} 
 
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);

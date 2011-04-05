@@ -317,6 +317,7 @@ public final class GenericMultiLabelRepresentation extends
 	public static final int RELATIVE_ACCURACY = 1;
 
 	public static final int HAMMING_LOSS = 2;
+	
 
 	public GenericMultiLabelRepresentation(final Attribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
@@ -435,28 +436,24 @@ public final class GenericMultiLabelRepresentation extends
 	public float classifyHamming(final Classifier aClassifier,
 			final int instanceIndex) {
 		float result = 0;
+		float totalClassifications = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
+			final String value = attributeList[currentLabelIndex]
+			               					.toString(aClassifier);
+			if (value == "#")
+				continue;
+			totalClassifications++;
 			if (attributeList[currentLabelIndex].isMatch(
 					(float) instances[instanceIndex][currentLabelIndex],
 					aClassifier))
 				result++;
 		}
 
-		boolean overgeneral = true;
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			final String value = attributeList[currentLabelIndex]
-					.toString(aClassifier);
-			if (value == "#")
-				result -= 1 - HAMMING_DONT_CARE_VALUE;// 1;
-			else
-				overgeneral = false;
-		}
+		final float hammingWin = ((float) result ) /((float) totalClassifications);
 
-		return overgeneral ? 0 : result / numberOfLabels;
+		return Double.isNaN(hammingWin) ? 0 : hammingWin;
 	}
 
 	@Override

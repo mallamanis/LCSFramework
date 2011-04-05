@@ -24,6 +24,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector2;
 
 import java.io.IOException;
 
@@ -41,10 +42,10 @@ public class DirectGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 1000;
-		final int populationSize = 3000;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 100;
+		final int populationSize = 1000;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
 				populationSize, numOfLabels);
 		dmlucs.run();
@@ -79,12 +80,12 @@ public class DirectGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 950;
+	private final int THETA_GA = 100;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 20;
+	private final int CALLBACK_RATE = 10;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -114,7 +115,7 @@ public class DirectGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 300;
+	private final int UCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
 	 * The post-process experience threshold used.
@@ -164,14 +165,14 @@ public class DirectGMlUCS {
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(), CROSSOVER_RATE,
+				new TournamentSelector2(40,true,
+						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+						new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.RELATIVE_ACCURACY,
+				GenericMultiLabelRepresentation.HAMMING_LOSS,
 				labelGeneralizationRate);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
@@ -182,16 +183,15 @@ public class DirectGMlUCS {
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new RouletteWheelSelector(
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
-								true)));
+						new TournamentSelector2(50,false,
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-
+		//rulePopulation.print();
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,

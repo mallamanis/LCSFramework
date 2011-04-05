@@ -36,17 +36,17 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		/**
 		 * niche set size estimation.
 		 */
-		public double ns = 1;
+		public double ns = 0;
 
 		/**
 		 * Match Set Appearances.
 		 */
-		public int msa = 1;
+		public int msa = 0;
 
 		/**
 		 * true positives.
 		 */
-		public int tp = 1;
+		public int tp = 0;
 
 		/**
 		 * false positives.
@@ -140,7 +140,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	public String getData(Classifier aClassifier) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		return "tp:" + data.tp + "msa:" + data.msa;
+		return "tp:" + data.tp + "msa:" + data.msa +"str: "+data.str+"ns:"+data.ns;
 	}
 
 	@Override
@@ -151,8 +151,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			Classifier cl = matchSet.getClassifier(i);
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			data.ns = (data.ns * data.msa + correctSet.getTotalNumerosity())
-					/ (data.msa + 1);
+			
 
 			data.msa++;
 			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);

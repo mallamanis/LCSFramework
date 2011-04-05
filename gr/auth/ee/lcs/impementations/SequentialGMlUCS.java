@@ -80,7 +80,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 950;
+	private final int THETA_GA = 150;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -115,7 +115,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 700;
+	private final int UCS_EXPERIENCE_THRESHOLD = 100;
 
 	/**
 	 * The post-process experince threshold used.
@@ -205,7 +205,7 @@ public class SequentialGMlUCS {
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
-		
+
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -215,7 +215,7 @@ public class SequentialGMlUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		//rulePopulation.print();
+		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
@@ -229,7 +229,7 @@ public class SequentialGMlUCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
-		
+
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 		System.out.println("Evaluating on test set (voting)");
