@@ -85,7 +85,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 40;
+	private final int CALLBACK_RATE = 10;
 
 	/**
 	 * The number of bits to use for representing continuous variables

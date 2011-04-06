@@ -13,7 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.GenericUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.MlUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -173,8 +173,8 @@ public class DirectMlUCS {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(
-				ga, .1, UCS_EXPERIENCE_THRESHOLD);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlUCSUpdateAlgorithm(
+				ga, .1, UCS_EXPERIENCE_THRESHOLD, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(

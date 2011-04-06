@@ -13,7 +13,9 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.GenericUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
+import gr.auth.ee.lcs.data.updateAlgorithms.MlUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -44,7 +46,7 @@ public class DirectGMlUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
 		final int numOfLabels = 7;
-		final int iterations = 100;
+		final int iterations = 500;
 		final int populationSize = 1000;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
 				populationSize, numOfLabels);
@@ -115,7 +117,7 @@ public class DirectGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 20;
+	private final int UCS_EXPERIENCE_THRESHOLD = 50;
 
 	/**
 	 * The post-process experience threshold used.
@@ -130,7 +132,7 @@ public class DirectGMlUCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.5;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -165,8 +167,8 @@ public class DirectGMlUCS {
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector2(40,true,
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+				new RouletteWheelSelector(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
+						true),
 						new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
@@ -174,17 +176,17 @@ public class DirectGMlUCS {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.HAMMING_LOSS,
 				labelGeneralizationRate);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new  BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new GenericUCSUpdateAlgorithm(
-				ga, .1, UCS_EXPERIENCE_THRESHOLD);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlUCSUpdateAlgorithm(
+				ga, .1, UCS_EXPERIENCE_THRESHOLD, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector2(50,false,
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+						new RouletteWheelSelector(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+								true)));
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
@@ -193,6 +195,7 @@ public class DirectGMlUCS {
 		myExample.train(iterations, rulePopulation);
 		//rulePopulation.print();
 		System.out.println("Post process...");
+		//rulePopulation.print();
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -216,6 +219,12 @@ public class DirectGMlUCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		System.out.println("Evaluating on test set (voting)");
+		testEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
+		
 	}
 
 }
