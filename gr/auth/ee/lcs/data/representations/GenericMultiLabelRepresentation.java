@@ -206,7 +206,8 @@ public final class GenericMultiLabelRepresentation extends
 				for (int label = 0; label < numberOfLabels; label++) {
 					final Classifier currentClassifier = matchSet
 							.getClassifier(i);
-					final double fitness = currentClassifier
+					final int numerosity = matchSet.getClassifierNumerosity(i);
+					final double fitness = numerosity * currentClassifier
 							.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 					if (fitness > confidenceTable[label]) {
 						final String cons = (attributeList[attributeList.length
