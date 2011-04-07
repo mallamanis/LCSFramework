@@ -33,8 +33,9 @@ import java.io.IOException;
 
 /**
  * A unilabel UCS using the RT transform
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class UnilabelUCS {
 	/**
@@ -46,8 +47,8 @@ public class UnilabelUCS {
 		final int numOfLabels = 27;
 		final int iterations = 100;
 		final int populationSize = 3000;
-		UnilabelUCS dmlucs = new UnilabelUCS(file, iterations,
-				populationSize, numOfLabels);
+		UnilabelUCS dmlucs = new UnilabelUCS(file, iterations, populationSize,
+				numOfLabels);
 		dmlucs.run();
 
 	}
@@ -165,24 +166,25 @@ public class UnilabelUCS {
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
-						true),
-						new SinglePointCrossover(), CROSSOVER_RATE,
+				new RouletteWheelSelector(
+						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
-		UniLabelRepresentation rep = new UniLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels);
-		rep.setClassificationStrategy(rep.new  ThresholdClassificationStrategy());
+		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
+				PRECISION_BITS, numberOfLabels);
+		rep.setClassificationStrategy(rep.new ThresholdClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
-				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, 0.01,
-				ga, THETA_GA, 1);
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
+				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
+				UCS_EXPERIENCE_THRESHOLD, 0.01, ga, THETA_GA, 1);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new RouletteWheelSelector(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+						new RouletteWheelSelector(
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
 		ArffLoader loader = new ArffLoader();
@@ -190,9 +192,9 @@ public class UnilabelUCS {
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-		//rulePopulation.print();
+		// rulePopulation.print();
 		System.out.println("Post process...");
-		//rulePopulation.print();
+		// rulePopulation.print();
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -216,7 +218,6 @@ public class UnilabelUCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
-		
-		
+
 	}
 }

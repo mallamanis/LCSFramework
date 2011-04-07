@@ -207,8 +207,9 @@ public final class GenericMultiLabelRepresentation extends
 					final Classifier currentClassifier = matchSet
 							.getClassifier(i);
 					final int numerosity = matchSet.getClassifierNumerosity(i);
-					final double fitness = numerosity * currentClassifier
-							.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+					final double fitness = numerosity
+							* currentClassifier
+									.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 					if (fitness > confidenceTable[label]) {
 						final String cons = (attributeList[attributeList.length
 								- numberOfLabels + label])
@@ -318,7 +319,6 @@ public final class GenericMultiLabelRepresentation extends
 	public static final int RELATIVE_ACCURACY = 1;
 
 	public static final int HAMMING_LOSS = 2;
-	
 
 	public GenericMultiLabelRepresentation(final Attribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
@@ -442,7 +442,7 @@ public final class GenericMultiLabelRepresentation extends
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
 			final String value = attributeList[currentLabelIndex]
-			               					.toString(aClassifier);
+					.toString(aClassifier);
 			if (value == "#")
 				continue;
 			totalClassifications++;
@@ -452,7 +452,8 @@ public final class GenericMultiLabelRepresentation extends
 				result++;
 		}
 
-		final float hammingWin = ((float) result ) /((float) totalClassifications);
+		final float hammingWin = ((float) result)
+				/ ((float) totalClassifications);
 
 		return Double.isNaN(hammingWin) ? 0 : hammingWin;
 	}

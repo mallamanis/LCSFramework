@@ -20,8 +20,7 @@ import java.util.Arrays;
  * @author Miltos Allamanis
  * 
  */
-public class MlUCSUpdateAlgorithm extends
-		UpdateAlgorithmFactoryAndStrategy {
+public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	/**
 	 * The data used at each classifier.
@@ -43,22 +42,22 @@ public class MlUCSUpdateAlgorithm extends
 			labelFitness = new float[numberOfLabels];
 			fitness0 = new float[numberOfLabels];
 		}
-		
+
 		/**
 		 * The total sum of the metric used.
 		 */
 		private int tp[];
 
 		private int fp[];
-		
+
 		private float fitness0[];
-		
+
 		private float labelFitness[];
-		
+
 		private float cs[];
-		
+
 		private boolean active[];
-		
+
 		/**
 		 * Strength.
 		 */
@@ -68,9 +67,9 @@ public class MlUCSUpdateAlgorithm extends
 		 * Fitness.
 		 */
 		private double fitness = .5;
-		
+
 		private double globalCs = 0.1;
-		
+
 		private double acc;
 	}
 
@@ -83,7 +82,7 @@ public class MlUCSUpdateAlgorithm extends
 	 * The learning rate.
 	 */
 	private final double b;
-	
+
 	/**
 	 * Acc0
 	 */
@@ -93,7 +92,7 @@ public class MlUCSUpdateAlgorithm extends
 	 * Genetic Algorithm.
 	 */
 	private final IGeneticAlgorithmStrategy ga;
-	
+
 	private final int numberOfLabels;
 
 	/**
@@ -106,11 +105,12 @@ public class MlUCSUpdateAlgorithm extends
 	 */
 	public MlUCSUpdateAlgorithm(
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final double learningRate, final int ageThreshold, final int numberOfLabels) {
+			final double learningRate, final int ageThreshold,
+			final int numberOfLabels) {
 		this.ga = geneticAlgorithm;
 		this.b = learningRate;
 		deleteAge = ageThreshold;
-		this.numberOfLabels =  numberOfLabels;
+		this.numberOfLabels = numberOfLabels;
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class MlUCSUpdateAlgorithm extends
 			return data.globalCs;
 
 		case COMPARISON_MODE_EXPLOITATION:
-					
+
 			final double exploitValue = data.acc
 					* (aClassifier.experience < deleteAge ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
@@ -177,9 +177,10 @@ public class MlUCSUpdateAlgorithm extends
 	public final String getData(final Classifier aClassifier) {
 		MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels + "tp:" + Arrays.toString(data.tp) 
-			+"globalCs:"+data.globalCs+"cs:"+Arrays.toString(data.cs); // TODO
-																			// more
+		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
+				+ "tp:" + Arrays.toString(data.tp) + "globalCs:"
+				+ data.globalCs + "cs:" + Arrays.toString(data.cs); // TODO
+																	// more
 	}
 
 	@Override
@@ -199,17 +200,17 @@ public class MlUCSUpdateAlgorithm extends
 		final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 				.getUpdateDataObject());
 		for (int i = 0; i < numberOfLabels; i++) {
-			if (cl.classifyLabelCorrectly(0, i) != 0 ) {
-				active ++;
+			if (cl.classifyLabelCorrectly(0, i) != 0) {
+				active++;
 				data.active[i] = true;
 			} else {
 				data.active[i] = false;
 			}
 		}
-		
+
 		data.activeLabels = active;
 	}
-	
+
 	/**
 	 * Generates the correct set.
 	 * 
@@ -257,23 +258,25 @@ public class MlUCSUpdateAlgorithm extends
 		}
 		return labelMatchSet;
 	}
-	
-	
-	private final int n =10;
-	
+
+	private final int n = 10;
+
 	private void updatePerLabel(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
 		for (int label = 0; label < numberOfLabels; label++) {
-			ClassifierSet labelMatchSet = generateLabelMatchSet(matchSet, instanceIndex, label);
-			ClassifierSet labelCorrectSet = generateCorrectSet(labelMatchSet, instanceIndex, label);
-			final int matchSetSize = labelMatchSet.getNumberOfMacroclassifiers();
+			ClassifierSet labelMatchSet = generateLabelMatchSet(matchSet,
+					instanceIndex, label);
+			ClassifierSet labelCorrectSet = generateCorrectSet(labelMatchSet,
+					instanceIndex, label);
+			final int matchSetSize = labelMatchSet
+					.getNumberOfMacroclassifiers();
 			final int correctSetSize = labelCorrectSet.getTotalNumerosity();
-			
+
 			if (correctSetSize == 0) {
 				cover(population, instanceIndex);
 				continue;
-			} 
-			
+			}
+
 			float fitnessSum = 0;
 			for (int i = 0; i < matchSetSize; i++) {
 				final Classifier cl = labelMatchSet.getClassifier(i);
@@ -286,11 +289,12 @@ public class MlUCSUpdateAlgorithm extends
 					data.cs[label] += b * (correctSetSize - data.cs[label]);
 					if (Double.isInfinite(data.cs[label]))
 						System.out.println("out " + data.cs[label]);
-					final float acc = ((float) (data.tp[label])) / ((float) (data.tp[label] + data.fp[label]));
+					final float acc = ((float) (data.tp[label]))
+							/ ((float) (data.tp[label] + data.fp[label]));
 					if (acc > acc0) {
-						data.fitness0[label] = 1;						
+						data.fitness0[label] = 1;
 					} else {
-						data.fitness0[label] = (float) Math.pow(acc/acc0, n);
+						data.fitness0[label] = (float) Math.pow(acc / acc0, n);
 					}
 					fitnessSum += data.fitness0[label];
 				} else {
@@ -298,16 +302,17 @@ public class MlUCSUpdateAlgorithm extends
 					data.fitness0[label] = 0;
 				}
 			}
-			
+
 			for (int i = 0; i < matchSetSize; i++) {
 				final Classifier cl = labelMatchSet.getClassifier(i);
 				final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 						.getUpdateDataObject());
-				data.labelFitness[label] += b * (data.fitness0[label] / fitnessSum  - data.labelFitness[label]);
+				data.labelFitness[label] += b
+						* (data.fitness0[label] / fitnessSum - data.labelFitness[label]);
 			}
 		}
 	}
-	
+
 	private void gatherResults(ClassifierSet matchSet) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
@@ -321,12 +326,13 @@ public class MlUCSUpdateAlgorithm extends
 			double fitnessHMean = 0;
 			double csMin = Double.MIN_VALUE;
 			for (int label = 0; label < numberOfLabels; label++) {
-				if (!data.active[label]) continue;
+				if (!data.active[label])
+					continue;
 				fitnessHMean += 1 / data.labelFitness[label];
 				if (csMin < data.cs[label])
 					csMin = data.cs[label];
 			}
-			
+
 			int totalTp = 0;
 			int msa = 0;
 			for (int j = 0; j < numberOfLabels; j++) {
@@ -338,41 +344,38 @@ public class MlUCSUpdateAlgorithm extends
 				cl.setSubsumptionAbility(true);
 			else
 				cl.setSubsumptionAbility(false);
-			final double accC = data.acc>acc0?Math.pow(data.acc,n):(.1*Math.pow(data.acc/acc0, n));
+			final double accC = data.acc > acc0 ? Math.pow(data.acc, n)
+					: (.1 * Math.pow(data.acc / acc0, n));
 			final double hmean = ((double) data.activeLabels) / fitnessHMean;
 			data.fitness = accC * hmean;
 			data.globalCs += b * (csMin - data.globalCs);
-			
+
 		}
 	}
-	
+
 	@Override
 	protected final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
-		
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);
 			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 					.getUpdateDataObject());
 			cl.experience++;
-			
+
 			if (data.activeLabels < 0)
-				buildActive(cl);		
-			
+				buildActive(cl);
+
 		}
 
-		
+		updatePerLabel(population, matchSet, instanceIndex);
 
-		updatePerLabel(population,matchSet,instanceIndex);
-		
 		gatherResults(matchSet);
-				
+
 		if (matchSetSize > 0)
 			ga.evolveSet(matchSet, population);
 
-	
 	}
 
 }

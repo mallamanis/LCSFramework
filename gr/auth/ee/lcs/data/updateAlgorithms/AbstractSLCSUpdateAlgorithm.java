@@ -140,7 +140,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	public String getData(Classifier aClassifier) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		return "tp:" + data.tp + "msa:" + data.msa +"str: "+data.str+"ns:"+data.ns;
+		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
+				+ data.ns;
 	}
 
 	@Override
@@ -151,7 +152,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			Classifier cl = matchSet.getClassifier(i);
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			
 
 			data.msa++;
 			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);

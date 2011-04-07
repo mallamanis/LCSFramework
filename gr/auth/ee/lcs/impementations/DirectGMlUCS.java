@@ -167,16 +167,16 @@ public class DirectGMlUCS {
 	public void run() throws IOException {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
-						true),
-						new SinglePointCrossover(), CROSSOVER_RATE,
+				new RouletteWheelSelector(
+						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.HAMMING_LOSS,
 				labelGeneralizationRate);
-		rep.setClassificationStrategy(rep.new  BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlUCSUpdateAlgorithm(
@@ -185,7 +185,8 @@ public class DirectGMlUCS {
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new RouletteWheelSelector(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+						new RouletteWheelSelector(
+								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
 		ArffLoader loader = new ArffLoader();
@@ -193,9 +194,9 @@ public class DirectGMlUCS {
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-		//rulePopulation.print();
+		// rulePopulation.print();
 		System.out.println("Post process...");
-		//rulePopulation.print();
+		// rulePopulation.print();
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -224,7 +225,7 @@ public class DirectGMlUCS {
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
-		
+
 	}
 
 }

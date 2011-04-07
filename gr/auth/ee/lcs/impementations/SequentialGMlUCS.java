@@ -45,7 +45,7 @@ public class SequentialGMlUCS {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
 		final int numOfLabels = 27;
 		final int iterations = 300;
-		final int populationSize = 4000;
+		final int populationSize = 3000;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .33);
 		sgmlucs.run();
@@ -80,7 +80,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 50;
+	private final int THETA_GA = 650;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -115,7 +115,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 100;
+	private final int UCS_EXPERIENCE_THRESHOLD = 700;
 
 	/**
 	 * The post-process experience threshold used.
