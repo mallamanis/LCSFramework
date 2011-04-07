@@ -267,7 +267,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 				lblProbs[i] /= sum;
 
 			// TODO: t as parameter
-			double t = 0.35;
+			double t = 0.2;
 			// Classify
 			int activeLabels = 0;
 			for (int i = 0; i < lblProbs.length; i++)

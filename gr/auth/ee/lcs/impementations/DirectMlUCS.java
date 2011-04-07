@@ -39,10 +39,10 @@ public class DirectMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 1000;
-		final int populationSize = 3000;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 100;
+		final int populationSize = 1000;
 		DirectMlUCS dmlucs = new DirectMlUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();

@@ -45,7 +45,7 @@ public class UnilabelUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
 		final int numOfLabels = 27;
-		final int iterations = 100;
+		final int iterations = 200;
 		final int populationSize = 3000;
 		UnilabelUCS dmlucs = new UnilabelUCS(file, iterations, populationSize,
 				numOfLabels);
@@ -86,7 +86,7 @@ public class UnilabelUCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 50;
 
 	/**
 	 * The number of bits to use for representing continuous variables

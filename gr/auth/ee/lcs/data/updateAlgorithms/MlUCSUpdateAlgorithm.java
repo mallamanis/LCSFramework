@@ -12,6 +12,7 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * A generalized UCS Update Algorithm. This UCS tries to estimate a given metric
@@ -148,12 +149,12 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
-			if (aClassifier.experience < deleteAge) {
-				final double result = data.globalCs / data.fitness;
+			if (aClassifier.experience > deleteAge) {
+				final double result = data.globalCs; // data.fitness;
 				return Double.isNaN(result) ? 1 : result;
 			}
 
-			return data.globalCs;
+			return 0;
 
 		case COMPARISON_MODE_EXPLOITATION:
 
@@ -263,7 +264,24 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	private void updatePerLabel(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
-		for (int label = 0; label < numberOfLabels; label++) {
+		
+		// Generate random labels
+		final int[] labelSequence = new int[numberOfLabels];
+		for (int i = 0; i < numberOfLabels; i++) {
+			labelSequence[i] = i;
+		}
+
+		// Shuffle
+		final Random rgen = new Random();
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int randomPosition = rgen.nextInt(numberOfLabels);
+			final int temp = labelSequence[i];
+			labelSequence[i] = labelSequence[randomPosition];
+			labelSequence[randomPosition] = temp;
+		}
+		
+		for (int j = 0; j < numberOfLabels; j++) {
+			int label = labelSequence[j];
 			ClassifierSet labelMatchSet = generateLabelMatchSet(matchSet,
 					instanceIndex, label);
 			ClassifierSet labelCorrectSet = generateCorrectSet(labelMatchSet,
@@ -282,6 +300,7 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				final Classifier cl = labelMatchSet.getClassifier(i);
 				final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 						.getUpdateDataObject());
+				final int numerosity = labelMatchSet.getClassifierNumerosity(cl);
 				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
 					data.tp[label] += 1;
 					if (Double.isInfinite(data.cs[label]))
@@ -296,7 +315,7 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 					} else {
 						data.fitness0[label] = (float) Math.pow(acc / acc0, n);
 					}
-					fitnessSum += data.fitness0[label];
+					fitnessSum += data.fitness0[label] * numerosity;
 				} else {
 					data.fp[label] += 1;
 					data.fitness0[label] = 0;
@@ -307,6 +326,7 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				final Classifier cl = labelMatchSet.getClassifier(i);
 				final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 						.getUpdateDataObject());
+				
 				data.labelFitness[label] += b
 						* (data.fitness0[label] / fitnessSum - data.labelFitness[label]);
 			}
@@ -319,18 +339,25 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			final Classifier cl = matchSet.getClassifier(i);
 			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 					.getUpdateDataObject());
+			final int numerosity = matchSet.getClassifierNumerosity(i);
 			if (data.activeLabels == 0) {
 				data.fitness = 0;
 				continue;
 			}
-			double fitnessHMean = 0;
-			double csMin = Double.MIN_VALUE;
+			double fitnessMin = Double.MAX_VALUE;
+			double fitnessSum = 0;
+			double csMax = Double.MIN_VALUE;
+			double csSum = 0;
 			for (int label = 0; label < numberOfLabels; label++) {
 				if (!data.active[label])
 					continue;
-				fitnessHMean += 1 / data.labelFitness[label];
-				if (csMin < data.cs[label])
-					csMin = data.cs[label];
+				if (fitnessMin > data.labelFitness[label])
+					fitnessMin = data.labelFitness[label];
+				fitnessSum += 1 / data.labelFitness[label];
+				
+				if (csMax < data.cs[label])
+					csMax = data.cs[label];
+				csSum += data.cs[label];
 			}
 
 			int totalTp = 0;
@@ -344,11 +371,12 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				cl.setSubsumptionAbility(true);
 			else
 				cl.setSubsumptionAbility(false);
-			final double accC = data.acc > acc0 ? Math.pow(data.acc, n)
-					: (.1 * Math.pow(data.acc / acc0, n));
-			final double hmean = ((double) data.activeLabels) / fitnessHMean;
-			data.fitness = accC * hmean;
-			data.globalCs += b * (csMin - data.globalCs);
+			
+			final double acc = data.acc;
+			final double fitness = (((double)data.activeLabels) / ((double) fitnessSum)  + fitnessMin) / 2; 
+			final double cs = (((double) csSum) / ((double) data.activeLabels) + csMax) / 2;
+			data.fitness += b * ( fitness - data.fitness);
+			data.globalCs += b * ( cs - data.globalCs);
 
 		}
 	}

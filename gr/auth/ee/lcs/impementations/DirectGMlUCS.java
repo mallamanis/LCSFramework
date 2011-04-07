@@ -44,8 +44,8 @@ public class DirectGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
 		final int iterations = 500;
 		final int populationSize = 1000;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
@@ -117,7 +117,7 @@ public class DirectGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
 	 * The post-process experience threshold used.
@@ -132,7 +132,7 @@ public class DirectGMlUCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.98;
 
 	/**
 	 * The number of labels used at the dmlUCS.
