@@ -855,7 +855,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * .classifiers.ClassifierSet, double[])
 	 */
 	@Override
-	public int[] classify(ClassifierSet aSet, double[] visionVector) {
+	public final int[] classify(ClassifierSet aSet, double[] visionVector) {
 		return defaultClassificationStrategy.classify(aSet, visionVector);
 	}
 
