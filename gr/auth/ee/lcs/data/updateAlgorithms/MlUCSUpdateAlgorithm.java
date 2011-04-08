@@ -35,29 +35,20 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		 */
 		private static final long serialVersionUID = -6248732998420320548L;
 
-		public MlUCSClassifierData(int numberOfLabels) {
-			tp = new int[numberOfLabels];
-			fp = new int[numberOfLabels];
-			cs = new float[numberOfLabels];
-			active = new boolean[numberOfLabels];
-			labelFitness = new float[numberOfLabels];
-			fitness0 = new float[numberOfLabels];
-		}
-
 		/**
 		 * The total sum of the metric used.
 		 */
-		private int tp[];
+		private final int tp[];
 
-		private int fp[];
+		private final int fp[];
 
-		private float fitness0[];
+		private final float fitness0[];
 
-		private float labelFitness[];
+		private final float labelFitness[];
 
-		private float cs[];
+		private final float cs[];
 
-		private boolean active[];
+		private final boolean active[];
 
 		/**
 		 * Strength.
@@ -72,6 +63,15 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		private double globalCs = 0.1;
 
 		private double acc;
+
+		public MlUCSClassifierData(int numberOfLabels) {
+			tp = new int[numberOfLabels];
+			fp = new int[numberOfLabels];
+			cs = new float[numberOfLabels];
+			active = new boolean[numberOfLabels];
+			labelFitness = new float[numberOfLabels];
+			fitness0 = new float[numberOfLabels];
+		}
 	}
 
 	/**
@@ -95,6 +95,8 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	private final IGeneticAlgorithmStrategy ga;
 
 	private final int numberOfLabels;
+
+	private final int n = 10;
 
 	/**
 	 * The constructor.
@@ -212,6 +214,54 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		data.activeLabels = active;
 	}
 
+	private void gatherResults(ClassifierSet matchSet) {
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			final Classifier cl = matchSet.getClassifier(i);
+			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
+					.getUpdateDataObject());
+			final int numerosity = matchSet.getClassifierNumerosity(i);
+			if (data.activeLabels == 0) {
+				data.fitness = 0;
+				continue;
+			}
+			double fitnessMin = Double.MAX_VALUE;
+			double fitnessSum = 0;
+			double csMax = Double.MIN_VALUE;
+			double csSum = 0;
+			for (int label = 0; label < numberOfLabels; label++) {
+				if (!data.active[label])
+					continue;
+				if (fitnessMin > data.labelFitness[label])
+					fitnessMin = data.labelFitness[label];
+				fitnessSum += 1 / data.labelFitness[label];
+
+				if (csMax < data.cs[label])
+					csMax = data.cs[label];
+				csSum += data.cs[label];
+			}
+
+			int totalTp = 0;
+			int msa = 0;
+			for (int j = 0; j < numberOfLabels; j++) {
+				totalTp += data.tp[j];
+				msa += data.fp[j] + data.tp[j];
+			}
+			data.acc = (((double) totalTp) / ((double) msa));
+			if (data.acc > acc0)
+				cl.setSubsumptionAbility(true);
+			else
+				cl.setSubsumptionAbility(false);
+
+			final double acc = data.acc;
+			final double fitness = ((data.activeLabels) / (fitnessSum) + fitnessMin) / 2;
+			final double cs = ((csSum) / (data.activeLabels) + csMax) / 2;
+			data.fitness += b * (fitness - data.fitness);
+			data.globalCs += b * (cs - data.globalCs);
+
+		}
+	}
+
 	/**
 	 * Generates the correct set.
 	 * 
@@ -260,11 +310,9 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		return labelMatchSet;
 	}
 
-	private final int n = 10;
-
 	private void updatePerLabel(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
-		
+
 		// Generate random labels
 		final int[] labelSequence = new int[numberOfLabels];
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -279,7 +327,7 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			labelSequence[i] = labelSequence[randomPosition];
 			labelSequence[randomPosition] = temp;
 		}
-		
+
 		for (int j = 0; j < numberOfLabels; j++) {
 			int label = labelSequence[j];
 			ClassifierSet labelMatchSet = generateLabelMatchSet(matchSet,
@@ -300,7 +348,8 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				final Classifier cl = labelMatchSet.getClassifier(i);
 				final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 						.getUpdateDataObject());
-				final int numerosity = labelMatchSet.getClassifierNumerosity(cl);
+				final int numerosity = labelMatchSet
+						.getClassifierNumerosity(cl);
 				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
 					data.tp[label] += 1;
 					if (Double.isInfinite(data.cs[label]))
@@ -326,58 +375,10 @@ public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				final Classifier cl = labelMatchSet.getClassifier(i);
 				final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 						.getUpdateDataObject());
-				
+
 				data.labelFitness[label] += b
 						* (data.fitness0[label] / fitnessSum - data.labelFitness[label]);
 			}
-		}
-	}
-
-	private void gatherResults(ClassifierSet matchSet) {
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			final Classifier cl = matchSet.getClassifier(i);
-			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
-					.getUpdateDataObject());
-			final int numerosity = matchSet.getClassifierNumerosity(i);
-			if (data.activeLabels == 0) {
-				data.fitness = 0;
-				continue;
-			}
-			double fitnessMin = Double.MAX_VALUE;
-			double fitnessSum = 0;
-			double csMax = Double.MIN_VALUE;
-			double csSum = 0;
-			for (int label = 0; label < numberOfLabels; label++) {
-				if (!data.active[label])
-					continue;
-				if (fitnessMin > data.labelFitness[label])
-					fitnessMin = data.labelFitness[label];
-				fitnessSum += 1 / data.labelFitness[label];
-				
-				if (csMax < data.cs[label])
-					csMax = data.cs[label];
-				csSum += data.cs[label];
-			}
-
-			int totalTp = 0;
-			int msa = 0;
-			for (int j = 0; j < numberOfLabels; j++) {
-				totalTp += data.tp[j];
-				msa += data.fp[j] + data.tp[j];
-			}
-			data.acc = (((double) totalTp) / ((double) msa));
-			if (data.acc > acc0)
-				cl.setSubsumptionAbility(true);
-			else
-				cl.setSubsumptionAbility(false);
-			
-			final double acc = data.acc;
-			final double fitness = (((double)data.activeLabels) / ((double) fitnessSum)  + fitnessMin) / 2; 
-			final double cs = (((double) csSum) / ((double) data.activeLabels) + csMax) / 2;
-			data.fitness += b * ( fitness - data.fitness);
-			data.globalCs += b * ( cs - data.globalCs);
-
 		}
 	}
 
