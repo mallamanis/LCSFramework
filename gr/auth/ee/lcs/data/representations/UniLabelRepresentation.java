@@ -134,6 +134,13 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 
 	}
 
+	/**
+	 * A Dummy label used to hide attributes as specified by the
+	 * ComplexRepresentation implementation
+	 * 
+	 * @author Miltiadis Allamanis
+	 * 
+	 */
 	public class DummyLabel extends Attribute {
 
 		public DummyLabel(int startPosition, String attributeName,
@@ -240,7 +247,30 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 */
 	public final class ThresholdClassificationStrategy implements
 			IClassificationStrategy {
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+
+		/**
+		 * The internal threshold used at classification.
+		 */
+		private double threshold = 0.25;
+
+		/**
+		 * The number of steps for refining the threshold.
+		 */
+		final private int steps = 15;
+
+		/**
+		 * Build the normalized confidence vector for a given instance.
+		 * 
+		 * @param aSet
+		 *            the set of classifier (rules)
+		 * @param visionVector
+		 *            the instance that the set will produce the confidence
+		 *            levels on
+		 * @return a float array that contains |L| the confidence (of the
+		 *         classifier set) for each label
+		 */
+		private float[] buildConfidence(ClassifierSet aSet,
+				double[] visionVector) {
 			float[] lblProbs = new float[numberOfLabels];
 			Arrays.fill(lblProbs, 0);
 
@@ -266,18 +296,123 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 			for (int i = 0; i < lblProbs.length; i++)
 				lblProbs[i] /= sum;
 
-			// TODO: t as parameter
-			double t = 0.2;
+			return lblProbs;
+		}
+
+		/**
+		 * Returns the number of active labels for a given threshold.
+		 * 
+		 * @param lblProbs
+		 *            the normalized confidence array of all labels.
+		 * @param th
+		 *            the threshold
+		 * @return an integer indicating the number of labels that are active
+		 */
+		private int getNumberOfActiveLabels(float[] lblProbs, float th) {
 			// Classify
 			int activeLabels = 0;
 			for (int i = 0; i < lblProbs.length; i++)
-				if (lblProbs[i] > t)
+				if (lblProbs[i] > th)
 					activeLabels++;
+			return activeLabels;
+		}
 
-			int[] result = new int[activeLabels];
+		/**
+		 * Get the proportional cut difference with a given target label
+		 * cardinality, threshold and instance confidence valies.
+		 * 
+		 * @param confidenceValues
+		 *            the normalized array of confidence values for all
+		 *            instances and labels
+		 * @param targetLc
+		 *            the target LC (Label Cardinality) that we are trying to
+		 *            achieve.
+		 * @param th
+		 *            the threshold
+		 * @return a float indicating the absolute difference
+		 */
+		private float getPcutDiff(float[][] confidenceValues, float targetLc,
+				float th) {
+			int sumOfActive = 0;
+			for (int i = 0; i < confidenceValues.length; i++)
+				sumOfActive += getNumberOfActiveLabels(confidenceValues[i], th);
+
+			// Compare diff
+			final double diff = Math.abs(((double) sumOfActive)
+					/ ((double) confidenceValues.length) - targetLc);
+			return (float) diff;
+		}
+
+		/**
+		 * Calibrate threshold with a given step for threshold values
+		 * 
+		 * @param confidenceValues
+		 *            the confidence value array (NxL)
+		 * @param targetLc
+		 *            the target LC (Label Cardinality) we are trying to achieve
+		 * @param pCutStep
+		 *            the step used for the pCut
+		 */
+		private void calibrateThreshold(float[][] confidenceValues,
+				float targetLc, float pCutStep) {
+			float downLimit = (float) this.threshold - pCutStep;
+			if (downLimit < 0)
+				downLimit = 0;
+			float upLimit = (float) this.threshold + pCutStep;
+			if (upLimit > .5)
+				upLimit = (float) .5;
+			float bestDif = Float.MAX_VALUE;
+			for (float th = downLimit; th <= upLimit; th += (pCutStep / 2)) {
+				final float diff = getPcutDiff(confidenceValues, targetLc, th);
+				if (diff < bestDif) {
+					bestDif = (float) diff;
+					this.threshold = th;
+				}
+			}
+		}
+
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 * @param targetLc
+		 *            the target Label Cardinality (LC) we are tring to achieve.
+		 */
+		public void proportionalCutCalibration(double[][] instances,
+				ClassifierSet rules, float targetLc) {
+			float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = buildConfidence(rules, instances[i]);
+			}
+			float pCutStep = (float) .25;
+			for (int i = 0; i < steps; i++) {
+				calibrateThreshold(confidenceValues, targetLc, pCutStep);
+				pCutStep /= 2;
+			}
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.
+		 * IClassificationStrategy
+		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
+		 */
+		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+			float[] lblProbs = buildConfidence(aSet, visionVector);
+
+			int[] result = new int[getNumberOfActiveLabels(lblProbs,
+					(float) this.threshold)];
+
 			int currentIndex = 0;
 			for (int i = 0; i < lblProbs.length; i++)
-				if (lblProbs[i] > t) {
+				if (lblProbs[i] > threshold) {
 					result[currentIndex] = i;
 					currentIndex++;
 				}

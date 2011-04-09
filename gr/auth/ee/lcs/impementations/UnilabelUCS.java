@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.UniLabelRepresentation.ThresholdClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -41,8 +42,8 @@ public class UnilabelUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
 		final int numOfLabels = 27;
-		final int iterations = 200;
-		final int populationSize = 3000;
+		final int iterations = 300;
+		final int populationSize = 6000;
 		UnilabelUCS dmlucs = new UnilabelUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -77,7 +78,7 @@ public class UnilabelUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 110;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -112,7 +113,7 @@ public class UnilabelUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 30;
 
 	/**
 	 * The post-process experience threshold used.
@@ -127,7 +128,7 @@ public class UnilabelUCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.2;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -169,7 +170,8 @@ public class UnilabelUCS {
 
 		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
 				PRECISION_BITS, numberOfLabels);
-		rep.setClassificationStrategy(rep.new ThresholdClassificationStrategy());
+		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		rep.setClassificationStrategy(str);
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
@@ -184,10 +186,12 @@ public class UnilabelUCS {
 								true)));
 
 		ArffLoader loader = new ArffLoader();
-		loader.loadInstances(inputFile, false);
+		loader.loadInstances(inputFile, true);
+
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
+
 		// rulePopulation.print();
 		System.out.println("Post process...");
 		// rulePopulation.print();
@@ -199,7 +203,8 @@ public class UnilabelUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation, (float) 1.252);
 		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
