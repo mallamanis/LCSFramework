@@ -80,23 +80,6 @@ public class ClassifierSet implements Serializable {
 
 	}
 
-	public void print() {
-		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
-			System.out
-					.println(this.getClassifier(i).toString()
-							+ " fit:"
-							+ this.getClassifier(i)
-									.getComparisonValue(
-											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
-							+ " exp:" + this.getClassifier(i).experience
-							+ " num:" + this.getClassifierNumerosity(i)
-							+ "cov:" + this.getClassifier(i).getCoverage());
-			System.out
-					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
-							.getData((this.getClassifier(i))));
-		}
-	}
-
 	/**
 	 * The total numerosity of all classifiers in set.
 	 */
@@ -152,16 +135,18 @@ public class ClassifierSet implements Serializable {
 					if (theClassifier.isMoreGeneral(aClassifier)) {
 						// Subsume and control size...
 						myMacroclassifiers.elementAt(i).numerosity += numerosity;
-						if (myISizeControlStrategy != null)
+						if (myISizeControlStrategy != null) {
 							myISizeControlStrategy.controlPopulation(this);
+						}
 						return;
 					}
 				} else if (theClassifier.equals(aClassifier)) { // Or it can't
 																// subsume but
 																// it is equal
 					myMacroclassifiers.elementAt(i).numerosity += numerosity;
-					if (myISizeControlStrategy != null)
+					if (myISizeControlStrategy != null) {
 						myISizeControlStrategy.controlPopulation(this);
+					}
 					return;
 				}
 			}
@@ -172,8 +157,9 @@ public class ClassifierSet implements Serializable {
 		 * control size...
 		 */
 		this.myMacroclassifiers.add(macro);
-		if (myISizeControlStrategy != null)
+		if (myISizeControlStrategy != null) {
 			myISizeControlStrategy.controlPopulation(this);
+		}
 	}
 
 	/**
@@ -221,7 +207,7 @@ public class ClassifierSet implements Serializable {
 	 *            the instance to be matched
 	 * @return a ClassifierSet containing the match set
 	 */
-	public final ClassifierSet generateMatchSet(double[] dataInstance) {
+	public final ClassifierSet generateMatchSet(final double[] dataInstance) {
 		ClassifierSet matchSet = new ClassifierSet(null);
 		final int populationSize = this.getNumberOfMacroclassifiers();
 		// TODO: Parallelize for performance increase
@@ -240,7 +226,7 @@ public class ClassifierSet implements Serializable {
 	 *            the index of the instance
 	 * @return the match set
 	 */
-	public final ClassifierSet generateMatchSet(int dataInstanceIndex) {
+	public final ClassifierSet generateMatchSet(final int dataInstanceIndex) {
 		ClassifierSet matchSet = new ClassifierSet(null);
 		final int populationSize = this.getNumberOfMacroclassifiers();
 		// TODO: Parallelize for performance increase
@@ -253,7 +239,7 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * Return the classifier at a given index of the macroclassifier vector
+	 * Return the classifier at a given index of the macroclassifier vector.
 	 * 
 	 * @param index
 	 *            the index of the macroclassifier
@@ -311,14 +297,6 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
-	 * Remove all set's macroclassifiers
-	 */
-	public final void removeAllMacroclassifiers() {
-		this.myMacroclassifiers.clear();
-		this.totalNumerosity = 0;
-	}
-
-	/**
 	 * Returns the set's total numerosity (the total number of
 	 * microclassifiers).
 	 * 
@@ -333,6 +311,48 @@ public class ClassifierSet implements Serializable {
 	 */
 	public final boolean isEmpty() {
 		return this.myMacroclassifiers.isEmpty();
+	}
+
+	/**
+	 * Merge a set into this set.
+	 * 
+	 * @param aSet
+	 *            the set to be merged.
+	 */
+	public final void merge(final ClassifierSet aSet) {
+		final int setSize = aSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < setSize; i++) {
+			final Macroclassifier ml = aSet.getMacroclassifier(i);
+			this.addClassifier(ml, false);
+		}
+	}
+
+	/**
+	 * Print all classifiers in the set.
+	 */
+	public final void print() {
+		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
+			System.out
+					.println(this.getClassifier(i).toString()
+							+ " fit:"
+							+ this.getClassifier(i)
+									.getComparisonValue(
+											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+							+ " exp:" + this.getClassifier(i).experience
+							+ " num:" + this.getClassifierNumerosity(i)
+							+ "cov:" + this.getClassifier(i).getCoverage());
+			System.out
+					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
+							.getData((this.getClassifier(i))));
+		}
+	}
+
+	/**
+	 * Remove all set's macroclassifiers.
+	 */
+	public final void removeAllMacroclassifiers() {
+		this.myMacroclassifiers.clear();
+		this.totalNumerosity = 0;
 	}
 
 	/**
