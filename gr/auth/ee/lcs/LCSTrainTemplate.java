@@ -66,8 +66,9 @@ public class LCSTrainTemplate {
 	 *            the set on which to run the callbacks
 	 */
 	private void executeCallbacks(final ClassifierSet aSet) {
-		for (int i = 0; i < hooks.size(); i++)
+		for (int i = 0; i < hooks.size(); i++) {
 			hooks.elementAt(i).evaluateSet(aSet);
+		}
 	}
 
 	/**
@@ -108,9 +109,11 @@ public class LCSTrainTemplate {
 		int repetition = 0;
 		while (repetition < iterations) {
 			for (int j = 0; j < hookCallbackFrequency; j++) {
-				System.out.println("Iteration " + repetition);
-				for (int i = 0; i < numInstances; i++)
+				System.out.print(".");
+
+				for (int i = 0; i < numInstances; i++) {
 					trainWithInstance(population, i);
+				}
 				repetition++;
 			}
 			executeCallbacks(population);

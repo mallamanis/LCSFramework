@@ -35,7 +35,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Cache for action.
 	 */
-	private int actionCache[] = null;
+	private int[] actionCache = null;
 
 	/**
 	 * Serialization code for versioning.
@@ -117,8 +117,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final void buildMatches() {
 		this.matchInstances = new byte[ClassifierTransformBridge.instances.length];
-		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++)
+		for (int i = 0; i < ClassifierTransformBridge.instances.length; i++) {
 			matchInstances[i] = -1;
+		}
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return a number that represents the correctness. This number may be 0,1
 	 *         for unilabel classification but it may also be in the range [0,1]
 	 */
-	public float classifyCorrectly(int instanceIndex) {
+	public final float classifyCorrectly(final int instanceIndex) {
 		return transformBridge.classifyAbilityAll(this, instanceIndex);
 	}
 
@@ -153,7 +154,8 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return a float representing the classifier's ability to classify for
 	 *         this instance
 	 */
-	public float classifyLabelCorrectly(int instanceIndex, int labelIndex) {
+	public final float classifyLabelCorrectly(final int instanceIndex,
+			final int labelIndex) {
 		return transformBridge.classifyAbilityLabel(this, instanceIndex,
 				labelIndex);
 	}
@@ -202,7 +204,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the number of instances the classifier has checked
 	 */
-	public int getCheckedInstances() {
+	public final int getCheckedInstances() {
 		return checked;
 	}
 
@@ -224,8 +226,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return the classifier's coverage as calculated by the current checks
 	 */
 	public final double getCoverage() {
-		if (this.checked == 0)
+		if (this.checked == 0) {
 			return INITIAL_FITNESS;
+		}
 		return ((double) this.covered) / ((double) this.checked);
 
 	}
@@ -269,8 +272,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return true if the classifier matches the instance of the given index
 	 */
 	public final boolean isMatch(final int instanceIndex) {
-		if (this.matchInstances == null)
+		if (this.matchInstances == null) {
 			buildMatches();
+		}
 
 		// if we haven't cached the answer, then answer...
 		if (this.matchInstances[instanceIndex] == -1) {

@@ -40,10 +40,10 @@ public class UnilabelUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 300;
-		final int populationSize = 6000;
+		final String file = "/home/miltiadis/Desktop/datasets/carml.arff";
+		final int numOfLabels = 4;
+		final int iterations = 1000;
+		final int populationSize = 2000;
 		UnilabelUCS dmlucs = new UnilabelUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -78,7 +78,7 @@ public class UnilabelUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 110;
+	private final int THETA_GA = 300;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -113,12 +113,12 @@ public class UnilabelUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 30;
+	private final int UCS_EXPERIENCE_THRESHOLD = 50;
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 5;
 
 	/**
 	 * Coverage threshold for post processing.
@@ -128,7 +128,7 @@ public class UnilabelUCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.2;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.0;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -204,8 +204,8 @@ public class UnilabelUCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation, (float) 1.252);
-		rulePopulation.print();
+				rulePopulation, (float) 1);
+		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

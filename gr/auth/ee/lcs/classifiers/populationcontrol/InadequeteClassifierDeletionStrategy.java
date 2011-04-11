@@ -8,15 +8,28 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
 
 /**
- * @author miltiadis
+ * Deletes all classifiers with zero coverage.
+ * 
+ * @author Miltos Allamanis
  * 
  */
 public class InadequeteClassifierDeletionStrategy implements
 		IPopulationControlStrategy {
 
-	final int instanceSize;
+	/**
+	 * The minimum number of instances that should have been checked before a
+	 * classifier can be considered inadequate.
+	 */
+	private final int instanceSize;
 
-	public InadequeteClassifierDeletionStrategy(int instanceSize) {
+	/**
+	 * The strategy constructor.
+	 * 
+	 * @param instanceSize
+	 *            the minimum number of instances to be checked before deleting
+	 *            a zero-coverage classifier.
+	 */
+	public InadequeteClassifierDeletionStrategy(final int instanceSize) {
 		this.instanceSize = instanceSize;
 	}
 
@@ -28,7 +41,7 @@ public class InadequeteClassifierDeletionStrategy implements
 	 * (gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void controlPopulation(ClassifierSet aSet) {
+	public final void controlPopulation(final ClassifierSet aSet) {
 
 		final int setSize = aSet.getNumberOfMacroclassifiers();
 

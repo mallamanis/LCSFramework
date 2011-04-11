@@ -53,14 +53,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 *            representation
 		 * @param attributeName
 		 *            the name of the attribute
-		 * @param generalizationRate
+		 * @param generalizationProbability
 		 *            the generalization rate used
 		 */
 		public Attribute(final int startPosition, final String attributeName,
-				final double generalizationRate) {
+				final double generalizationProbability) {
 			nameOfAttribute = attributeName;
 			positionInChromosome = startPosition;
-			this.generalizationRate = generalizationRate;
+			this.generalizationRate = generalizationProbability;
 		}
 
 		/**
@@ -289,13 +289,23 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	}
 
 	/**
-	 * A classification strategy interface
+	 * A classification strategy interface.
 	 * 
 	 * @author Miltos Allamanis
 	 * 
 	 */
 	public interface IClassificationStrategy {
-		public int[] classify(ClassifierSet aSet, double[] visionVector);
+		/**
+		 * Classify a given vision vector with a given set of classifiers.
+		 * 
+		 * @param aSet
+		 *            the set of classifiers used at the classificaiton
+		 * @param visionVector
+		 *            the vision vector of the instance to be classified
+		 * @return an integer array containing the labels/ classes that the
+		 *         instance has been classified in
+		 */
+		int[] classify(ClassifierSet aSet, double[] visionVector);
 	}
 
 	/**
@@ -723,6 +733,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	protected int numberOfLabels;
 
+	/**
+	 * The rule consequents for all classes
+	 */
 	protected String[] ruleConsequents;
 
 	/**
@@ -741,7 +754,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the number of labels
 	 */
 	public ComplexRepresentation(final Attribute[] attributes,
-			final String[] ruleConsequentsNames, int labels) {
+			final String[] ruleConsequentsNames, final int labels) {
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
 		ruleConsequents = ruleConsequentsNames;
@@ -855,20 +868,24 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * .classifiers.ClassifierSet, double[])
 	 */
 	@Override
-	public final int[] classify(ClassifierSet aSet, double[] visionVector) {
+	public final int[] classify(final ClassifierSet aSet,
+			final double[] visionVector) {
 		return defaultClassificationStrategy.classify(aSet, visionVector);
 	}
 
 	/**
-	 * Classify using another classification Strategy
+	 * Classify using another classification Strategy.
 	 * 
 	 * @param aSet
+	 *            the set of classifiers used at the classification
 	 * @param visionVector
+	 *            the vision vector of the instance to be classified
 	 * @param strategy
-	 * @return
+	 *            the strategy to use for classification
+	 * @return the classification of the given instance
 	 */
-	public int[] classify(ClassifierSet aSet, double[] visionVector,
-			IClassificationStrategy strategy) {
+	public final int[] classify(final ClassifierSet aSet,
+			final double[] visionVector, final IClassificationStrategy strategy) {
 		return strategy.classify(aSet, visionVector);
 	}
 
@@ -951,7 +968,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return true;
 	}
 
-	public void setClassificationStrategy(IClassificationStrategy strategy) {
+	/**
+	 * Setter of the classification strategy.
+	 * 
+	 * @param strategy
+	 *            the strategy to use
+	 */
+	public final void setClassificationStrategy(
+			final IClassificationStrategy strategy) {
 		defaultClassificationStrategy = strategy;
 	}
 
@@ -1003,6 +1027,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 	/**
 	 * Create the class representation depending on the problem.
+	 * 
+	 * @param instances
+	 *            the weka instances
 	 */
 	protected abstract void createClassRepresentation(Instances instances);
 

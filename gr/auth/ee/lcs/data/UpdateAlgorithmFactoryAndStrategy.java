@@ -58,6 +58,9 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 *            the match set
 	 * @param setB
 	 *            the correct set
+	 * @param instanceIndex
+	 *            the index of the instance that will be used for updating the
+	 *            population
 	 */
 	public static void updateData(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
@@ -68,7 +71,7 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	}
 
 	/**
-	 * Covers an instance adding it to the population
+	 * Covers an instance adding it to the population.
 	 * 
 	 * @param population
 	 *            the population
@@ -101,10 +104,19 @@ public abstract class UpdateAlgorithmFactoryAndStrategy {
 	 * Returns a string with the update specific data.
 	 * 
 	 * @param aClassifier
-	 * @return
+	 *            the classifier used to obtain the data
+	 * @return a string representation of the classifier data
 	 */
 	public abstract String getData(Classifier aClassifier);
 
+	/**
+	 * Perform an update knowing only the correct set and match set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param correctSet
+	 *            the correct set
+	 */
 	public abstract void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet);
 

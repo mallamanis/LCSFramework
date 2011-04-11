@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Random;
 
 import weka.core.Instances;
 
@@ -94,11 +93,9 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		@Override
 		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
-			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
-					.getIntAt(positionInChromosome, lengthInBits))
-				return true;
-			else
-				return false;
+			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
+					.getIntAt(positionInChromosome, lengthInBits));
+
 		}
 
 		@Override
@@ -136,55 +133,77 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 
 	/**
 	 * A Dummy label used to hide attributes as specified by the
-	 * ComplexRepresentation implementation
+	 * ComplexRepresentation implementation.
 	 * 
 	 * @author Miltiadis Allamanis
 	 * 
 	 */
 	public class DummyLabel extends Attribute {
 
+		/**
+		 * Constructor.
+		 * 
+		 * @param startPosition
+		 *            the starting position of the chromosome.
+		 * @param attributeName
+		 *            the name of the attribute
+		 * @param generalizationRate
+		 *            the generalization Rate
+		 */
 		public DummyLabel(int startPosition, String attributeName,
 				double generalizationRate) {
 			super(startPosition, attributeName, generalizationRate);
 		}
 
 		@Override
-		public void fixAttributeRepresentation(
-				ExtendedBitSet generatedClassifier) {
+		public final void fixAttributeRepresentation(
+				final ExtendedBitSet generatedClassifier) {
 			return;
 		}
 
 		@Override
-		public boolean isEqual(ExtendedBitSet baseChromosome,
-				ExtendedBitSet testChromosome) {
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 			return true;
 		}
 
 		@Override
-		public boolean isMatch(float attributeVision,
-				ExtendedBitSet testedChromosome) {
+		public final boolean isMatch(final float attributeVision,
+				final ExtendedBitSet testedChromosome) {
 			return true;
 		}
 
 		@Override
-		public boolean isMoreGeneral(ExtendedBitSet baseChromosome,
-				ExtendedBitSet testChromosome) {
+		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
 			return true;
 		}
 
 		@Override
-		public void randomCoveringValue(float attributeValue,
-				Classifier generatedClassifier) {
+		public final void randomCoveringValue(final float attributeValue,
+				final Classifier generatedClassifier) {
 			return;
 		}
 
 		@Override
-		public String toString(ExtendedBitSet convertingClassifier) {
+		public final String toString(final ExtendedBitSet convertingClassifier) {
 			return "";
 		}
 
 	}
 
+	/**
+	 * The constructor.
+	 * 
+	 * @param inputArff
+	 *            the input .arff file name
+	 * @param precision
+	 *            the number of precision bits to be used
+	 * @param labels
+	 *            the number of labels used at the problem
+	 * @throws IOException
+	 *             when file is not found
+	 */
 	public UniLabelRepresentation(final String inputArff, final int precision,
 			final int labels) throws IOException {
 		super(inputArff, precision, labels);
@@ -199,7 +218,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
+	public float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
 		int[] possibleLabels = getDataInstanceLabels(ClassifierTransformBridge.instances[instanceIndex]);
 		int ruleLabel = getClassification(aClassifier)[0];
 
@@ -216,8 +236,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * .auth.ee.lcs.classifiers.Classifier, int, int)
 	 */
 	@Override
-	public float classifyAbilityLabel(Classifier aClassifier,
-			int instanceIndex, int label) {
+	public final float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
 		if (getClassification(aClassifier)[0] == label)
 			return 1;
 		else
@@ -232,7 +252,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public int[] getClassification(Classifier aClassifier) {
+	public final int[] getClassification(final Classifier aClassifier) {
 		int[] label = new int[1];
 		label[0] = ((UniLabel) attributeList[attributeList.length
 				- numberOfLabels]).getValue(aClassifier);
@@ -256,7 +276,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		/**
 		 * The number of steps for refining the threshold.
 		 */
-		final private int steps = 15;
+		private final int steps = 15;
 
 		/**
 		 * Build the normalized confidence vector for a given instance.
@@ -269,8 +289,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * @return a float array that contains |L| the confidence (of the
 		 *         classifier set) for each label
 		 */
-		private float[] buildConfidence(ClassifierSet aSet,
-				double[] visionVector) {
+		private float[] buildConfidence(final ClassifierSet aSet,
+				final double[] visionVector) {
 			float[] lblProbs = new float[numberOfLabels];
 			Arrays.fill(lblProbs, 0);
 
@@ -308,7 +328,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 *            the threshold
 		 * @return an integer indicating the number of labels that are active
 		 */
-		private int getNumberOfActiveLabels(float[] lblProbs, float th) {
+		private int getNumberOfActiveLabels(final float[] lblProbs,
+				final float th) {
 			// Classify
 			int activeLabels = 0;
 			for (int i = 0; i < lblProbs.length; i++)
@@ -331,8 +352,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 *            the threshold
 		 * @return a float indicating the absolute difference
 		 */
-		private float getPcutDiff(float[][] confidenceValues, float targetLc,
-				float th) {
+		private float getPcutDiff(final float[][] confidenceValues,
+				final float targetLc, final float th) {
 			int sumOfActive = 0;
 			for (int i = 0; i < confidenceValues.length; i++)
 				sumOfActive += getNumberOfActiveLabels(confidenceValues[i], th);
@@ -344,7 +365,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		}
 
 		/**
-		 * Calibrate threshold with a given step for threshold values
+		 * Calibrate threshold with a given step for threshold values.
 		 * 
 		 * @param confidenceValues
 		 *            the confidence value array (NxL)
@@ -353,8 +374,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * @param pCutStep
 		 *            the step used for the pCut
 		 */
-		private void calibrateThreshold(float[][] confidenceValues,
-				float targetLc, float pCutStep) {
+		private void calibrateThreshold(final float[][] confidenceValues,
+				final float targetLc, final float pCutStep) {
 			float downLimit = (float) this.threshold - pCutStep;
 			if (downLimit < 0)
 				downLimit = 0;
@@ -383,8 +404,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * @param targetLc
 		 *            the target Label Cardinality (LC) we are tring to achieve.
 		 */
-		public void proportionalCutCalibration(double[][] instances,
-				ClassifierSet rules, float targetLc) {
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules, final float targetLc) {
 			float[][] confidenceValues = new float[instances.length][];
 			for (int i = 0; i < instances.length; i++) {
 				confidenceValues[i] = buildConfidence(rules, instances[i]);
@@ -395,6 +416,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 				pCutStep /= 2;
 			}
 
+			System.out.println("Threshold set to " + this.threshold);
+
 		}
 
 		/*
@@ -404,7 +427,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * IClassificationStrategy
 		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
 		 */
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		public final int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 			float[] lblProbs = buildConfidence(aSet, visionVector);
 
 			int[] result = new int[getNumberOfActiveLabels(lblProbs,
@@ -428,7 +452,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * [])
 	 */
 	@Override
-	public int[] getDataInstanceLabels(double[] dataInstance) {
+	public final int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = dataInstance.length - numberOfLabels
@@ -457,13 +481,13 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public void setClassification(Classifier aClassifier, int action) {
+	public void setClassification(final Classifier aClassifier, final int action) {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
 				aClassifier, action);
 	}
 
 	@Override
-	protected void createClassRepresentation(Instances instances) {
+	protected void createClassRepresentation(final Instances instances) {
 		String[] ruleConsequents = new String[numberOfLabels];
 		this.ruleConsequents = ruleConsequents;
 

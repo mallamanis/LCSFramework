@@ -42,7 +42,7 @@ public class SequentialMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/part2.arff";
+		final String file = "/home/miltiadis/Desktop/datasets/carml.arff";
 		final int numOfLabels = 4;
 		final int iterations = 500;
 		final int populationSize = 1000;
@@ -80,7 +80,7 @@ public class SequentialMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 300;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -115,7 +115,7 @@ public class SequentialMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
 	 * The post-process experience threshold used.

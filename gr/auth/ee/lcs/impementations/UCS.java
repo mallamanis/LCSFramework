@@ -42,7 +42,7 @@ public class UCS {
 	 */
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/car.arff";
-		final int iterations = 500;
+		final int iterations = 1000;
 		final int populationSize = 2000;
 		UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.run();
@@ -76,12 +76,12 @@ public class UCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 300;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 50;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -111,7 +111,7 @@ public class UCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
 	 * The post-process experince threshold used.

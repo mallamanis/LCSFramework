@@ -16,21 +16,23 @@ import java.util.Comparator;
  */
 public class SortPopulationControl implements IPopulationControlStrategy {
 
-	final int comparisonMode;
+	/**
+	 * The comparison mode to be used for sorting.
+	 */
+	private final int comparisonMode;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param sortFitnessMode
+	 *            the comparison mode to be used for sorting
+	 */
 	public SortPopulationControl(final int sortFitnessMode) {
 		comparisonMode = sortFitnessMode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.classifiers.IPopulationControlStrategy#controlPopulation
-	 * (gr.auth.ee.lcs.classifiers.ClassifierSet)
-	 */
 	@Override
-	public void controlPopulation(ClassifierSet aSet) {
+	public final void controlPopulation(final ClassifierSet aSet) {
 		// Create an array to place Classifiers
 		Macroclassifier[] list = new Macroclassifier[aSet
 				.getNumberOfMacroclassifiers()];
@@ -45,19 +47,19 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 		Comparator<Macroclassifier> comp = new Comparator<Macroclassifier>() {
 
 			@Override
-			public final int compare(final Macroclassifier MacroA,
-					final Macroclassifier MacroB) {
+			public final int compare(final Macroclassifier macroA,
+					final Macroclassifier macroB) {
 
-				final double fitnessA = MacroA.myClassifier
+				final double fitnessA = macroA.myClassifier
 						.getComparisonValue(comparisonMode);
-				final double fitnessB = MacroB.myClassifier
+				final double fitnessB = macroB.myClassifier
 						.getComparisonValue(comparisonMode);
 
-				final int experienceA = MacroA.myClassifier.experience;
-				final int experienceB = MacroB.myClassifier.experience;
+				final int experienceA = macroA.myClassifier.experience;
+				final int experienceB = macroB.myClassifier.experience;
 
-				final double coverageA = MacroA.myClassifier.getCoverage();
-				final double coverageB = MacroB.myClassifier.getCoverage();
+				final double coverageA = macroA.myClassifier.getCoverage();
+				final double coverageB = macroB.myClassifier.getCoverage();
 
 				final double expFitA = experienceA < 10 ? 0 : fitnessA;
 				final double expFitB = experienceB < 10 ? 0 : fitnessB;

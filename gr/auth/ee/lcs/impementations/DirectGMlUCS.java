@@ -41,9 +41,9 @@ public class DirectGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 500;
+		final String file = "/home/miltiadis/Desktop/datasets/irisml.arff";
+		final int numOfLabels = 3;
+		final int iterations = 1000;
 		final int populationSize = 1000;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
 				populationSize, numOfLabels);
@@ -114,7 +114,7 @@ public class DirectGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 20;
+	private final int UCS_EXPERIENCE_THRESHOLD = 15;
 
 	/**
 	 * The post-process experience threshold used.
