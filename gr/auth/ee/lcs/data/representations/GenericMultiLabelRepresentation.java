@@ -22,8 +22,14 @@ import weka.core.Instances;
 public final class GenericMultiLabelRepresentation extends
 		ComplexRepresentation {
 
+	/**
+	 * The accuracy don't (#) care value.
+	 */
 	public static final double ACCURACY_DONT_CARE_VALUE = 0.5;
 
+	/**
+	 * The Hamming don't care (#) value.
+	 */
 	public static final double HAMMING_DONT_CARE_VALUE = 1;
 
 	/**
@@ -35,6 +41,11 @@ public final class GenericMultiLabelRepresentation extends
 	 * 
 	 */
 	public class GenericLabel extends Attribute {
+
+		/**
+		 * A boolean variable permitting to temporarily deactivating a label.
+		 */
+		private boolean active;
 
 		/**
 		 * The constructor.
@@ -51,6 +62,17 @@ public final class GenericMultiLabelRepresentation extends
 			super(startPosition, attributeName, generalizationRate);
 			lengthInBits = 2;
 			chromosomeSize += lengthInBits;
+			active = true;
+		}
+
+		/**
+		 * A setter for the active variable.
+		 * 
+		 * @param isActive
+		 *            true if we want to set the label active
+		 */
+		public final void setActive(final boolean isActive) {
+			active = isActive;
 		}
 
 		/*
@@ -78,7 +100,8 @@ public final class GenericMultiLabelRepresentation extends
 		@Override
 		public final boolean isEqual(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
-
+			if (!active)
+				return true;
 			// if the base classifier is specific and the test is # return false
 			if (baseChromosome.get(positionInChromosome) != testChromosome
 					.get(positionInChromosome))
@@ -101,7 +124,8 @@ public final class GenericMultiLabelRepresentation extends
 		@Override
 		public final boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
-
+			if (!active)
+				return true;
 			if (testedChromosome.get(this.positionInChromosome)) {
 				if ((attributeVision == 0 ? false : true) == testedChromosome
 						.get(this.positionInChromosome + 1))
@@ -124,6 +148,8 @@ public final class GenericMultiLabelRepresentation extends
 		@Override
 		public final boolean isMoreGeneral(final ExtendedBitSet testChromosome,
 				final ExtendedBitSet baseChromosome) {
+			if (!active)
+				return true;
 			// if the base classifier is specific and the test is # return false
 			if (baseChromosome.get(positionInChromosome)
 					&& !testChromosome.get(positionInChromosome))
@@ -146,17 +172,34 @@ public final class GenericMultiLabelRepresentation extends
 		@Override
 		public final void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
+			if (!active) {
+				generatedClassifier.clear(positionInChromosome);
+				generatedClassifier.clear(positionInChromosome + 1);
+				return;
+			}
 			if (attributeValue == 0)
 				generatedClassifier.clear(positionInChromosome + 1);
 			else
 				generatedClassifier.set(positionInChromosome + 1);
 
-			if (Math.random() < generalizationRate) // TODO: Configurable
-													// generalization rate
+			if (Math.random() < generalizationRate)
 				generatedClassifier.clear(positionInChromosome);
 			else
 				generatedClassifier.set(positionInChromosome);
 
+		}
+
+		/**
+		 * Enforce label deactivation.
+		 * 
+		 * @param aClassifier
+		 *            the classifier to deactivate
+		 */
+		public final void enforceDeactivation(final Classifier aClassifier) {
+			if (active)
+				return;
+			aClassifier.clear(positionInChromosome);
+			aClassifier.clear(positionInChromosome + 1);
 		}
 
 		/*
@@ -168,6 +211,9 @@ public final class GenericMultiLabelRepresentation extends
 		 */
 		@Override
 		public final String toString(final ExtendedBitSet convertingClassifier) {
+			if (!active)
+				return "#";
+
 			if (convertingClassifier.get(this.positionInChromosome)) {
 				return convertingClassifier.get(this.positionInChromosome + 1) ? "1"
 						: "0";
@@ -191,7 +237,8 @@ public final class GenericMultiLabelRepresentation extends
 			IClassificationStrategy {
 
 		@Override
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 			final double[] decisionTable = new double[numberOfLabels];
 			final double[] confidenceTable = new double[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++) {
@@ -310,16 +357,41 @@ public final class GenericMultiLabelRepresentation extends
 	 * instance.
 	 */
 	private final int metricType;
+
 	/**
 	 * The label generalization rate.
 	 */
 	private final double labelGeneralizationRate;
+
+	/**
+	 * The exact-match metric.
+	 */
 	public static final int EXACT_MATCH = 0;
 
+	/**
+	 * The relative accuracy metric.
+	 */
 	public static final int RELATIVE_ACCURACY = 1;
 
+	/**
+	 * The hamming loss metric.
+	 */
 	public static final int HAMMING_LOSS = 2;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param attributes
+	 *            the attributes to use
+	 * @param ruleConsequentsNames
+	 *            the rule consequent names
+	 * @param labels
+	 *            the number of labels to be used
+	 * @param type
+	 *            the type of metric to be used (see static int's)
+	 * @param generalizationRate
+	 *            the generalization rate to be used for the labels
+	 */
 	public GenericMultiLabelRepresentation(final Attribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final int type, final double generalizationRate) {
@@ -328,9 +400,25 @@ public final class GenericMultiLabelRepresentation extends
 		labelGeneralizationRate = generalizationRate;
 	}
 
-	public GenericMultiLabelRepresentation(String inputArff, int precision,
-			int labels, int type, final double generalizationRate)
-			throws IOException {
+	/**
+	 * A constructor from an .arff file.
+	 * 
+	 * @param inputArff
+	 *            the input .arff filename
+	 * @param precision
+	 *            the number of bits to be used for precision
+	 * @param labels
+	 *            the number of labels used at the program
+	 * @param type
+	 *            the type of metric to be used
+	 * @param generalizationRate
+	 *            the generalization rate of the labels (P#))
+	 * @throws IOException
+	 *             when file is not found
+	 */
+	public GenericMultiLabelRepresentation(final String inputArff,
+			final int precision, final int labels, final int type,
+			final double generalizationRate) throws IOException {
 		super(inputArff, precision, labels);
 		metricType = type;
 		labelGeneralizationRate = generalizationRate;
@@ -346,8 +434,9 @@ public final class GenericMultiLabelRepresentation extends
 			return classifyAccuracy(aClassifier, instanceIndex);
 		case HAMMING_LOSS:
 			return classifyHamming(aClassifier, instanceIndex);
+		default:
+			return 0;
 		}
-		return 0;
 	}
 
 	@Override
@@ -371,8 +460,11 @@ public final class GenericMultiLabelRepresentation extends
 	 * Absolute Classification.
 	 * 
 	 * @param aClassifier
+	 *            a classifier to be used for classification
 	 * @param instanceIndex
-	 * @return
+	 *            the index of the instance
+	 * @return a float indicating the classifier's ability to exact match the
+	 *         instance
 	 */
 	public float classifyAbsolute(final Classifier aClassifier,
 			final int instanceIndex) {
@@ -398,6 +490,15 @@ public final class GenericMultiLabelRepresentation extends
 		return 0;
 	}
 
+	/**
+	 * Find the accuracy at which the classifier classifies a given instance.
+	 * 
+	 * @param aClassifier
+	 *            the classifier
+	 * @param instanceIndex
+	 *            the instance index
+	 * @return a float representing the classifier's accuracy
+	 */
 	public float classifyAccuracy(final Classifier aClassifier,
 			final int instanceIndex) {
 		float correct = 0;
@@ -429,7 +530,7 @@ public final class GenericMultiLabelRepresentation extends
 	 * Evaluate classify ability of an instance through Hamming distance.
 	 * 
 	 * @param aClassifier
-	 *            the classifier to evaluatre
+	 *            the classifier to evaluate
 	 * @param instanceIndex
 	 *            the index of the instance
 	 * @return the hamming distance of the classifier and the instance.
@@ -495,7 +596,7 @@ public final class GenericMultiLabelRepresentation extends
 	}
 
 	@Override
-	public final int[] getDataInstanceLabels(final double[] dataInstance) {
+	public int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -517,10 +618,54 @@ public final class GenericMultiLabelRepresentation extends
 	}
 
 	@Override
-	public final void setClassification(final Classifier aClassifier,
-			final int action) {
+	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
+	}
+
+	/**
+	 * Activate all labels.
+	 */
+	public void activateAllLabels() {
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			((GenericLabel) attributeList[currentLabelIndex]).setActive(true);
+		}
+	}
+
+	/**
+	 * Activate only a specific label.
+	 * 
+	 * @param labelIndex
+	 *            the index of the label to be activated
+	 */
+	public void activateLabel(final int labelIndex) {
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			((GenericLabel) attributeList[currentLabelIndex])
+					.setActive(i == labelIndex);
+		}
+	}
+
+	/**
+	 * Make sure all labels in the set are correctly deactivated.
+	 * 
+	 * @param aSet
+	 *            the set to deactivate labels from
+	 */
+	public void reinforceDeactivatedLabels(final ClassifierSet aSet) {
+		final int setSize = aSet.getNumberOfMacroclassifiers();
+		for (int k = 0; k < setSize; k++) {
+			final Classifier cl = aSet.getClassifier(k);
+			for (int i = 0; i < numberOfLabels; i++) {
+				final int currentLabelIndex = attributeList.length
+						- numberOfLabels + i;
+				((GenericLabel) attributeList[currentLabelIndex])
+						.enforceDeactivation(cl);
+			}
+		}
 	}
 
 }
