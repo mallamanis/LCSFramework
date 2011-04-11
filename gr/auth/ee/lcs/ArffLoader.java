@@ -17,12 +17,17 @@ import weka.core.Instances;
 public class ArffLoader {
 
 	/**
-	 * A test set
+	 * A test set.
 	 */
 	public Instances testSet;
 
 	/**
-	 * Load instances into the global train store and create test set
+	 * The current trainSet.
+	 */
+	public Instances trainSet;
+
+	/**
+	 * Load instances into the global train store and create test set.
 	 * 
 	 * @param filename
 	 *            the .arff filename to be used
@@ -41,7 +46,6 @@ public class ArffLoader {
 		set.randomize(new Random());
 		set.stratify(10);
 
-		Instances trainSet;
 		if (generateTestSet) {
 			trainSet = set.trainCV(10, 3);
 			testSet = set.testCV(10, 3);
