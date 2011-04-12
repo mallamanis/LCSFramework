@@ -88,7 +88,9 @@ public final class GenericMultiLabelRepresentation extends
 		@Override
 		public final void fixAttributeRepresentation(
 				final ExtendedBitSet generatedClassifier) {
-			return;
+			if (active)
+				return;
+			generatedClassifier.clear(positionInChromosome);
 		}
 
 		/*

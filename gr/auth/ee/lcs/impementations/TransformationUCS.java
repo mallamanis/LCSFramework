@@ -27,6 +27,7 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
+import gr.auth.ee.lcs.utilities.PairwiseLabelSelector;
 
 import java.io.IOException;
 
@@ -47,11 +48,11 @@ public class TransformationUCS {
 		final int iterations = 500;
 		final int populationSize = 1000;
 		final float lc = (float) 1.869;
-		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
+		PairwiseLabelSelector selector = new PairwiseLabelSelector(
 				numOfLabels);
-		TransformationUCS dmlucs = new TransformationUCS(file, iterations,
+		TransformationUCS trucs = new TransformationUCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
-		dmlucs.run();
+		trucs.run();
 
 	}
 
@@ -128,7 +129,7 @@ public class TransformationUCS {
 	private final int UCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
-	 * The post-process experince threshold used.
+	 * The post-process experience threshold used.
 	 */
 	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
 
@@ -185,7 +186,7 @@ public class TransformationUCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.HAMMING_LOSS, 0);
+				GenericMultiLabelRepresentation.EXACT_MATCH, 0);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
