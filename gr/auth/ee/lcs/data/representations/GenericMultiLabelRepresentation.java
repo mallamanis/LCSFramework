@@ -7,6 +7,8 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.utilities.ILabelSelector;
+import gr.auth.ee.lcs.utilities.ProportionalCut;
 
 import java.io.IOException;
 
@@ -300,11 +302,17 @@ public final class GenericMultiLabelRepresentation extends
 	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
-		@Override
-		public int[] classify(final ClassifierSet aSet,
+		private final float targetLC;
+
+		private double voteThreshold;
+
+		public VotingClassificationStrategy(float targetLabelCardinality) {
+			targetLC = targetLabelCardinality;
+		}
+
+		private final float[] getConfidenceArray(final ClassifierSet aSet,
 				final double[] visionVector) {
-			final double voteThreshold = 0;
-			final double[] votingTable = new double[numberOfLabels];
+			final float[] votingTable = new float[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++)
 				votingTable[i] = 0;
 
@@ -332,6 +340,58 @@ public final class GenericMultiLabelRepresentation extends
 
 				}
 			}
+
+			// Find mean to make all numbers positive
+			double minVote = Double.MAX_VALUE;
+			for (int i = 0; i < votingTable.length; i++) {
+				if (votingTable[i] < minVote)
+					minVote = votingTable[i];
+			}
+
+			// Find sum (and make all positive)
+			double sumVote = 0;
+			for (int i = 0; i < votingTable.length; i++) {
+				votingTable[i] -= minVote;
+				sumVote += votingTable[i];
+			}
+
+			// Normalize
+			for (int i = 0; i < votingTable.length; i++) {
+				votingTable[i] /= sumVote;
+			}
+			return votingTable;
+		}
+
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 * @param targetLc
+		 *            the target Label Cardinality (LC) we are tring to achieve.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
+
+			ProportionalCut pCut = new ProportionalCut();
+			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.voteThreshold);
+
+		}
+
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+
+			float[] votingTable = getConfidenceArray(aSet, visionVector);
 
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++)
@@ -640,12 +700,12 @@ public final class GenericMultiLabelRepresentation extends
 	 * @param labelIndex
 	 *            the index of the label to be activated
 	 */
-	public void activateLabel(final int labelIndex) {
+	public void activateLabel(final ILabelSelector selector) {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
 			((GenericLabel) attributeList[currentLabelIndex])
-					.setActive(i == labelIndex);
+					.setActive(selector.getStatus(i));
 		}
 	}
 
