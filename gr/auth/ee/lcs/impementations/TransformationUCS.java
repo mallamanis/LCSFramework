@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -24,6 +25,8 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
+import gr.auth.ee.lcs.utilities.ILabelSelector;
 
 import java.io.IOException;
 
@@ -33,18 +36,21 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class BinaryRelevanceUCS {
+public class TransformationUCS {
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final int numOfLabels = 6;
 		final int iterations = 500;
 		final int populationSize = 1000;
-		BinaryRelevanceUCS dmlucs = new BinaryRelevanceUCS(file, iterations,
-				populationSize, numOfLabels);
+		final float lc = (float) 1.869;
+		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
+				numOfLabels);
+		TransformationUCS dmlucs = new TransformationUCS(file, iterations,
+				populationSize, numOfLabels, lc, selector);
 		dmlucs.run();
 
 	}
@@ -69,6 +75,13 @@ public class BinaryRelevanceUCS {
 	 */
 	private final float CROSSOVER_RATE = (float) 0.8;
 
+	private final ILabelSelector selector;
+
+	/**
+	 * The target label cardinality.
+	 */
+	private final float targetLC;
+
 	/**
 	 * The GA mutation rate.
 	 */
@@ -77,7 +90,7 @@ public class BinaryRelevanceUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 300;
+	private final int THETA_GA = 150;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -112,7 +125,7 @@ public class BinaryRelevanceUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 10;
+	private final int UCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
 	 * The post-process experince threshold used.
@@ -146,12 +159,15 @@ public class BinaryRelevanceUCS {
 	 * @param numOfLabels
 	 *            the number of labels in the problem
 	 */
-	public BinaryRelevanceUCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels) {
+	public TransformationUCS(final String filename, final int iterations,
+			final int populationSize, final int numOfLabels,
+			final float problemLC, ILabelSelector transformSelector) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
+		this.targetLC = problemLC;
+		this.selector = transformSelector;
 	}
 
 	/**
@@ -170,7 +186,7 @@ public class BinaryRelevanceUCS {
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.HAMMING_LOSS, 0);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
@@ -184,9 +200,9 @@ public class BinaryRelevanceUCS {
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 
-		for (int i = 0; i < numberOfLabels; i++) {
-			System.out.println("Training Binary Classifier for label " + i);
-			rep.activateLabel(i);
+		while (selector.hasNext()) {
+			System.out.println("Training Classifier Set");
+			rep.activateLabel(selector);
 			ClassifierSet brpopulation = new ClassifierSet(
 					new FixedSizeSetWorstFitnessDeletion(
 							populationSize,
@@ -196,6 +212,7 @@ public class BinaryRelevanceUCS {
 			myExample.train(iterations, brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
+			selector.next();
 		}
 		rep.activateAllLabels();
 
@@ -222,7 +239,11 @@ public class BinaryRelevanceUCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(str);
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
 		System.out.println("Evaluating on test set (voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
