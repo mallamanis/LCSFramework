@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -45,8 +46,9 @@ public class DirectGMlUCS {
 		final int numOfLabels = 3;
 		final int iterations = 1000;
 		final int populationSize = 1000;
+		final float lc = 1;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
-				populationSize, numOfLabels);
+				populationSize, numOfLabels, lc);
 		dmlucs.run();
 
 	}
@@ -55,6 +57,8 @@ public class DirectGMlUCS {
 	 * The input file used (.arff).
 	 */
 	private final String inputFile;
+
+	private final float targetLC;
 
 	/**
 	 * The number of full iterations to train the UCS.
@@ -149,11 +153,13 @@ public class DirectGMlUCS {
 	 *            the number of labels in the problem
 	 */
 	public DirectGMlUCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels) {
+			final int populationSize, final int numOfLabels,
+			final float problemLC) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
+		this.targetLC = problemLC;
 	}
 
 	/**
@@ -217,7 +223,12 @@ public class DirectGMlUCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(str);
+		// TODO: Calibrate on set
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
 		System.out.println("Evaluating on test set (voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);

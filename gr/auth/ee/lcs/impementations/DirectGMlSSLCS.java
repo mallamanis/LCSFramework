@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlSSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -43,8 +44,9 @@ public class DirectGMlSSLCS {
 		final int numOfLabels = 7;
 		final int iterations = 50;
 		final int populationSize = 2000;
+		final float lc = (float) 1;
 		DirectGMlSSLCS sgmlucs = new DirectGMlSSLCS(file, iterations,
-				populationSize, numOfLabels, .07);
+				populationSize, numOfLabels, .07, lc);
 		sgmlucs.run();
 
 	}
@@ -53,6 +55,11 @@ public class DirectGMlSSLCS {
 	 * The input file used (.arff).
 	 */
 	private final String inputFile;
+
+	/**
+	 * The target label cardinality.
+	 */
+	private final float targetLC;
 
 	/**
 	 * The number of full iterations to train the UCS.
@@ -140,12 +147,13 @@ public class DirectGMlSSLCS {
 	 */
 	public DirectGMlSSLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability) {
+			final double labelGeneralizationProbability, final float problemLC) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
+		this.targetLC = problemLC;
 	}
 
 	/**
@@ -167,7 +175,10 @@ public class DirectGMlSSLCS {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH,
 				labelGeneralizationRate);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(str);
+
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlSSLCSUpdateAlgorithm(
@@ -202,6 +213,9 @@ public class DirectGMlSSLCS {
 
 		eval.evaluateSet(rulePopulation);
 
+		// TODO: Calibrate on set
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);

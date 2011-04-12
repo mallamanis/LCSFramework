@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -42,12 +43,13 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/carml.arff";
-		final int numOfLabels = 4;
-		final int iterations = 1000;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
+		final int iterations = 200;
 		final int populationSize = 4000;
+		final float lc = (float) 1.252;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
-				populationSize, numOfLabels, .33);
+				populationSize, numOfLabels, .33, lc);
 		sgmlucs.run();
 
 	}
@@ -80,12 +82,17 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 300;
+	private final int THETA_GA = 400;
+
+	/**
+	 * The target Label Cardinality of the problem
+	 */
+	private final float targetLC;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 50;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -115,7 +122,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 20;
+	private final int UCS_EXPERIENCE_THRESHOLD = 50;
 
 	/**
 	 * The post-process experience threshold used.
@@ -155,15 +162,18 @@ public class SequentialGMlUCS {
 	 *            the number of labels in the problem
 	 * @param labelGeneralizationProbability
 	 *            the probability of generalizing a label (during coverage)
+	 * @param problemLC
+	 *            the problem's target label cardinality
 	 */
 	public SequentialGMlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability) {
+			final double labelGeneralizationProbability, final float problemLC) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
+		this.targetLC = problemLC;
 	}
 
 	/**
@@ -230,8 +240,13 @@ public class SequentialGMlUCS {
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
 
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
-		ClassifierTransformBridge.setInstance(rep);
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(str);
+		// TODO: Calibrate on set
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
+
 		System.out.println("Evaluating on test set (voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);

@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -44,8 +45,9 @@ public class TournamentSGMlUCS {
 		final int numOfLabels = 7;
 		final int iterations = 50;
 		final int populationSize = 1000;
+		final float lc = (float) 3.5;
 		TournamentSGMlUCS sgmlucs = new TournamentSGMlUCS(file, iterations,
-				populationSize, numOfLabels, .07);
+				populationSize, numOfLabels, .07, lc);
 		sgmlucs.run();
 
 	}
@@ -140,6 +142,8 @@ public class TournamentSGMlUCS {
 	 */
 	private final int numberOfLabels;
 
+	private final float targetLC;
+
 	/**
 	 * Constructor.
 	 * 
@@ -156,12 +160,13 @@ public class TournamentSGMlUCS {
 	 */
 	public TournamentSGMlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability) {
+			final double labelGeneralizationProbability, float problemLC) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
+		this.targetLC = problemLC;
 	}
 
 	/**
@@ -183,7 +188,10 @@ public class TournamentSGMlUCS {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH,
 				labelGeneralizationRate);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(str);
+
 		ClassifierTransformBridge.setInstance(rep);
 
 		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
@@ -218,7 +226,9 @@ public class TournamentSGMlUCS {
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
+		// TODO: Calibrate on set
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");

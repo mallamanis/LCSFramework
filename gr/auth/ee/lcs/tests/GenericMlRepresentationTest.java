@@ -43,7 +43,7 @@ public class GenericMlRepresentationTest {
 		list[3] = rep.new GenericLabel(rep.getChromosomeSize(), "Mediocre", .33);
 		list[4] = rep.new GenericLabel(rep.getChromosomeSize(), "Bad", .33);
 
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(0));
 		ClassifierTransformBridge.setInstance(rep);
 	}
 

@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -44,8 +45,9 @@ public class SequentialGMlSSLCS {
 		final int numOfLabels = 7;
 		final int iterations = 100;
 		final int populationSize = 1000;
+		final float lc = (float) 3.5;
 		SequentialGMlSSLCS sgmlucs = new SequentialGMlSSLCS(file, iterations,
-				populationSize, numOfLabels, .33);
+				populationSize, numOfLabels, .33, lc);
 		sgmlucs.run();
 
 	}
@@ -54,6 +56,11 @@ public class SequentialGMlSSLCS {
 	 * The input file used (.arff).
 	 */
 	private final String inputFile;
+
+	/**
+	 * The target LC used at for classification
+	 */
+	private final float targetLC;
 
 	/**
 	 * The number of full iterations to train the UCS.
@@ -141,12 +148,13 @@ public class SequentialGMlSSLCS {
 	 */
 	public SequentialGMlSSLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability) {
+			final double labelGeneralizationProbability, final float problemLC) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
+		this.targetLC = problemLC;
 	}
 
 	/**
@@ -168,7 +176,10 @@ public class SequentialGMlSSLCS {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.HAMMING_LOSS,
 				labelGeneralizationRate);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(str);
+
 		ClassifierTransformBridge.setInstance(rep);
 
 		SSLCSUpdateAlgorithm updateObj = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
@@ -204,7 +215,9 @@ public class SequentialGMlSSLCS {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-
+		// TODO: Calibrate on set
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);

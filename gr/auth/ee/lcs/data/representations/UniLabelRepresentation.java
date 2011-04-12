@@ -275,12 +275,12 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		public ThresholdClassificationStrategy() {
 			pCut = new ProportionalCut();
 		}
-		
+
 		/**
 		 * The pCut method used
 		 */
 		private ProportionalCut pCut;
-		
+
 		/**
 		 * The internal threshold used at classification.
 		 */
@@ -327,8 +327,6 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 			return lblProbs;
 		}
 
-		
-
 		/**
 		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
 		 * threshold.
@@ -347,8 +345,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 			for (int i = 0; i < instances.length; i++) {
 				confidenceValues[i] = buildConfidence(rules, instances[i]);
 			}
-			
-			
+
 			this.threshold = pCut.calibrate(targetLc, confidenceValues);
 			System.out.println("Threshold set to " + this.threshold);
 

@@ -7,27 +7,30 @@ package gr.auth.ee.lcs.utilities;
  * A threshold calibration method.
  * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class ProportionalCut {
 	/**
-	 * The threshold
+	 * The threshold.
 	 */
 	private float threshold;
-	
+
 	/**
 	 * The number of refinement steps to be taken.
 	 */
-	private static final int steps=15;
-		
+	private static final int steps = 15;
+
 	/**
 	 * Calibrates the threshold.
-	 * @param targetLC the target Label Cardinality we are trying to achieve
-	 * @param confidenceValues the normalized confidence value's array per instance per label
+	 * 
+	 * @param targetLC
+	 *            the target Label Cardinality we are trying to achieve
+	 * @param confidenceValues
+	 *            the normalized confidence value's array per instance per label
 	 * @return a float representing the normalized threshold (between 0 and .5)
 	 */
 	public float calibrate(float targetLC, float[][] confidenceValues) {
-		threshold = (float).25;
+		threshold = (float) .25;
 		float pCutStep = (float) .25;
 		for (int i = 0; i < steps; i++) {
 			calibrateThreshold(confidenceValues, targetLC, pCutStep);
@@ -35,7 +38,7 @@ public class ProportionalCut {
 		}
 		return threshold;
 	}
-	
+
 	/**
 	 * Calibrate threshold with a given step for threshold values.
 	 * 
@@ -63,14 +66,14 @@ public class ProportionalCut {
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the proportional cut difference with a given target label
 	 * cardinality, threshold and instance confidence valies.
 	 * 
 	 * @param confidenceValues
-	 *            the normalized array of confidence values for all
-	 *            instances and labels
+	 *            the normalized array of confidence values for all instances
+	 *            and labels
 	 * @param targetLc
 	 *            the target LC (Label Cardinality) that we are trying to
 	 *            achieve.
@@ -89,7 +92,7 @@ public class ProportionalCut {
 				/ ((double) confidenceValues.length) - targetLc);
 		return (float) diff;
 	}
-	
+
 	/**
 	 * Returns the number of active labels for a given threshold.
 	 * 
@@ -99,13 +102,12 @@ public class ProportionalCut {
 	 *            the threshold
 	 * @return an integer indicating the number of labels that are active
 	 */
-	public int getNumberOfActiveLabels(final float[] lblProbs,
-			final float th) {
+	public int getNumberOfActiveLabels(final float[] lblProbs, final float th) {
 		// Classify
 		int activeLabels = 0;
 		for (int i = 0; i < lblProbs.length; i++)
 			if (lblProbs[i] > th)
 				activeLabels++;
 		return activeLabels;
-	} 	
+	}
 }

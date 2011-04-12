@@ -58,7 +58,8 @@ public class ComplexRepresentationLCSTest {
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				filename, 6, numOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH, .33);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
+				(float) 3.5));
 		ClassifierTransformBridge.setInstance(rep);
 
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy = new
