@@ -34,17 +34,17 @@ import java.io.IOException;
  * @author Miltiadis Allamanis
  * 
  */
-public class UnilabelUCS {
+public class RTUCS {
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/carml.arff";
-		final int numOfLabels = 4;
-		final int iterations = 1000;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
+		final int numOfLabels = 27;
+		final int iterations = 200;
 		final int populationSize = 2000;
-		UnilabelUCS dmlucs = new UnilabelUCS(file, iterations, populationSize,
+		RTUCS dmlucs = new RTUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
 
@@ -78,7 +78,7 @@ public class UnilabelUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 300;
+	private final int THETA_GA = 855;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -147,7 +147,7 @@ public class UnilabelUCS {
 	 * @param numOfLabels
 	 *            the number of labels in the problem
 	 */
-	public UnilabelUCS(final String filename, final int iterations,
+	public RTUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) {
 		inputFile = filename;
 		this.iterations = iterations;
@@ -187,9 +187,10 @@ public class UnilabelUCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-
+		AccuracyEvaluator acc = new AccuracyEvaluator(loader.trainSet, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		myExample.registerHook(acc);
 		myExample.train(iterations, rulePopulation);
 
 		// rulePopulation.print();
@@ -204,7 +205,7 @@ public class UnilabelUCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation, (float) 1);
+				rulePopulation, (float) 1.35);
 		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
