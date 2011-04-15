@@ -199,7 +199,7 @@ public class TransformationUCS {
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 
-		while (selector.hasNext()) {
+		do {
 			System.out.println("Training Classifier Set");
 			rep.activateLabel(selector);
 			ClassifierSet brpopulation = new ClassifierSet(
@@ -211,8 +211,8 @@ public class TransformationUCS {
 			myExample.train(iterations, brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
-			selector.next();
-		}
+			
+		}while (selector.next());
 		rep.activateAllLabels();
 
 		System.out.println("Post process...");

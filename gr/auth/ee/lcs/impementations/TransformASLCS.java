@@ -13,11 +13,10 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
+import gr.auth.ee.lcs.evaluators.AllSingleLabelEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
@@ -27,6 +26,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.PairwiseLabelSelector;
 
@@ -34,8 +34,9 @@ import java.io.IOException;
 
 /**
  * A Transformation ml-ASLCS
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class TransformASLCS {
 	/**
@@ -45,10 +46,10 @@ public class TransformASLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
 		final int numOfLabels = 6;
-		final int iterations = 200;
+		final int iterations = 400;
 		final int populationSize = 1000;
 		final float lc = (float) 1.869;
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(numOfLabels);
+		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
 		trucs.run();
@@ -95,12 +96,12 @@ public class TransformASLCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 100;
+	private final int CALLBACK_RATE = 200;
 
 	/**
 	 * The number of bits to use for representing continuous variables
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = 5;
 
 	/**
 	 * The ASLCS n power parameter.
@@ -188,8 +189,10 @@ public class TransformASLCS {
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(loader.trainSet,numberOfLabels, true);
+		myExample.registerHook(slEval);
 
-		while (selector.hasNext()) {
+		do {
 			System.out.println("Training Classifier Set");
 			rep.activateLabel(selector);
 			ClassifierSet brpopulation = new ClassifierSet(
@@ -201,8 +204,8 @@ public class TransformASLCS {
 			myExample.train(iterations, brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
-			selector.next();
-		}
+			
+		} while (selector.next());
 		rep.activateAllLabels();
 
 		System.out.println("Post process...");
@@ -218,7 +221,7 @@ public class TransformASLCS {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-
+		slEval.evaluateSet(rulePopulation);
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);

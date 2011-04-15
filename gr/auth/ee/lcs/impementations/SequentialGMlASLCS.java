@@ -34,7 +34,7 @@ import java.io.IOException;
  * A sequential Generic Representation ASLCS.
  * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class SequentialGMlASLCS {
 	/**
@@ -185,8 +185,8 @@ public class SequentialGMlASLCS {
 
 		ClassifierTransformBridge.setInstance(rep);
 
-		ASLCSUpdateAlgorithm updateObj = new ASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga);
+		ASLCSUpdateAlgorithm updateObj = new ASLCSUpdateAlgorithm(ASLCS_N,
+				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga);
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 
@@ -230,9 +230,9 @@ public class SequentialGMlASLCS {
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
-		
+
 		System.out.println("Best Fitness");
-		
+
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);

@@ -40,9 +40,9 @@ public class SSLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/cmc.arff";
+		final String file = "/home/miltiadis/Desktop/datasets/iris.arff";
 		final int iterations = 600;
-		final int populationSize = 1200;
+		final int populationSize = 1000;
 		SSLCS sslcs = new SSLCS(file, iterations, populationSize);
 		sslcs.run();
 	}
@@ -75,7 +75,7 @@ public class SSLCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 300;
+	private final int THETA_GA = 100;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -103,7 +103,7 @@ public class SSLCS {
 	private final int SSLCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
-	 * The SSLCS experience threshold.
+	 * The SSLCS subsumption experience threshold.
 	 */
 	private final double SSLCS_FITNESS_THRESHOLD = .99;
 

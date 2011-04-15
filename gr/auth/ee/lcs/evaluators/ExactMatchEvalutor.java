@@ -63,7 +63,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 
 	@Override
 	public final double evaluateSet(final ClassifierSet classifiers) {
-		ClassifierTransformBridge bridge = ClassifierTransformBridge
+		final ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
 
 		int tp = 0, fp = 0;
