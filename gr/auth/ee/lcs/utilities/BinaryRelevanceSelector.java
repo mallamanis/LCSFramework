@@ -37,9 +37,12 @@ public class BinaryRelevanceSelector implements ILabelSelector {
 	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#next()
 	 */
 	@Override
-	public void next() {
-		if (currentLabel < numberOfLabels - 1)
+	public boolean next() {
+		if (currentLabel < numberOfLabels - 1){
 			currentLabel++;
+			return true;
+		}
+		return false;
 	}
 
 	/*

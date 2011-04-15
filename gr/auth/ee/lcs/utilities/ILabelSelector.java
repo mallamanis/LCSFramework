@@ -12,8 +12,10 @@ package gr.auth.ee.lcs.utilities;
 public interface ILabelSelector {
 	/**
 	 * Change internal status to the next combination.
+	 * 
+	 * @return true if the is a next (and we have sucessfully transitioned)
 	 */
-	void next();
+	boolean next();
 
 	/**
 	 * Reset combination counting.

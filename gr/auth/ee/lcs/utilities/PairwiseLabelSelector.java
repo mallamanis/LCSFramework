@@ -37,14 +37,15 @@ public class PairwiseLabelSelector implements ILabelSelector {
 	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#next()
 	 */
 	@Override
-	public void next() {
+	public boolean next() {
 		if (!hasNext())
-			return;
+			return false;
 		j++;
 		if (j >= numberOfLabels) {
 			i++;
 			j = i + 1;
 		}
+		return true;
 	}
 
 	/*
