@@ -13,7 +13,6 @@ import java.util.Arrays;
  * A tournament selecting the best fitness classifier.
  * 
  * @author Miltos Allamanis
- * @deprecated use TournamentSelector
  * 
  */
 public class TournamentSelector2 implements INaturalSelector {

@@ -104,7 +104,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 		data.fitness = (data.str / data.msa);
 		if (Double.isNaN(data.fitness))
-			data.fitness = 0;
+			data.fitness = Double.MIN_VALUE;
 	}
 
 }

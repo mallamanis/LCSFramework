@@ -25,7 +25,6 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
-import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.PairwiseLabelSelector;
 
@@ -48,8 +47,7 @@ public class TransformationUCS {
 		final int iterations = 500;
 		final int populationSize = 1000;
 		final float lc = (float) 1.869;
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(
-				numOfLabels);
+		PairwiseLabelSelector selector = new PairwiseLabelSelector(numOfLabels);
 		TransformationUCS trucs = new TransformationUCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
 		trucs.run();

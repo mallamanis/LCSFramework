@@ -44,8 +44,7 @@ public class RTUCS {
 		final int numOfLabels = 27;
 		final int iterations = 200;
 		final int populationSize = 2000;
-		RTUCS dmlucs = new RTUCS(file, iterations, populationSize,
-				numOfLabels);
+		RTUCS dmlucs = new RTUCS(file, iterations, populationSize, numOfLabels);
 		dmlucs.run();
 
 	}
