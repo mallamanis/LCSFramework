@@ -41,10 +41,10 @@ public class RTASLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 300;
-		final int populationSize = 7000;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
+		final int numOfLabels = 27;
+		final int iterations = 500;
+		final int populationSize = 6000;
 		RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize, numOfLabels);
 		rtaslcs.run();
 
@@ -78,12 +78,12 @@ public class RTASLCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 900;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 50;
+	private final int CALLBACK_RATE = 500;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -103,7 +103,7 @@ public class RTASLCS {
 	/**
 	 * The ASLCS experience threshold.
 	 */
-	private final int ASLCS_EXPERIENCE_THRESHOLD = 50;
+	private final int ASLCS_EXPERIENCE_THRESHOLD = 20;
 
 	/**
 	 * The post-process experience threshold used.
@@ -195,7 +195,7 @@ public class RTASLCS {
 		sort.controlPopulation(rulePopulation);
 		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
 				rulePopulation, (float) 1.35);
-		rulePopulation.print();
+		//rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

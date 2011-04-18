@@ -44,11 +44,11 @@ public class TransformASLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 400;
-		final int populationSize = 1000;
-		final float lc = (float) 1.869;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
+		final int numOfLabels = 27;
+		final int iterations = 150;
+		final int populationSize = 1500;
+		final float lc = (float) 1.252;
 		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
@@ -91,12 +91,12 @@ public class TransformASLCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 200;
+	private final int THETA_GA = 1200;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 200;
+	private final int CALLBACK_RATE = 150;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -188,7 +188,7 @@ public class TransformASLCS {
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		//myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(loader.trainSet,numberOfLabels, true);
 		myExample.registerHook(slEval);
 
