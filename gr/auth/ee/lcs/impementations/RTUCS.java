@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation.ThresholdClassificationStrategy;
+import gr.auth.ee.lcs.data.updateAlgorithms.RTUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -42,9 +43,10 @@ public class RTUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
 		final int numOfLabels = 27;
-		final int iterations = 200;
+		final int iterations = 500;
 		final int populationSize = 2000;
-		RTUCS dmlucs = new RTUCS(file, iterations, populationSize, numOfLabels);
+		final double targetLC = 1.252;
+		RTUCS dmlucs = new RTUCS(file, iterations, populationSize, numOfLabels, targetLC);
 		dmlucs.run();
 
 	}
@@ -112,7 +114,7 @@ public class RTUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * The post-process experience threshold used.
@@ -134,6 +136,8 @@ public class RTUCS {
 	 */
 	private final int numberOfLabels;
 
+	private final double targetLC;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -147,11 +151,13 @@ public class RTUCS {
 	 *            the number of labels in the problem
 	 */
 	public RTUCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels) {
+			final int populationSize, final int numOfLabels,
+			final double lc) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
+		targetLC = lc;
 	}
 
 	/**
@@ -173,9 +179,9 @@ public class RTUCS {
 		rep.setClassificationStrategy(str);
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
+		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new RTUCSUpdateAlgorithm(
 				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, 0.01, ga, THETA_GA, 1);
+				UCS_EXPERIENCE_THRESHOLD, 0.01, ga, THETA_GA, 1, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -194,7 +200,7 @@ public class RTUCS {
 
 		// rulePopulation.print();
 		System.out.println("Post process...");
-		// rulePopulation.print();
+		//rulePopulation.print();
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -204,8 +210,8 @@ public class RTUCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation, (float) 1.35);
-		// rulePopulation.print();
+				rulePopulation, (float) targetLC);
+		 rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

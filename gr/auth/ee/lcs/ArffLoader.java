@@ -44,7 +44,7 @@ public class ArffLoader {
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());
-		set.stratify(10);
+		//set.stratify(10);
 
 		if (generateTestSet) {
 			trainSet = set.trainCV(10, 3);
