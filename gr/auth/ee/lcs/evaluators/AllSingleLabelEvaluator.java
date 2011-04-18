@@ -3,29 +3,31 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
-import weka.core.Instances;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IEvaluator;
+import weka.core.Instances;
 
 /**
- * All label single evaluator. The class acts as a wrapper against single label evaluator.
+ * All label single evaluator. The class acts as a wrapper against single label
+ * evaluator.
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class AllSingleLabelEvaluator implements IEvaluator {
-	
+
 	/**
 	 * The set of instances to evaluate on.
 	 */
 	private final Instances instanceSet;
-	
+
 	/**
 	 * Single label evaluators.
 	 */
 	private final SingleLabelEvaluator[] evaluators;
-	
+
 	/**
-	 * Boolean indicating if we are going to print results 
+	 * Boolean indicating if we are going to print results
 	 */
 	private final boolean print;
 
@@ -35,16 +37,21 @@ public class AllSingleLabelEvaluator implements IEvaluator {
 	 * @param numberOfLabels
 	 * @param printResults
 	 */
-	public AllSingleLabelEvaluator(Instances evaluateSet, int numberOfLabels, boolean printResults) {
+	public AllSingleLabelEvaluator(Instances evaluateSet, int numberOfLabels,
+			boolean printResults) {
 		instanceSet = evaluateSet;
 		print = printResults;
 		evaluators = new SingleLabelEvaluator[numberOfLabels];
-		for (int i = 0; i < numberOfLabels; i++) 
+		for (int i = 0; i < numberOfLabels; i++)
 			evaluators[i] = new SingleLabelEvaluator(i, evaluateSet);
 	}
-	
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers.ClassifierSet)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
+	 * .ClassifierSet)
 	 */
 	@Override
 	public double evaluateSet(ClassifierSet classifiers) {
@@ -52,7 +59,7 @@ public class AllSingleLabelEvaluator implements IEvaluator {
 		for (int i = 0; i < evaluators.length; i++) {
 			final double result = evaluators[i].evaluateSet(classifiers);
 			if (print) {
-				System.out.println("Label "+i+" exact match:"+result);
+				System.out.println("Label " + i + " exact match:" + result);
 			}
 			sum += result;
 		}

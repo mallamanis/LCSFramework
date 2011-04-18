@@ -13,7 +13,6 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;

@@ -3,12 +3,13 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
-import java.util.Arrays;
-
-import weka.core.Instances;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
+
+import java.util.Arrays;
+
+import weka.core.Instances;
 
 /**
  * A single label evaluator.
@@ -55,7 +56,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 
 			final int[] classification = bridge.getDataInstanceLabels(instance);
 			Arrays.sort(classification);
-			
+
 			if (Arrays.binarySearch(classes, label)
 					* Arrays.binarySearch(classification, label) >= 0)
 				tp++;

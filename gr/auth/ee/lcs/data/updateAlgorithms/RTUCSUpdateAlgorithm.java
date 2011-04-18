@@ -3,20 +3,20 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
-import java.io.Serializable;
-
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm.UCSClassifierData;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
+
+import java.io.Serializable;
 
 /**
  * An alernative Rank and Threshold UCS update algorithm.
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
@@ -97,7 +97,7 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * classified as correct (and added to the correct set).
 	 */
 	private final double correctSetThreshold;
-	
+
 	/**
 	 * The number of labels used.
 	 */
@@ -130,7 +130,8 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			final int experienceThreshold,
 			final double gaMatchSetRunProbability,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final int thetaDel, final double correctSetTheshold, final int labels) {
+			final int thetaDel, final double correctSetTheshold,
+			final int labels) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -227,7 +228,7 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	@Override
 	public void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
-		//Do nothing
+		// Do nothing
 	}
 
 	private void shareFitness(final ClassifierSet set, double fitnessToShare) {
@@ -240,10 +241,9 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			cl.experience++;
 			data.msa += 1;
 			data.tp += 1;
-			data.fitness += b * (0- data.fitness);
+			data.fitness += b * (0 - data.fitness);
 			data.cs = data.cs + b * (setSize - data.cs);
-			final double accuracy = ((double) data.tp)
-				/ ((double) data.msa);
+			final double accuracy = ((double) data.tp) / ((double) data.msa);
 			if (accuracy > accuracy0) {
 				data.fitness0 = 1;
 
@@ -256,14 +256,13 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				cl.setSubsumptionAbility(false);
 			}
 
-			strengthSum += data.fitness0
-				* set.getClassifierNumerosity(i);
+			strengthSum += data.fitness0 * set.getClassifierNumerosity(i);
 		}
-		
+
 		// Fix for avoiding problems...
 		if (strengthSum == 0)
 			strengthSum = 1;
-		
+
 		for (int i = 0; i < setSize; i++) {
 			Classifier cl = set.getClassifier(i);
 			UCSClassifierData data = ((UCSClassifierData) cl
@@ -271,7 +270,7 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			data.fitness += b * (data.fitness0 / strengthSum - data.fitness);
 		}
 	}
-	
+
 	private void updateWrongSet(final ClassifierSet set) {
 		final int setSize = set.getNumberOfMacroclassifiers();
 		for (int i = 0; i < setSize; i++) {
@@ -281,11 +280,9 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			cl.experience++;
 			data.msa += 1;
 			data.fp += 1;
-			
+
 		}
 	}
-	
-	
 
 	@Override
 	public final void setComparisonValue(final Classifier aClassifier,
@@ -294,8 +291,6 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
 	}
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -309,22 +304,25 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	@Override
 	protected final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
-	
-		final int[] classifications = ClassifierTransformBridge.getInstance().getDataInstanceLabels(ClassifierTransformBridge.instances[instanceIndex]);
+
+		final int[] classifications = ClassifierTransformBridge.getInstance()
+				.getDataInstanceLabels(
+						ClassifierTransformBridge.instances[instanceIndex]);
 		final int numOfCorrectSets = classifications.length;
 		ClassifierSet[] correctSets = new ClassifierSet[numOfCorrectSets];
 		for (int i = 0; i < numOfCorrectSets; i++)
 			correctSets[i] = new ClassifierSet(null);
-		
+
 		ClassifierSet wrongSet = new ClassifierSet(null);
-		
+
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);
 			boolean added = false;
 			for (int j = 0; j < numOfCorrectSets; j++) {
 				if (cl.classifyLabelCorrectly(instanceIndex, classifications[j]) > 0) {
-					correctSets[j].addClassifier(matchSet.getMacroclassifier(i), false);
+					correctSets[j].addClassifier(
+							matchSet.getMacroclassifier(i), false);
 					added = true;
 				}
 			}
@@ -339,15 +337,15 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			cover(population, instanceIndex);
 			return;
 		}
-			
+
 		/*
 		 * Perform update
 		 */
 		for (int label = 0; label < numOfCorrectSets; label++) {
-			shareFitness(correctSets[label],1);
+			shareFitness(correctSets[label], 1);
 		}
 		updateWrongSet(wrongSet);
-		
+
 		/*
 		 * Run GA
 		 */
@@ -355,7 +353,7 @@ public class RTUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 			ga.evolveSet(matchSet, population);
 		} else {
 			for (int i = 0; i < numOfCorrectSets; i++)
-				if (correctSets[i].getTotalNumerosity() > 0 )
+				if (correctSets[i].getTotalNumerosity() > 0)
 					ga.evolveSet(correctSets[i], population);
 		}
 

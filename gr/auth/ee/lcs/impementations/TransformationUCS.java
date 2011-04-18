@@ -211,8 +211,8 @@ public class TransformationUCS {
 			myExample.train(iterations, brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
-			
-		}while (selector.next());
+
+		} while (selector.next());
 		rep.activateAllLabels();
 
 		System.out.println("Post process...");

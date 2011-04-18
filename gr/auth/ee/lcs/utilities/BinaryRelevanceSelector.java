@@ -38,7 +38,7 @@ public class BinaryRelevanceSelector implements ILabelSelector {
 	 */
 	@Override
 	public boolean next() {
-		if (currentLabel < numberOfLabels - 1){
+		if (currentLabel < numberOfLabels - 1) {
 			currentLabel++;
 			return true;
 		}

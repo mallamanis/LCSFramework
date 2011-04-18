@@ -39,10 +39,10 @@ public class DirectUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 200;
-		final int populationSize = 2000;
+		final String file = "/home/miltiadis/Desktop/datasets/identity7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 500;
+		final int populationSize = 1000;
 		DirectUCS dmlucs = new DirectUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();

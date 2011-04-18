@@ -15,7 +15,6 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation.ThresholdClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.RTUCSUpdateAlgorithm;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -46,7 +45,8 @@ public class RTUCS {
 		final int iterations = 500;
 		final int populationSize = 2000;
 		final double targetLC = 1.252;
-		RTUCS dmlucs = new RTUCS(file, iterations, populationSize, numOfLabels, targetLC);
+		RTUCS dmlucs = new RTUCS(file, iterations, populationSize, numOfLabels,
+				targetLC);
 		dmlucs.run();
 
 	}
@@ -84,7 +84,7 @@ public class RTUCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 50;
+	private final int CALLBACK_RATE = 500;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -137,7 +137,7 @@ public class RTUCS {
 	private final int numberOfLabels;
 
 	private final double targetLC;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -151,8 +151,7 @@ public class RTUCS {
 	 *            the number of labels in the problem
 	 */
 	public RTUCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels,
-			final double lc) {
+			final int populationSize, final int numOfLabels, final double lc) {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
@@ -200,7 +199,7 @@ public class RTUCS {
 
 		// rulePopulation.print();
 		System.out.println("Post process...");
-		//rulePopulation.print();
+		// rulePopulation.print();
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -209,9 +208,9 @@ public class RTUCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation, (float) targetLC);
-		 rulePopulation.print();
+		// str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+		// rulePopulation, (float) targetLC);
+		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

@@ -19,7 +19,6 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.AllSingleLabelEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
-import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -28,7 +27,6 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
-import gr.auth.ee.lcs.utilities.PairwiseLabelSelector;
 
 import java.io.IOException;
 
@@ -49,7 +47,8 @@ public class TransformASLCS {
 		final int iterations = 150;
 		final int populationSize = 1500;
 		final float lc = (float) 1.252;
-		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(numOfLabels);
+		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
+				numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
 		trucs.run();
@@ -188,8 +187,10 @@ public class TransformASLCS {
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
-		//myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
-		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(loader.trainSet,numberOfLabels, true);
+		// myExample.registerHook(new FileLogger(inputFile + "_result.txt",
+		// eval));
+		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
+				loader.trainSet, numberOfLabels, true);
 		myExample.registerHook(slEval);
 
 		do {
@@ -204,7 +205,7 @@ public class TransformASLCS {
 			myExample.train(iterations, brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
-			
+
 		} while (selector.next());
 		rep.activateAllLabels();
 

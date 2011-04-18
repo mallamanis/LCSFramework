@@ -15,7 +15,6 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation.ThresholdClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
@@ -33,7 +32,7 @@ import java.io.IOException;
  * An Rank-and-Threshold AS-LCS Update Algorithm
  * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class RTASLCS {
 	/**
@@ -45,7 +44,8 @@ public class RTASLCS {
 		final int numOfLabels = 27;
 		final int iterations = 500;
 		final int populationSize = 6000;
-		RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize, numOfLabels);
+		RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize,
+				numOfLabels);
 		rtaslcs.run();
 
 	}
@@ -195,7 +195,7 @@ public class RTASLCS {
 		sort.controlPopulation(rulePopulation);
 		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
 				rulePopulation, (float) 1.35);
-		//rulePopulation.print();
+		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
