@@ -63,7 +63,9 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 					: 1));
 			// TODO: Something else?
 		case COMPARISON_MODE_EXPLOITATION:
-			return (((double) (data.tp)) / (double) (data.msa));
+			final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
+			return Double.isNaN(exploitationFitness) ? .000001
+					: exploitationFitness;
 		}
 		return 0;
 	}
