@@ -6,6 +6,7 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	/**
 	 * The set of instances to evaluate on.
 	 */
-	private final Instances instanceSet;
+	private final double[][] instances;
 
 	/**
 	 * A boolean indicating if the evaluator is going to print the results.
@@ -40,7 +41,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	 *            true to print results to stdout
 	 */
 	public AccuracyEvaluator(final Instances instances, final boolean print) {
-		instanceSet = instances;
+		this.instances = InstanceToDoubleConverter.convert(instances);
 		printResults = print;
 	}
 
@@ -58,7 +59,21 @@ public class AccuracyEvaluator implements IEvaluator {
 			throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
-		instanceSet = new Instances(reader);
+		this.instances = InstanceToDoubleConverter
+				.convert(new Instances(reader));
+	}
+
+	/**
+	 * A constructor using only instances.
+	 * 
+	 * @param instances
+	 *            the instance double[][] array
+	 * @param print
+	 *            true to print results to stdout
+	 */
+	public AccuracyEvaluator(final double[][] instances, final boolean print) {
+		this.printResults = print;
+		this.instances = instances;
 	}
 
 	/*
@@ -72,17 +87,16 @@ public class AccuracyEvaluator implements IEvaluator {
 	public double evaluateSet(ClassifierSet classifiers) {
 		final ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
+
 		double sumOfAccuracies = 0;
 		double sumOfRecall = 0;
-		for (int i = 0; i < instanceSet.numInstances(); i++) {
+		for (int i = 0; i < instances.length; i++) {
 			int unionOfLabels = 0;
 			int intersectionOfLabels = 0;
-			final double[] instance = new double[instanceSet.numAttributes()];
-			for (int j = 0; j < instanceSet.numAttributes(); j++) {
-				instance[j] = instanceSet.instance(i).value(j);
-			}
-			final int[] classes = bridge.classify(classifiers, instance);
-			final int[] classification = bridge.getDataInstanceLabels(instance);
+
+			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classification = bridge
+					.getDataInstanceLabels(instances[i]);
 
 			// Find symmetric differences
 			Arrays.sort(classes);
@@ -104,8 +118,9 @@ public class AccuracyEvaluator implements IEvaluator {
 			sumOfRecall += ((double) intersectionOfLabels)
 					/ ((double) classification.length);
 		}
-		final double accuracy = sumOfAccuracies / (instanceSet.numInstances());
-		final double recall = sumOfRecall / (instanceSet.numInstances());
+		final double accuracy = sumOfAccuracies / ((double) instances.length);
+		final double recall = sumOfRecall / ((double) instances.length);
+
 		if (printResults) {
 			System.out.println("Accuracy: " + accuracy);
 			System.out.println("Recall: " + recall);
