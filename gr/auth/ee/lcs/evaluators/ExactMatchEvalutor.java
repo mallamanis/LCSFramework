@@ -6,6 +6,7 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 	/**
 	 * The set of instances to evaluate on.
 	 */
-	private final Instances instanceSet;
+	private final double[][] instances;
 
 	/**
 	 * A boolean indicating if the evaluator is going to print the results.
@@ -40,7 +41,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 *            true to turn printing on
 	 */
 	public ExactMatchEvalutor(final Instances instances, final boolean print) {
-		instanceSet = instances;
+		this.instances = InstanceToDoubleConverter.convert(instances);
 		printResults = print;
 	}
 
@@ -58,7 +59,17 @@ public class ExactMatchEvalutor implements IEvaluator {
 			throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
-		instanceSet = new Instances(reader);
+		this.instances = InstanceToDoubleConverter.convert(new Instances(reader));
+	}
+	
+	/**
+	 * Constructor using a double array
+	 * @param instances the double[][] of instances
+	 * @param print true to turn printing on
+	 */
+	public ExactMatchEvalutor(final double[][] instances, final boolean print) {
+		printResults = print;
+		this.instances = instances;
 	}
 
 	@Override
@@ -67,13 +78,9 @@ public class ExactMatchEvalutor implements IEvaluator {
 				.getInstance();
 
 		int tp = 0, fp = 0;
-		for (int i = 0; i < instanceSet.numInstances(); i++) {
-			final double[] instance = new double[instanceSet.numAttributes()];
-			for (int j = 0; j < instanceSet.numAttributes(); j++) {
-				instance[j] = instanceSet.instance(i).value(j);
-			}
-			final int[] classes = bridge.classify(classifiers, instance);
-			final int[] classification = bridge.getDataInstanceLabels(instance);
+		for (int i = 0; i < instances.length; i++) {			
+			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classification = bridge.getDataInstanceLabels(instances[i]);
 			if (Arrays.equals(classes, classification))
 				tp++;
 			else
@@ -86,7 +93,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 		if (printResults) {
 			System.out.println("tp:" + tp + " fp:" + fp + " errorRate:"
 					+ errorRate + " total instances:"
-					+ instanceSet.numInstances());
+					+ instances.length);
 		}
 		return errorRate;
 	}
