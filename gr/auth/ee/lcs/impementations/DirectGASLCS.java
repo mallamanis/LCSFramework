@@ -17,7 +17,6 @@ import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -42,8 +41,8 @@ public class DirectGASLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
 		final int numOfLabels = 7;
-		final int iterations = 500;
-		final int populationSize = 10000;
+		final int iterations = 100;
+		final int populationSize = 1000;
 		DirectGASLCS dgaslcs = new DirectGASLCS(file, iterations,
 				populationSize, numOfLabels);
 		dgaslcs.run();
@@ -176,7 +175,7 @@ public class DirectGASLCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
+		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 

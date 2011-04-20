@@ -15,7 +15,7 @@ import weka.classifiers.evaluation.ConfusionMatrix;
 public class ConfusionMatrixEvaluator implements IEvaluator {
 
 	/**
-	 * A weka confusion matrix.
+	 * A Weka confusion matrix.
 	 */
 	private final ConfusionMatrix conf;
 

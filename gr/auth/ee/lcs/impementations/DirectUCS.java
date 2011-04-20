@@ -15,7 +15,6 @@ import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -186,7 +185,7 @@ public class DirectUCS {
 
 		ArffLoader trainer = new ArffLoader();
 		trainer.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
+		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 

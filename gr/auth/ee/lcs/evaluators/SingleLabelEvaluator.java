@@ -57,9 +57,11 @@ public class SingleLabelEvaluator implements IEvaluator {
 			final int[] classification = bridge.getDataInstanceLabels(instance);
 			Arrays.sort(classification);
 
-			final boolean classifiedToLabel = Arrays.binarySearch(classes, label) >= 0;
-			final boolean belongsToLabel = Arrays.binarySearch(classification, label) >= 0;
-			if (! (classifiedToLabel ^ belongsToLabel))
+			final boolean classifiedToLabel = Arrays.binarySearch(classes,
+					label) >= 0;
+			final boolean belongsToLabel = Arrays.binarySearch(classification,
+					label) >= 0;
+			if (!(classifiedToLabel ^ belongsToLabel))
 				tp++;
 
 		}

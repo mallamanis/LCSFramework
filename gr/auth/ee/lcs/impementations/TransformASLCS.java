@@ -18,7 +18,6 @@ import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.AllSingleLabelEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -44,8 +43,8 @@ public class TransformASLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
 		final int numOfLabels = 27;
-		final int iterations = 150;
-		final int populationSize = 1500;
+		final int iterations = 500;
+		final int populationSize = 500;
 		final float lc = (float) 1.252;
 		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
@@ -90,12 +89,12 @@ public class TransformASLCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 1200;
+	private final int THETA_GA = 1000;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 150;
+	private final int CALLBACK_RATE = 500;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -186,7 +185,7 @@ public class TransformASLCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
+		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
 		// myExample.registerHook(new FileLogger(inputFile + "_result.txt",
 		// eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
@@ -218,7 +217,7 @@ public class TransformASLCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
+		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

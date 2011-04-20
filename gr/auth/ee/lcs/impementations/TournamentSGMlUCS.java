@@ -18,7 +18,6 @@ import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.ExactMatchSelfEvaluator;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -210,7 +209,7 @@ public class TournamentSGMlUCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchSelfEvaluator(true, true);
+		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
