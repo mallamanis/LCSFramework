@@ -6,6 +6,7 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class HammingLossEvaluator implements IEvaluator {
 	/**
 	 * The set of instances to evaluate on.
 	 */
-	private final Instances instanceSet;
+	private final double instances[][];
 
 	/**
 	 * A boolean indicating if the evaluator is going to print the results.
@@ -48,7 +49,7 @@ public class HammingLossEvaluator implements IEvaluator {
 	 */
 	public HammingLossEvaluator(final Instances instances, final boolean print,
 			final int numOfLabels) {
-		instanceSet = instances;
+		this.instances = InstanceToDoubleConverter.convert(instances);
 		printResults = print;
 		numberOfLabels = numOfLabels;
 	}
@@ -69,7 +70,26 @@ public class HammingLossEvaluator implements IEvaluator {
 			final int numOfLabels) throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
-		instanceSet = new Instances(reader);
+		this.instances = InstanceToDoubleConverter
+				.convert(new Instances(reader));
+		numberOfLabels = numOfLabels;
+	}
+
+	/**
+	 * Constructor using double[][] of instances.
+	 * 
+	 * @param instances
+	 *            the instances
+	 * @param print
+	 *            true to turn printing on
+	 * @param numOfLabels
+	 *            the number of labels
+	 */
+	public HammingLossEvaluator(final double[][] instances,
+			final boolean print, final int numOfLabels) {
+		this.instances = instances;
+		printResults = print;
+
 		numberOfLabels = numOfLabels;
 	}
 
@@ -85,15 +105,13 @@ public class HammingLossEvaluator implements IEvaluator {
 		final ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
 		int numberOfSymmetricDifferences = 0;
-		for (int i = 0; i < instanceSet.numInstances(); i++) {
-			final double[] instance = new double[instanceSet.numAttributes()];
-			for (int j = 0; j < instanceSet.numAttributes(); j++) {
-				instance[j] = instanceSet.instance(i).value(j);
-			}
-			final int[] classes = bridge.classify(classifiers, instance);
-			final int[] classification = bridge.getDataInstanceLabels(instance);
+		for (int i = 0; i < instances.length; i++) {
 
-			// Find symetric differences
+			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classification = bridge
+					.getDataInstanceLabels(instances[i]);
+
+			// Find symmetric differences
 			Arrays.sort(classes);
 			Arrays.sort(classification);
 			for (int j = 0; j < classes.length; j++) {
@@ -106,7 +124,7 @@ public class HammingLossEvaluator implements IEvaluator {
 			}
 		}
 		final double hammingLoss = ((double) numberOfSymmetricDifferences)
-				/ ((double) (instanceSet.numInstances() * numberOfLabels));
+				/ ((double) (instances.length * numberOfLabels));
 		if (printResults)
 			System.out.println("Hamming Loss: " + hammingLoss);
 		return hammingLoss;

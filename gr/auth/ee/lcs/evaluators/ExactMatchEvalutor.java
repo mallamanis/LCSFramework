@@ -59,13 +59,17 @@ public class ExactMatchEvalutor implements IEvaluator {
 			throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
-		this.instances = InstanceToDoubleConverter.convert(new Instances(reader));
+		this.instances = InstanceToDoubleConverter
+				.convert(new Instances(reader));
 	}
-	
+
 	/**
 	 * Constructor using a double array
-	 * @param instances the double[][] of instances
-	 * @param print true to turn printing on
+	 * 
+	 * @param instances
+	 *            the double[][] of instances
+	 * @param print
+	 *            true to turn printing on
 	 */
 	public ExactMatchEvalutor(final double[][] instances, final boolean print) {
 		printResults = print;
@@ -78,9 +82,10 @@ public class ExactMatchEvalutor implements IEvaluator {
 				.getInstance();
 
 		int tp = 0, fp = 0;
-		for (int i = 0; i < instances.length; i++) {			
+		for (int i = 0; i < instances.length; i++) {
 			final int[] classes = bridge.classify(classifiers, instances[i]);
-			final int[] classification = bridge.getDataInstanceLabels(instances[i]);
+			final int[] classification = bridge
+					.getDataInstanceLabels(instances[i]);
 			if (Arrays.equals(classes, classification))
 				tp++;
 			else
@@ -92,8 +97,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 
 		if (printResults) {
 			System.out.println("tp:" + tp + " fp:" + fp + " errorRate:"
-					+ errorRate + " total instances:"
-					+ instances.length);
+					+ errorRate + " total instances:" + instances.length);
 		}
 		return errorRate;
 	}
