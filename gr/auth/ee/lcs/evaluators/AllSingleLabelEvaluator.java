@@ -17,11 +17,6 @@ import weka.core.Instances;
 public class AllSingleLabelEvaluator implements IEvaluator {
 
 	/**
-	 * The set of instances to evaluate on.
-	 */
-	private final Instances instanceSet;
-
-	/**
 	 * Single label evaluators.
 	 */
 	private final SingleLabelEvaluator[] evaluators;
@@ -38,8 +33,7 @@ public class AllSingleLabelEvaluator implements IEvaluator {
 	 * @param printResults
 	 */
 	public AllSingleLabelEvaluator(Instances evaluateSet, int numberOfLabels,
-			boolean printResults) {
-		instanceSet = evaluateSet;
+			boolean printResults) {		
 		print = printResults;
 		evaluators = new SingleLabelEvaluator[numberOfLabels];
 		for (int i = 0; i < numberOfLabels; i++)
