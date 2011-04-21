@@ -42,7 +42,7 @@ public final class GenericMultiLabelRepresentation extends
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class GenericLabel extends Attribute {
+	public class GenericLabel extends AbstractAttribute {
 
 		/**
 		 * A boolean variable permitting to temporarily deactivating a label.
@@ -436,7 +436,7 @@ public final class GenericMultiLabelRepresentation extends
 	public static final int RELATIVE_ACCURACY = 1;
 
 	/**
-	 * The hamming loss metric.
+	 * The Hamming loss metric.
 	 */
 	public static final int HAMMING_LOSS = 2;
 
@@ -454,7 +454,8 @@ public final class GenericMultiLabelRepresentation extends
 	 * @param generalizationRate
 	 *            the generalization rate to be used for the labels
 	 */
-	public GenericMultiLabelRepresentation(final Attribute[] attributes,
+	public GenericMultiLabelRepresentation(
+			final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final int type, final double generalizationRate) {
 		super(attributes, ruleConsequentsNames, labels);
@@ -627,7 +628,7 @@ public final class GenericMultiLabelRepresentation extends
 
 			final int labelIndex = attributeList.length - numberOfLabels + i;
 
-			String attributeName = instances.attribute(labelIndex).name();
+			final String attributeName = instances.attribute(labelIndex).name();
 
 			attributeList[labelIndex] = new GenericLabel(chromosomeSize,
 					attributeName, labelGeneralizationRate);

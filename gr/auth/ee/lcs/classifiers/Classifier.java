@@ -87,7 +87,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * A boolean representing the classifier's ability to subsume.
 	 */
-	private boolean canSubsume = false;
+	private boolean subsumes = false;
 	/**
 	 * An object for saving the transformation specific data.
 	 */
@@ -128,7 +128,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return true if the classifier is strong enough to subsume
 	 */
 	public final boolean canSubsume() {
-		return canSubsume;
+		return subsumes;
 	}
 
 	/**
@@ -228,8 +228,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	public final double getCoverage() {
 		if (this.checked == 0) {
 			return INITIAL_FITNESS;
+		} else {
+			return ((double) this.covered) / ((double) this.checked);
 		}
-		return ((double) this.covered) / ((double) this.checked);
 
 	}
 
@@ -332,7 +333,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            true if the classifier is able to subsume
 	 */
 	public final void setSubsumptionAbility(final boolean canSubsumeAbility) {
-		canSubsume = canSubsumeAbility;
+		subsumes = canSubsumeAbility;
 	}
 
 	/**

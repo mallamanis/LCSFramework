@@ -23,23 +23,23 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	/**
 	 * The selector used for the next generation selection.
 	 */
-	private INaturalSelector gaSelector;
+	final private INaturalSelector gaSelector;
 
 	/**
 	 * The crossover operator that will be used by the GA.
 	 */
-	private IBinaryGeneticOperator crossoverOp;
+	final private IBinaryGeneticOperator crossoverOp;
 
 	/**
 	 * The mutation operator used by the GA.
 	 */
-	private IUnaryGeneticOperator mutationOp;
+	final private IUnaryGeneticOperator mutationOp;
 
 	/**
 	 * The GA activation age. The population must have an average age, greater
 	 * that this in order for the GA to run.
 	 */
-	private int gaActivationAge;
+	final private int gaActivationAge;
 
 	/**
 	 * The current timestamp. Used by the GA to count generations.
@@ -49,7 +49,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	/**
 	 * The rate that the crossover is performed.
 	 */
-	private float crossoverRate;
+	final private float crossoverRate;
 
 	/**
 	 * The number of children per generation.
@@ -83,6 +83,27 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		this.crossoverRate = crossoverRate;
 	}
 
+	/**
+	 * Get the population mean age.
+	 * 
+	 * @param set
+	 *            the set of classifiers to find the mean age
+	 * @return an int representing the set's mean age (rounded)
+	 */
+	private int getMeanAge(final ClassifierSet set) {
+		int meanAge = 0;
+		// Cache value for optimization
+		final int evolveSetSize = set.getNumberOfMacroclassifiers();
+
+		for (int i = 0; i < evolveSetSize; i++) {
+			meanAge += set.getClassifierNumerosity(i)
+					* set.getClassifier(i).timestamp;
+		}
+		meanAge /= ((double) set.getTotalNumerosity());
+
+		return meanAge;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -97,39 +118,33 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 
 		timestamp++;
 
-		int meanAge = 0;
-		// Cache value for optimization
-		final int evolveSetSize = evolveSet.getNumberOfMacroclassifiers();
-
-		for (int i = 0; i < evolveSetSize; i++) {
-			meanAge += evolveSet.getClassifierNumerosity(i)
-					* evolveSet.getClassifier(i).timestamp;
-		}
-		meanAge /= evolveSet.getTotalNumerosity();
+		final int meanAge = getMeanAge(evolveSet);
 		if (timestamp - meanAge < this.gaActivationAge)
 			return;
 
+		final int evolveSetSize = evolveSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < evolveSetSize; i++) {
 			evolveSet.getClassifier(i).timestamp = timestamp;
 		}
 
-		ClassifierSet parents = new ClassifierSet(null);
+		final ClassifierSet parents = new ClassifierSet(null);
+
 		// Select parents
 		gaSelector.select(1, evolveSet, parents);
-		Classifier parentA = parents.getClassifier(0);
+		final Classifier parentA = parents.getClassifier(0);
 		parents.deleteClassifier(0);
 		gaSelector.select(1, evolveSet, parents);
-		Classifier parentB = parents.getClassifier(0);
+		final Classifier parentB = parents.getClassifier(0);
 		parents.deleteClassifier(0);
 
 		// Reproduce
 		for (int i = 0; i < CHILDREN_PER_GENERATION; i++) {
 			Classifier child;
 			// produce a child
-			if (Math.random() < crossoverRate)
+			if (Math.random() < crossoverRate) {
 				child = crossoverOp.operate((i == 0) ? parentB : parentA,
 						(i == 0) ? parentA : parentB);
-			else {
+			} else {
 				child = (Classifier) ((i == 0) ? parentA : parentB).clone();
 				child.setComparisonValue(
 						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION,

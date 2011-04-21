@@ -58,7 +58,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	public AccuracyEvaluator(final String arffFileName, final boolean print)
 			throws IOException {
 		printResults = print;
-		FileReader reader = new FileReader(arffFileName);
+		final FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
 				.convert(new Instances(reader));
 	}
@@ -84,7 +84,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public double evaluateSet(final ClassifierSet classifiers) {
 		final ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
 

@@ -36,11 +36,11 @@ public class ArffLoader {
 	 * @throws IOException
 	 *             if the input file is not found
 	 */
-	public void loadInstances(String filename, boolean generateTestSet)
-			throws IOException {
+	public void loadInstances(final String filename,
+			final boolean generateTestSet) throws IOException {
 		// Open .arff
-		FileReader reader = new FileReader(filename);
-		Instances set = new Instances(reader);
+		final FileReader reader = new FileReader(filename);
+		final Instances set = new Instances(reader);
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());

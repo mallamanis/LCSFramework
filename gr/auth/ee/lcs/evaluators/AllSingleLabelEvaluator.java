@@ -32,8 +32,8 @@ public class AllSingleLabelEvaluator implements IEvaluator {
 	 * @param numberOfLabels
 	 * @param printResults
 	 */
-	public AllSingleLabelEvaluator(Instances evaluateSet, int numberOfLabels,
-			boolean printResults) {		
+	public AllSingleLabelEvaluator(final Instances evaluateSet,
+			final int numberOfLabels, final boolean printResults) {
 		print = printResults;
 		evaluators = new SingleLabelEvaluator[numberOfLabels];
 		for (int i = 0; i < numberOfLabels; i++)

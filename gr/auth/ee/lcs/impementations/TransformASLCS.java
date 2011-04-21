@@ -46,7 +46,7 @@ public class TransformASLCS {
 		final int iterations = 500;
 		final int populationSize = 500;
 		final float lc = (float) 1.252;
-		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
+		final BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
@@ -84,52 +84,52 @@ public class TransformASLCS {
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private static final double MUTATION_RATE = (float) .04;
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 1000;
+	private static final int THETA_GA = 1000;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 500;
+	private static final int CALLBACK_RATE = 500;
 
 	/**
 	 * The number of bits to use for representing continuous variables
 	 */
-	private final int PRECISION_BITS = 5;
+	private static final int PRECISION_BITS = 5;
 
 	/**
 	 * The ASLCS n power parameter.
 	 */
-	private final int ASLCS_N = 10;
+	private static final int ASLCS_N = 10;
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double ASLCS_ACC0 = .99;
+	private static final double ASLCS_ACC0 = .99;
 
 	/**
 	 * The ASLCS experience threshold.
 	 */
-	private final int ASLCS_EXPERIENCE_THRESHOLD = 10;
+	private static final int ASLCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private static final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private static final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
 
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .1;
+	private static final double POSTPROCESS_FITNESS_THRESHOLD = .1;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -185,7 +185,8 @@ public class TransformASLCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
+		final IEvaluator eval = new ExactMatchEvalutor(
+				ClassifierTransformBridge.instances, true);
 		// myExample.registerHook(new FileLogger(inputFile + "_result.txt",
 		// eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(

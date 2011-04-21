@@ -20,13 +20,13 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	@Override
 	public final Classifier operate(final Classifier classifierA,
 			final Classifier classifierB) {
-		int chromosomeSize = classifierB.size();
+		final int chromosomeSize = classifierB.size();
 		Classifier child;
 		/*
 		 * The point at which the crossover will occur
 		 */
-		int mutationPoint = (int) Math
-				.round(Math.random() * chromosomeSize - 1);
+		final int mutationPoint = (int) Math.round(Math.random()
+				* chromosomeSize - 1);
 		child = new Classifier(performCrossover(classifierA, classifierB,
 				mutationPoint));
 		double newFitness = classifierA
@@ -55,7 +55,7 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	protected final ExtendedBitSet performCrossover(
 			final ExtendedBitSet chromosomeA, final ExtendedBitSet chromosomeB,
 			final int position) {
-		ExtendedBitSet child = (ExtendedBitSet) chromosomeA.clone();
+		final ExtendedBitSet child = (ExtendedBitSet) chromosomeA.clone();
 		child.setSubSet(position,
 				chromosomeB.getSubSet(position, chromosomeB.size() - position));
 

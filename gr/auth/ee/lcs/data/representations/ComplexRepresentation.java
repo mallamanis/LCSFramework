@@ -24,7 +24,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public abstract class Attribute {
+	public abstract class AbstractAttribute {
 		/**
 		 * The length in bits of the attribute in the chromosome.
 		 */
@@ -56,7 +56,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * @param generalizationProbability
 		 *            the generalization rate used
 		 */
-		public Attribute(final int startPosition, final String attributeName,
+		public AbstractAttribute(final int startPosition,
+				final String attributeName,
 				final double generalizationProbability) {
 			nameOfAttribute = attributeName;
 			positionInChromosome = startPosition;
@@ -143,7 +144,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class BooleanAttribute extends Attribute {
+	public class BooleanAttribute extends AbstractAttribute {
 
 		/**
 		 * The constructor.
@@ -190,12 +191,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 			// if the base classifier is specific and the test is # return false
 			if (baseChromosome.get(positionInChromosome) != testChromosome
-					.get(positionInChromosome))
+					.get(positionInChromosome)) {
 				return false;
-			else if ((baseChromosome.get(positionInChromosome + 1) != testChromosome
+			} else if ((baseChromosome.get(positionInChromosome + 1) != testChromosome
 					.get(positionInChromosome + 1))
-					&& baseChromosome.get(positionInChromosome))
+					&& baseChromosome.get(positionInChromosome)) {
 				return false;
+			}
 
 			return true;
 		}
@@ -260,8 +262,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			else
 				generatedClassifier.set(positionInChromosome + 1);
 
-			if (Math.random() < generalizationRate) // TODO: Configurable
-													// generalization rate
+			if (Math.random() < generalizationRate)
 				generatedClassifier.clear(positionInChromosome);
 			else
 				generatedClassifier.set(positionInChromosome);
@@ -313,7 +314,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public class IntervalAttribute extends Attribute {
+	public class IntervalAttribute extends AbstractAttribute {
 
 		/**
 		 * The minimum and the maximum value that the attribute can receive.
@@ -323,7 +324,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		/**
 		 * The number of bits to use for representing the interval limits.
 		 */
-		private int precisionBits = 0;
+		private final int precisionBits;
 
 		/**
 		 * The number of parts we have split the interval from min to max.
@@ -375,10 +376,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				final ExtendedBitSet chromosome) {
 			if (getLowBoundValue(chromosome) > getHighBoundValue(chromosome)) {
 				// Swap
-				ExtendedBitSet low = chromosome.getSubSet(
+				final ExtendedBitSet low = chromosome.getSubSet(
 						positionInChromosome + 1, precisionBits);
-				ExtendedBitSet high = chromosome.getSubSet(positionInChromosome
-						+ 1 + precisionBits, precisionBits);
+				final ExtendedBitSet high = chromosome
+						.getSubSet(positionInChromosome + 1 + precisionBits,
+								precisionBits);
 				chromosome.setSubSet(positionInChromosome + 1, high);
 				chromosome.setSubSet(positionInChromosome + 1 + precisionBits,
 						low);
@@ -427,7 +429,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			if (!testedChromosome.get(positionInChromosome)) // if rule inactive
 				return true;
 
-			return ((attributeVision >= getLowBoundValue((testedChromosome))) && (attributeVision <= getHighBoundValue(testedChromosome)));
+			return ((attributeVision >= getLowBoundValue(testedChromosome)) && (attributeVision <= getHighBoundValue(testedChromosome)));
 
 		}
 
@@ -464,10 +466,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				final Classifier generatedClassifier) {
 			// First find a random value that is smaller than the attribute
 			// value & convert it to fraction
-			int newLowBound = (int) Math
+			final int newLowBound = (int) Math
 					.floor(((attributeValue - minValue) * Math.random())
 							/ (maxValue - minValue) * totalParts);
-			int newMaxBound = (int) Math
+			final int newMaxBound = (int) Math
 					.ceil(((maxValue - minValue - (maxValue - attributeValue)
 							* Math.random())
 							/ (maxValue - minValue) * totalParts));
@@ -497,7 +499,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			if (!convertingChromosome.get(positionInChromosome))
 				return nameOfAttribute + ":#";
 
-			String value = nameOfAttribute
+			final String value = nameOfAttribute
 					+ " in ["
 					+ String.format("%.3f",
 							getLowBoundValue(convertingChromosome))
@@ -515,7 +517,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * @return the numeric value of the high bound
 		 */
 		private float getHighBoundValue(final ExtendedBitSet chromosome) {
-			int part = chromosome.getIntAt(positionInChromosome + 1
+			final int part = chromosome.getIntAt(positionInChromosome + 1
 					+ precisionBits, precisionBits);
 
 			return ((float) part) / ((float) totalParts)
@@ -530,7 +532,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * @return the numeric value of the lower bound
 		 */
 		private float getLowBoundValue(final ExtendedBitSet chromosome) {
-			int part = chromosome.getIntAt(positionInChromosome + 1,
+			final int part = chromosome.getIntAt(positionInChromosome + 1,
 					precisionBits);
 
 			return ((float) part) / ((float) totalParts)
@@ -545,7 +547,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public class NominalAttribute extends Attribute {
+	public class NominalAttribute extends AbstractAttribute {
 
 		/**
 		 * The names of the nominal values.
@@ -636,7 +638,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			// if condition is not active
 			if (!testedChromosome.get(positionInChromosome))
 				return true;
-			int genePosition = (int) attributeVision + 1 + positionInChromosome;
+			final int genePosition = (int) attributeVision + 1
+					+ positionInChromosome;
 
 			return testedChromosome.get(genePosition);
 
@@ -721,7 +724,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	/**
 	 * The list of all attributes.
 	 */
-	protected Attribute[] attributeList;
+	protected AbstractAttribute[] attributeList;
 
 	/**
 	 * The size of the chromosomes of the representation.
@@ -753,8 +756,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * @param labels
 	 *            the number of labels
 	 */
-	public ComplexRepresentation(final Attribute[] attributes,
+	public ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels) {
+		super();
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
 		ruleConsequents = ruleConsequentsNames;
@@ -774,22 +778,23 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	public ComplexRepresentation(final String inputArff, final int precision,
 			final int labels) throws IOException {
-		FileReader reader = new FileReader(inputArff);
-		Instances instances = new Instances(reader);
+		super();
+		final FileReader reader = new FileReader(inputArff);
+		final Instances instances = new Instances(reader);
 
 		this.numberOfLabels = labels;
-		attributeList = new Attribute[instances.numAttributes()];
+		attributeList = new AbstractAttribute[instances.numAttributes()];
 		final double generalizationRate = .33;
 
 		for (int i = 0; i < instances.numAttributes() - labels; i++) {
 
-			String attributeName = instances.attribute(i).name();
+			final String attributeName = instances.attribute(i).name();
 
 			if (instances.attribute(i).isNominal()) {
 
 				String[] attributeNames = new String[instances.attribute(i)
 						.numValues()];
-				Enumeration<?> values = instances.attribute(i)
+				final Enumeration<?> values = instances.attribute(i)
 						.enumerateValues();
 				for (int j = 0; j < attributeNames.length; j++) {
 					attributeNames[j] = (String) values.nextElement();
@@ -809,7 +814,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				minValue = (float) instances.instance(0).toDoubleArray()[i];
 				maxValue = minValue;
 				for (int sample = 0; sample < instances.numInstances(); sample++) {
-					float currentVal = (float) instances.instance(sample)
+					final float currentVal = (float) instances.instance(sample)
 							.toDoubleArray()[i];
 					if (currentVal > maxValue)
 						maxValue = currentVal;
@@ -838,13 +843,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public final boolean areEqual(final Classifier cl1, final Classifier cl2) {
-		ExtendedBitSet baseChromosome = cl1;
-		ExtendedBitSet testChromosome = cl2;
+		final ExtendedBitSet baseChromosome = cl1;
+		final ExtendedBitSet testChromosome = cl2;
 
 		// Check for equality starting with class
-		for (int i = attributeList.length - 1; i >= 0; i--)
+		for (int i = attributeList.length - 1; i >= 0; i--) {
 			if (!attributeList[i].isEqual(baseChromosome, testChromosome))
 				return false;
+		}
 
 		return true;
 	}
@@ -899,10 +905,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final Classifier createRandomCoveringClassifier(
 			final double[] visionVector) {
-		Classifier generatedClassifier = new Classifier();
-		for (int i = 0; i < attributeList.length; i++)
+		final Classifier generatedClassifier = new Classifier();
+		for (int i = 0; i < attributeList.length; i++) {
 			attributeList[i].randomCoveringValue((float) visionVector[i],
 					generatedClassifier);
+		}
 		return generatedClassifier;
 	}
 
@@ -915,8 +922,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public final void fixChromosome(final ExtendedBitSet aChromosome) {
-		for (int i = 0; i < attributeList.length; i++)
+		for (int i = 0; i < attributeList.length; i++) {
 			attributeList[i].fixAttributeRepresentation(aChromosome);
+		}
 
 	}
 
@@ -944,9 +952,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final boolean isMatch(final double[] visionVector,
 			final ExtendedBitSet chromosome) {
-		for (int i = 0; i < attributeList.length - numberOfLabels; i++)
+		for (int i = 0; i < attributeList.length - numberOfLabels; i++) {
 			if (!attributeList[i].isMatch((float) visionVector[i], chromosome))
 				return false;
+		}
 		return true;
 	}
 
@@ -961,10 +970,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	public final boolean isMoreGeneral(final Classifier baseClassifier,
 			final Classifier testClassifier) {
 		// Start from labels to the attributes
-		for (int i = attributeList.length - 1; i >= 0; i--)
+		for (int i = attributeList.length - 1; i >= 0; i--) {
 			if (!attributeList[i].isMoreGeneral(baseClassifier, testClassifier))
 				return false;
-
+		}
 		return true;
 	}
 
@@ -1029,7 +1038,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * Create the class representation depending on the problem.
 	 * 
 	 * @param instances
-	 *            the weka instances
+	 *            the Weka instances
 	 */
 	protected abstract void createClassRepresentation(Instances instances);
 

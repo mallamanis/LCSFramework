@@ -17,12 +17,12 @@ public class BestClassifierSelector implements INaturalSelector {
 	/**
 	 * Boolean indicating if the selector selects the best or worst classifier.
 	 */
-	private boolean max = true;
+	private final boolean max;
 
 	/**
 	 * The mode used for comparing classifiers.
 	 */
-	private int mode;
+	private final int mode;
 
 	/**
 	 * Default constructor.
@@ -49,7 +49,7 @@ public class BestClassifierSelector implements INaturalSelector {
 	public final void select(final int howManyToSelect,
 			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
 		// Add it toPopulation
-		int bestIndex = select(fromPopulation);
+		final int bestIndex = select(fromPopulation);
 		if (bestIndex == -1)
 			return;
 		toPopulation.addClassifier(
@@ -73,8 +73,8 @@ public class BestClassifierSelector implements INaturalSelector {
 		int bestIndex = -1;
 		final int popSize = fromPopulation.getNumberOfMacroclassifiers();
 		for (int i = 0; i < popSize; i++) {
-			double temp = fromPopulation.getClassifier(i).getComparisonValue(
-					mode);
+			final double temp = fromPopulation.getClassifier(i)
+					.getComparisonValue(mode);
 			if ((max ? 1. : -1.) * (temp - bestFitness) > 0) {
 				bestFitness = temp;
 				bestIndex = i;

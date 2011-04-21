@@ -19,12 +19,12 @@ public class LCSTrainTemplate {
 	/**
 	 * A vector of all evaluator hooks.
 	 */
-	private Vector<IEvaluator> hooks;
+	private final Vector<IEvaluator> hooks;
 
 	/**
 	 * Frequency of the hook callback execution.
 	 */
-	private final int hookCallbackFrequency;
+	private final int hookCallbackRate;
 
 	/**
 	 * Constructor.
@@ -34,7 +34,7 @@ public class LCSTrainTemplate {
 	 */
 	public LCSTrainTemplate(final int callbackFrequency) {
 		hooks = new Vector<IEvaluator>();
-		hookCallbackFrequency = callbackFrequency;
+		hookCallbackRate = callbackFrequency;
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class LCSTrainTemplate {
 
 		int repetition = 0;
 		while (repetition < iterations) {
-			for (int j = 0; j < hookCallbackFrequency; j++) {
+			for (int j = 0; j < hookCallbackRate; j++) {
 				System.out.print(".");
 
 				for (int i = 0; i < numInstances; i++) {

@@ -66,13 +66,14 @@ public class TournamentSelector implements INaturalSelector {
 	}
 
 	@Override
-	public int select(ClassifierSet fromPopulation) {
+	public int select(final ClassifierSet fromPopulation) {
 		int size;
-		if (tournamentSize == 0)
+		if (tournamentSize == 0) {
 			size = (int) Math.floor(fromPopulation.getTotalNumerosity()
 					* percentSize);
-		else
+		} else {
 			size = tournamentSize;
+		}
 
 		int[] participants = new int[size];
 		// Create random participants
@@ -145,7 +146,7 @@ public class TournamentSelector implements INaturalSelector {
 					&& (participants[currentClassifierIndex] <= currentBestParticipantIndex)) {
 
 				// currentParicipant is in this macroclassifier
-				double fitness = fromPopulation.getClassifier(
+				final double fitness = fromPopulation.getClassifier(
 						currentMacroclassifierIndex).getComparisonValue(mode);
 
 				if ((max ? 1. : -1.) * (fitness - bestFitness) > 0) {

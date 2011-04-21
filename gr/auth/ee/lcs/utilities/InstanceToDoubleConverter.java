@@ -11,7 +11,13 @@ import weka.core.Instances;
  * @author Miltiadis Allamanis
  * 
  */
-public class InstanceToDoubleConverter {
+public final class InstanceToDoubleConverter {
+
+	/**
+	 * Private Constructor to avoid instanciation.
+	 */
+	private InstanceToDoubleConverter() {
+	};
 
 	/**
 	 * Perform the conversion.
@@ -21,10 +27,10 @@ public class InstanceToDoubleConverter {
 	 * @return a double[][] containing the instances and their respective
 	 *         attributes
 	 */
-	public static double[][] convert(Instances set) {
-		double[][] result = new double[set.numInstances()][];
+	public static double[][] convert(final Instances set) {
+		double[][] result = new double[set.numInstances()][set.numAttributes()];
 		for (int i = 0; i < set.numInstances(); i++) {
-			result[i] = new double[set.numAttributes()];
+
 			for (int j = 0; j < set.numAttributes(); j++) {
 				result[i][j] = set.instance(i).value(j);
 			}

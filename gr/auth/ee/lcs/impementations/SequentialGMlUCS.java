@@ -42,11 +42,11 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
-		final int numOfLabels = 27;
-		final int iterations = 200;
-		final int populationSize = 4000;
-		final float lc = (float) 1.252;
+		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
+		final int numOfLabels = 7;
+		final int iterations = 500;
+		final int populationSize = 1000;
+		final float lc = (float) 3.5;
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
 				populationSize, numOfLabels, .33, lc);
 		sgmlucs.run();
@@ -210,7 +210,8 @@ public class SequentialGMlUCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
+		final IEvaluator eval = new ExactMatchEvalutor(
+				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);

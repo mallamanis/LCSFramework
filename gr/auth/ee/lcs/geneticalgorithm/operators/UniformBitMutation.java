@@ -1,7 +1,6 @@
 package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.geneticalgorithm.IUnaryGeneticOperator;
 
 /**
@@ -16,7 +15,7 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	/**
 	 * The rate at which the mutation happens.
 	 */
-	private double mutationRate;
+	final private double mutationRate;
 
 	/**
 	 * The default constructor.
@@ -38,11 +37,11 @@ public class UniformBitMutation implements IUnaryGeneticOperator {
 	 */
 	@Override
 	public final Classifier operate(final Classifier aClassifier) {
-		int chromosomeSize = aClassifier.size();
-		ExtendedBitSet chromosome = aClassifier;
+		final int chromosomeSize = aClassifier.size();
+
 		for (int i = 0; i < chromosomeSize; i++) {
 			if (Math.random() < mutationRate)
-				chromosome.invert(i);
+				aClassifier.invert(i);
 		}
 		return aClassifier;
 	}

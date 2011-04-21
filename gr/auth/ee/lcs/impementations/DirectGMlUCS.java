@@ -34,7 +34,7 @@ import java.io.IOException;
  * 
  */
 public class DirectGMlUCS {
-	private static final double labelGeneralizationRate = .33;
+	private static final double LABEL_GENERALIZATION_RATE = .33;
 
 	/**
 	 * @param args
@@ -177,7 +177,7 @@ public class DirectGMlUCS {
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.HAMMING_LOSS,
-				labelGeneralizationRate);
+				LABEL_GENERALIZATION_RATE);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -193,7 +193,8 @@ public class DirectGMlUCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
-		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
+		final IEvaluator eval = new ExactMatchEvalutor(
+				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 		// rulePopulation.print();

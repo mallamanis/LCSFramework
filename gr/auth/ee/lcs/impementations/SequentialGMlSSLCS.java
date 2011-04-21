@@ -196,7 +196,8 @@ public class SequentialGMlSSLCS {
 
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, false);
-		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
+		final IEvaluator eval = new ExactMatchEvalutor(
+				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);

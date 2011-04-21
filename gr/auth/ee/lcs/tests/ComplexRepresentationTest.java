@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute;
+import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 
 import org.junit.Before;
@@ -148,7 +148,7 @@ public class ComplexRepresentationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		SingleClassRepresentation.Attribute list[] = new Attribute[4];
+		SingleClassRepresentation.AbstractAttribute list[] = new AbstractAttribute[4];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new SingleClassRepresentation(list, names);
 		ClassifierTransformBridge.setInstance(rep);

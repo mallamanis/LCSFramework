@@ -191,7 +191,8 @@ public class RTUCS {
 		ArffLoader loader = new ArffLoader();
 		loader.loadInstances(inputFile, true);
 		AccuracyEvaluator acc = new AccuracyEvaluator(loader.trainSet, true);
-		final IEvaluator eval = new ExactMatchEvalutor(ClassifierTransformBridge.instances, true);
+		final IEvaluator eval = new ExactMatchEvalutor(
+				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.registerHook(acc);
 		myExample.train(iterations, rulePopulation);

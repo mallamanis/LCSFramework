@@ -127,7 +127,7 @@ public class ClassifierSet implements Serializable {
 
 		// Subsume if possible
 		if (thoroughAdd) {
-			Classifier aClassifier = macro.myClassifier;
+			final Classifier aClassifier = macro.myClassifier;
 			for (int i = 0; i < myMacroclassifiers.size(); i++) {
 				final Classifier theClassifier = myMacroclassifiers
 						.elementAt(i).myClassifier;
@@ -194,10 +194,11 @@ public class ClassifierSet implements Serializable {
 	 */
 	public final void deleteClassifier(final int index) {
 		this.totalNumerosity--;
-		if (this.myMacroclassifiers.elementAt(index).numerosity > 1)
+		if (this.myMacroclassifiers.elementAt(index).numerosity > 1) {
 			this.myMacroclassifiers.elementAt(index).numerosity--;
-		else
+		} else {
 			this.myMacroclassifiers.remove(index);
+		}
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class ClassifierSet implements Serializable {
 	 * @return a ClassifierSet containing the match set
 	 */
 	public final ClassifierSet generateMatchSet(final double[] dataInstance) {
-		ClassifierSet matchSet = new ClassifierSet(null);
+		final ClassifierSet matchSet = new ClassifierSet(null);
 		final int populationSize = this.getNumberOfMacroclassifiers();
 		// TODO: Parallelize for performance increase
 		for (int i = 0; i < populationSize; i++) {
@@ -227,7 +228,7 @@ public class ClassifierSet implements Serializable {
 	 * @return the match set
 	 */
 	public final ClassifierSet generateMatchSet(final int dataInstanceIndex) {
-		ClassifierSet matchSet = new ClassifierSet(null);
+		final ClassifierSet matchSet = new ClassifierSet(null);
 		final int populationSize = this.getNumberOfMacroclassifiers();
 		// TODO: Parallelize for performance increase
 		for (int i = 0; i < populationSize; i++) {
@@ -343,7 +344,7 @@ public class ClassifierSet implements Serializable {
 							+ "cov:" + this.getClassifier(i).getCoverage());
 			System.out
 					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
-							.getData((this.getClassifier(i))));
+							.getData(this.getClassifier(i)));
 		}
 	}
 
@@ -360,8 +361,8 @@ public class ClassifierSet implements Serializable {
 	 */
 	public final void selfSubsume() {
 		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
-			Macroclassifier cl = this.getMacroclassifier(0);
-			int numerosity = cl.numerosity;
+			final Macroclassifier cl = this.getMacroclassifier(0);
+			final int numerosity = cl.numerosity;
 			this.myMacroclassifiers.remove(0);
 			this.totalNumerosity -= numerosity;
 			this.addClassifier(cl, true);

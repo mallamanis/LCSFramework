@@ -18,7 +18,7 @@ public class ProportionalCut {
 	/**
 	 * The number of refinement steps to be taken.
 	 */
-	private static final int steps = 15;
+	private static final int STEPS = 15;
 
 	/**
 	 * Calibrates the threshold.
@@ -29,10 +29,11 @@ public class ProportionalCut {
 	 *            the normalized confidence value's array per instance per label
 	 * @return a float representing the normalized threshold (between 0 and .5)
 	 */
-	public float calibrate(float targetLC, float[][] confidenceValues) {
+	public float calibrate(final float targetLC,
+			final float[][] confidenceValues) {
 		threshold = (float) .25;
 		float pCutStep = (float) .25;
-		for (int i = 0; i < steps; i++) {
+		for (int i = 0; i < STEPS; i++) {
 			calibrateThreshold(confidenceValues, targetLC, pCutStep);
 			pCutStep /= 2;
 		}
@@ -77,15 +78,17 @@ public class ProportionalCut {
 	 * @param targetLc
 	 *            the target LC (Label Cardinality) that we are trying to
 	 *            achieve.
-	 * @param th
+	 * @param threshold
 	 *            the threshold
 	 * @return a float indicating the absolute difference
 	 */
 	private float getPcutDiff(final float[][] confidenceValues,
-			final float targetLc, final float th) {
+			final float targetLc, final float threshold) {
 		int sumOfActive = 0;
-		for (int i = 0; i < confidenceValues.length; i++)
-			sumOfActive += getNumberOfActiveLabels(confidenceValues[i], th);
+		for (int i = 0; i < confidenceValues.length; i++) {
+			sumOfActive += getNumberOfActiveLabels(confidenceValues[i],
+					threshold);
+		}
 
 		// Compare diff
 		final double diff = Math.abs(((double) sumOfActive)
@@ -98,16 +101,18 @@ public class ProportionalCut {
 	 * 
 	 * @param lblProbs
 	 *            the normalized confidence array of all labels.
-	 * @param th
+	 * @param threshold
 	 *            the threshold
 	 * @return an integer indicating the number of labels that are active
 	 */
-	public int getNumberOfActiveLabels(final float[] lblProbs, final float th) {
+	public int getNumberOfActiveLabels(final float[] lblProbs,
+			final float threshold) {
 		// Classify
 		int activeLabels = 0;
-		for (int i = 0; i < lblProbs.length; i++)
-			if (lblProbs[i] > th)
+		for (int i = 0; i < lblProbs.length; i++) {
+			if (lblProbs[i] > threshold)
 				activeLabels++;
+		}
 		return activeLabels;
 	}
 }

@@ -59,7 +59,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @param type
 	 *            the type of the metric used
 	 */
-	public StrictMultiLabelRepresentation(final Attribute[] attributes,
+	public StrictMultiLabelRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final int type) {
 		super(attributes, ruleConsequentsNames, labels);
@@ -100,7 +100,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 			final int labelIndex = attributeList.length - numberOfLabels + i;
 
-			String attributeName = instances.attribute(labelIndex).name();
+			final String attributeName = instances.attribute(labelIndex).name();
 
 			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
 		}
@@ -279,7 +279,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public final class Label extends Attribute {
+	public final class Label extends AbstractAttribute {
 
 		/**
 		 * The Label Attribute Constructor.
@@ -366,7 +366,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		@Override
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
-			double[] votingTable = new double[numberOfLabels];
+			final double[] votingTable = new double[numberOfLabels];
 			for (int i = 0; i < numberOfLabels; i++)
 				votingTable[i] = 0;
 
@@ -394,9 +394,10 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 			}
 
 			int numberOfActiveLabels = 0;
-			for (int i = 0; i < votingTable.length; i++)
+			for (int i = 0; i < votingTable.length; i++) {
 				if (votingTable[i] > 0)
 					numberOfActiveLabels++;
+			}
 
 			int[] result = new int[numberOfActiveLabels];
 

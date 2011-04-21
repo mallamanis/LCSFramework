@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation.Attribute;
+import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class GenericMlRepresentationTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		GenericMultiLabelRepresentation.Attribute list[] = new Attribute[5];
+		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new GenericMultiLabelRepresentation(list, names, 3,
 				GenericMultiLabelRepresentation.EXACT_MATCH, .33);

@@ -39,8 +39,8 @@ public class FileLogger implements IEvaluator {
 		file = filename;
 		actualEvaluator = evaluator;
 		try {
-			FileWriter fstream = new FileWriter(file, false);
-			BufferedWriter buffer = new BufferedWriter(fstream);
+			final FileWriter fstream = new FileWriter(file, false);
+			final BufferedWriter buffer = new BufferedWriter(fstream);
 			buffer.write("");
 			buffer.flush();
 			buffer.close();
@@ -54,8 +54,8 @@ public class FileLogger implements IEvaluator {
 	public final double evaluateSet(final ClassifierSet classifiers) {
 		final double evalResult = actualEvaluator.evaluateSet(classifiers);
 		try {
-			FileWriter fstream = new FileWriter(file, true);
-			BufferedWriter buffer = new BufferedWriter(fstream);
+			final FileWriter fstream = new FileWriter(file, true);
+			final BufferedWriter buffer = new BufferedWriter(fstream);
 			buffer.write(String.valueOf(evalResult) + "\n");
 			buffer.flush();
 			buffer.close();

@@ -22,17 +22,27 @@ public class SinglePointCrossoverTest extends SinglePointCrossover {
 	 */
 	@Test
 	public void testPerformCrossover() {
-		ExtendedBitSet a = new ExtendedBitSet("0000000");
-		ExtendedBitSet b = new ExtendedBitSet("1111111");
+		ExtendedBitSet chromosome1 = new ExtendedBitSet("0000000");
+		ExtendedBitSet chromosome2 = new ExtendedBitSet("1111111");
 
-		assertEquals(performCrossover(a, b, 3).toString(), "1111000");
-		assertEquals(performCrossover(a, b, 0).toString(), "1111111");
-		assertEquals(performCrossover(a, b, 7).toString(), "0000000");
+		assertEquals("Chromosomes do not crossover correctly at position 3",
+				performCrossover(chromosome1, chromosome2, 3).toString(),
+				"1111000");
+		assertEquals("Chromosomes do not crossover correctly at position 0",
+				performCrossover(chromosome1, chromosome2, 0).toString(),
+				"1111111");
+		assertEquals("Chromosomes do not crossover correctly at position 7",
+				performCrossover(chromosome1, chromosome2, 7).toString(),
+				"0000000");
 
-		a = new ExtendedBitSet("1001001");
-		b = new ExtendedBitSet("0011001");
-		assertEquals(performCrossover(a, b, 1).toString(), "0011001");
-		assertEquals(performCrossover(a, b, 5).toString(), "0001001");
+		chromosome1 = new ExtendedBitSet("1001001");
+		chromosome2 = new ExtendedBitSet("0011001");
+		assertEquals("Chromosomes do not crossover correctly at position 1",
+				performCrossover(chromosome1, chromosome2, 1).toString(),
+				"0011001");
+		assertEquals("Chromosomes do not crossover correctly at position 5",
+				performCrossover(chromosome1, chromosome2, 5).toString(),
+				"0001001");
 	}
 
 }

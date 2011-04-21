@@ -34,7 +34,7 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 	@Override
 	public final void controlPopulation(final ClassifierSet aSet) {
 		// Create an array to place Classifiers
-		Macroclassifier[] list = new Macroclassifier[aSet
+		final Macroclassifier[] list = new Macroclassifier[aSet
 				.getNumberOfMacroclassifiers()];
 
 		// Copy Macroclassifiers to list
@@ -44,7 +44,7 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 		/*
 		 * Create Comparator.
 		 */
-		Comparator<Macroclassifier> comp = new Comparator<Macroclassifier>() {
+		final Comparator<Macroclassifier> comp = new Comparator<Macroclassifier>() {
 
 			@Override
 			public final int compare(final Macroclassifier macroA,

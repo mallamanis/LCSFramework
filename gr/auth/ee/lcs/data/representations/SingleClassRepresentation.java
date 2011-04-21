@@ -31,7 +31,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * @param ruleConsequents
 	 *            the names of the rule consequents
 	 */
-	public SingleClassRepresentation(final Attribute[] attributes,
+	public SingleClassRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequents) {
 		super(attributes, ruleConsequents, 1);
 	}
@@ -117,7 +117,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class UniLabel extends Attribute {
+	public class UniLabel extends AbstractAttribute {
 
 		/**
 		 * The classes' names.

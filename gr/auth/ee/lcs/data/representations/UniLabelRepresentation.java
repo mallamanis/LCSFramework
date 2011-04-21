@@ -29,12 +29,12 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class UniLabel extends Attribute {
+	public class UniLabel extends AbstractAttribute {
 
 		/**
 		 * The classes' names.
 		 */
-		private String[] classes;
+		private final String[] classes;
 
 		/**
 		 * The constructor.
@@ -57,8 +57,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 
 		@Override
 		public final String toString(final ExtendedBitSet convertingClassifier) {
-			int index = convertingClassifier.getIntAt(positionInChromosome,
-					lengthInBits);
+			final int index = convertingClassifier.getIntAt(
+					positionInChromosome, lengthInBits);
 			return classes[index];
 		}
 
@@ -72,7 +72,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		@Override
 		public final void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
-			int coverClass = (int) (Math.random() * classes.length);
+			final int coverClass = (int) (Math.random() * classes.length);
 			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
 					coverClass);
 		}
@@ -83,8 +83,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 			if (generatedClassifier
 					.getIntAt(positionInChromosome, lengthInBits) >= classes.length) {
 
-				int randClass = (int) Math
-						.floor(Math.random() * classes.length);
+				final int randClass = (int) Math.floor(Math.random()
+						* classes.length);
 				generatedClassifier.setIntAt(positionInChromosome,
 						lengthInBits, randClass);
 			}
@@ -139,7 +139,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltiadis Allamanis
 	 * 
 	 */
-	public class DummyLabel extends Attribute {
+	public class DummyLabel extends AbstractAttribute {
 
 		/**
 		 * Constructor.
@@ -151,8 +151,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * @param generalizationRate
 		 *            the generalization Rate
 		 */
-		public DummyLabel(int startPosition, String attributeName,
-				double generalizationRate) {
+		public DummyLabel(final int startPosition, final String attributeName,
+				final double generalizationRate) {
 			super(startPosition, attributeName, generalizationRate);
 		}
 
@@ -221,12 +221,14 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	@Override
 	public float classifyAbilityAll(final Classifier aClassifier,
 			final int instanceIndex) {
-		int[] possibleLabels = getDataInstanceLabels(ClassifierTransformBridge.instances[instanceIndex]);
-		int ruleLabel = getClassification(aClassifier)[0];
+		final int[] possibleLabels = getDataInstanceLabels(ClassifierTransformBridge.instances[instanceIndex]);
+		final int ruleLabel = getClassification(aClassifier)[0];
 
-		if (Arrays.binarySearch(possibleLabels, ruleLabel) < 0)
+		if (Arrays.binarySearch(possibleLabels, ruleLabel) < 0) {
 			return 0;
-		return 1;
+		} else {
+			return 1;
+		}
 	}
 
 	/*
@@ -279,7 +281,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		/**
 		 * The pCut method used
 		 */
-		private ProportionalCut pCut;
+		private final ProportionalCut pCut;
 
 		/**
 		 * The internal threshold used at classification.
@@ -358,19 +360,20 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * IClassificationStrategy
 		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
 		 */
-		public final int[] classify(final ClassifierSet aSet,
+		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
-			float[] lblProbs = buildConfidence(aSet, visionVector);
+			final float[] lblProbs = buildConfidence(aSet, visionVector);
 
-			int[] result = new int[pCut.getNumberOfActiveLabels(lblProbs,
+			final int[] result = new int[pCut.getNumberOfActiveLabels(lblProbs,
 					(float) this.threshold)];
 
 			int currentIndex = 0;
-			for (int i = 0; i < lblProbs.length; i++)
+			for (int i = 0; i < lblProbs.length; i++) {
 				if (lblProbs[i] > threshold) {
 					result[currentIndex] = i;
 					currentIndex++;
 				}
+			}
 			return result;
 		}
 	}

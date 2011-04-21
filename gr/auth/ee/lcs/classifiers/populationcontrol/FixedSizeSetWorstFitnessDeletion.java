@@ -17,12 +17,12 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	/**
 	 * The Natural Selector used to select the the classifier to be deleted.
 	 */
-	private INaturalSelector mySelector;
+	final private INaturalSelector mySelector;
 
 	/**
 	 * The fixed population size of the controlled set.
 	 */
-	private int populationSize;
+	final private int populationSize;
 
 	/**
 	 * Constructor of deletion strategy.
@@ -45,13 +45,12 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	 */
 	@Override
 	public final void controlPopulation(final ClassifierSet aSet) {
-		ClassifierSet toBeDeleted = new ClassifierSet(null);
+		final ClassifierSet toBeDeleted = new ClassifierSet(null);
 		while (aSet.getTotalNumerosity() > populationSize) {
 			mySelector.select(1, aSet, toBeDeleted);
 			aSet.deleteClassifier(toBeDeleted.getClassifier(0));
 			toBeDeleted.deleteClassifier(0);
 		}
-
 	}
 
 }
