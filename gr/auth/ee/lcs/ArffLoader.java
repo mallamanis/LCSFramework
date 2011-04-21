@@ -1,6 +1,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -53,16 +54,7 @@ public class ArffLoader {
 			trainSet = set;
 		}
 
-		ClassifierTransformBridge.instances = new double[trainSet
-				.numInstances()][trainSet.numAttributes()];
-
-		// Load instances
-		for (int i = 0; i < trainSet.numInstances(); i++) {
-			for (int j = 0; j < trainSet.numAttributes(); j++) {
-				ClassifierTransformBridge.instances[i][j] = trainSet
-						.instance(i).value(j);
-			}
-		}
+		ClassifierTransformBridge.instances = InstanceToDoubleConverter.convert(trainSet);
 
 	}
 }
