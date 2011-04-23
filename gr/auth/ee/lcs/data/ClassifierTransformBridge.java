@@ -10,6 +10,8 @@ import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
  * the actual transformation. All function calls are diverted to the static
  * instance.
  * 
+ * @stereotype BridgeImplementor
+ * 
  * @author Miltos Allamanis
  */
 public abstract class ClassifierTransformBridge {
@@ -18,13 +20,6 @@ public abstract class ClassifierTransformBridge {
 	 * The singleton instance of the bridge.
 	 */
 	private static ClassifierTransformBridge instance;
-
-	/**
-	 * Get the name of all labels (or classes).
-	 * 
-	 * @return a String array containing all label names
-	 */
-	public abstract String[] getLabelNames();
 
 	/**
 	 * The instances of the current problem.
@@ -79,28 +74,16 @@ public abstract class ClassifierTransformBridge {
 	public abstract void buildRepresentationModel();
 
 	/**
-	 * Creates a random classifier to cover the visionVector.
+	 * Classify a specific vision vector form a set of classifiers.
 	 * 
+	 * @param aSet
+	 *            the set of classifiers used for classification
 	 * @param visionVector
-	 *            the vision vector to cover
-	 * @return a random covering classifier
+	 *            the vision vector of the instance used for classification
+	 * @return an int[] containing the classes/ labels that the vision Vector
+	 *         has been classified
 	 */
-	public abstract Classifier createRandomCoveringClassifier(
-			double[] visionVector);
-
-	/**
-	 * Fixes a chromosome bit representation in the correct value range (e.g.
-	 * after mutation or crossover)
-	 * 
-	 * @param aChromosome
-	 *            the chromosome to be fixed
-	 */
-	public abstract void fixChromosome(ExtendedBitSet aChromosome);
-
-	/**
-	 * @return the size of the chromosome (used for the chromosome construction)
-	 */
-	public abstract int getChromosomeSize();
+	public abstract int[] classify(ClassifierSet aSet, double[] visionVector);
 
 	/**
 	 * The ability of the classifier to correctly classify the instance at the
@@ -130,6 +113,30 @@ public abstract class ClassifierTransformBridge {
 			int instanceIndex, int label);
 
 	/**
+	 * Creates a random classifier to cover the visionVector.
+	 * 
+	 * @param visionVector
+	 *            the vision vector to cover
+	 * @return a random covering classifier
+	 */
+	public abstract Classifier createRandomCoveringClassifier(
+			double[] visionVector);
+
+	/**
+	 * Fixes a chromosome bit representation in the correct value range (e.g.
+	 * after mutation or crossover)
+	 * 
+	 * @param aChromosome
+	 *            the chromosome to be fixed
+	 */
+	public abstract void fixChromosome(ExtendedBitSet aChromosome);
+
+	/**
+	 * @return the size of the chromosome (used for the chromosome construction)
+	 */
+	public abstract int getChromosomeSize();
+
+	/**
 	 * Gets the classification as specified by the representation.
 	 * 
 	 * @param aClassifier
@@ -139,16 +146,20 @@ public abstract class ClassifierTransformBridge {
 	public abstract int[] getClassification(Classifier aClassifier);
 
 	/**
-	 * Classify a specific vision vector form a set of classifiers.
+	 * Returns all the labels of the specific data instance.
 	 * 
-	 * @param aSet
-	 *            the set of classifiers used for classification
-	 * @param visionVector
-	 *            the vision vector of the instance used for classification
-	 * @return an int[] containing the classes/ labels that the vision Vector
-	 *         has been classified
+	 * @param dataInstance
+	 *            the data instance
+	 * @return a array of instances
 	 */
-	public abstract int[] classify(ClassifierSet aSet, double[] visionVector);
+	public abstract int[] getDataInstanceLabels(final double[] dataInstance);
+
+	/**
+	 * Get the name of all labels (or classes).
+	 * 
+	 * @return a String array containing all label names
+	 */
+	public abstract String[] getLabelNames();
 
 	/**
 	 * Checks if the visionVector matches the condition of the given chromosome.
@@ -161,15 +172,6 @@ public abstract class ClassifierTransformBridge {
 	 */
 	public abstract boolean isMatch(double[] visionVector,
 			ExtendedBitSet chromosome);
-
-	/**
-	 * Returns all the labels of the specific data instance.
-	 * 
-	 * @param dataInstance
-	 *            the data instance
-	 * @return a array of instances
-	 */
-	public abstract int[] getDataInstanceLabels(final double[] dataInstance);
 
 	/**
 	 * Tests the given chromosomes if the baseClassifier is a more general

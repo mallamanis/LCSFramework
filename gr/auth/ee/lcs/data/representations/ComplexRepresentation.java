@@ -14,6 +14,8 @@ import weka.core.Instances;
 /**
  * A Complex representation for the chromosome.
  * 
+ * @has 1 contains * AbstractAttribute
+ * 
  * @author Miltos Allamanis
  * 
  */

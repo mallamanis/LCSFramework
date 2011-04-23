@@ -3,6 +3,8 @@ package gr.auth.ee.lcs.classifiers;
 /**
  * An interface for a strategy on controlling classifiers from the set.
  * 
+ * @stereotype Strategy
+ * 
  * @author Miltos Allamanis
  */
 public interface IPopulationControlStrategy {

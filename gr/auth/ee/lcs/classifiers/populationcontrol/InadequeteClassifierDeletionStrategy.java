@@ -10,6 +10,8 @@ import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
 /**
  * Deletes all classifiers with zero coverage.
  * 
+ * @stereotype ConcreteStrategy
+ * 
  * @author Miltos Allamanis
  * 
  */
@@ -47,8 +49,8 @@ public class InadequeteClassifierDeletionStrategy implements
 
 		for (int i = setSize - 1; i >= 0; i--) {
 			final Classifier aClassifier = aSet.getClassifier(i);
-			final boolean zeroCoverage = aClassifier.getCheckedInstances() >= instanceSize
-					&& aClassifier.getCoverage() == 0;
+			final boolean zeroCoverage = (aClassifier.getCheckedInstances() >= instanceSize)
+					&& (aClassifier.getCoverage() == 0);
 			if (zeroCoverage)
 				aSet.deleteClassifier(i);
 		}

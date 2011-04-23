@@ -11,6 +11,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
+ * Sort the population.
+ * 
+ * @stereotype ConcreteStrategy
+ * 
  * @author Miltos Allamanis
  * 
  */

@@ -5,6 +5,8 @@ import java.io.Serializable;
 /**
  * Represents a macroclassifier. A macroclassifier is a classifier with a
  * numerosity.
+ * 
+ * @has 1 - 1 Classifier
  */
 public class Macroclassifier implements Serializable {
 

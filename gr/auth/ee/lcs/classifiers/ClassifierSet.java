@@ -15,6 +15,9 @@ import java.util.Vector;
  * object is serializable.
  * 
  * @author Miltos Allamanis
+ * 
+ * @has 1 - * Macroclassifier
+ * @has 1 - 1 IPopulationControlStrategy
  */
 public class ClassifierSet implements Serializable {
 

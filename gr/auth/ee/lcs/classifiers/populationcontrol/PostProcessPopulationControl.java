@@ -11,6 +11,8 @@ import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
  * A population control strategy post processing all classifiers. This strategy
  * removes rules with low experience and
  * 
+ * @stereotype ConcreteStrategy
+ * 
  * @author Miltos Allamanis
  * 
  */

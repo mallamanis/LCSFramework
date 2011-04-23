@@ -12,6 +12,9 @@ import java.io.Serializable;
  * represent a strategy because they provide different. methods to update each
  * classifier's fitness.
  * 
+ * @stereotype FactoryCreator
+ * @stereotype Strategy
+ * 
  * @author Miltos Allamanis
  */
 public abstract class UpdateAlgorithmFactoryAndStrategy {

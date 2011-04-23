@@ -8,6 +8,8 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * A fixed size control strategy. Classifiers are deleted based on the selector
  * tournaments
  * 
+ * @stereotype ConcreteStrategy
+ * 
  * @author Miltos Allamanis
  * 
  */

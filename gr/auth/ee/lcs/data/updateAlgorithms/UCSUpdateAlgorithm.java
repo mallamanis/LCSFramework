@@ -15,6 +15,9 @@ import java.io.Serializable;
 /**
  * A UCS implementation with fitness sharing.
  * 
+ * @stereotype ConcreteCreator
+ * @stereotype ConcreteStrategy
+ * @navassoc - - - UCSClassifierData
  * @author Miltos Allamanis
  */
 public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
@@ -22,6 +25,7 @@ public class UCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	/**
 	 * A data object for the UCS update algorithm.
 	 * 
+	 * @stereotype ConcreteProduct
 	 * @author Miltos Allamanis
 	 * 
 	 */
