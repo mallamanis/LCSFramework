@@ -1,9 +1,9 @@
 package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 /**
  * A binary genetic operator that performs gene crossover at a single point.

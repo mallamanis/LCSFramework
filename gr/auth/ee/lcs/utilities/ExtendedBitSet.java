@@ -1,4 +1,4 @@
-package gr.auth.ee.lcs.classifiers;
+package gr.auth.ee.lcs.utilities;
 
 import java.io.Serializable;
 import java.util.Random;

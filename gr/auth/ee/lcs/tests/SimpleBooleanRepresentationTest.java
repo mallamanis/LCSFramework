@@ -7,9 +7,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class SimpleBooleanRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#isMatch(double[], gr.auth.ee.lcs.classifiers.ExtendedBitSet)}
+	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#isMatch(double[], gr.auth.ee.lcs.utilities.ExtendedBitSet)}
 	 * .
 	 */
 	@Test

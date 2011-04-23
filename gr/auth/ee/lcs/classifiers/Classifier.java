@@ -2,6 +2,7 @@ package gr.auth.ee.lcs.classifiers;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.Serializable;
 

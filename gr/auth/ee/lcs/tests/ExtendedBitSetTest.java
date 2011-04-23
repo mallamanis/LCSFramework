@@ -5,7 +5,7 @@ package gr.auth.ee.lcs.tests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Test;
 

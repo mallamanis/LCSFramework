@@ -4,8 +4,8 @@
 package gr.auth.ee.lcs.tests;
 
 import static org.junit.Assert.assertEquals;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class SinglePointCrossoverTest extends SinglePointCrossover {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover#performCrossover(gr.auth.ee.lcs.classifiers.ExtendedBitSet, gr.auth.ee.lcs.classifiers.ExtendedBitSet, int)}
+	 * {@link gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover#performCrossover(gr.auth.ee.lcs.utilities.ExtendedBitSet, gr.auth.ee.lcs.utilities.ExtendedBitSet, int)}
 	 * .
 	 */
 	@Test

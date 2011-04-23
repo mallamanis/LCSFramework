@@ -5,11 +5,11 @@ package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 /**
  * Implements the a simple boolean representation of the chromosomes. Each bit
@@ -129,7 +129,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	/**
 	 * In this representation there is nothing to fix. It does nothing
 	 * 
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#fixChromosome(gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#fixChromosome(gr.auth.ee.lcs.utilities.ExtendedBitSet)
 	 */
 	@Override
 	public void fixChromosome(ExtendedBitSet aChromosome) {
@@ -155,7 +155,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * Returns true if the input visionVector matches the chromosome.
 	 * 
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMatch(double[],
-	 *      gr.auth.ee.lcs.classifiers.ExtendedBitSet)
+	 *      gr.auth.ee.lcs.utilities.ExtendedBitSet)
 	 */
 	@Override
 	public boolean isMatch(double[] visionVector, ExtendedBitSet chromosome) {

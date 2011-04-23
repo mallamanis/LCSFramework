@@ -41,11 +41,11 @@ public class DirectGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/irisml.arff";
-		final int numOfLabels = 3;
-		final int iterations = 1000;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
+		final int numOfLabels = 27;
+		final int iterations = 100;
 		final int populationSize = 1000;
-		final float lc = 1;
+		final float lc = (float) 1.252;
 		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
 				populationSize, numOfLabels, lc);
 		dmlucs.run();
@@ -82,7 +82,7 @@ public class DirectGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 1500;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.

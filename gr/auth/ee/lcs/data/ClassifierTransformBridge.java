@@ -2,7 +2,7 @@ package gr.auth.ee.lcs.data;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 /**
  * A bridge [GoF] that decouples the chromosome bit representation and the
