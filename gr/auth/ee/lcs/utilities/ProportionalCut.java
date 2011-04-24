@@ -41,6 +41,26 @@ public class ProportionalCut {
 	}
 
 	/**
+	 * Returns the number of active labels for a given threshold.
+	 * 
+	 * @param lblProbs
+	 *            the normalized confidence array of all labels.
+	 * @param threshold
+	 *            the threshold
+	 * @return an integer indicating the number of labels that are active
+	 */
+	public int getNumberOfActiveLabels(final float[] lblProbs,
+			final float threshold) {
+		// Classify
+		int activeLabels = 0;
+		for (int i = 0; i < lblProbs.length; i++) {
+			if (lblProbs[i] >= threshold)
+				activeLabels++;
+		}
+		return activeLabels;
+	}
+
+	/**
 	 * Calibrate threshold with a given step for threshold values.
 	 * 
 	 * @param confidenceValues
@@ -52,17 +72,17 @@ public class ProportionalCut {
 	 */
 	private void calibrateThreshold(final float[][] confidenceValues,
 			final float targetLc, final float pCutStep) {
-		float downLimit = (float) this.threshold - pCutStep;
+		float downLimit = this.threshold - pCutStep;
 		if (downLimit < 0)
 			downLimit = 0;
-		float upLimit = (float) this.threshold + pCutStep;
+		float upLimit = this.threshold + pCutStep;
 		if (upLimit > .5)
 			upLimit = (float) .5;
 		float bestDif = Float.MAX_VALUE;
 		for (float th = downLimit; th <= upLimit; th += (pCutStep / 2)) {
 			final float diff = getPcutDiff(confidenceValues, targetLc, th);
 			if (diff < bestDif) {
-				bestDif = (float) diff;
+				bestDif = diff;
 				this.threshold = th;
 			}
 		}
@@ -94,25 +114,5 @@ public class ProportionalCut {
 		final double diff = Math.abs(((double) sumOfActive)
 				/ ((double) confidenceValues.length) - targetLc);
 		return (float) diff;
-	}
-
-	/**
-	 * Returns the number of active labels for a given threshold.
-	 * 
-	 * @param lblProbs
-	 *            the normalized confidence array of all labels.
-	 * @param threshold
-	 *            the threshold
-	 * @return an integer indicating the number of labels that are active
-	 */
-	public int getNumberOfActiveLabels(final float[] lblProbs,
-			final float threshold) {
-		// Classify
-		int activeLabels = 0;
-		for (int i = 0; i < lblProbs.length; i++) {
-			if (lblProbs[i] > threshold)
-				activeLabels++;
-		}
-		return activeLabels;
 	}
 }
