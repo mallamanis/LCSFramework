@@ -28,7 +28,7 @@ import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import java.io.IOException;
 
 /**
- * A Direct Generic-Representation AS-LCS
+ * A Direct Generic-Representation AS-LCS.
  * 
  * @author Miltiadis Allamanis
  * 
@@ -39,9 +39,9 @@ public class DirectGASLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 100;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase.arff";
+		final int numOfLabels = 27;
+		final int iterations = 200;
 		final int populationSize = 1000;
 		DirectGASLCS dgaslcs = new DirectGASLCS(file, iterations,
 				populationSize, numOfLabels);
@@ -77,7 +77,7 @@ public class DirectGASLCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = 850;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.

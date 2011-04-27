@@ -30,7 +30,7 @@ import gr.auth.ee.lcs.utilities.ILabelSelector;
 import java.io.IOException;
 
 /**
- * A Transformation ml-ASLCS
+ * A Transformation ml-ASLCS.
  * 
  * @author Miltos Allamanis
  * 
@@ -40,12 +40,12 @@ public class TransformASLCS {
 	 * @param args
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
-		final int numOfLabels = 27;
-		final int iterations = 500;
-		final int populationSize = 500;
-		final float lc = (float) 1.252;
+	public static void main(final String[] args) throws IOException {
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final int numOfLabels = 6;
+		final int iterations = 1000;
+		final int populationSize = 1000;
+		final float lc = (float) 1.869;
 		final BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
@@ -74,6 +74,9 @@ public class TransformASLCS {
 	 */
 	private final float CROSSOVER_RATE = (float) 0.8;
 
+	/**
+	 * The label selector used for trasformation.
+	 */
 	private final ILabelSelector selector;
 
 	/**
@@ -97,7 +100,7 @@ public class TransformASLCS {
 	private static final int CALLBACK_RATE = 500;
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
 	private static final int PRECISION_BITS = 5;
 
@@ -114,12 +117,12 @@ public class TransformASLCS {
 	/**
 	 * The ASLCS experience threshold.
 	 */
-	private static final int ASLCS_EXPERIENCE_THRESHOLD = 10;
+	private static final int ASLCS_EXPERIENCE_THRESHOLD = 5;
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private static final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private static final int POSTPROCESS_EXPERIENCE_THRESHOLD = 0;
 
 	/**
 	 * Coverage threshold for post processing.
@@ -127,7 +130,7 @@ public class TransformASLCS {
 	private static final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
 	private static final double POSTPROCESS_FITNESS_THRESHOLD = .1;
 

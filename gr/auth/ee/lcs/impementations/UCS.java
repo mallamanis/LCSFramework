@@ -40,7 +40,7 @@ public class UCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/car.arff";
+		final String file = "/home/miltiadis/Desktop/datasets/iris.arff";
 		final int iterations = 1000;
 		final int populationSize = 2000;
 		UCS ucs = new UCS(file, iterations, populationSize);

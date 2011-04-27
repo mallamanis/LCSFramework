@@ -14,7 +14,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class AllSingleLabelEvaluator implements IEvaluator {
+public final class AllSingleLabelEvaluator implements IEvaluator {
 
 	/**
 	 * Single label evaluators.
@@ -22,15 +22,15 @@ public class AllSingleLabelEvaluator implements IEvaluator {
 	private final SingleLabelEvaluator[] evaluators;
 
 	/**
-	 * Boolean indicating if we are going to print results
+	 * Boolean indicating if we are going to print results.
 	 */
 	private final boolean print;
 
 	/**
-	 * 
-	 * @param evaluateSet
-	 * @param numberOfLabels
-	 * @param printResults
+	 * Constructor.
+	 * @param evaluateSet the Weka instances to perform evaluation on
+	 * @param numberOfLabels the number of labels at the problem
+	 * @param printResults print results to stout
 	 */
 	public AllSingleLabelEvaluator(final Instances evaluateSet,
 			final int numberOfLabels, final boolean printResults) {
@@ -48,7 +48,7 @@ public class AllSingleLabelEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public double evaluateSet(final ClassifierSet classifiers) {
 		double sum = 0;
 		for (int i = 0; i < evaluators.length; i++) {
 			final double result = evaluators[i].evaluateSet(classifiers);
