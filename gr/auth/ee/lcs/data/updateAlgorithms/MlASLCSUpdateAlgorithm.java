@@ -1,19 +1,34 @@
+/**
+ * 
+ */
 package gr.auth.ee.lcs.data.updateAlgorithms;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm.SLCSClassifierData;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
-import java.io.Serializable;
-
 /**
- * An abstract *S-LCS update algorithm as described in Tzima-Mitkas paper.
+ * An Ml-ASLCS update algorithm. The algorithm is the same to AS-LCS apart from
+ * ns calculation
+ * 
+ * @author Miltos Allamanis
+ * 
  */
-public abstract class AbstractSLCSUpdateAlgorithm extends
-		UpdateAlgorithmFactoryAndStrategy {
+public class MlASLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
+
+	/**
+	 * The strictness factor for updating.
+	 */
+	private final double n;
+
+	private final int numOfLabels;
 
 	/**
 	 * A data object for the *SLCS update algorithms.
@@ -36,7 +51,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		/**
 		 * niche set size estimation.
 		 */
-		public double ns = 0;
+		public double ns = 100;
 
 		/**
 		 * Match Set Appearances.
@@ -82,23 +97,31 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	private final int subsumptionExperienceThreshold;
 
 	/**
-	 * @param subsumptionFitness
+	 * Object's Constructor.
+	 * 
+	 * @param nParameter
+	 *            the strictness factor ν used in updating
+	 * @param fitnessThreshold
 	 *            the fitness threshold for subsumption
-	 * @param subsumptionExperience
+	 * @param experienceThreshold
 	 *            the experience threshold for subsumption
 	 * @param gaMatchSetRunProbability
-	 *            the probability of running the GA at the matchset
+	 *            the probability of running the GA on the match set
 	 * @param geneticAlgorithm
-	 *            the GA to use
+	 *            the GA
+	 * @param labels
+	 *            the number of labels in the problem
 	 */
-	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
-			final int subsumptionExperience,
-			final double gaMatchSetRunProbability,
-			final IGeneticAlgorithmStrategy geneticAlgorithm) {
-		this.subsumptionFitnessThreshold = subsumptionFitness;
-		this.subsumptionExperienceThreshold = subsumptionExperience;
+	public MlASLCSUpdateAlgorithm(final double nParameter,
+			final double fitnessThreshold, final int experienceThreshold,
+			double gaMatchSetRunProbability,
+			IGeneticAlgorithmStrategy geneticAlgorithm, int labels) {
+		this.subsumptionFitnessThreshold = fitnessThreshold;
+		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
 		this.ga = geneticAlgorithm;
+		this.n = nParameter;
+		numOfLabels = labels;
 	}
 
 	/**
@@ -137,26 +160,79 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public String getData(Classifier aClassifier) {
+	public final String getData(final Classifier aClassifier) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
 				+ data.ns;
 	}
 
+	private int[] calculateLabelNiches(final ClassifierSet correctSet,
+			final int instanceIndex) {
+		final int[] niches = new int[numOfLabels];
+		Arrays.fill(niches, 0);
+
+		final int correctSetSize = correctSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < correctSetSize; i++) {
+			final Classifier cl = correctSet.getClassifier(i);
+			for (int label = 0; label < numOfLabels; label++) {
+				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
+					niches[label]++;
+				}
+			}
+		}
+		return niches;
+	}
+
+	private double getClassifierNicheSize(final Classifier aClassifier,
+			final int instanceIndex, final int[] niches) {
+		int mean  = 0;
+		int active = 0;
+		int minNiche = Integer.MAX_VALUE;
+		for (int label = 0; label < numOfLabels; label++) {
+			if (aClassifier.classifyLabelCorrectly(instanceIndex, label) > 0) {
+				if (niches[label] < minNiche) 
+					minNiche = niches[label];
+				mean += niches[label];
+				active++;
+			}
+		}
+		return minNiche;
+		/*final double result = ((double)minNiche) / (((double)mean)/((double)active));
+		return Double.isNaN(result)?1000: result;*/
+	}
+
 	@Override
 	public void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
+		return; // Not used!
+	}
+
+	public void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet, final int instanceIndex) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		final int correctSetNumerosity = correctSet.getTotalNumerosity();
+
+		final int[] niches = calculateLabelNiches(correctSet, instanceIndex);
+				
 		for (int i = 0; i < matchSetSize; i++) {
 			Classifier cl = matchSet.getClassifier(i);
+
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			data.ns = (data.msa* data.ns + correctSetNumerosity) / (data.msa +1);
-			data.msa++;
 			
-			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);
+			data.msa++;
+
+			if (correctSet.getClassifierNumerosity(cl) > 0) {
+				data.tp += 1; // aClassifier at the correctSet
+				data.ns = (data.msa * data.ns + getClassifierNicheSize(cl,
+						instanceIndex, niches)) / (data.msa + 1); //TODO: Correct?
+			} else {
+				data.fp += 1;
+			}
+
+			// Niche set sharing heuristic...
+			data.fitness = Math.pow(((double) (data.tp)) / (double) (data.msa),
+					n);
 			this.updateSubsumption(cl);
 			cl.experience++;
 		}
@@ -178,34 +254,30 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 
 	}
 
-	/**
-	 * The abstract function used to calculate the fitness of a classifier.
-	 * 
-	 * @param aClassifier
-	 *            the classifier to calculate the fitness
-	 * @param numerosity
-	 *            the numerosity of the given classifier
-	 * @param correctSet
-	 *            the correct set, used at updating the fitness
-	 */
-	public abstract void updateFitness(Classifier aClassifier, int numerosity,
-			ClassifierSet correctSet);
-
 	@Override
 	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex) {
 
 		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
 
+		
+		final int[] niches = calculateLabelNiches(correctSet, instanceIndex);
+		boolean emptyLabel = false;
+		for (int i = 0; i < niches.length; i++) {
+			if (niches[i] == 0 ) emptyLabel = true;
+		}
+		
 		/*
 		 * Cover if necessary
 		 */
 		if (correctSet.getNumberOfMacroclassifiers() == 0) {
 			cover(population, instanceIndex);
 			return;
+		} else if (emptyLabel){
+			cover(population, instanceIndex);
 		}
 
-		performUpdate(matchSet, correctSet);
+		performUpdate(matchSet, correctSet, instanceIndex);
 
 		/*
 		 * Run GA
@@ -249,6 +321,35 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 				.setSubsumptionAbility((aClassifier
 						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
 						&& (aClassifier.experience > subsumptionExperienceThreshold));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
+	@Override
+	public double getComparisonValue(final Classifier aClassifier, final int mode) {
+		SLCSClassifierData data = (SLCSClassifierData) aClassifier
+				.getUpdateDataObject();
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness * (aClassifier.experience < 5 ? 0 : 1);
+		case COMPARISON_MODE_DELETION:
+			return 1 / (data.fitness 
+					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
+							.isNaN(data.ns) ? 1 : data.ns) + 1)) * (((aClassifier
+					.getCoverage() == 0 || aClassifier.getCoverage() == 1) && (aClassifier.experience == 1)) ? 0.
+					: 1));
+			// TODO: Something else?
+		case COMPARISON_MODE_EXPLOITATION:
+			final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
+			return Double.isNaN(exploitationFitness) ? .000001
+					: exploitationFitness;
+		}
+		return 0;
 	}
 
 }

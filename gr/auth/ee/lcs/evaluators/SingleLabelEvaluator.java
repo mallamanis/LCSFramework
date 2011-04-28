@@ -24,7 +24,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 	private final Instances instanceSet;
 
 	/**
-	 * The label index of the label under evaluation
+	 * The label index of the label under evaluation.
 	 */
 	private final int label;
 
@@ -33,6 +33,8 @@ public class SingleLabelEvaluator implements IEvaluator {
 	 * 
 	 * @param labelIndex
 	 *            the label's index that is under evaluation
+	 * @param evaluateSet
+	 * 			 the set to evaluate the label on
 	 */
 	public SingleLabelEvaluator(final int labelIndex,
 			final Instances evaluateSet) {

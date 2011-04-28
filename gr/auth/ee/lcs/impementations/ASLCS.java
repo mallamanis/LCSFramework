@@ -33,7 +33,7 @@ import java.io.IOException;
  */
 public class ASLCS {
 	/**
-	 * The main for running AS-LCS
+	 * The main for running AS-LCS.
 	 * 
 	 * @param args
 	 * @throws IOException
@@ -82,7 +82,7 @@ public class ASLCS {
 	private final int CALLBACK_RATE = 50;
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
 	private final int PRECISION_BITS = 7;
 

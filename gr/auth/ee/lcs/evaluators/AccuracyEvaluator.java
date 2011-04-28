@@ -33,7 +33,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	private final boolean printResults;
 
 	/**
-	 * Constructor for creating evaluator with a Weka instance set
+	 * Constructor for creating evaluator with a Weka instance set.
 	 * 
 	 * @param instances
 	 *            the instances to be used
@@ -46,7 +46,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	}
 
 	/**
-	 * Constructor for creating evaluator with .arff file
+	 * Constructor for creating evaluator with .arff file.
 	 * 
 	 * @param arffFileName
 	 *            the arff file
@@ -84,7 +84,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(final ClassifierSet classifiers) {
+	public final double evaluateSet(final ClassifierSet classifiers) {
 		final ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
 
