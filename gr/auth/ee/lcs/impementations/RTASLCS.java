@@ -24,6 +24,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.IOException;
 
@@ -41,7 +42,7 @@ public class RTASLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
 		final int numOfLabels = 27;
-		final int iterations = 500;
+		final int iterations = 200;
 		final int populationSize = 6000;
 		RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize,
 				numOfLabels);
@@ -82,7 +83,7 @@ public class RTASLCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 500;
+	private final int CALLBACK_RATE = 200;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -193,14 +194,9 @@ public class RTASLCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation, (float) 1.35);
-		// rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
 		eval.evaluateSet(rulePopulation);
 
-		System.out.println("Evaluating on test set");
+		System.out.println("Evaluating on test set (pre-calibration)");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);
 		testEval.evaluateSet(rulePopulation);
@@ -208,6 +204,31 @@ public class RTASLCS {
 				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		accEval.evaluateSet(rulePopulation);
+
+		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation, (float) 1.252);
+		// rulePopulation.print();
+		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+
+		eval.evaluateSet(rulePopulation);
+
+		System.out.println("Evaluating on test set");
+
+		testEval.evaluateSet(rulePopulation);
+
+		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
+
+		str.proportionalCutCalibration(
+				InstanceToDoubleConverter.convert(loader.testSet),
+				rulePopulation, (float) 1.252);
+
+		System.out.println("Evaluating on test set (Pcut on test)");
+
+		testEval.evaluateSet(rulePopulation);
+
+		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
 
 	}
