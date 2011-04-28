@@ -12,7 +12,7 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * @author Miltos Allamanis
  * 
  */
-public class BestClassifierSelector implements INaturalSelector {
+public final class BestClassifierSelector implements INaturalSelector {
 
 	/**
 	 * Boolean indicating if the selector selects the best or worst classifier.
