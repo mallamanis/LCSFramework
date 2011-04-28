@@ -13,7 +13,6 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -41,8 +40,8 @@ public class DirectGASLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
 		final int numOfLabels = 7;
-		final int iterations = 100;
-		final int populationSize = 1000;
+		final int iterations = 1000;
+		final int populationSize = 2000;
 		DirectGASLCS dgaslcs = new DirectGASLCS(file, iterations,
 				populationSize, numOfLabels);
 		dgaslcs.run();
@@ -159,7 +158,7 @@ public class DirectGASLCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.ACCURACY, .33);
+				GenericMultiLabelRepresentation.EXACT_MATCH, .01);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
