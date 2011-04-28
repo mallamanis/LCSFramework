@@ -22,6 +22,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.IOException;
 
@@ -39,9 +40,9 @@ public class ASLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/cmc.arff";
-		final int iterations = 600;
-		final int populationSize = 1200;
+		final String file = "/home/miltiadis/Desktop/datasets/emotionsClass1.arff";
+		final int iterations = 200;
+		final int populationSize = 5000;
 		ASLCS aslcs = new ASLCS(file, iterations, populationSize);
 		aslcs.run();
 	}
@@ -79,12 +80,12 @@ public class ASLCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 50;
+	private final int CALLBACK_RATE = 100;
 
 	/**
 	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = 5;
 
 	/**
 	 * The UCS n power parameter.
@@ -104,7 +105,7 @@ public class ASLCS {
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 0;
 
 	/**
 	 * Coverage threshold for post processing.
@@ -114,7 +115,7 @@ public class ASLCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
 	/**
 	 * The AS-LCS constructor.
@@ -189,6 +190,10 @@ public class ASLCS {
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
 				true);
 		testEval.evaluateSet(rulePopulation);
+		ConfusionMatrixEvaluator testconf = new ConfusionMatrixEvaluator(
+				rep.getLabelNames(),
+				InstanceToDoubleConverter.convert(trainer.testSet));
+		testconf.evaluateSet(rulePopulation);
 
 	}
 }

@@ -43,7 +43,7 @@ public class TransformASLCS {
 	public static void main(final String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
 		final int numOfLabels = 6;
-		final int iterations = 1000;
+		final int iterations = 500;
 		final int populationSize = 1000;
 		final float lc = (float) 1.869;
 		final BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
@@ -132,7 +132,7 @@ public class TransformASLCS {
 	/**
 	 * Post-process threshold for fitness.
 	 */
-	private static final double POSTPROCESS_FITNESS_THRESHOLD = .1;
+	private static final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -221,9 +221,22 @@ public class TransformASLCS {
 				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
+
+		ExactMatchEvalutor trainEval = new ExactMatchEvalutor(loader.trainSet,
+				true);
+		trainEval.evaluateSet(rulePopulation);
+		HammingLossEvaluator trainhamEval = new HammingLossEvaluator(
+				loader.trainSet, true, numberOfLabels);
+		trainhamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator trainaccEval = new AccuracyEvaluator(loader.trainSet,
+				true);
+		trainaccEval.evaluateSet(rulePopulation);
+
 		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
+		AllSingleLabelEvaluator teEval = new AllSingleLabelEvaluator(
+				loader.testSet, numberOfLabels, true);
+		teEval.evaluateSet(rulePopulation);
 		eval.evaluateSet(rulePopulation);
 		slEval.evaluateSet(rulePopulation);
 		System.out.println("Evaluating on test set");

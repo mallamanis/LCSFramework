@@ -22,6 +22,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.io.IOException;
 
@@ -40,9 +41,9 @@ public class UCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/iris.arff";
-		final int iterations = 1000;
-		final int populationSize = 2000;
+		final String file = "/home/miltiadis/Desktop/datasets/emotionsClass1.arff";
+		final int iterations = 300;
+		final int populationSize = 5000;
 		UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.run();
 	}
@@ -75,12 +76,12 @@ public class UCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 300;
+	private final int THETA_GA = 200;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 50;
+	private final int CALLBACK_RATE = 300;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -115,7 +116,7 @@ public class UCS {
 	/**
 	 * The post-process experince threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 0;
 
 	/**
 	 * Coverage threshold for post processing.
@@ -125,7 +126,7 @@ public class UCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
 	/**
 	 * The UCS constructor.
@@ -194,12 +195,19 @@ public class UCS {
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), ClassifierTransformBridge.instances);
+				rep.getLabelNames(), InstanceToDoubleConverter.convert(trainer.testSet));
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
 				true);
+		testEval.evaluateSet(rulePopulation);
+
+		System.out.println("Evaluating on test set (best)");
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		ConfusionMatrixEvaluator conf2 = new ConfusionMatrixEvaluator(
+				rep.getLabelNames(), InstanceToDoubleConverter.convert(trainer.testSet));
+		conf2.evaluateSet(rulePopulation);
 		testEval.evaluateSet(rulePopulation);
 
 	}

@@ -44,7 +44,7 @@ public class TransformationUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
 		final int numOfLabels = 6;
-		final int iterations = 200;
+		final int iterations = 400;
 		final int populationSize = 1000;
 		final float lc = (float) 1.869;
 		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
@@ -90,17 +90,17 @@ public class TransformationUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 200;
+	private final int THETA_GA = 800;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 100;
+	private final int CALLBACK_RATE = 400;
 
 	/**
 	 * The number of bits to use for representing continuous variables
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = 5;
 
 	/**
 	 * The UCS alpha parameter.
@@ -115,7 +115,7 @@ public class TransformationUCS {
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
+	private final double UCS_ACC0 = .9;
 
 	/**
 	 * The learning rate (beta) parameter.
@@ -130,7 +130,7 @@ public class TransformationUCS {
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 0;
 
 	/**
 	 * Coverage threshold for post processing.
@@ -140,7 +140,7 @@ public class TransformationUCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .1;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -212,7 +212,7 @@ public class TransformationUCS {
 									true)));
 			myExample.train(iterations, brpopulation);
 			AllSingleLabelEvaluator seval = new AllSingleLabelEvaluator(
-					loader.trainSet, 6, true);
+					loader.trainSet, numberOfLabels, true);
 			seval.evaluateSet(brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
@@ -220,7 +220,20 @@ public class TransformationUCS {
 		} while (selector.next());
 		rep.activateAllLabels();
 
+		ExactMatchEvalutor trainEval = new ExactMatchEvalutor(loader.trainSet,
+				true);
+		trainEval.evaluateSet(rulePopulation);
+		HammingLossEvaluator trainhamEval = new HammingLossEvaluator(
+				loader.trainSet, true, numberOfLabels);
+		trainhamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator trainaccEval = new AccuracyEvaluator(loader.trainSet,
+				true);
+		trainaccEval.evaluateSet(rulePopulation);
+
 		System.out.println("Evaluating on test set");
+		AllSingleLabelEvaluator teEval = new AllSingleLabelEvaluator(
+				loader.testSet, numberOfLabels, true);
+		teEval.evaluateSet(rulePopulation);
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true);
 		testEval.evaluateSet(rulePopulation);

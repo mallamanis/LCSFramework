@@ -55,8 +55,8 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 			final int[] classes = bridge.classify(classifiers, instances[i]);
 			if (classes == null)
 				continue; // TODO: Use majority
-			final int x = classes[0];
-			final int y = bridge.getDataInstanceLabels(instances[i])[0];
+			final int y = classes[0];
+			final int x = bridge.getDataInstanceLabels(instances[i])[0];
 			conf.setElement(x, y, conf.getElement(x, y) + 1);
 		}
 

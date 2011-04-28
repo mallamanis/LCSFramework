@@ -49,49 +49,6 @@ public class LCSTrainTemplate {
 	}
 
 	/**
-	 * Unregister an evaluator.
-	 * 
-	 * @param evaluator
-	 *            the evaluator to register
-	 * @return true if the evaluator has been unregisterd successfully
-	 */
-	public final boolean unregisterEvaluator(final IEvaluator evaluator) {
-		return hooks.remove(evaluator);
-	}
-
-	/**
-	 * Execute hooks.
-	 * 
-	 * @param aSet
-	 *            the set on which to run the callbacks
-	 */
-	private void executeCallbacks(final ClassifierSet aSet) {
-		for (int i = 0; i < hooks.size(); i++) {
-			hooks.elementAt(i).evaluateSet(aSet);
-		}
-	}
-
-	/**
-	 * Train with instance main template. Trains the classifier set with a
-	 * single instance.
-	 * 
-	 * @param population
-	 *            the classifier's popoulation
-	 * @param dataInstanceIndex
-	 *            the index of the training data instance
-	 */
-	public final void trainWithInstance(final ClassifierSet population,
-			final int dataInstanceIndex) {
-
-		final ClassifierSet matchSet = population
-				.generateMatchSet(dataInstanceIndex);
-
-		UpdateAlgorithmFactoryAndStrategy.updateData(population, matchSet,
-				dataInstanceIndex);
-
-	}
-
-	/**
 	 * Train a classifier set with all train instances.
 	 * 
 	 * @param iterations
@@ -115,11 +72,55 @@ public class LCSTrainTemplate {
 					trainWithInstance(population, i);
 				}
 				repetition++;
+				del.controlPopulation(population);
 			}
 			executeCallbacks(population);
-			del.controlPopulation(population);
+
 		}
 
+	}
+
+	/**
+	 * Train with instance main template. Trains the classifier set with a
+	 * single instance.
+	 * 
+	 * @param population
+	 *            the classifier's popoulation
+	 * @param dataInstanceIndex
+	 *            the index of the training data instance
+	 */
+	public final void trainWithInstance(final ClassifierSet population,
+			final int dataInstanceIndex) {
+
+		final ClassifierSet matchSet = population
+				.generateMatchSet(dataInstanceIndex);
+
+		UpdateAlgorithmFactoryAndStrategy.updateData(population, matchSet,
+				dataInstanceIndex);
+
+	}
+
+	/**
+	 * Unregister an evaluator.
+	 * 
+	 * @param evaluator
+	 *            the evaluator to register
+	 * @return true if the evaluator has been unregisterd successfully
+	 */
+	public final boolean unregisterEvaluator(final IEvaluator evaluator) {
+		return hooks.remove(evaluator);
+	}
+
+	/**
+	 * Execute hooks.
+	 * 
+	 * @param aSet
+	 *            the set on which to run the callbacks
+	 */
+	private void executeCallbacks(final ClassifierSet aSet) {
+		for (int i = 0; i < hooks.size(); i++) {
+			hooks.elementAt(i).evaluateSet(aSet);
+		}
 	}
 
 }

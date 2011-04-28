@@ -13,10 +13,6 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -32,8 +28,9 @@ import java.io.IOException;
 
 /**
  * Direct Generic ml-ASLCS implementation.
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class DirectGMlASLCS {
 	/**
@@ -161,12 +158,13 @@ public class DirectGMlASLCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.ACCURACY, .33);
+				GenericMultiLabelRepresentation.EXACT_MATCH, .33);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, numberOfLabels);
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga,
+				numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(

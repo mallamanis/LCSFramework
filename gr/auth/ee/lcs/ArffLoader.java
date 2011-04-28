@@ -45,16 +45,18 @@ public class ArffLoader {
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());
-		// set.stratify(10);
+		set.stratify(10);
 
 		if (generateTestSet) {
-			trainSet = set.trainCV(10, 3);
-			testSet = set.testCV(10, 3);
+			final int fold = (int) Math.floor(Math.random() * 10);
+			trainSet = set.trainCV(10, fold);
+			testSet = set.testCV(10, fold);
 		} else {
 			trainSet = set;
 		}
 
-		ClassifierTransformBridge.instances = InstanceToDoubleConverter.convert(trainSet);
+		ClassifierTransformBridge.instances = InstanceToDoubleConverter
+				.convert(trainSet);
 
 	}
 }
