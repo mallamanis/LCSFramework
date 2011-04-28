@@ -94,7 +94,6 @@ public class ProportionalCutTest {
 		assertTrue(threshold < .05);
 
 		threshold = a.calibrate((float) (8. / 3.), confValues);
-		System.out.println(threshold);
 		assertTrue(threshold < .2);
 	}
 }
