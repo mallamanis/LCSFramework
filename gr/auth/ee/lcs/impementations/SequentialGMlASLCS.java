@@ -46,7 +46,7 @@ public class SequentialGMlASLCS {
 		final int populationSize = 1000;
 		final float lc = (float) 3.5;
 		SequentialGMlASLCS taslcs = new SequentialGMlASLCS(file, iterations,
-				populationSize, numOfLabels, .07, lc);
+				populationSize, numOfLabels, .5, lc);
 		taslcs.run();
 
 	}
@@ -167,7 +167,7 @@ public class SequentialGMlASLCS {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(
-						(int) 50,
+						50,
 						true,
 						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), CROSSOVER_RATE,
@@ -192,7 +192,7 @@ public class SequentialGMlASLCS {
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new TournamentSelector(
-								(int) 40,
+								40,
 								true,
 								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
 

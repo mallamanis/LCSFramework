@@ -81,7 +81,7 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 400;
+	private final int THETA_GA = 800;
 
 	/**
 	 * The target Label Cardinality of the problem

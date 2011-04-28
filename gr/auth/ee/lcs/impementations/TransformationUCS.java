@@ -16,6 +16,7 @@ import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
+import gr.auth.ee.lcs.evaluators.AllSingleLabelEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
@@ -24,8 +25,8 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
-import gr.auth.ee.lcs.utilities.PairwiseLabelSelector;
 
 import java.io.IOException;
 
@@ -43,10 +44,11 @@ public class TransformationUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
 		final int numOfLabels = 6;
-		final int iterations = 500;
+		final int iterations = 200;
 		final int populationSize = 1000;
 		final float lc = (float) 1.869;
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(numOfLabels);
+		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
+				numOfLabels);
 		TransformationUCS trucs = new TransformationUCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
 		trucs.run();
@@ -88,7 +90,7 @@ public class TransformationUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 150;
+	private final int THETA_GA = 200;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -209,11 +211,24 @@ public class TransformationUCS {
 									UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
 									true)));
 			myExample.train(iterations, brpopulation);
+			AllSingleLabelEvaluator seval = new AllSingleLabelEvaluator(
+					loader.trainSet, 6, true);
+			seval.evaluateSet(brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
 
 		} while (selector.next());
 		rep.activateAllLabels();
+
+		System.out.println("Evaluating on test set");
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
+				true);
+		testEval.evaluateSet(rulePopulation);
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
+				true, numberOfLabels);
+		hamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		accEval.evaluateSet(rulePopulation);
 
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
@@ -230,13 +245,8 @@ public class TransformationUCS {
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);

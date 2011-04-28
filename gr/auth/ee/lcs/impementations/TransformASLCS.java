@@ -41,11 +41,11 @@ public class TransformASLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
-		final int numOfLabels = 27;
-		final int iterations = 500;
-		final int populationSize = 500;
-		final float lc = (float) 1.252;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final int numOfLabels = 6;
+		final int iterations = 300;
+		final int populationSize = 5000;
+		final float lc = (float) 1.869;
 		final BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
@@ -94,7 +94,7 @@ public class TransformASLCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private static final int CALLBACK_RATE = 500;
+	private static final int CALLBACK_RATE = 300;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -208,6 +208,15 @@ public class TransformASLCS {
 
 		} while (selector.next());
 		rep.activateAllLabels();
+		slEval.evaluateSet(rulePopulation);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
+				true);
+		testEval.evaluateSet(rulePopulation);
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
+				true, numberOfLabels);
+		hamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		accEval.evaluateSet(rulePopulation);
 
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
@@ -224,13 +233,11 @@ public class TransformASLCS {
 		eval.evaluateSet(rulePopulation);
 		slEval.evaluateSet(rulePopulation);
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true);
+
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels);
+
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+
 		accEval.evaluateSet(rulePopulation);
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);
