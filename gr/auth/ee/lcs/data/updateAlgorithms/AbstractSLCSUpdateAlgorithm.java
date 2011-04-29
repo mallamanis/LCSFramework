@@ -153,9 +153,10 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			Classifier cl = matchSet.getClassifier(i);
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			data.ns = (data.msa* data.ns + correctSetNumerosity) / (data.msa +1);
+			data.ns = (data.msa * data.ns + correctSetNumerosity)
+					/ (data.msa + 1);
 			data.msa++;
-			
+
 			updateFitness(cl, matchSet.getClassifierNumerosity(i), correctSet);
 			this.updateSubsumption(cl);
 			cl.experience++;

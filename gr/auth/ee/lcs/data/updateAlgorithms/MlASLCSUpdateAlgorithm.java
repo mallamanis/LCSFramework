@@ -3,16 +3,15 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.AbstractSLCSUpdateAlgorithm.SLCSClassifierData;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
+
+import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * An Ml-ASLCS update algorithm. The algorithm is the same to AS-LCS apart from
@@ -186,20 +185,23 @@ public class MlASLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 	private double getClassifierNicheSize(final Classifier aClassifier,
 			final int instanceIndex, final int[] niches) {
-		int mean  = 0;
+		int mean = 0;
 		int active = 0;
 		int minNiche = Integer.MAX_VALUE;
 		for (int label = 0; label < numOfLabels; label++) {
 			if (aClassifier.classifyLabelCorrectly(instanceIndex, label) > 0) {
-				if (niches[label] < minNiche) 
+				if (niches[label] < minNiche)
 					minNiche = niches[label];
 				mean += niches[label];
 				active++;
 			}
 		}
 		return minNiche;
-		/*final double result = ((double)minNiche) / (((double)mean)/((double)active));
-		return Double.isNaN(result)?1000: result;*/
+		/*
+		 * final double result = ((double)minNiche) /
+		 * (((double)mean)/((double)active)); return Double.isNaN(result)?1000:
+		 * result;
+		 */
 	}
 
 	@Override
@@ -213,19 +215,20 @@ public class MlASLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
 		final int[] niches = calculateLabelNiches(correctSet, instanceIndex);
-				
+
 		for (int i = 0; i < matchSetSize; i++) {
 			Classifier cl = matchSet.getClassifier(i);
 
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			
+
 			data.msa++;
 
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1; // aClassifier at the correctSet
 				data.ns = (data.msa * data.ns + getClassifierNicheSize(cl,
-						instanceIndex, niches)) / (data.msa + 1); //TODO: Correct?
+						instanceIndex, niches)) / (data.msa + 1); // TODO:
+																	// Correct?
 			} else {
 				data.fp += 1;
 			}
@@ -260,20 +263,20 @@ public class MlASLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 
 		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
 
-		
 		final int[] niches = calculateLabelNiches(correctSet, instanceIndex);
 		boolean emptyLabel = false;
 		for (int i = 0; i < niches.length; i++) {
-			if (niches[i] == 0 ) emptyLabel = true;
+			if (niches[i] == 0)
+				emptyLabel = true;
 		}
-		
+
 		/*
 		 * Cover if necessary
 		 */
 		if (correctSet.getNumberOfMacroclassifiers() == 0) {
 			cover(population, instanceIndex);
 			return;
-		} else if (emptyLabel){
+		} else if (emptyLabel) {
 			cover(population, instanceIndex);
 		}
 
@@ -331,14 +334,15 @@ public class MlASLCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(final Classifier aClassifier, final int mode) {
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
 		SLCSClassifierData data = (SLCSClassifierData) aClassifier
 				.getUpdateDataObject();
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			return data.fitness * (aClassifier.experience < 5 ? 0 : 1);
 		case COMPARISON_MODE_DELETION:
-			return 1 / (data.fitness 
+			return 1 / (data.fitness
 					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
 							.isNaN(data.ns) ? 1 : data.ns) + 1)) * (((aClassifier
 					.getCoverage() == 0 || aClassifier.getCoverage() == 1) && (aClassifier.experience == 1)) ? 0.

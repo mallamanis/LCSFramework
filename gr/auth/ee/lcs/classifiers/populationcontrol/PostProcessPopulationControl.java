@@ -74,7 +74,7 @@ public class PostProcessPopulationControl implements IPopulationControlStrategy 
 			final Classifier currentClassifier = aSet.getClassifier(i);
 
 			final boolean notExperienced = (currentClassifier.experience < minimumExperience);
-			final boolean lowCoverage = (currentClassifier.getCoverage() < coverageThreshold);
+			final boolean lowCoverage = (currentClassifier.getCoverage() <= coverageThreshold);
 			final boolean lowFitness = (currentClassifier
 					.getComparisonValue(comparisonMode) < minimumFitness);
 

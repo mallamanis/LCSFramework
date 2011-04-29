@@ -35,14 +35,14 @@ import java.io.IOException;
 public class UCS {
 
 	/**
-	 * The main for running UCS
+	 * The main for running UCS.
 	 * 
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotionsClass1.arff";
-		final int iterations = 300;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final int iterations = 1000;
 		final int populationSize = 5000;
 		UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.run();
@@ -81,12 +81,12 @@ public class UCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 300;
+	private final int CALLBACK_RATE = 100;
 
 	/**
 	 * The number of bits to use for representing continuous variables
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = 5;
 
 	/**
 	 * The UCS alpha parameter.
@@ -101,7 +101,7 @@ public class UCS {
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
+	private final double UCS_ACC0 = .95;
 
 	/**
 	 * The learning rate (beta) parameter.
@@ -111,7 +111,7 @@ public class UCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 20;
+	private final int UCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * The post-process experince threshold used.
@@ -124,7 +124,7 @@ public class UCS {
 	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
 	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
@@ -195,7 +195,8 @@ public class UCS {
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), InstanceToDoubleConverter.convert(trainer.testSet));
+				rep.getLabelNames(),
+				InstanceToDoubleConverter.convert(trainer.testSet));
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
@@ -206,7 +207,8 @@ public class UCS {
 		System.out.println("Evaluating on test set (best)");
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ConfusionMatrixEvaluator conf2 = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), InstanceToDoubleConverter.convert(trainer.testSet));
+				rep.getLabelNames(),
+				InstanceToDoubleConverter.convert(trainer.testSet));
 		conf2.evaluateSet(rulePopulation);
 		testEval.evaluateSet(rulePopulation);
 

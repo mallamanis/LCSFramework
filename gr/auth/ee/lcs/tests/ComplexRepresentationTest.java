@@ -56,6 +56,12 @@ public class ComplexRepresentationTest {
 			Classifier cover = rep.createRandomCoveringClassifier(visionVector);
 			assertTrue(rep.isMatch(visionVector, cover));
 		}
+		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
+			visionVector[1] = (float) (Math.random() * (5.785 + 2.3) - 2.3);
+			Classifier cover = rep.createRandomCoveringClassifier(visionVector);
+			assertTrue(rep.isMatch(visionVector, cover));
+		}
+
 	}
 
 	@Test

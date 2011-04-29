@@ -739,7 +739,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	protected int numberOfLabels;
 
 	/**
-	 * The rule consequents for all classes
+	 * The rule consequents for all classes.
 	 */
 	protected String[] ruleConsequents;
 
@@ -825,8 +825,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				}
 
 				attributeList[i] = new ComplexRepresentation.IntervalAttribute(
-						this.chromosomeSize + 1, attributeName, minValue,
-						maxValue, precision, generalizationRate);
+						this.chromosomeSize, attributeName, minValue, maxValue,
+						precision, generalizationRate);
 			}
 
 		}

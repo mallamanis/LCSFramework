@@ -34,7 +34,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 	 * @param labelIndex
 	 *            the label's index that is under evaluation
 	 * @param evaluateSet
-	 * 			 the set to evaluate the label on
+	 *            the set to evaluate the label on
 	 */
 	public SingleLabelEvaluator(final int labelIndex,
 			final Instances evaluateSet) {

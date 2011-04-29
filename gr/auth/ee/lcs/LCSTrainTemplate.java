@@ -61,7 +61,7 @@ public class LCSTrainTemplate {
 
 		final int numInstances = ClassifierTransformBridge.instances.length;
 		final InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
-				numInstances);
+				0);
 
 		int repetition = 0;
 		while (repetition < iterations) {

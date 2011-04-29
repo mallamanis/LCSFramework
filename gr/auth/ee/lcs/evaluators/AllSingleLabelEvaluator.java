@@ -28,9 +28,13 @@ public final class AllSingleLabelEvaluator implements IEvaluator {
 
 	/**
 	 * Constructor.
-	 * @param evaluateSet the Weka instances to perform evaluation on
-	 * @param numberOfLabels the number of labels at the problem
-	 * @param printResults print results to stout
+	 * 
+	 * @param evaluateSet
+	 *            the Weka instances to perform evaluation on
+	 * @param numberOfLabels
+	 *            the number of labels at the problem
+	 * @param printResults
+	 *            print results to stout
 	 */
 	public AllSingleLabelEvaluator(final Instances evaluateSet,
 			final int numberOfLabels, final boolean printResults) {
