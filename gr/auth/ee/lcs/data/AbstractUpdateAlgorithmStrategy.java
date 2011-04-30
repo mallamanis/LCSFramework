@@ -58,16 +58,19 @@ public abstract class AbstractUpdateAlgorithmStrategy {
 	 *            the current population
 	 * @param matchSet
 	 *            the match set
-	 * @param setB
-	 *            the correct set
+	 * @param evolve
+	 *            true if the update algorithm should also evolve the set
 	 * @param instanceIndex
 	 *            the index of the instance that will be used for updating the
 	 *            population
+	 * 
 	 */
 	public static void updateData(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 		if (currentStrategy != null) {
-			currentStrategy.updateSet(population, matchSet, instanceIndex);
+			currentStrategy.updateSet(population, matchSet, instanceIndex,
+					evolve);
 
 		}
 	}
@@ -144,8 +147,10 @@ public abstract class AbstractUpdateAlgorithmStrategy {
 	 *            The first set to take into consideration during update
 	 * @param instanceIndex
 	 *            The instance to take into consideration when updating
+	 * @param evolve
+	 *            true to update the data and evolve the set
 	 */
 	protected abstract void updateSet(ClassifierSet population,
-			ClassifierSet matchSet, int instanceIndex);
+			ClassifierSet matchSet, int instanceIndex, boolean evolve);
 
 }

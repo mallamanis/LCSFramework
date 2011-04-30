@@ -3,8 +3,8 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -194,7 +194,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 
 	@Override
 	public final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 
 		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
 
@@ -202,12 +203,15 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		 * Cover if necessary
 		 */
 		if (correctSet.getNumberOfMacroclassifiers() == 0) {
-			cover(population, instanceIndex);
+			if (evolve)
+				cover(population, instanceIndex);
 			return;
 		}
 
 		performUpdate(matchSet, correctSet);
 
+		if (!evolve)
+			return;
 		/*
 		 * Run GA
 		 */

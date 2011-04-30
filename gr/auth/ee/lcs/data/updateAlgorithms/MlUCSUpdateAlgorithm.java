@@ -6,8 +6,8 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -311,7 +311,8 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	}
 
 	private void updatePerLabel(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 
 		// Generate random labels
 		final int[] labelSequence = new int[numberOfLabels];
@@ -338,7 +339,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 					.getNumberOfMacroclassifiers();
 			final int correctSetSize = labelCorrectSet.getTotalNumerosity();
 
-			if (correctSetSize == 0) {
+			if ((correctSetSize == 0) && evolve) {
 				cover(population, instanceIndex);
 				continue;
 			}
@@ -384,7 +385,8 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 	@Override
 	protected final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
 		for (int i = 0; i < matchSetSize; i++) {
@@ -398,11 +400,11 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 		}
 
-		updatePerLabel(population, matchSet, instanceIndex);
+		updatePerLabel(population, matchSet, instanceIndex, evolve);
 
 		gatherResults(matchSet);
 
-		if (matchSetSize > 0)
+		if ((matchSetSize > 0) && evolve)
 			ga.evolveSet(matchSet, population);
 
 	}

@@ -165,7 +165,8 @@ public class SequentialMlUpdateAlgorithm extends
 
 	@Override
 	protected final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 		// Generate random labels
 		final int[] labelSequence = new int[numberOfLabels];
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -199,7 +200,8 @@ public class SequentialMlUpdateAlgorithm extends
 			 * Cover if necessary
 			 */
 			if (correctSet.getNumberOfMacroclassifiers() == 0) {
-				cover(population, instanceIndex);
+				if (evolve)
+					cover(population, instanceIndex);
 				continue;
 			}
 
@@ -211,7 +213,7 @@ public class SequentialMlUpdateAlgorithm extends
 			/*
 			 * Run GA
 			 */
-			if (correctSet.getNumberOfMacroclassifiers() > 0)
+			if ((correctSet.getNumberOfMacroclassifiers() > 0) && evolve)
 				ga.evolveSet(matchSet, population);
 		}
 

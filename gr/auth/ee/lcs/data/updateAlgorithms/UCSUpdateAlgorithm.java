@@ -6,8 +6,8 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -327,7 +327,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	protected final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 		/*
 		 * Generate correct set
 		 */
@@ -337,7 +338,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		 * Cover if necessary
 		 */
 		if (correctSet.getNumberOfMacroclassifiers() == 0) {
-			cover(population, instanceIndex);
+			if (evolve)
+				cover(population, instanceIndex);
 			return;
 		}
 
@@ -353,10 +355,12 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Run GA
 		 */
-		if (Math.random() < matchSetRunProbability) {
-			ga.evolveSet(matchSet, population);
-		} else {
-			ga.evolveSet(correctSet, population);
+		if (evolve) {
+			if (Math.random() < matchSetRunProbability) {
+				ga.evolveSet(matchSet, population);
+			} else {
+				ga.evolveSet(correctSet, population);
+			}
 		}
 
 	}

@@ -6,8 +6,8 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -19,6 +19,54 @@ import java.io.Serializable;
  * 
  */
 public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+
+	class MlSSLCSClassifierData implements Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 2060323742317299358L;
+
+		/**
+		 *
+		 */
+		public double fitness = Double.NEGATIVE_INFINITY;
+
+		/**
+		 * niche set size estimation.
+		 */
+		public double[] ns;
+
+		/**
+		 * Match Set Appearances.
+		 */
+		public int msa = 1;
+
+		/**
+		 * true positives.
+		 */
+		public int tp = 1;
+
+		/**
+		 * false positives.
+		 */
+		public int fp = 0;
+
+		/**
+		 * Strength.
+		 */
+		public double str = 0;
+
+		/**
+		 * Number of active labels
+		 */
+		public int activeLabels = -1;
+
+		public MlSSLCSClassifierData() {
+			ns = new double[numberOfLabels];
+		}
+
+	}
 
 	/**
 	 * The number of labels used.
@@ -158,7 +206,7 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	protected void updateSet(ClassifierSet population, ClassifierSet matchSet,
-			int instanceIndex) {
+			int instanceIndex, boolean evolve) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
 		for (int lbl = 0; lbl < numberOfLabels; lbl++) {
@@ -180,20 +228,18 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 				data.ns[lbl] = (data.ns[lbl] + totalCorrectRules)
 						/ (data.msa + 1);
 				if (classificationAbility >= 0) {
-					data.str += ((double) strengthReward)
-							/ ((double) totalCorrectRules);
+					data.str += (strengthReward) / (totalCorrectRules);
 					if (Double.isInfinite(data.str))
 						data.str = 10;
 					data.tp += 1;
 				} else if (classificationAbility == -1) {
-					data.str -= penalty * ((double) strengthReward)
-							/ ((double) data.ns[lbl]);
+					data.str -= penalty * (strengthReward) / (data.ns[lbl]);
 					data.fp += 1;
 				}
 
 			}
 
-			if (totalCorrectRules == 0) {
+			if ((totalCorrectRules == 0) && evolve) {
 				this.cover(population, instanceIndex);
 			}
 		}
@@ -213,63 +259,15 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 			data.msa += 1;
 			currentClassifier.experience++;
 			data.fitness = data.str < 0 ? 0 : (data.str / data.msa);
-			if (((double) data.tp) / ((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold
-					&& currentClassifier.experience > subsumptionExperienceThreshold)
+			if ((((double) data.tp) / ((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold)
+					&& (currentClassifier.experience > subsumptionExperienceThreshold))
 				currentClassifier.setSubsumptionAbility(true);
 			else
 				currentClassifier.setSubsumptionAbility(false);
 		}
 
-		if (matchSetSize > 0)
+		if ((matchSetSize > 0) && evolve)
 			ga.evolveSet(matchSet, population);
-
-	}
-
-	class MlSSLCSClassifierData implements Serializable {
-
-		public MlSSLCSClassifierData() {
-			ns = new double[numberOfLabels];
-		}
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 2060323742317299358L;
-
-		/**
-		 *
-		 */
-		public double fitness = Double.NEGATIVE_INFINITY;
-
-		/**
-		 * niche set size estimation.
-		 */
-		public double[] ns;
-
-		/**
-		 * Match Set Appearances.
-		 */
-		public int msa = 1;
-
-		/**
-		 * true positives.
-		 */
-		public int tp = 1;
-
-		/**
-		 * false positives.
-		 */
-		public int fp = 0;
-
-		/**
-		 * Strength.
-		 */
-		public double str = 0;
-
-		/**
-		 * Number of active labels
-		 */
-		public int activeLabels = -1;
 
 	}
 

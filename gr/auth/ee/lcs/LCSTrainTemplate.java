@@ -2,9 +2,9 @@ package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.InadequeteClassifierDeletionStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 
 import java.util.Vector;
 
@@ -96,7 +96,7 @@ public class LCSTrainTemplate {
 				.generateMatchSet(dataInstanceIndex);
 
 		AbstractUpdateAlgorithmStrategy.updateData(population, matchSet,
-				dataInstanceIndex);
+				dataInstanceIndex, true);
 
 	}
 

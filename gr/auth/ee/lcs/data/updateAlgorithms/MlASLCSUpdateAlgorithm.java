@@ -6,8 +6,8 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -21,13 +21,6 @@ import java.util.Arrays;
  * 
  */
 public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
-
-	/**
-	 * The strictness factor for updating.
-	 */
-	private final double n;
-
-	private final int numOfLabels;
 
 	/**
 	 * A data object for the *SLCS update algorithms.
@@ -73,6 +66,13 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		public double str = 0;
 
 	}
+
+	/**
+	 * The strictness factor for updating.
+	 */
+	private final double n;
+
+	private final int numOfLabels;
 
 	/**
 	 * Genetic Algorithm.
@@ -155,6 +155,36 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
+	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
+	 */
+	@Override
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		SLCSClassifierData data = (SLCSClassifierData) aClassifier
+				.getUpdateDataObject();
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			return data.fitness * (aClassifier.experience < 5 ? 0 : 1);
+		case COMPARISON_MODE_DELETION:
+			return 1 / (data.fitness
+					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
+							.isNaN(data.ns) ? 1 : data.ns) + 1)) * ((((aClassifier
+					.getCoverage() == 0) || (aClassifier.getCoverage() == 1)) && (aClassifier.experience == 1)) ? 0.
+					: 1));
+			// TODO: Something else?
+		case COMPARISON_MODE_EXPLOITATION:
+			final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
+			return Double.isNaN(exploitationFitness) ? .000001
+					: exploitationFitness;
+		}
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
 	 * .ee.lcs.classifiers.Classifier)
 	 */
@@ -164,44 +194,6 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
 				+ data.ns;
-	}
-
-	private int[] calculateLabelNiches(final ClassifierSet correctSet,
-			final int instanceIndex) {
-		final int[] niches = new int[numOfLabels];
-		Arrays.fill(niches, 0);
-
-		final int correctSetSize = correctSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < correctSetSize; i++) {
-			final Classifier cl = correctSet.getClassifier(i);
-			for (int label = 0; label < numOfLabels; label++) {
-				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
-					niches[label]++;
-				}
-			}
-		}
-		return niches;
-	}
-
-	private double getClassifierNicheSize(final Classifier aClassifier,
-			final int instanceIndex, final int[] niches) {
-		int mean = 0;
-		int active = 0;
-		int minNiche = Integer.MAX_VALUE;
-		for (int label = 0; label < numOfLabels; label++) {
-			if (aClassifier.classifyLabelCorrectly(instanceIndex, label) > 0) {
-				if (niches[label] < minNiche)
-					minNiche = niches[label];
-				mean += niches[label];
-				active++;
-			}
-		}
-		return minNiche;
-		/*
-		 * final double result = ((double)minNiche) /
-		 * (((double)mean)/((double)active)); return Double.isNaN(result)?1000:
-		 * result;
-		 */
 	}
 
 	@Override
@@ -259,7 +251,8 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 	@Override
 	public final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 
 		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
 
@@ -273,11 +266,13 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Cover if necessary
 		 */
-		if (correctSet.getNumberOfMacroclassifiers() == 0) {
-			cover(population, instanceIndex);
-			return;
-		} else if (emptyLabel) {
-			cover(population, instanceIndex);
+		if (evolve) {
+			if (correctSet.getNumberOfMacroclassifiers() == 0) {
+				cover(population, instanceIndex);
+				return;
+			} else if (emptyLabel) {
+				cover(population, instanceIndex);
+			}
 		}
 
 		performUpdate(matchSet, correctSet, instanceIndex);
@@ -285,11 +280,30 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Run GA
 		 */
-		if (Math.random() < matchSetRunProbability)
-			ga.evolveSet(matchSet, population);
-		else
-			ga.evolveSet(correctSet, population);
+		if (evolve) {
+			if (Math.random() < matchSetRunProbability)
+				ga.evolveSet(matchSet, population);
+			else
+				ga.evolveSet(correctSet, population);
+		}
 
+	}
+
+	private int[] calculateLabelNiches(final ClassifierSet correctSet,
+			final int instanceIndex) {
+		final int[] niches = new int[numOfLabels];
+		Arrays.fill(niches, 0);
+
+		final int correctSetSize = correctSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < correctSetSize; i++) {
+			final Classifier cl = correctSet.getClassifier(i);
+			for (int label = 0; label < numOfLabels; label++) {
+				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
+					niches[label]++;
+				}
+			}
+		}
+		return niches;
 	}
 
 	/**
@@ -313,6 +327,27 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		return correctSet;
 	}
 
+	private double getClassifierNicheSize(final Classifier aClassifier,
+			final int instanceIndex, final int[] niches) {
+		int mean = 0;
+		int active = 0;
+		int minNiche = Integer.MAX_VALUE;
+		for (int label = 0; label < numOfLabels; label++) {
+			if (aClassifier.classifyLabelCorrectly(instanceIndex, label) > 0) {
+				if (niches[label] < minNiche)
+					minNiche = niches[label];
+				mean += niches[label];
+				active++;
+			}
+		}
+		return minNiche;
+		/*
+		 * final double result = ((double)minNiche) /
+		 * (((double)mean)/((double)active)); return Double.isNaN(result)?1000:
+		 * result;
+		 */
+	}
+
 	/**
 	 * Implementation of the subsumption strength.
 	 * 
@@ -324,36 +359,6 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 				.setSubsumptionAbility((aClassifier
 						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
 						&& (aClassifier.experience > subsumptionExperienceThreshold));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getComparisonValue
-	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
-	 */
-	@Override
-	public double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		SLCSClassifierData data = (SLCSClassifierData) aClassifier
-				.getUpdateDataObject();
-		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			return data.fitness * (aClassifier.experience < 5 ? 0 : 1);
-		case COMPARISON_MODE_DELETION:
-			return 1 / (data.fitness
-					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1)) * (((aClassifier
-					.getCoverage() == 0 || aClassifier.getCoverage() == 1) && (aClassifier.experience == 1)) ? 0.
-					: 1));
-			// TODO: Something else?
-		case COMPARISON_MODE_EXPLOITATION:
-			final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
-			return Double.isNaN(exploitationFitness) ? .000001
-					: exploitationFitness;
-		}
-		return 0;
 	}
 
 }

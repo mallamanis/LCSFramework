@@ -6,8 +6,8 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -231,6 +231,14 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		// Do nothing
 	}
 
+	@Override
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
+		UCSClassifierData data = ((UCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		data.fitness = comparisonValue;
+	}
+
 	private void shareFitness(final ClassifierSet set, double fitnessToShare) {
 		double strengthSum = 0;
 		final int setSize = set.getNumberOfMacroclassifiers();
@@ -284,14 +292,6 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		}
 	}
 
-	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
-			final int mode, final double comparisonValue) {
-		UCSClassifierData data = ((UCSClassifierData) aClassifier
-				.getUpdateDataObject());
-		data.fitness = comparisonValue;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -303,7 +303,8 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	protected final void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex) {
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 
 		final int[] classifications = ClassifierTransformBridge.getInstance()
 				.getDataInstanceLabels(
@@ -333,7 +334,8 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Cover if necessary
 		 */
-		if (wrongSet.getTotalNumerosity() == matchSet.getTotalNumerosity()) {
+		if ((wrongSet.getTotalNumerosity() == matchSet.getTotalNumerosity())
+				&& evolve) {
 			cover(population, instanceIndex);
 			return;
 		}
@@ -349,12 +351,14 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Run GA
 		 */
-		if (Math.random() < matchSetRunProbability) {
-			ga.evolveSet(matchSet, population);
-		} else {
-			for (int i = 0; i < numOfCorrectSets; i++)
-				if (correctSets[i].getTotalNumerosity() > 0)
-					ga.evolveSet(correctSets[i], population);
+		if (evolve) {
+			if (Math.random() < matchSetRunProbability) {
+				ga.evolveSet(matchSet, population);
+			} else {
+				for (int i = 0; i < numOfCorrectSets; i++)
+					if (correctSets[i].getTotalNumerosity() > 0)
+						ga.evolveSet(correctSets[i], population);
+			}
 		}
 
 	}
