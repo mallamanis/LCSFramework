@@ -1,6 +1,6 @@
 package gr.auth.ee.lcs.classifiers;
 
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -341,12 +341,12 @@ public class ClassifierSet implements Serializable {
 							+ " fit:"
 							+ this.getClassifier(i)
 									.getComparisonValue(
-											UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+											AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION)
 							+ " exp:" + this.getClassifier(i).experience
 							+ " num:" + this.getClassifierNumerosity(i)
 							+ "cov:" + this.getClassifier(i).getCoverage());
 			System.out
-					.println(UpdateAlgorithmFactoryAndStrategy.currentStrategy
+					.println(AbstractUpdateAlgorithmStrategy.currentStrategy
 							.getData(this.getClassifier(i)));
 		}
 	}

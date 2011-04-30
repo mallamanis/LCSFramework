@@ -1,7 +1,7 @@
 package gr.auth.ee.lcs.classifiers;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.Serializable;
@@ -217,7 +217,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return the value of comparison
 	 */
 	public final double getComparisonValue(final int mode) {
-		return UpdateAlgorithmFactoryAndStrategy.currentStrategy
+		return AbstractUpdateAlgorithmStrategy.currentStrategy
 				.getComparisonValue(this, mode);
 	}
 
@@ -323,7 +323,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final void setComparisonValue(final int mode,
 			final double comparisonValue) {
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy.setComparisonValue(
+		AbstractUpdateAlgorithmStrategy.currentStrategy.setComparisonValue(
 				this, mode, comparisonValue);
 	}
 
@@ -360,7 +360,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * Sets the update-specific and transform-specific data needed.
 	 */
 	private void setConstructionData() {
-		updateData = UpdateAlgorithmFactoryAndStrategy
+		updateData = AbstractUpdateAlgorithmStrategy
 				.createDefaultDataObject();
 
 		transformBridge.setRepresentationSpecificClassifierData(this);

@@ -7,7 +7,7 @@ import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -31,12 +31,12 @@ public class SimpleBoolTest {
 				new TournamentSelector(
 						10,
 						true,
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), 1, new UniformBitMutation(.04), 15);
 
 		ClassifierTransformBridge.setInstance(new SimpleBooleanRepresentation(
 				.33, 3));
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
+		AbstractUpdateAlgorithmStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
 				5, .99, 50, .01, ga);
 		// UpdateAlgorithmFactoryAndStrategy.currentStrategy=new
 		// XCSUpdateAlgorithm(.2,10,.01,.1,3);
@@ -47,7 +47,7 @@ public class SimpleBoolTest {
 						new TournamentSelector(
 								50,
 								false,
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION)));
 
 		ClassifierTransformBridge.instances = new double[8][4];
 		fillInstance();
@@ -71,7 +71,7 @@ public class SimpleBoolTest {
 											+ rulePopulation
 													.getClassifier(i)
 													.getComparisonValue(
-															UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION)
+															AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION)
 											+ " exp:"
 											+ rulePopulation.getClassifier(i).experience
 											+ " num:"

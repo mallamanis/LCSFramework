@@ -4,7 +4,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
@@ -147,9 +147,9 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			} else {
 				child = (Classifier) ((i == 0) ? parentA : parentB).clone();
 				child.setComparisonValue(
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION,
+						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION,
 						((i == 0) ? parentA : parentB)
-								.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION));
+								.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION));
 			}
 
 			child = mutationOp.operate(child);

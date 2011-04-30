@@ -12,18 +12,17 @@ import java.io.Serializable;
  * represent a strategy because they provide different. methods to update each
  * classifier's fitness.
  * 
- * @stereotype FactoryCreator
  * @stereotype Strategy
  * 
  * @author Miltos Allamanis
  */
-public abstract class UpdateAlgorithmFactoryAndStrategy {
+public abstract class AbstractUpdateAlgorithmStrategy {
 
 	/**
 	 * The static strategy used throughout the algorithms. Works like a
 	 * singleton.
 	 */
-	public static UpdateAlgorithmFactoryAndStrategy currentStrategy;
+	public static AbstractUpdateAlgorithmStrategy currentStrategy;
 
 	/**
 	 * Comparison mode used for LCS exploitation.

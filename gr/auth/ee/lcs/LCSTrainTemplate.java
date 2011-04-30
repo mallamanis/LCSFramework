@@ -4,7 +4,7 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.InadequeteClassifierDeletionStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 
 import java.util.Vector;
 
@@ -95,7 +95,7 @@ public class LCSTrainTemplate {
 		final ClassifierSet matchSet = population
 				.generateMatchSet(dataInstanceIndex);
 
-		UpdateAlgorithmFactoryAndStrategy.updateData(population, matchSet,
+		AbstractUpdateAlgorithmStrategy.updateData(population, matchSet,
 				dataInstanceIndex);
 
 	}

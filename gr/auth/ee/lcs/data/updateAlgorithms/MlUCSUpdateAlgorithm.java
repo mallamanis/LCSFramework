@@ -7,7 +7,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import java.util.Random;
  * @author Miltos Allamanis
  * 
  */
-public class MlUCSUpdateAlgorithm extends UpdateAlgorithmFactoryAndStrategy {
+public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 	/**
 	 * The data used at each classifier.

@@ -11,7 +11,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
@@ -149,7 +149,7 @@ public class SSLCS {
 				new TournamentSelector2(
 						40,
 						true,
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
@@ -158,7 +158,7 @@ public class SSLCS {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new SSLCSUpdateAlgorithm(
+		AbstractUpdateAlgorithmStrategy.currentStrategy = new SSLCSUpdateAlgorithm(
 				SSLCS_REWARD, SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
 				SSLCS_EXPERIENCE_THRESHOLD, .01, ga);
 
@@ -168,7 +168,7 @@ public class SSLCS {
 						new TournamentSelector2(
 								80,
 								true,
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION)));
+								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION)));
 
 		ArffLoader trainer = new ArffLoader();
 		trainer.loadInstances(inputFile, true);
@@ -181,9 +181,9 @@ public class SSLCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();

@@ -6,7 +6,7 @@ package gr.auth.ee.lcs.data.representations;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
@@ -266,7 +266,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public int[] classify(ClassifierSet aSet, double[] dataInstance) {
 
 		INaturalSelector selector = new BestClassifierSelector(true,
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 
 		// Generate MatchSet
 		ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);

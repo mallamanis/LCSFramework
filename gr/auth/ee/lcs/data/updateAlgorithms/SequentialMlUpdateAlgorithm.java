@@ -6,7 +6,7 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -17,9 +17,9 @@ import java.util.Random;
  * 
  */
 public class SequentialMlUpdateAlgorithm extends
-		UpdateAlgorithmFactoryAndStrategy {
+		AbstractUpdateAlgorithmStrategy {
 
-	private final UpdateAlgorithmFactoryAndStrategy strategy;
+	private final AbstractUpdateAlgorithmStrategy strategy;
 
 	private final IGeneticAlgorithmStrategy ga;
 
@@ -39,7 +39,7 @@ public class SequentialMlUpdateAlgorithm extends
 	 *            the GA to be used
 	 */
 	public SequentialMlUpdateAlgorithm(
-			final UpdateAlgorithmFactoryAndStrategy updateMethod,
+			final AbstractUpdateAlgorithmStrategy updateMethod,
 			final IGeneticAlgorithmStrategy geneticAlgorithm, int numberOfLabels) {
 		this.strategy = updateMethod;
 		this.numberOfLabels = numberOfLabels;

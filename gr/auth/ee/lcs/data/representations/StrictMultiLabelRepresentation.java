@@ -5,7 +5,7 @@ package gr.auth.ee.lcs.data.representations;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.IOException;
@@ -381,7 +381,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 					final int classifierNumerosity = matchSet
 							.getClassifierNumerosity(i);
 					final double fitness = currentClassifier
-							.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+							.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 					final boolean labelActivated = ((Label) attributeList[attributeList.length
 							- numberOfLabels + label])
 							.getValue(currentClassifier);

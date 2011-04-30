@@ -11,7 +11,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -152,7 +152,7 @@ public class DirectGMlASLCS {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
-						UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION,
+						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
@@ -162,7 +162,7 @@ public class DirectGMlASLCS {
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new MlASLCSUpdateAlgorithm(
+		AbstractUpdateAlgorithmStrategy.currentStrategy = new MlASLCSUpdateAlgorithm(
 				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga,
 				numberOfLabels);
 
@@ -170,7 +170,7 @@ public class DirectGMlASLCS {
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_DELETION,
+								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
 		ArffLoader loader = new ArffLoader();
@@ -184,9 +184,9 @@ public class DirectGMlASLCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();

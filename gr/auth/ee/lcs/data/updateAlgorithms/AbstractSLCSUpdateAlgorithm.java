@@ -4,7 +4,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * An abstract *S-LCS update algorithm as described in Tzima-Mitkas paper.
  */
 public abstract class AbstractSLCSUpdateAlgorithm extends
-		UpdateAlgorithmFactoryAndStrategy {
+		AbstractUpdateAlgorithmStrategy {
 
 	/**
 	 * A data object for the *SLCS update algorithms.

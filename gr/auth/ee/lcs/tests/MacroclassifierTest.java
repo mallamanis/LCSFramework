@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -35,7 +35,7 @@ public class MacroclassifierTest {
 	public void setUp() throws Exception {
 		test = new SimpleBooleanRepresentation(0.5, 4);
 		ClassifierTransformBridge.setInstance(test);
-		UpdateAlgorithmFactoryAndStrategy.currentStrategy = new UCSUpdateAlgorithm(
+		AbstractUpdateAlgorithmStrategy.currentStrategy = new UCSUpdateAlgorithm(
 				.1,
 				10,
 				.99,
@@ -46,7 +46,7 @@ public class MacroclassifierTest {
 						new TournamentSelector(
 								10,
 								true,
-								UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLORATION),
+								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION),
 						new SinglePointCrossover(), (float) .8,
 						new UniformBitMutation(.04), 50), 100, 1);
 	}
@@ -60,8 +60,8 @@ public class MacroclassifierTest {
 		assertTrue(parentClassifier.equals(clone));
 		assertEquals(clone.experience, 0);
 		assertTrue(clone
-				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
-				.getComparisonValue(UpdateAlgorithmFactoryAndStrategy.COMPARISON_MODE_EXPLOITATION));
+				.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
+				.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION));
 
 		ExtendedBitSet a = parentClassifier;
 		ExtendedBitSet b = clone;
