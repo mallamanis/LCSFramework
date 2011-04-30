@@ -49,7 +49,7 @@ public class LCSTrainTemplate {
 	}
 
 	/**
-	 * Train a classifier set with all train instances.
+	 * Train population with all train instances and perform evolution.
 	 * 
 	 * @param iterations
 	 *            the number of full iterations (one iteration the LCS is
@@ -58,23 +58,43 @@ public class LCSTrainTemplate {
 	 *            the population of the classifiers to train.
 	 */
 	public final void train(final int iterations, final ClassifierSet population) {
+		train(iterations, population, true);
+	}
+
+	/**
+	 * Train a classifier set with all train instances.
+	 * 
+	 * @param iterations
+	 *            the number of full iterations (one iteration the LCS is
+	 *            trained with all instances) to train the LCS
+	 * @param population
+	 *            the population of the classifiers to train.
+	 * @param evolve
+	 *            set true to evolve population, false to only update it
+	 */
+	public final void train(final int iterations,
+			final ClassifierSet population, boolean evolve) {
 
 		final int numInstances = ClassifierTransformBridge.instances.length;
 		final InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
 				0);
 
 		int repetition = 0;
+		int trainsBeforeHook = 0;
 		while (repetition < iterations) {
-			for (int j = 0; j < hookCallbackRate; j++) {
+			while ((trainsBeforeHook < hookCallbackRate)
+					&& (repetition < iterations)) {
 				System.out.print(".");
 
 				for (int i = 0; i < numInstances; i++) {
 					trainWithInstance(population, i);
 				}
 				repetition++;
+				trainsBeforeHook++;
 				del.controlPopulation(population);
 			}
 			executeCallbacks(population);
+			trainsBeforeHook = 0;
 
 		}
 
@@ -109,6 +129,20 @@ public class LCSTrainTemplate {
 	 */
 	public final boolean unregisterEvaluator(final IEvaluator evaluator) {
 		return hooks.remove(evaluator);
+	}
+
+	/**
+	 * Update population with all train instances but do not perform evolution.
+	 * 
+	 * @param iterations
+	 *            the number of full iterations (one iteration the LCS is
+	 *            trained with all instances) to update the LCS
+	 * @param population
+	 *            the population of the classifiers to update.
+	 */
+	public final void updatePopulation(final int iterations,
+			final ClassifierSet population) {
+		train(iterations, population, false);
 	}
 
 	/**
