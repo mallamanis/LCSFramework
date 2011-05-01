@@ -39,7 +39,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/**
 		 *
 		 */
-		private double fitness = 1 / 2;
+		private double fitness = 0;
 
 		/**
 		 * niche set size estimation.
@@ -185,7 +185,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? 0 : 1);
+					* (aClassifier.experience < 1 ? 0 : 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
@@ -346,12 +346,13 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Update
 		 */
+		//Number of active labels? (no don't cares)
+		final int numberOfLabels = ClassifierTransformBridge.getInstance().getDataInstanceLabels(
+				ClassifierTransformBridge.instances[instanceIndex]).length;
 		performUpdate(
 				matchSet,
-				correctSet,
-				ClassifierTransformBridge.getInstance().getDataInstanceLabels(
-						ClassifierTransformBridge.instances[instanceIndex]).length);
-
+				correctSet,1);				
+				//TODO: Fix for both RT & Transformation
 		/*
 		 * Run GA
 		 */
