@@ -45,7 +45,7 @@ public class ArffLoader {
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());
-		set.stratify(10);
+		//set.stratify(10);
 
 		if (generateTestSet) {
 			final int fold = (int) Math.floor(Math.random() * 10);
