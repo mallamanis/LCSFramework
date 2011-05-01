@@ -43,7 +43,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	public static final int F_MEASURE = 2;
 
 	/**
-	 * Hamming Loss Metric Type
+	 * Hamming Loss Metric Type.
 	 */
 	public static final int HAMMING_LOSS = 3;
 
@@ -351,11 +351,42 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 	}
 
+	public final class BestFitnessClassificationStrategy implements
+	IClassificationStrategy {
+
+		@Override
+		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+			double bestFitness = Double.MIN_VALUE;
+			int bestClassifierIndex = -1;
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			final int setSize = matchSet.getNumberOfMacroclassifiers();
+			for (int i = 0; i < setSize; i++) {
+				// For each classifier
+				final Classifier currentClassifier = matchSet
+						.getClassifier(i);
+				final int numerosity = matchSet.getClassifierNumerosity(i);
+				final double fitness = numerosity
+							* currentClassifier
+									.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				if (fitness > bestFitness) {
+					bestFitness = fitness;
+					bestClassifierIndex = i;
+				}
+			}
+			if (bestClassifierIndex != -1) {
+				final Classifier bestClassifier = matchSet.getClassifier(bestClassifierIndex);
+				return bestClassifier.getActionAdvocated();
+			}
+			return new int[0];
+		}
+		
+	}
+	
 	/**
 	 * A voting strategy using voting. Each classifier can vote for or against a
 	 * label. The votes are proportional to each classifier's numerosity and
 	 * fitness. When a label has positive votes the input is classified with
-	 * this label
+	 * this label.
 	 * 
 	 * @author Miltos Allamanis
 	 * 
