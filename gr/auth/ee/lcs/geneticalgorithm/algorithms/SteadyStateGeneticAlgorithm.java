@@ -147,9 +147,9 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			} else {
 				child = (Classifier) ((i == 0) ? parentA : parentB).clone();
 				child.setComparisonValue(
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION,
+						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
 						((i == 0) ? parentA : parentB)
-								.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION));
+								.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION));
 			}
 
 			child = mutationOp.operate(child);
