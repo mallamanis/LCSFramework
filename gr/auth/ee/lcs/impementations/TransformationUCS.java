@@ -42,10 +42,10 @@ public class TransformationUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 400;
-		final int populationSize = 1000;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
+		final int numOfLabels = 27;
+		final int iterations = 600;
+		final int populationSize = 4500;
 		final float lc = (float) 1.869;
 		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
@@ -90,12 +90,12 @@ public class TransformationUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 800;
+	private final int THETA_GA = 2000;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 400;
+	private final int CALLBACK_RATE = 250;
 
 	/**
 	 * The number of bits to use for representing continuous variables
@@ -138,7 +138,7 @@ public class TransformationUCS {
 	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
 	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
@@ -211,6 +211,7 @@ public class TransformationUCS {
 									AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
 									true)));
 			myExample.train(iterations, brpopulation);
+			myExample.updatePopulation(iterations / 10 , rulePopulation);
 			AllSingleLabelEvaluator seval = new AllSingleLabelEvaluator(
 					loader.trainSet, numberOfLabels, true);
 			seval.evaluateSet(brpopulation);
@@ -252,8 +253,8 @@ public class TransformationUCS {
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		//rulePopulation.print();
+		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 

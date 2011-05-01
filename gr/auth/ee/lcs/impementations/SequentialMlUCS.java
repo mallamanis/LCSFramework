@@ -35,7 +35,7 @@ import java.io.IOException;
  */
 public class SequentialMlUCS {
 	/**
-	 * Main for running the SMl-UCS
+	 * Main for running the SMl-UCS.
 	 * 
 	 * @param args
 	 * @throws IOException

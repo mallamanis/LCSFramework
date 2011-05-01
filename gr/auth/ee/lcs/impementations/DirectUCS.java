@@ -42,8 +42,8 @@ public class DirectUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
 		final int numOfLabels = 27;
-		final int iterations = 300;
-		final int populationSize = 2000;
+		final int iterations = 600;
+		final int populationSize = 8000;
 		DirectUCS dmlucs = new DirectUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -78,7 +78,7 @@ public class DirectUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 1000;
+	private final int THETA_GA = 2000;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -86,9 +86,9 @@ public class DirectUCS {
 	private final int CALLBACK_RATE = 300;
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = 5;
 
 	/**
 	 * The UCS alpha parameter.
@@ -126,7 +126,7 @@ public class DirectUCS {
 	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
 	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
 
@@ -191,7 +191,7 @@ public class DirectUCS {
 				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-
+		myExample.updatePopulation(iterations / 10 , rulePopulation);
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -214,8 +214,14 @@ public class DirectUCS {
 				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		accEval.evaluateSet(rulePopulation);	
+		
+		System.out.println("Evaluating on test set (best)");
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		testEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
-
+		
 	}
 
 }

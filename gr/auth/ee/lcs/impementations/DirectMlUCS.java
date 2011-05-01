@@ -40,8 +40,8 @@ public class DirectMlUCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
 		final int numOfLabels = 7;
-		final int iterations = 100;
-		final int populationSize = 1000;
+		final int iterations = 1000;
+		final int populationSize = 2000;
 		DirectMlUCS dmlucs = new DirectMlUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -81,7 +81,7 @@ public class DirectMlUCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 100;
 
 	/**
 	 * The number of bits to use for representing continuous variables

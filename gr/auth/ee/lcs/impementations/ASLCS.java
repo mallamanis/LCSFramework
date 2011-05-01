@@ -40,8 +40,8 @@ public class ASLCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotionsClass1.arff";
-		final int iterations = 400;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final int iterations = 100;
 		final int populationSize = 6000;
 		ASLCS aslcs = new ASLCS(file, iterations, populationSize);
 		aslcs.run();
@@ -180,7 +180,7 @@ public class ASLCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		// rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(

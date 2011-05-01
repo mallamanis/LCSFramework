@@ -41,9 +41,9 @@ public class UCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotionsClass1.arff";
-		final int iterations = 1000;
-		final int populationSize = 5000;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final int iterations = 500;
+		final int populationSize = 4000;
 		UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.run();
 	}
@@ -84,7 +84,7 @@ public class UCS {
 	private final int CALLBACK_RATE = 100;
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
 	private final int PRECISION_BITS = 5;
 
@@ -194,7 +194,7 @@ public class UCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
