@@ -59,4 +59,34 @@ public class ArffLoader {
 				.convert(trainSet);
 
 	}
+	
+	
+	/**
+	 * Load instances into the global train store and create test set.
+	 * 
+	 * @param filename
+	 *            the .arff filename to be used
+	 * @param generateTestSet
+	 *            true if a test set is going to be generated
+	 * @throws IOException
+	 *             if the input file is not found
+	 */
+	public void loadInstancesWithTest(final String filename,
+			final String testFile) throws IOException {
+		// Open .arff
+		final FileReader reader = new FileReader(filename);
+		final Instances set = new Instances(reader);
+		if (set.classIndex() < 0)
+			set.setClassIndex(set.numAttributes() - 1);
+		set.randomize(new Random());
+		//set.stratify(10);
+		trainSet = set;
+
+		ClassifierTransformBridge.instances = InstanceToDoubleConverter
+				.convert(trainSet);
+		
+		final FileReader testReader = new FileReader(filename);
+		testSet = new Instances(testReader);
+		
+	}
 }
