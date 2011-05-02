@@ -81,7 +81,7 @@ public class LCSTrainTemplate {
 
 		int repetition = 0;
 		int trainsBeforeHook = 0;
-		final double instanceProb = (1. / ((double)numInstances));
+		final double instanceProb = (1. / ((double) numInstances));
 		while (repetition < iterations) {
 			while ((trainsBeforeHook < hookCallbackRate)
 					&& (repetition < iterations)) {

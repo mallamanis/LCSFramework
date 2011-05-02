@@ -41,8 +41,8 @@ public class ASLCS {
 	 */
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
-		final int iterations = 100;
-		final int populationSize = 6000;
+		final int iterations = 300;
+		final int populationSize = 5000;
 		ASLCS aslcs = new ASLCS(file, iterations, populationSize);
 		aslcs.run();
 	}
@@ -75,7 +75,7 @@ public class ASLCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 200;
+	private final int THETA_GA = 100;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -179,8 +179,8 @@ public class ASLCS {
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		// rulePopulation.print();
-		ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		rulePopulation.print();
+		//ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(

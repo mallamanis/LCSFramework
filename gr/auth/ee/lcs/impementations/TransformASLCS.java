@@ -41,11 +41,11 @@ public class TransformASLCS {
 	 * @throws IOException
 	 */
 	public static void main(final String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
-		final int numOfLabels = 6;
-		final int iterations = 500;
-		final int populationSize = 1000;
-		final float lc = (float) 1.869;
+		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
+		final int numOfLabels = 27;
+		final int iterations = 600;
+		final int populationSize = 2000;
+		final float lc = (float) 1.252;
 		final BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
@@ -194,7 +194,7 @@ public class TransformASLCS {
 		// eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
 				loader.trainSet, numberOfLabels, true);
-		myExample.registerHook(slEval);
+		//myExample.registerHook(slEval);
 
 		do {
 			System.out.println("Training Classifier Set");
@@ -206,6 +206,7 @@ public class TransformASLCS {
 									AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
 									true)));
 			myExample.train(iterations, brpopulation);
+			myExample.updatePopulation(iterations / 10, brpopulation);
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
 

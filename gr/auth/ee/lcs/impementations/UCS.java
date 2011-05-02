@@ -41,7 +41,7 @@ public class UCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final String file = "/home/miltiadis/Desktop/datasets/iris.arff";
 		final int iterations = 500;
 		final int populationSize = 4000;
 		UCS ucs = new UCS(file, iterations, populationSize);
@@ -76,7 +76,7 @@ public class UCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 200;
+	private final int THETA_GA = 100;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.

@@ -247,5 +247,13 @@ public class GenericMlRepresentationTest {
 		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2. / 3.)) < 0.0001);
 		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
 	}
+	
+	@Test
+	public void testVoting() {
+		ExtendedBitSet set1 = new ExtendedBitSet("11011100111011");
+		Classifier ex1 = new Classifier(set1);
+		//TODO
+	}
+	
 
 }

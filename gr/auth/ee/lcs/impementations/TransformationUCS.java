@@ -90,12 +90,12 @@ public class TransformationUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 2000;
+	private final int THETA_GA = 2500;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 250;
+	private final int CALLBACK_RATE = 600;
 
 	/**
 	 * The number of bits to use for representing continuous variables
