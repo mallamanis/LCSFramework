@@ -74,7 +74,7 @@ public final class BestClassifierSelector implements INaturalSelector {
 		final int popSize = fromPopulation.getNumberOfMacroclassifiers();
 		for (int i = 0; i < popSize; i++) {
 			final double temp = fromPopulation.getClassifier(i)
-					.getComparisonValue(mode);
+					.getComparisonValue(mode) * fromPopulation.getClassifierNumerosity(i);
 			if ((max ? 1. : -1.) * (temp - bestFitness) > 0) {
 				bestFitness = temp;
 				bestIndex = i;
