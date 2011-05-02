@@ -184,23 +184,24 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
+		case COMPARISON_MODE_EXPLOITATION:
 			final double value = data.fitness
-					* (aClassifier.experience < 1 ? 0 : 1);
+					* (aClassifier.experience < deleteAge ? ((double) aClassifier.experience) / ((double) deleteAge) : 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
 			if (aClassifier.experience < deleteAge) {
-				final double result = data.cs / data.fitness;
+				final double result = data.cs * meanPopulationFitness / data.fitness;
 				return Double.isNaN(result) ? 1 : result;
 			}
 
 			return data.cs;
 
-		case COMPARISON_MODE_EXPLOITATION:
-			final double acc = (((double) (data.tp)) / (double) (data.msa));
+		
+			/*final double acc = (((double) (data.tp)) / (double) (data.msa));
 			final double exploitValue = acc
 					* (aClassifier.experience < deleteAge ? 0 : 1);
-			return Double.isNaN(exploitValue) ? 0 : exploitValue;
+			return Double.isNaN(exploitValue) ? 0 : exploitValue;*/
 		default:
 			return 0;
 		}
@@ -315,7 +316,26 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		}
 		return correctSet;
 	}
+	
+	private double meanPopulationFitness = 0;
 
+	/**
+	 * Update the mean fitness variable.
+	 * @param population a set representing the population.
+	 */
+	private void updateMeanPopulationFitness(ClassifierSet population) {
+		meanPopulationFitness = 0;
+		final int populationSize = population.getNumberOfMacroclassifiers();
+		for (int i = 0; i < populationSize; i++) {
+			final int clNumerosity = population.getClassifierNumerosity(i);
+			final Classifier cl = population.getClassifier(i);
+			final double fitness = ((UCSClassifierData) cl.getUpdateDataObject()).fitness;
+			meanPopulationFitness += fitness * clNumerosity;
+		}
+		
+		meanPopulationFitness /= (double) population.getTotalNumerosity();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -329,6 +349,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	protected final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
+		updateMeanPopulationFitness(population);
+		
 		/*
 		 * Generate correct set
 		 */
