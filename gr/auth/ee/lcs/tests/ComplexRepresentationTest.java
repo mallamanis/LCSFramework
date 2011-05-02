@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
@@ -57,7 +59,7 @@ public class ComplexRepresentationTest {
 			assertTrue(rep.isMatch(visionVector, cover));
 		}
 	}
-	
+
 	@Test
 	public void coverageRandom() {
 		double visionVector[] = { 0, 1.1256, 2, 0 };
@@ -173,6 +175,42 @@ public class ComplexRepresentationTest {
 				attribute, 0);
 		list[3] = rep.new UniLabel(rep.getChromosomeSize(), "class", names);
 
+	}
+
+	@Test
+	public void testVoting() {
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+
+		Classifier ex1 = new Classifier(new ExtendedBitSet(
+				"1011101111111111001000000011010"));
+		Classifier ex2 = new Classifier(new ExtendedBitSet(
+				"0111100111111111001000000011010"));
+
+		ClassifierSet set = new ClassifierSet(null);
+		set.addClassifier(new Macroclassifier(ex1, 1), false);
+		set.addClassifier(new Macroclassifier(ex2, 1), false);
+
+		ex1.setComparisonValue(0, 1);
+		ex2.setComparisonValue(0, .5);
+		ex1.experience = 100;
+		ex2.experience = 100;
+
+		final double[] visionVector = { 1, .1, 2 };
+		assertEquals(rep.classify(set, visionVector).length, 1);
+		System.out.println(ex1.getComparisonValue(0));
+		assertTrue(ex1.getComparisonValue(0) == 1);
+		assertEquals(rep.classify(set, visionVector)[0], 2);
+
+		set = new ClassifierSet(null);
+		set.addClassifier(new Macroclassifier(ex1, 1), false);
+		set.addClassifier(new Macroclassifier(ex2, 3), false);
+
+		ex1.setComparisonValue(0, 1);
+		ex2.setComparisonValue(0, .5);
+
+		final double[] visionVector2 = { 1, .1, 2 };
+		assertEquals(rep.classify(set, visionVector2).length, 1);
+		assertEquals(rep.classify(set, visionVector)[0], 1);
 	}
 
 }
