@@ -141,7 +141,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		for (int i = 0; i < CHILDREN_PER_GENERATION; i++) {
 			Classifier child;
 			// produce a child
-			if (Math.random() < crossoverRate) {
+			if (Math.random() < crossoverRate && parentA != parentB) {
 				child = crossoverOp.operate((i == 0) ? parentB : parentA,
 						(i == 0) ? parentA : parentB);
 			} else {
