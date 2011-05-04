@@ -176,7 +176,7 @@ public class SequentialGMlASLCS {
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH,
-				labelGeneralizationRate);
+				labelGeneralizationRate, .7);
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);
 		rep.setClassificationStrategy(str);

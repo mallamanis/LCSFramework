@@ -64,9 +64,11 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 			// TODO: Something else?
 		case COMPARISON_MODE_EXPLOITATION:
 			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
-			/*final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
-			return Double.isNaN(exploitationFitness) ? .000001
-					: exploitationFitness;*/
+			/*
+			 * final double exploitationFitness = (((double) (data.tp)) /
+			 * (double) (data.msa)); return Double.isNaN(exploitationFitness) ?
+			 * .000001 : exploitationFitness;
+			 */
 		}
 		return 0;
 	}

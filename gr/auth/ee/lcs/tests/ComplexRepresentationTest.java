@@ -164,7 +164,7 @@ public class ComplexRepresentationTest {
 	public void setUp() throws Exception {
 		SingleClassRepresentation.AbstractAttribute list[] = new AbstractAttribute[4];
 		String[] names = { "Good", "Mediocre", "Bad" };
-		rep = new SingleClassRepresentation(list, names);
+		rep = new SingleClassRepresentation(list, names, .7);
 		ClassifierTransformBridge.setInstance(rep);
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",

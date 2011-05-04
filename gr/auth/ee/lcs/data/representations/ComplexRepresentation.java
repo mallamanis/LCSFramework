@@ -729,6 +729,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	protected AbstractAttribute[] attributeList;
 
 	/**
+	 * The attribute generalization rate.
+	 */
+	private final double attributeGeneralizationRate;
+
+	/**
 	 * The size of the chromosomes of the representation.
 	 */
 	protected int chromosomeSize = 0;
@@ -759,11 +764,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the number of labels
 	 */
 	public ComplexRepresentation(final AbstractAttribute[] attributes,
-			final String[] ruleConsequentsNames, final int labels) {
+			final String[] ruleConsequentsNames, final int labels,
+			final double generalizationRate) {
 		super();
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
-		ruleConsequents = ruleConsequentsNames;
+		this.ruleConsequents = ruleConsequentsNames;
+		this.attributeGeneralizationRate = generalizationRate;
 	}
 
 	/**
@@ -779,14 +786,15 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *             when .arff not found
 	 */
 	public ComplexRepresentation(final String inputArff, final int precision,
-			final int labels) throws IOException {
+			final int labels, final double generalizationRate)
+			throws IOException {
 		super();
 		final FileReader reader = new FileReader(inputArff);
 		final Instances instances = new Instances(reader);
 
 		this.numberOfLabels = labels;
 		attributeList = new AbstractAttribute[instances.numAttributes()];
-		final double generalizationRate = .33;
+		this.attributeGeneralizationRate = generalizationRate;
 
 		for (int i = 0; i < instances.numAttributes() - labels; i++) {
 

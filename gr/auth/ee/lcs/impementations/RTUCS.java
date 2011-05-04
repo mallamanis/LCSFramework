@@ -172,7 +172,7 @@ public class RTUCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
-				PRECISION_BITS, numberOfLabels);
+				PRECISION_BITS, numberOfLabels, .7);
 		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 		ClassifierTransformBridge.setInstance(rep);

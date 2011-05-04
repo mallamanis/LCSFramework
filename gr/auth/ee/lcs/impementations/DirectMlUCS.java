@@ -168,7 +168,7 @@ public class DirectMlUCS {
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.HAMMING_LOSS);
+				StrictMultiLabelRepresentation.HAMMING_LOSS, .7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 

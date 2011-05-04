@@ -177,7 +177,7 @@ public class TransformASLCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH, 0);
+				GenericMultiLabelRepresentation.EXACT_MATCH, 0, .7);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -194,7 +194,7 @@ public class TransformASLCS {
 		// eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
 				loader.trainSet, numberOfLabels, true);
-		//myExample.registerHook(slEval);
+		// myExample.registerHook(slEval);
 
 		do {
 			System.out.println("Training Classifier Set");

@@ -186,22 +186,26 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		case COMPARISON_MODE_EXPLORATION:
 		case COMPARISON_MODE_EXPLOITATION:
 			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? ((double) aClassifier.experience) / ((double) deleteAge) : 1);
+					* (aClassifier.experience < deleteAge ? ((double) aClassifier.experience)
+							/ ((double) deleteAge)
+							: 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
 			if (aClassifier.experience < deleteAge) {
-				final double result = data.cs * meanPopulationFitness / data.fitness;
+				final double result = data.cs * meanPopulationFitness
+						/ data.fitness;
 				return Double.isNaN(result) ? 1 : result;
 			}
 
 			return data.cs;
 
-		
-			/*final double acc = (((double) (data.tp)) / (double) (data.msa));
-			final double exploitValue = acc
-					* (aClassifier.experience < deleteAge ? 0 : 1);
-			return Double.isNaN(exploitValue) ? 0 : exploitValue;*/
+			/*
+			 * final double acc = (((double) (data.tp)) / (double) (data.msa));
+			 * final double exploitValue = acc (aClassifier.experience <
+			 * deleteAge ? 0 : 1); return Double.isNaN(exploitValue) ? 0 :
+			 * exploitValue;
+			 */
 		default:
 			return 0;
 		}
@@ -316,12 +320,14 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		}
 		return correctSet;
 	}
-	
+
 	private double meanPopulationFitness = 0;
 
 	/**
 	 * Update the mean fitness variable.
-	 * @param population a set representing the population.
+	 * 
+	 * @param population
+	 *            a set representing the population.
 	 */
 	private void updateMeanPopulationFitness(ClassifierSet population) {
 		meanPopulationFitness = 0;
@@ -329,13 +335,14 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		for (int i = 0; i < populationSize; i++) {
 			final int clNumerosity = population.getClassifierNumerosity(i);
 			final Classifier cl = population.getClassifier(i);
-			final double fitness = ((UCSClassifierData) cl.getUpdateDataObject()).fitness;
+			final double fitness = ((UCSClassifierData) cl
+					.getUpdateDataObject()).fitness;
 			meanPopulationFitness += fitness * clNumerosity;
 		}
-		
+
 		meanPopulationFitness /= (double) population.getTotalNumerosity();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -350,7 +357,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		updateMeanPopulationFitness(population);
-		
+
 		/*
 		 * Generate correct set
 		 */
@@ -368,13 +375,12 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		/*
 		 * Update
 		 */
-		//Number of active labels? (no don't cares)
-		final int numberOfLabels = ClassifierTransformBridge.getInstance().getDataInstanceLabels(
-				ClassifierTransformBridge.instances[instanceIndex]).length;
-		performUpdate(
-				matchSet,
-				correctSet,1);				
-				//TODO: Fix for both RT & Transformation
+		// Number of active labels? (no don't cares)
+		final int numberOfLabels = ClassifierTransformBridge.getInstance()
+				.getDataInstanceLabels(
+						ClassifierTransformBridge.instances[instanceIndex]).length;
+		performUpdate(matchSet, correctSet, 1);
+		// TODO: Fix for both RT & Transformation
 		/*
 		 * Run GA
 		 */

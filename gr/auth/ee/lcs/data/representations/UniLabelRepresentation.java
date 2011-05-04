@@ -206,8 +206,9 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 *             when file is not found
 	 */
 	public UniLabelRepresentation(final String inputArff, final int precision,
-			final int labels) throws IOException {
-		super(inputArff, precision, labels);
+			final int labels, final double generalizationRate)
+			throws IOException {
+		super(inputArff, precision, labels, generalizationRate);
 
 	}
 

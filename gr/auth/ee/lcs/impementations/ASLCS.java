@@ -42,7 +42,7 @@ public class ASLCS {
 	public static void main(String[] args) throws IOException {
 		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
 		final int iterations = 300;
-		final int populationSize = 5000;
+		final int populationSize = 2000;
 		ASLCS aslcs = new ASLCS(file, iterations, populationSize);
 		aslcs.run();
 	}
@@ -148,7 +148,7 @@ public class ASLCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		SingleClassRepresentation rep = new SingleClassRepresentation(
-				inputFile, PRECISION_BITS);
+				inputFile, PRECISION_BITS, .7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -180,7 +180,7 @@ public class ASLCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
-		//ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(

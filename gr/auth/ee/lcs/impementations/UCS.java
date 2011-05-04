@@ -41,9 +41,9 @@ public class UCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/iris.arff";
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
 		final int iterations = 500;
-		final int populationSize = 4000;
+		final int populationSize = 1000;
 		UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.run();
 	}
@@ -159,7 +159,7 @@ public class UCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		SingleClassRepresentation rep = new SingleClassRepresentation(
-				inputFile, PRECISION_BITS);
+				inputFile, PRECISION_BITS, .7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 

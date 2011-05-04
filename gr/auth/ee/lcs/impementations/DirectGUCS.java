@@ -39,8 +39,8 @@ public class DirectGUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final int numOfLabels = 1;
 		final int iterations = 500;
 		final int populationSize = 1000;
 		DirectGUCS dgucs = new DirectGUCS(file, iterations, populationSize,
@@ -82,10 +82,10 @@ public class DirectGUCS {
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = 500;
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
 	private final int PRECISION_BITS = 7;
 
@@ -112,7 +112,7 @@ public class DirectGUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * The post-process experince threshold used.
@@ -127,7 +127,7 @@ public class DirectGUCS {
 	/**
 	 * Post-process threshold for fitness;
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -169,7 +169,7 @@ public class DirectGUCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH, .33);
+				StrictMultiLabelRepresentation.EXACT_MATCH, .33, .7);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -190,7 +190,7 @@ public class DirectGUCS {
 				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-
+		myExample.updatePopulation(iterations / 10, rulePopulation);
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -200,7 +200,7 @@ public class DirectGUCS {
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
+		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

@@ -157,7 +157,7 @@ public class DirectMlSSLCS {
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH);
+				StrictMultiLabelRepresentation.EXACT_MATCH, .7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 

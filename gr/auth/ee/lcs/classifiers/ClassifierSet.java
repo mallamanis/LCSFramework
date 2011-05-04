@@ -345,9 +345,8 @@ public class ClassifierSet implements Serializable {
 							+ " exp:" + this.getClassifier(i).experience
 							+ " num:" + this.getClassifierNumerosity(i)
 							+ "cov:" + this.getClassifier(i).getCoverage());
-			System.out
-					.println(AbstractUpdateAlgorithmStrategy.currentStrategy
-							.getData(this.getClassifier(i)));
+			System.out.println(AbstractUpdateAlgorithmStrategy.currentStrategy
+					.getData(this.getClassifier(i)));
 		}
 	}
 

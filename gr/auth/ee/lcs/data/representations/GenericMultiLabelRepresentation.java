@@ -450,16 +450,20 @@ public final class GenericMultiLabelRepresentation extends
 	 *            the number of labels to be used
 	 * @param type
 	 *            the type of metric to be used (see static int's)
-	 * @param generalizationRate
+	 * @param lblgeneralizationRate
 	 *            the generalization rate to be used for the labels
+	 * @param attributeGeneralizationRate
+	 *            the generalization rate to be used for the attributes
 	 */
 	public GenericMultiLabelRepresentation(
 			final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
-			final int type, final double generalizationRate) {
-		super(attributes, ruleConsequentsNames, labels);
+			final int type, final double lblgeneralizationRate,
+			final double attributeGeneralizationRate) {
+		super(attributes, ruleConsequentsNames, labels,
+				attributeGeneralizationRate);
 		metricType = type;
-		labelGeneralizationRate = generalizationRate;
+		labelGeneralizationRate = lblgeneralizationRate;
 	}
 
 	/**
@@ -473,17 +477,20 @@ public final class GenericMultiLabelRepresentation extends
 	 *            the number of labels used at the program
 	 * @param type
 	 *            the type of metric to be used
-	 * @param generalizationRate
+	 * @param lblgeneralizationRate
 	 *            the generalization rate of the labels (P#))
+	 * @param attributeGeneralizationRate
+	 *            the attribute generalization rate
 	 * @throws IOException
 	 *             when file is not found
 	 */
 	public GenericMultiLabelRepresentation(final String inputArff,
 			final int precision, final int labels, final int type,
-			final double generalizationRate) throws IOException {
-		super(inputArff, precision, labels);
+			final double lblgeneralizationRate,
+			final double attributeGeneralizationRate) throws IOException {
+		super(inputArff, precision, labels, attributeGeneralizationRate);
 		metricType = type;
-		labelGeneralizationRate = generalizationRate;
+		labelGeneralizationRate = lblgeneralizationRate;
 	}
 
 	@Override

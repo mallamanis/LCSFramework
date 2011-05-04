@@ -33,7 +33,7 @@ public class StrictMlRepresentationTest {
 		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new StrictMultiLabelRepresentation(list, names, 3,
-				StrictMultiLabelRepresentation.EXACT_MATCH);
+				StrictMultiLabelRepresentation.EXACT_MATCH, .7);
 		ClassifierTransformBridge.setInstance(rep);
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",

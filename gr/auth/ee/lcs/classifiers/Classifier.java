@@ -360,8 +360,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * Sets the update-specific and transform-specific data needed.
 	 */
 	private void setConstructionData() {
-		updateData = AbstractUpdateAlgorithmStrategy
-				.createDefaultDataObject();
+		updateData = AbstractUpdateAlgorithmStrategy.createDefaultDataObject();
 
 		transformBridge.setRepresentationSpecificClassifierData(this);
 

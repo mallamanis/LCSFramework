@@ -40,10 +40,10 @@ public class DirectUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
-		final int numOfLabels = 27;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final int numOfLabels = 1;
 		final int iterations = 600;
-		final int populationSize = 8000;
+		final int populationSize = 1000;
 		DirectUCS dmlucs = new DirectUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.run();
@@ -78,7 +78,7 @@ public class DirectUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 2000;
+	private final int THETA_GA = 100;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -113,7 +113,7 @@ public class DirectUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * The post-process experince threshold used.
@@ -128,7 +128,7 @@ public class DirectUCS {
 	/**
 	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -170,7 +170,7 @@ public class DirectUCS {
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH);
+				StrictMultiLabelRepresentation.EXACT_MATCH, .7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
@@ -191,7 +191,7 @@ public class DirectUCS {
 				ClassifierTransformBridge.instances, true);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-		myExample.updatePopulation(iterations / 10 , rulePopulation);
+		myExample.updatePopulation(iterations / 10, rulePopulation);
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -214,14 +214,14 @@ public class DirectUCS {
 				true, numberOfLabels);
 		hamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
-		accEval.evaluateSet(rulePopulation);	
-		
+		accEval.evaluateSet(rulePopulation);
+
 		System.out.println("Evaluating on test set (best)");
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
-		
+
 	}
 
 }

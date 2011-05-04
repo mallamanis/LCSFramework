@@ -45,7 +45,7 @@ public class ArffLoader {
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());
-		//set.stratify(10);
+		// set.stratify(10);
 
 		if (generateTestSet) {
 			final int fold = (int) Math.floor(Math.random() * 10);
@@ -59,8 +59,7 @@ public class ArffLoader {
 				.convert(trainSet);
 
 	}
-	
-	
+
 	/**
 	 * Load instances into the global train store and create test set.
 	 * 
@@ -79,14 +78,14 @@ public class ArffLoader {
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());
-		//set.stratify(10);
+		// set.stratify(10);
 		trainSet = set;
 
 		ClassifierTransformBridge.instances = InstanceToDoubleConverter
 				.convert(trainSet);
-		
+
 		final FileReader testReader = new FileReader(filename);
 		testSet = new Instances(testReader);
-		
+
 	}
 }

@@ -26,7 +26,7 @@ public class AccuracyEvaluatorTest {
 		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new GenericMultiLabelRepresentation(list, names, 3,
-				GenericMultiLabelRepresentation.EXACT_MATCH, .33);
+				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7);
 		ClassifierTransformBridge.setInstance(rep);
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",

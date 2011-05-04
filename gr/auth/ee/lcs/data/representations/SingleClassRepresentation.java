@@ -26,14 +26,16 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	/**
 	 * Call superclass's constructor.
 	 * 
+	 * @param generalizationRate
+	 *            the P# for generalizing attibutes
 	 * @param attributes
 	 *            the attributes of the representation
 	 * @param ruleConsequents
 	 *            the names of the rule consequents
 	 */
 	public SingleClassRepresentation(final AbstractAttribute[] attributes,
-			final String[] ruleConsequents) {
-		super(attributes, ruleConsequents, 1);
+			final String[] ruleConsequents, final double generalizationRate) {
+		super(attributes, ruleConsequents, 1, generalizationRate);
 	}
 
 	/**
@@ -43,18 +45,22 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 *            the filename of the input .arff
 	 * @param precision
 	 *            the precision for the interval rules
+	 * @param generalizationRate
+	 *            the generalization rate used for the attibutes (P#)
 	 * @throws IOException
 	 *             when file cannot be read
+	 * 
 	 */
-	public SingleClassRepresentation(final String inputArff, final int precision)
+	public SingleClassRepresentation(final String inputArff,
+			final int precision, final double generalizationRate)
 			throws IOException {
-		super(inputArff, precision, 1);
+		super(inputArff, precision, 1, generalizationRate);
 	}
 
 	public SingleClassRepresentation(final String inputArff,
-			final int precision, final int attributeToIgnore)
-			throws IOException {
-		super(inputArff, precision, attributeToIgnore);
+			final int precision, final int attributeToIgnore,
+			final double generalizationRate) throws IOException {
+		super(inputArff, precision, attributeToIgnore, generalizationRate);
 	}
 
 	/*

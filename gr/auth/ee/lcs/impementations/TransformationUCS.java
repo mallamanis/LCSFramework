@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -42,11 +43,11 @@ public class TransformationUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
-		final int numOfLabels = 27;
-		final int iterations = 600;
-		final int populationSize = 4500;
-		final float lc = (float) 1.869;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
+		final int numOfLabels = 1;
+		final int iterations = 500;
+		final int populationSize = 1500;
+		final float lc = (float) 0.6649;
 		BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
 		TransformationUCS trucs = new TransformationUCS(file, iterations,
@@ -90,7 +91,7 @@ public class TransformationUCS {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 2500;
+	private final int THETA_GA = 100;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -115,7 +116,7 @@ public class TransformationUCS {
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .9;
+	private final double UCS_ACC0 = .95;
 
 	/**
 	 * The learning rate (beta) parameter.
@@ -125,7 +126,7 @@ public class TransformationUCS {
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 20;
+	private final int UCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
 	 * The post-process experience threshold used.
@@ -185,8 +186,10 @@ public class TransformationUCS {
 
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH, 0);
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+				GenericMultiLabelRepresentation.HAMMING_LOSS, 0, .7);
+		VotingClassificationStrategy vs = rep.new VotingClassificationStrategy(
+				targetLC);
+		rep.setClassificationStrategy(vs);
 		ClassifierTransformBridge.setInstance(rep);
 
 		AbstractUpdateAlgorithmStrategy.currentStrategy = new UCSUpdateAlgorithm(
@@ -211,7 +214,7 @@ public class TransformationUCS {
 									AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
 									true)));
 			myExample.train(iterations, brpopulation);
-			myExample.updatePopulation(iterations / 10 , rulePopulation);
+			myExample.updatePopulation(iterations / 10, brpopulation);
 			AllSingleLabelEvaluator seval = new AllSingleLabelEvaluator(
 					loader.trainSet, numberOfLabels, true);
 			seval.evaluateSet(brpopulation);
@@ -253,21 +256,27 @@ public class TransformationUCS {
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		//rulePopulation.print();
+		// rulePopulation.print();
 		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 
-		System.out.println("Evaluating on test set");
+		System.out.println("Evaluating on test set (before calibration)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
-				targetLC);
-		rep.setClassificationStrategy(str);
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+
+		vs.proportionalCutCalibration(ClassifierTransformBridge.instances,
 				rulePopulation);
-		System.out.println("Evaluating on test set (voting)");
+		System.out.println("Evaluating on test set (after calibration)");
+		testEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
+
+		BestFitnessClassificationStrategy str = rep.new BestFitnessClassificationStrategy();
+		rep.setClassificationStrategy(str);
+
+		System.out.println("Evaluating on test set (best)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);

@@ -177,7 +177,7 @@ public class DirectGMlUCS {
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.HAMMING_LOSS,
-				LABEL_GENERALIZATION_RATE);
+				LABEL_GENERALIZATION_RATE, .7);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 

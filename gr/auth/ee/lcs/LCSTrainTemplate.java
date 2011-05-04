@@ -89,11 +89,12 @@ public class LCSTrainTemplate {
 
 				for (int i = 0; i < numInstances; i++) {
 					trainWithInstance(population, i);
-					if (Math.random() < instanceProb) del.controlPopulation(population);
+					if (Math.random() < instanceProb)
+						del.controlPopulation(population);
 				}
 				repetition++;
 				trainsBeforeHook++;
-				
+
 			}
 			executeCallbacks(population);
 			trainsBeforeHook = 0;

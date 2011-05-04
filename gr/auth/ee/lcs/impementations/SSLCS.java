@@ -154,7 +154,7 @@ public class SSLCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		SingleClassRepresentation rep = new SingleClassRepresentation(
-				inputFile, PRECISION_BITS);
+				inputFile, PRECISION_BITS, .7);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
