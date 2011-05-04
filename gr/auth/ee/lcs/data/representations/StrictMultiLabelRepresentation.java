@@ -9,6 +9,7 @@ import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import weka.core.Instances;
 
@@ -322,7 +323,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		@Override
 		public boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
-			return (testedChromosome.get(positionInChromosome) == (attributeVision == 1 ? true
+			return (testedChromosome.get(positionInChromosome) == (attributeVision == 1. ? true
 					: false));
 
 		}
@@ -398,8 +399,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
 			final double[] votingTable = new double[numberOfLabels];
-			for (int i = 0; i < numberOfLabels; i++)
-				votingTable[i] = 0;
+			Arrays.fill(votingTable, 0);
 
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
 			// Let each classifier vote
