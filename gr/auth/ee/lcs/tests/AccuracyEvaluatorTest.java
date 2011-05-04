@@ -65,10 +65,11 @@ public class AccuracyEvaluatorTest {
 
 		ClassifierSet set = new ClassifierSet(null);
 		ex1.setComparisonValue(0, 1);
+		ex1.experience = 100;
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
 		AccuracyEvaluator a = new AccuracyEvaluator(instances, false);
 		final double evalResult = a.evaluateSet(set);
-		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
+		assertTrue(Math.abs(evalResult - 5 / 6.) <.0001);
 	}
 
 }
