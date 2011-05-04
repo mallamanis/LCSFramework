@@ -93,13 +93,13 @@ public class ExactMatchEvalutor implements IEvaluator {
 
 		}
 
-		final double errorRate = ((double) fp) / ((double) (fp + tp));
+		final double correctRate = ((double) tp) / ((double) (fp + tp));
 
 		if (printResults) {
-			System.out.println("tp:" + tp + " fp:" + fp + " errorRate:"
-					+ errorRate + " total instances:" + instances.length);
+			System.out.println("tp:" + tp + " fp:" + fp + " exactMatch:"
+					+ correctRate + " total instances:" + instances.length);
 		}
-		return errorRate;
+		return correctRate;
 	}
 
 }
