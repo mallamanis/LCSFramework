@@ -11,6 +11,7 @@ import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.ProportionalCut;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import weka.core.Instances;
 
@@ -245,10 +246,8 @@ public final class GenericMultiLabelRepresentation extends
 				final double[] visionVector) {
 			final double[] decisionTable = new double[numberOfLabels];
 			final double[] confidenceTable = new double[numberOfLabels];
-			for (int i = 0; i < numberOfLabels; i++) {
-				decisionTable[i] = 0;
-				confidenceTable[i] = 0;
-			}
+			Arrays.fill(decisionTable, 0);
+			Arrays.fill(confidenceTable, 0);
 
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
 			final int setSize = matchSet.getNumberOfMacroclassifiers();
