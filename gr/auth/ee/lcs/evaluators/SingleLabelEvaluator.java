@@ -6,6 +6,7 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 
 import java.util.Arrays;
 
@@ -47,16 +48,14 @@ public class SingleLabelEvaluator implements IEvaluator {
 		final ClassifierTransformBridge bridge = ClassifierTransformBridge
 				.getInstance();
 		int tp = 0;
+		double[][] instances = InstanceToDoubleConverter.convert(instanceSet);
 
-		for (int i = 0; i < instanceSet.numInstances(); i++) {
-			final double[] instance = new double[instanceSet.numAttributes()];
-			for (int j = 0; j < instanceSet.numAttributes(); j++) {
-				instance[j] = instanceSet.instance(i).value(j);
-			}
-			final int[] classes = bridge.classify(classifiers, instance);
+		for (int i = 0; i < instances.length; i++) {			
+			
+			final int[] classes = bridge.classify(classifiers, instances[i]);
 			Arrays.sort(classes);
 
-			final int[] classification = bridge.getDataInstanceLabels(instance);
+			final int[] classification = bridge.getDataInstanceLabels(instances[i]);
 			Arrays.sort(classification);
 
 			final boolean classifiedToLabel = Arrays.binarySearch(classes,
@@ -67,7 +66,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 				tp++;
 
 		}
-		return ((double) tp) / ((double) instanceSet.numInstances());
+		return ((double) tp) / ((double) instances.length);
 	}
 
 }
