@@ -50,12 +50,13 @@ public class SingleLabelEvaluator implements IEvaluator {
 		int tp = 0;
 		double[][] instances = InstanceToDoubleConverter.convert(instanceSet);
 
-		for (int i = 0; i < instances.length; i++) {			
-			
+		for (int i = 0; i < instances.length; i++) {
+
 			final int[] classes = bridge.classify(classifiers, instances[i]);
 			Arrays.sort(classes);
 
-			final int[] classification = bridge.getDataInstanceLabels(instances[i]);
+			final int[] classification = bridge
+					.getDataInstanceLabels(instances[i]);
 			Arrays.sort(classification);
 
 			final boolean classifiedToLabel = Arrays.binarySearch(classes,

@@ -40,8 +40,8 @@ public class DirectUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
-		final int numOfLabels = 1;
+		final String file = "/home/miltiadis/Desktop/datasets/emotions-train.arff";
+		final int numOfLabels = 6;
 		final int iterations = 600;
 		final int populationSize = 1000;
 		DirectUCS dmlucs = new DirectUCS(file, iterations, populationSize,
@@ -103,7 +103,7 @@ public class DirectUCS {
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
+	private final double UCS_ACC0 = .95;
 
 	/**
 	 * The learning rate (beta) parameter.
@@ -116,7 +116,7 @@ public class DirectUCS {
 	private final int UCS_EXPERIENCE_THRESHOLD = 10;
 
 	/**
-	 * The post-process experince threshold used.
+	 * The post-process experience threshold used.
 	 */
 	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
 
@@ -201,7 +201,7 @@ public class DirectUCS {
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		// rulePopulation.print();
+		 rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

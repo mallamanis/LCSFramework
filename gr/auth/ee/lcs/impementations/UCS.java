@@ -101,7 +101,7 @@ public class UCS {
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .95;
+	private final double UCS_ACC0 = .99;
 
 	/**
 	 * The learning rate (beta) parameter.
