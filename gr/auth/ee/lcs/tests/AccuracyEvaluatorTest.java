@@ -4,8 +4,8 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
@@ -69,7 +69,7 @@ public class AccuracyEvaluatorTest {
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
 		AccuracyEvaluator a = new AccuracyEvaluator(instances, false);
 		final double evalResult = a.evaluateSet(set);
-		assertTrue(Math.abs(evalResult - 5 / 6.) <.0001);
+		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
 	}
 
 }

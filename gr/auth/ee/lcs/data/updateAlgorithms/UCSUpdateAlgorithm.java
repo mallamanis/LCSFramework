@@ -373,7 +373,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 				.getDataInstanceLabels(
 						ClassifierTransformBridge.instances[instanceIndex]).length;
 		performUpdate(matchSet, correctSet);
-		
+
 		/*
 		 * Run GA
 		 */

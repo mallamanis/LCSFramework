@@ -114,12 +114,13 @@ public class AccuracyEvaluator implements IEvaluator {
 					unionOfLabels++;
 			}
 			final double instanceAccuracy = ((double) intersectionOfLabels)
-				/ ((double) unionOfLabels);
-			sumOfAccuracies += Double.isNaN(instanceAccuracy)?0:instanceAccuracy;
-			
+					/ ((double) unionOfLabels);
+			sumOfAccuracies += Double.isNaN(instanceAccuracy) ? 0
+					: instanceAccuracy;
+
 			final double instanceRecall = ((double) intersectionOfLabels)
-				/ ((double) classification.length);
-			sumOfRecall += Double.isNaN(instanceRecall)?0:instanceRecall;
+					/ ((double) classification.length);
+			sumOfRecall += Double.isNaN(instanceRecall) ? 0 : instanceRecall;
 		}
 		final double accuracy = sumOfAccuracies / ((double) instances.length);
 		final double recall = sumOfRecall / ((double) instances.length);
