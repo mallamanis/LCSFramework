@@ -24,11 +24,12 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
 /**
- * A unilabel UCS using the RT transform
+ * A unilabel UCS using the RT transform.
  * 
  * @author Miltiadis Allamanis
  * 
@@ -39,11 +40,12 @@ public class RTUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
-		final int numOfLabels = 27;
-		final int iterations = 500;
-		final int populationSize = 2000;
-		final double targetLC = 1.252;
+		SettingsLoader.loadSettings();
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting("numberOfLabels",1);
+		final int iterations = (int) SettingsLoader.getNumericSetting("trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting("populationSize", 1000);
+		final double targetLC = SettingsLoader.getNumericSetting("datasetLabelCardinality",1);
 		RTUCS dmlucs = new RTUCS(file, iterations, populationSize, numOfLabels,
 				targetLC);
 		dmlucs.run();
@@ -68,68 +70,84 @@ public class RTUCS {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float)  SettingsLoader.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 855;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting("thetaGA", 300);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 500;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting("callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting("precisionBits", 5);
 
 	/**
 	 * The UCS alpha parameter.
 	 */
-	private final double UCS_ALPHA = .1;
+	private final double UCS_ALPHA = SettingsLoader.getNumericSetting("UCS_Alpha", .1);
 
 	/**
 	 * The UCS n power parameter.
 	 */
-	private final int UCS_N = 10;
+	private final int UCS_N = (int) SettingsLoader.getNumericSetting("UCS_N", 10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
+	private final double UCS_ACC0 = SettingsLoader.getNumericSetting("UCS_Acc0", .99);
 
 	/**
 	 * The learning rate (beta) parameter.
 	 */
-	private final double UCS_LEARNING_RATE = .1;
+	private final double UCS_LEARNING_RATE = SettingsLoader.getNumericSetting("UCS_beta", .1);
 
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 10;
+	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 5;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.0;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
+	/**
+	 * The attribute generalization rate.
+	 */
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader.getNumericSetting("AttributeGeneralizationRate", 0.33);
+
+	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader.getNumericSetting("GAMatchSetRunProbability", 0.01);
+	
+	/**
+	 * Percentage of only updates (and no exploration).
+	 */
+	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader.getNumericSetting("UpdateOnlyPercentage",.1);
+
+	
 	/**
 	 * The number of labels used at the dmlUCS.
 	 */
@@ -172,14 +190,14 @@ public class RTUCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
-				PRECISION_BITS, numberOfLabels, .7);
+				PRECISION_BITS, numberOfLabels, ATTRIBUTE_GENERALIZATION_RATE);
 		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 		ClassifierTransformBridge.setInstance(rep);
 
 		AbstractUpdateAlgorithmStrategy.currentStrategy = new RTUCSUpdateAlgorithm(
 				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, 0.01, ga, THETA_GA, 1, numberOfLabels);
+				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -196,7 +214,7 @@ public class RTUCS {
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.registerHook(acc);
 		myExample.train(iterations, rulePopulation);
-
+		myExample.updatePopulation((int)(UPDATE_ONLY_ITERATION_PERCENTAGE * iterations), rulePopulation);
 		// rulePopulation.print();
 		System.out.println("Post process...");
 		// rulePopulation.print();

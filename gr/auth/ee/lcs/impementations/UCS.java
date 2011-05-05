@@ -23,6 +23,7 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
@@ -41,9 +42,10 @@ public class UCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/emotions-trainClass1.arff";
-		final int iterations = 500;
-		final int populationSize = 1000;
+		SettingsLoader.loadSettings();
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int iterations = (int) SettingsLoader.getNumericSetting("trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting("populationSize", 1000);
 		UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.run();
 	}
@@ -66,68 +68,83 @@ public class UCS {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float)  SettingsLoader.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting("thetaGA", 100);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 100;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting("callbackRate", 100);
 
 	/**
 	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 5;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting("precisionBits", 5);
 
 	/**
 	 * The UCS alpha parameter.
 	 */
-	private final double UCS_ALPHA = .1;
+	private final double UCS_ALPHA = SettingsLoader.getNumericSetting("UCS_Alpha", .1);
 
 	/**
 	 * The UCS n power parameter.
 	 */
-	private final int UCS_N = 10;
+	private final int UCS_N = (int) SettingsLoader.getNumericSetting("UCS_N", 10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
+	private final double UCS_ACC0 = SettingsLoader.getNumericSetting("UCS_Acc0", .99);
 
 	/**
 	 * The learning rate (beta) parameter.
 	 */
-	private final double UCS_LEARNING_RATE = .1;
+	private final double UCS_LEARNING_RATE = SettingsLoader.getNumericSetting("UCS_beta", .1);
 
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 10;
+	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
 	 * The post-process experince threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 0;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
 	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = 0;
+	private final double POSTPROCESS_FITNESS_THRESHOLD =  SettingsLoader.getNumericSetting("PostProcess_Fitness_Theshold", 0);
+	
+	/**
+	 * The attribute generalization rate.
+	 */
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader.getNumericSetting("AttributeGeneralizationRate", 0.33);
 
+	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader.getNumericSetting("GAMatchSetRunProbability", 0.01);
+	
+	/**
+	 * Percentage of only updates (and no exploration).
+	 */
+	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader.getNumericSetting("UpdateOnlyPercentage",.1);
+	
 	/**
 	 * The UCS constructor.
 	 * 
@@ -159,13 +176,14 @@ public class UCS {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA);
 
 		SingleClassRepresentation rep = new SingleClassRepresentation(
-				inputFile, PRECISION_BITS, .7);
+				inputFile, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new UCSUpdateAlgorithm(
+		AbstractUpdateAlgorithmStrategy.currentStrategy = 
+			new UCSUpdateAlgorithm(
 				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, 0.01, ga, THETA_GA, 1);
+				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -182,7 +200,7 @@ public class UCS {
 		myExample.train(iterations, rulePopulation);
 
 		System.out.println("Performing only updates...");
-		myExample.updatePopulation(iterations / 10, rulePopulation);
+		myExample.updatePopulation((int)(iterations * UPDATE_ONLY_ITERATION_PERCENTAGE), rulePopulation);
 
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
