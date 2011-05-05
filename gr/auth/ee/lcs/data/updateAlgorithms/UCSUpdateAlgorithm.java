@@ -230,11 +230,6 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	@Override
 	public void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
-		performUpdate(matchSet, correctSet, 1);
-	}
-
-	public void performUpdate(final ClassifierSet matchSet,
-			final ClassifierSet correctSet, int lbl) {
 		double strengthSum = 0;
 		final int matchSetMacroclassifiers = matchSet
 				.getNumberOfMacroclassifiers();
@@ -275,8 +270,6 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		// Fix for avoiding problems...
 		if (strengthSum == 0)
 			strengthSum = 1;
-
-		strengthSum /= lbl;
 
 		// double fitnessSum = 0;
 		final int msSize = matchSet.getNumberOfMacroclassifiers();
@@ -379,8 +372,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		final int numberOfLabels = ClassifierTransformBridge.getInstance()
 				.getDataInstanceLabels(
 						ClassifierTransformBridge.instances[instanceIndex]).length;
-		performUpdate(matchSet, correctSet, 1);
-		// TODO: Fix for both RT & Transformation
+		performUpdate(matchSet, correctSet);
+		
 		/*
 		 * Run GA
 		 */
