@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -232,7 +233,7 @@ public class DirectGUCS {
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchEvalutor(
 				ClassifierTransformBridge.instances, true);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
@@ -261,11 +262,16 @@ public class DirectGUCS {
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
 		accEval.evaluateSet(rulePopulation);
 
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
-				(float) 3.5));
+		VotingClassificationStrategy vs = rep.new VotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(vs);
+		vs.proportionalCutCalibration(ClassifierTransformBridge.instances,
+				rulePopulation);
 		System.out.println("Evaluating on test set(voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
 
 	}
 }
