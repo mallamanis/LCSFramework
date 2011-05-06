@@ -25,6 +25,8 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
@@ -42,13 +44,20 @@ public class SequentialGMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 500;
-		final int populationSize = 1000;
-		final float lc = (float) 3.5;
+		SettingsLoader.loadSettings();
+
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		final int iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
+		final float lc = (float) SettingsLoader.getNumericSetting(
+				"datasetLabelCardinality", 1);
 		SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
-				populationSize, numOfLabels, .33, lc);
+				populationSize, numOfLabels, SettingsLoader.getNumericSetting(
+						"LabelGeneralizationRate", 0.33), lc);
 		sgmlucs.run();
 
 	}
@@ -71,72 +80,84 @@ public class SequentialGMlUCS {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float) SettingsLoader
+			.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader
+			.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 800;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 100);
 
 	/**
-	 * The target Label Cardinality of the problem
+	 * The target Label Cardinality of the problem.
 	 */
 	private final float targetLC;
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 50;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
+			"callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 5;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
+			"precisionBits", 5);
 
 	/**
 	 * The UCS alpha parameter.
 	 */
-	private final double UCS_ALPHA = .1;
+	private final double UCS_ALPHA = SettingsLoader.getNumericSetting(
+			"UCS_Alpha", .1);
 
 	/**
 	 * The UCS n power parameter.
 	 */
-	private final int UCS_N = 10;
+	private final int UCS_N = (int) SettingsLoader.getNumericSetting("UCS_N",
+			10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
-
+	private final double UCS_ACC0 = SettingsLoader.getNumericSetting(
+			"UCS_Acc0", .99);
 	/**
 	 * The learning rate (beta) parameter.
 	 */
-	private final double UCS_LEARNING_RATE = .1;
+	private final double UCS_LEARNING_RATE = SettingsLoader.getNumericSetting(
+			"UCS_beta", .1);
 
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 50;
+	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .01;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
 	/**
 	 * The generalization rate used for labels.
@@ -191,13 +212,15 @@ public class SequentialGMlUCS {
 		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH,
-				labelGeneralizationRate, .7);
+				labelGeneralizationRate, SettingsLoader.getNumericSetting(
+						"AttributeGeneralizationRate", 0.33));
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
-				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, 0.01,
-				ga, THETA_GA, 1);
+				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+				SettingsLoader.getNumericSetting("GAMatchSetRunProbability",
+						0.01), ga, THETA_GA, 1);
 		AbstractUpdateAlgorithmStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 
@@ -212,7 +235,7 @@ public class SequentialGMlUCS {
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchEvalutor(
 				ClassifierTransformBridge.instances, true);
-		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
+		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS",
 				eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -243,8 +266,9 @@ public class SequentialGMlUCS {
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);
 		rep.setClassificationStrategy(str);
-		// TODO: Calibrate on set
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
+
+		str.proportionalCutCalibration(
+				InstanceToDoubleConverter.convert(loader.testSet),
 				rulePopulation);
 
 		System.out.println("Evaluating on test set (voting)");
