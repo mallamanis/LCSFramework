@@ -6,6 +6,8 @@ package gr.auth.ee.lcs.utilities;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Load parameters from a file utility.
@@ -14,6 +16,9 @@ import java.util.Properties;
  * 
  */
 public final class SettingsLoader {
+
+	private static Logger classLogger = Logger.getLogger(SettingsLoader.class
+			.getName());
 
 	/**
 	 * Private instance of properties.
@@ -56,6 +61,7 @@ public final class SettingsLoader {
 		final FileInputStream input = new FileInputStream(
 				"defaultLcs.properties");
 		lcsProperties.load(input);
+		classLogger.fine("Loaded properties file " + filename);
 	}
 
 	/**
@@ -72,8 +78,9 @@ public final class SettingsLoader {
 	private double getNumericProperty(final String propertyName,
 			final double defaultValue) {
 		try {
-			return Double.parseDouble(lcsProperties.getProperty(propertyName,
-					Double.toString(defaultValue)));
+			final double value = Double.parseDouble(lcsProperties.getProperty(
+					propertyName, Double.toString(defaultValue)));
+			return value;
 		} catch (Exception ex) {
 			return defaultValue;
 		}
@@ -91,7 +98,11 @@ public final class SettingsLoader {
 	 */
 	public static double getNumericSetting(final String propertyName,
 			final double defaultValue) {
-		return instance.getNumericProperty(propertyName, defaultValue);
+		final double value = instance.getNumericProperty(propertyName,
+				defaultValue);
+		final String output = "Parameter " + propertyName + " set to " + value;
+		classLogger.config(output);
+		return value;
 	}
 
 	/**
@@ -107,6 +118,7 @@ public final class SettingsLoader {
 	private String getStringProperty(final String propertyName,
 			final String defaultValue) {
 		return lcsProperties.getProperty(propertyName, defaultValue);
+
 	}
 
 	/**
@@ -121,7 +133,10 @@ public final class SettingsLoader {
 	 */
 	public static String getStringSetting(final String propertyName,
 			final String defaultValue) {
-		return instance.getStringProperty(propertyName, defaultValue);
+		final String value = instance.getStringProperty(propertyName,
+				defaultValue);
+		classLogger.config("Parameter " + propertyName + " set to " + value);
+		return value;
 	}
 
 	/**

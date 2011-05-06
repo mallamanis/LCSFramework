@@ -31,6 +31,12 @@ import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * A Binary Relevance Problem Transformation UCS.
@@ -44,7 +50,12 @@ public class TransformationUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+
 		SettingsLoader.loadSettings();
+		Handler fileLogging = new FileHandler("ouput.log");
+
+		Logger.getLogger("").setLevel(Level.CONFIG);
+		Logger.getLogger("").addHandler(fileLogging);
 		final String file = SettingsLoader.getStringSetting("filename", "");
 		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1);
@@ -245,7 +256,7 @@ public class TransformationUCS {
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchEvalutor(
 				ClassifierTransformBridge.instances, true);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
 
 		do {
 			System.out.println("Training Classifier Set");
