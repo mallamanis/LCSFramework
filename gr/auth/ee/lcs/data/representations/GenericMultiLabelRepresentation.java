@@ -314,21 +314,20 @@ public final class GenericMultiLabelRepresentation extends
 		private final float[] getConfidenceArray(final ClassifierSet aSet,
 				final double[] visionVector) {
 			final float[] votingTable = new float[numberOfLabels];
-			for (int i = 0; i < numberOfLabels; i++)
-				votingTable[i] = 0;
+			Arrays.fill(votingTable, 0);
 
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
 			// Let each classifier vote
 			final int setSize = matchSet.getNumberOfMacroclassifiers();
 			for (int i = 0; i < setSize; i++) {
 				// For each classifier
+				final Classifier currentClassifier = matchSet.getClassifier(i);
+				final int classifierNumerosity = matchSet
+						.getClassifierNumerosity(i);
+				final double fitness = currentClassifier
+						.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+
 				for (int label = 0; label < numberOfLabels; label++) {
-					final Classifier currentClassifier = matchSet
-							.getClassifier(i);
-					final int classifierNumerosity = matchSet
-							.getClassifierNumerosity(i);
-					final double fitness = currentClassifier
-							.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 					final String cons = (attributeList[attributeList.length
 							- numberOfLabels + label])
 							.toString(currentClassifier);
@@ -343,7 +342,7 @@ public final class GenericMultiLabelRepresentation extends
 			}
 
 			// Find mean to make all numbers positive
-			double minVote = Double.MAX_VALUE;
+			double minVote = 0;
 			for (int i = 0; i < votingTable.length; i++) {
 				if (votingTable[i] < minVote)
 					minVote = votingTable[i];
@@ -357,8 +356,10 @@ public final class GenericMultiLabelRepresentation extends
 			}
 
 			// Normalize
-			for (int i = 0; i < votingTable.length; i++) {
-				votingTable[i] /= sumVote;
+			if (sumVote > 0) {
+				for (int i = 0; i < votingTable.length; i++) {
+					votingTable[i] /= sumVote;
+				}
 			}
 			return votingTable;
 		}
