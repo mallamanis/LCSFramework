@@ -11,6 +11,7 @@ import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 import weka.core.Instances;
@@ -292,8 +293,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			// Initialize table
 			final int numOfClasses = ((UniLabel) attributeList[attributeList.length - 1]).classes.length;
 			double[] votingTable = new double[numOfClasses];
-			for (int i = 0; i < numOfClasses; i++)
-				votingTable[i] = 0;
+			Arrays.fill(votingTable, 0);
 
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
 
