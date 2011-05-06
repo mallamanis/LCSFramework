@@ -8,6 +8,8 @@ import gr.auth.ee.lcs.data.IEvaluator;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * An evaluator logging output to a file.
@@ -36,7 +38,9 @@ public class FileLogger implements IEvaluator {
 	 *            the evaluator which we are going to output.
 	 */
 	public FileLogger(final String filename, final IEvaluator evaluator) {
-		file = filename;
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+		file = filename + sdf.format(cal.getTime()) + ".txt";
 		actualEvaluator = evaluator;
 		try {
 			final FileWriter fstream = new FileWriter(file, false);
