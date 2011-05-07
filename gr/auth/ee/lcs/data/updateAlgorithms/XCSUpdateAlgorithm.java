@@ -163,7 +163,6 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	public Serializable createStateClassifierObject() {
-		// TODO: Initial Parameters
 		return new XCSClassifierData();
 	}
 

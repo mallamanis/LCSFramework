@@ -242,7 +242,7 @@ public class DirectUCS {
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 

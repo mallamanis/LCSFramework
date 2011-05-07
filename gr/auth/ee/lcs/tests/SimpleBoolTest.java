@@ -17,6 +17,8 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 /**
+ * Test the simple boolean representation.
+ * 
  * @author Miltos Allamanis
  * @deprecated
  */

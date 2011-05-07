@@ -37,6 +37,17 @@ public class TournamentSelector implements INaturalSelector {
 	 */
 	private final int mode;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param sizeOfTournaments
+	 *            the size of the tournament as a percentage of the given set
+	 *            size
+	 * @param max
+	 *            true if the tournament selects the max fitness
+	 * @param comparisonMode
+	 *            the comparison mode to be used
+	 */
 	public TournamentSelector(final double sizeOfTournaments,
 			final boolean max, final int comparisonMode) {
 		this.tournamentSize = 0;

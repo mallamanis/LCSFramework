@@ -192,8 +192,7 @@ public abstract class ClassifierTransformBridge {
 	 * @param aClassifier
 	 *            the classifier to set the classification
 	 * @param action
-	 *            the action to set on the classifier TODO: Pending changes on
-	 *            ml
+	 *            the action to set on the classifier
 	 */
 	public abstract void setClassification(Classifier aClassifier, int action);
 

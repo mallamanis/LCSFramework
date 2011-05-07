@@ -11,7 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author miltiadis
+ * Test for the PW Selector.
+ * 
+ * @author Miltos Allamanis
  * 
  */
 public class PWSelectorTest {

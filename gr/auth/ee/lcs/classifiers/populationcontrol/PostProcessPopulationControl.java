@@ -67,7 +67,7 @@ public class PostProcessPopulationControl implements IPopulationControlStrategy 
 	 * (gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void controlPopulation(final ClassifierSet aSet) {
+	public final void controlPopulation(final ClassifierSet aSet) {
 		final int populationSize = aSet.getNumberOfMacroclassifiers();
 
 		for (int i = populationSize - 1; i >= 0; i--) {

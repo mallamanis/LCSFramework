@@ -25,6 +25,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
@@ -266,7 +267,8 @@ public class DirectGUCS {
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(vs);
-		vs.proportionalCutCalibration(ClassifierTransformBridge.instances,
+		vs.proportionalCutCalibration(
+				InstanceToDoubleConverter.convert(loader.testSet),
 				rulePopulation);
 		System.out.println("Evaluating on test set(voting)");
 		testEval.evaluateSet(rulePopulation);

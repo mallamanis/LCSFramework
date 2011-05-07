@@ -125,7 +125,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 */
 	@Override
 	public Serializable createStateClassifierObject() {
-		// TODO: Initial parameters
 		return new SLCSClassifierData();
 	}
 

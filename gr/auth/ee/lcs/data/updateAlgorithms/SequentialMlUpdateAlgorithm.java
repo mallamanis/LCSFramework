@@ -19,17 +19,23 @@ import java.util.Random;
 public class SequentialMlUpdateAlgorithm extends
 		AbstractUpdateAlgorithmStrategy {
 
+	/**
+	 * The update strategy used by the problem.
+	 */
 	private final AbstractUpdateAlgorithmStrategy strategy;
 
+	/**
+	 * The GA to be used at updating.
+	 */
 	private final IGeneticAlgorithmStrategy ga;
 
 	/**
-	 * Number of labels used
+	 * Number of labels used.
 	 */
 	private final int numberOfLabels;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param updateMethod
 	 *            the update method to use

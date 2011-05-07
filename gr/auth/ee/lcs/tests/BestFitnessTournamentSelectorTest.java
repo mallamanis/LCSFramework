@@ -15,14 +15,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for Best Fitness Tournament Selector
+ * Tests for Best Fitness Tournament Selector.
  * 
  * @author Miltos Allamanis
  * 
  */
 public class BestFitnessTournamentSelectorTest {
 
+	/**
+	 * A selector.
+	 */
 	TournamentSelector mySelector;
+
+	/**
+	 * A population.
+	 */
 	ClassifierSet population;
 
 	@Before

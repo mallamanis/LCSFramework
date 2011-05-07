@@ -31,23 +31,38 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	class MlUCSClassifierData implements Serializable {
 		/**
-		 * 
+		 * The serial used for serialization.
 		 */
 		private static final long serialVersionUID = -6248732998420320548L;
 
 		/**
-		 * The total sum of the metric used.
+		 * The per-label tp.
 		 */
 		private final int tp[];
 
+		/**
+		 * The per-label fp.
+		 */
 		private final int fp[];
 
+		/**
+		 * fitness0 per-label variable.
+		 */
 		private final float fitness0[];
 
+		/**
+		 * The per-label fitness.
+		 */
 		private final float labelFitness[];
 
+		/**
+		 * The per-label correct set.
+		 */
 		private final float cs[];
 
+		/**
+		 * A boolean array indicating on which variables the rule is active.
+		 */
 		private final boolean active[];
 
 		/**
@@ -60,10 +75,22 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		 */
 		private double fitness = .5;
 
+		/**
+		 * The global correct set size.
+		 */
 		private double globalCs = 0.1;
 
+		/**
+		 * The classifier's accuracy.
+		 */
 		private double acc;
 
+		/**
+		 * Constructor.
+		 * 
+		 * @param numberOfLabels
+		 *            the number of labels used
+		 */
 		public MlUCSClassifierData(int numberOfLabels) {
 			tp = new int[numberOfLabels];
 			fp = new int[numberOfLabels];
@@ -94,8 +121,14 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	private final IGeneticAlgorithmStrategy ga;
 
+	/**
+	 * The number of labels used at the problem.
+	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The UCS n parameter.
+	 */
 	private final int n = 10;
 
 	/**
@@ -198,6 +231,12 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 	}
 
+	/**
+	 * Build active label array.
+	 * 
+	 * @param cl
+	 *            the classifier to build active labels array on
+	 */
 	private void buildActive(final Classifier cl) {
 		int active = 0;
 		final MlUCSClassifierData data = ((MlUCSClassifierData) cl
@@ -214,13 +253,21 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		data.activeLabels = active;
 	}
 
-	private void gatherResults(ClassifierSet matchSet) {
+	/**
+	 * Gather results from single-label updates.
+	 * 
+	 * @param matchSet
+	 *            the set of the classifiers that have been updated
+	 */
+	private void gatherResults(final ClassifierSet matchSet) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			final Classifier cl = matchSet.getClassifier(i);
 			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 					.getUpdateDataObject());
-			final int numerosity = matchSet.getClassifierNumerosity(i);
+			final int numerosity = matchSet.getClassifierNumerosity(i); // TODO:
+																		// Why
+																		// unused?
 			if (data.activeLabels == 0) {
 				data.fitness = 0;
 				continue;
@@ -234,7 +281,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 					continue;
 				if (fitnessMin > data.labelFitness[label])
 					fitnessMin = data.labelFitness[label];
-				fitnessSum += 1 / data.labelFitness[label];
+				fitnessSum += 1. / data.labelFitness[label];
 
 				if (csMax < data.cs[label])
 					csMax = data.cs[label];
@@ -253,7 +300,6 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 			else
 				cl.setSubsumptionAbility(false);
 
-			final double acc = data.acc;
 			final double fitness = ((data.activeLabels) / (fitnessSum) + fitnessMin) / 2;
 			final double cs = ((csSum) / (data.activeLabels) + csMax) / 2;
 			data.fitness += b * (fitness - data.fitness);
@@ -310,6 +356,18 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		return labelMatchSet;
 	}
 
+	/**
+	 * Update set per label.
+	 * 
+	 * @param population
+	 *            the population of rules to add any new rules
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the index of the instance to update the matchset with
+	 * @param evolve
+	 *            true to run cover and GA operators
+	 */
 	private void updatePerLabel(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {

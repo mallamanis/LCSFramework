@@ -42,8 +42,9 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 				.getNumberOfMacroclassifiers()];
 
 		// Copy Macroclassifiers to list
-		for (int i = 0; i < list.length; i++)
+		for (int i = 0; i < list.length; i++) {
 			list[i] = aSet.getMacroclassifier(i);
+		}
 
 		/*
 		 * Create Comparator.
@@ -65,8 +66,12 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 				final double coverageA = macroA.myClassifier.getCoverage();
 				final double coverageB = macroB.myClassifier.getCoverage();
 
-				final double expFitA = experienceA < 10 ? 0 : fitnessA;
-				final double expFitB = experienceB < 10 ? 0 : fitnessB;
+				final int experienceThreshold = 10;
+
+				final double expFitA = experienceA < experienceThreshold ? 0
+						: fitnessA;
+				final double expFitB = experienceB < experienceThreshold ? 0
+						: fitnessB;
 
 				if (expFitA > expFitB)
 					return -1;
@@ -92,8 +97,9 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 
 		aSet.removeAllMacroclassifiers();
 
-		for (int i = 0; i < list.length; i++)
+		for (int i = 0; i < list.length; i++) {
 			aSet.addClassifier(list[i], false);
+		}
 	}
 
 }

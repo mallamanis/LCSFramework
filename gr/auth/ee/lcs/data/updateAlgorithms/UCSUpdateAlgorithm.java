@@ -71,35 +71,35 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	/**
 	 * Genetic Algorithm.
 	 */
-	private final IGeneticAlgorithmStrategy ga;
+	private final transient IGeneticAlgorithmStrategy ga;
 
 	/**
 	 * The \theta_{DEL} parameter of UCS.
 	 */
-	private final int deleteAge;
+	private final transient int deleteAge;
 
 	/**
 	 * Private variables: the UCS parameter sharing. accuracy0 is considered the
 	 * subsumption fitness threshold
 	 */
-	private final double a, accuracy0, n, b;
+	private final transient double a, accuracy0, n, b;
 
 	/**
 	 * A double indicating the probability that the GA will run on the matchSet
 	 * (and not on the correct set).
 	 */
-	private final double matchSetRunProbability;
+	private final transient double matchSetRunProbability;
 
 	/**
 	 * The experience threshold for subsumption.
 	 */
-	private final int subsumptionExperienceThreshold;
+	private final transient int subsumptionExperienceThreshold;
 
 	/**
 	 * A threshold of the classification ability of a classifier in order to be
 	 * classified as correct (and added to the correct set).
 	 */
-	private final double correctSetThreshold;
+	private final transient double correctSetThreshold;
 
 	/**
 	 * Default constructor.
@@ -314,7 +314,10 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		return correctSet;
 	}
 
-	private double meanPopulationFitness = 0;
+	/**
+	 * The mean population fitness of the population being updated.
+	 */
+	private transient double meanPopulationFitness = 0;
 
 	/**
 	 * Update the mean fitness variable.

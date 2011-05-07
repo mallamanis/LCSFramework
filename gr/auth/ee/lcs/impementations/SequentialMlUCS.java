@@ -24,11 +24,12 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
 /**
- * A sequential ml-UCS with a strict representation
+ * A sequential ml-UCS with a strict representation.
  * 
  * @author Miltos Allamanis
  * 
@@ -41,10 +42,15 @@ public class SequentialMlUCS {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/carml.arff";
-		final int numOfLabels = 4;
-		final int iterations = 500;
-		final int populationSize = 1000;
+		SettingsLoader.loadSettings();
+
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		final int iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
 		SequentialMlUCS sgmlucs = new SequentialMlUCS(file, iterations,
 				populationSize, numOfLabels);
 		sgmlucs.run();
@@ -65,71 +71,82 @@ public class SequentialMlUCS {
 	 * The size of the population to use.
 	 */
 	private final int populationSize;
-
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float) SettingsLoader
+			.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader
+			.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 300;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 100);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
+			"callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
+			"precisionBits", 5);
 
 	/**
 	 * The UCS alpha parameter.
 	 */
-	private final double UCS_ALPHA = .1;
+	private final double UCS_ALPHA = SettingsLoader.getNumericSetting(
+			"UCS_Alpha", .1);
 
 	/**
 	 * The UCS n power parameter.
 	 */
-	private final int UCS_N = 10;
+	private final int UCS_N = (int) SettingsLoader.getNumericSetting("UCS_N",
+			10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
-
+	private final double UCS_ACC0 = SettingsLoader.getNumericSetting(
+			"UCS_Acc0", .99);
 	/**
 	 * The learning rate (beta) parameter.
 	 */
-	private final double UCS_LEARNING_RATE = .1;
+	private final double UCS_LEARNING_RATE = SettingsLoader.getNumericSetting(
+			"UCS_beta", .1);
 
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 20;
+	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -157,7 +174,7 @@ public class SequentialMlUCS {
 	}
 
 	/**
-	 * Run Sequential ML UCS
+	 * Run Sequential ML UCS.
 	 * 
 	 * @throws IOException
 	 */
@@ -171,13 +188,16 @@ public class SequentialMlUCS {
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH, .7);
+				StrictMultiLabelRepresentation.EXACT_MATCH,
+				SettingsLoader.getNumericSetting("AttributeGeneralizationRate",
+						0.33));
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		ClassifierTransformBridge.setInstance(rep);
 
 		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
-				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, 0.01,
-				ga, THETA_GA, 1);
+				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+				SettingsLoader.getNumericSetting("GAMatchSetRunProbability",
+						0.01), ga, THETA_GA, 1);
 		AbstractUpdateAlgorithmStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 
@@ -192,8 +212,8 @@ public class SequentialMlUCS {
 		loader.loadInstances(inputFile, true);
 		final IEvaluator eval = new ExactMatchEvalutor(
 				ClassifierTransformBridge.instances, true);
-		myExample.registerHook(new FileLogger(inputFile + "_resultSMlUCS.txt",
-				eval));
+		myExample
+				.registerHook(new FileLogger(inputFile + "_resultSMlUCS", eval));
 		myExample.train(iterations, rulePopulation);
 
 		System.out.println("Post process...");

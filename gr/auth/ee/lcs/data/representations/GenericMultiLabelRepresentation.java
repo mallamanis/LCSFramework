@@ -303,15 +303,37 @@ public final class GenericMultiLabelRepresentation extends
 	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
+		/**
+		 * The target Label Cardinality we are trying to reach.
+		 */
 		private final float targetLC;
 
+		/**
+		 * The threshold on which to decide for the label bipartition.
+		 */
 		private double voteThreshold;
 
+		/**
+		 * Constructor.
+		 * 
+		 * @param targetLabelCardinality
+		 *            the target label cardinality
+		 */
 		public VotingClassificationStrategy(float targetLabelCardinality) {
 			targetLC = targetLabelCardinality;
 		}
 
-		private final float[] getConfidenceArray(final ClassifierSet aSet,
+		/**
+		 * Create and normalized the confidence array for a vision vector.
+		 * 
+		 * @param aSet
+		 *            the set of rules to be used for confidence output
+		 * @param visionVector
+		 *            the vision vector
+		 * @return a float array containing the normalized confidence for each
+		 *         label
+		 */
+		private float[] getConfidenceArray(final ClassifierSet aSet,
 				final double[] visionVector) {
 			final float[] votingTable = new float[numberOfLabels];
 			Arrays.fill(votingTable, 0);
@@ -707,8 +729,8 @@ public final class GenericMultiLabelRepresentation extends
 	/**
 	 * Activate only a specific label.
 	 * 
-	 * @param labelIndex
-	 *            the index of the label to be activated
+	 * @param selector
+	 *            the selector used to activate labels
 	 */
 	public void activateLabel(final ILabelSelector selector) {
 		for (int i = 0; i < numberOfLabels; i++) {

@@ -28,6 +28,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * Set the transform bridge.
 	 * 
 	 * @param bridge
+	 *            set the transformation bridge
 	 */
 	public static void setTransformBridge(final ClassifierTransformBridge bridge) {
 		transformBridge = bridge;
@@ -168,8 +169,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	@Override
 	public final Object clone() {
-		Classifier clone = new Classifier(this);
-		return clone;
+		return new Classifier(this);
 	}
 
 	/**

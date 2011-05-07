@@ -46,7 +46,7 @@ public final class BestClassifierSelector implements INaturalSelector {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public final void select(final int howManyToSelect,
+	public void select(final int howManyToSelect,
 			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
 		// Add it toPopulation
 		final int bestIndex = select(fromPopulation);

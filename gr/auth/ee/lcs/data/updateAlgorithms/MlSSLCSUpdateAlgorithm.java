@@ -13,22 +13,28 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import java.io.Serializable;
 
 /**
- * A strength based multi-label update algorithm
+ * A strength based multi-label update algorithm.
  * 
  * @author Miltos Allamanis
  * 
  */
 public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
+	/**
+	 * The Ml-SS-LCS classifier data object.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
 	class MlSSLCSClassifierData implements Serializable {
 
 		/**
-		 * 
+		 * The serial for serialization.
 		 */
 		private static final long serialVersionUID = 2060323742317299358L;
 
 		/**
-		 *
+		 * Classifier fitness.
 		 */
 		public double fitness = Double.NEGATIVE_INFINITY;
 
@@ -58,10 +64,13 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		public double str = 0;
 
 		/**
-		 * Number of active labels
+		 * Number of active labels.
 		 */
 		public int activeLabels = -1;
 
+		/**
+		 * Constructor.
+		 */
 		public MlSSLCSClassifierData() {
 			ns = new double[numberOfLabels];
 		}
@@ -73,8 +82,14 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The subsumption experience threshold.
+	 */
 	private final int subsumptionExperienceThreshold;
 
+	/**
+	 * The subsumption accuracy threshold.
+	 */
 	private final double subsumptionAccuracyThreshold;
 
 	/**
@@ -87,6 +102,22 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	private final double strengthReward, penalty;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param reward
+	 *            the reward to be used
+	 * @param penaltyPercent
+	 *            the percent of penalty to incur on wrong classifiers
+	 * @param labels
+	 *            the number of labels in the problem
+	 * @param geneticAlgorithm
+	 *            the GA to be used for evolving
+	 * @param subsumptionExperience
+	 *            the subsumption experience
+	 * @param subsumptionAccuracy
+	 *            the subsumtion minimum accuracy
+	 */
 	public MlSSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final int labels,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,

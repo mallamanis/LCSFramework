@@ -19,12 +19,12 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	/**
 	 * The Natural Selector used to select the the classifier to be deleted.
 	 */
-	final private INaturalSelector mySelector;
+	private final INaturalSelector mySelector;
 
 	/**
 	 * The fixed population size of the controlled set.
 	 */
-	final private int populationSize;
+	private final int populationSize;
 
 	/**
 	 * Constructor of deletion strategy.

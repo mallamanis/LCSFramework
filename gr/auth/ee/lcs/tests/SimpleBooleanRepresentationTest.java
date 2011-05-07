@@ -14,7 +14,7 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import org.junit.Test;
 
 /**
- * A test for @see gr.auth.ee.data.SimpleBooleanRepresentation
+ * A test for @see gr.auth.ee.data.SimpleBooleanRepresentation .
  * 
  * @author Miltos Allamanis
  * 

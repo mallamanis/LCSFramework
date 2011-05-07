@@ -131,6 +131,15 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 	}
 
+	/**
+	 * Classify an instance using a classifier and the accuracy metric.
+	 * 
+	 * @param aClassifier
+	 *            the classifier to be used
+	 * @param instanceIndex
+	 *            the instance index.
+	 * @return a float representing the ml-accuracy of the classification
+	 */
 	public float classifyAccuracy(final Classifier aClassifier,
 			final int instanceIndex) {
 		float correct = 0;
@@ -352,6 +361,12 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 	}
 
+	/**
+	 * Voting Classification Strategy for the Strict Representation.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
 	public final class BestFitnessClassificationStrategy implements
 			IClassificationStrategy {
 

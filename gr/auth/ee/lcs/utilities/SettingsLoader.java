@@ -6,7 +6,6 @@ package gr.auth.ee.lcs.utilities;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -17,8 +16,11 @@ import java.util.logging.Logger;
  */
 public final class SettingsLoader {
 
-	private static Logger classLogger = Logger.getLogger(SettingsLoader.class
-			.getName());
+	/**
+	 * The static logger instance.
+	 */
+	private static final Logger CLASS_LOGGER = Logger
+			.getLogger(SettingsLoader.class.getName());
 
 	/**
 	 * Private instance of properties.
@@ -61,7 +63,7 @@ public final class SettingsLoader {
 		final FileInputStream input = new FileInputStream(
 				"defaultLcs.properties");
 		lcsProperties.load(input);
-		classLogger.fine("Loaded properties file " + filename);
+		CLASS_LOGGER.fine("Loaded properties file " + filename);
 	}
 
 	/**
@@ -101,7 +103,7 @@ public final class SettingsLoader {
 		final double value = instance.getNumericProperty(propertyName,
 				defaultValue);
 		final String output = "Parameter " + propertyName + " set to " + value;
-		classLogger.config(output);
+		CLASS_LOGGER.config(output);
 		return value;
 	}
 
@@ -135,7 +137,7 @@ public final class SettingsLoader {
 			final String defaultValue) {
 		final String value = instance.getStringProperty(propertyName,
 				defaultValue);
-		classLogger.config("Parameter " + propertyName + " set to " + value);
+		CLASS_LOGGER.config("Parameter " + propertyName + " set to " + value);
 		return value;
 	}
 

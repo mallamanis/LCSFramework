@@ -209,7 +209,7 @@ public class SequentialGMlSSLCS {
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
-		// postProcess.controlPopulation(rulePopulation);
+		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");

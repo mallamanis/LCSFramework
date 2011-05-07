@@ -10,6 +10,8 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import org.junit.Test;
 
 /**
+ * Test the single point crossover.
+ * 
  * @author Miltos Allamanis
  * 
  */

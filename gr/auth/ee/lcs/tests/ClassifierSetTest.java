@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A test for a ClassifierSet
+ * A test for a ClassifierSet.
  * 
  * @author Miltos Allamanis
  * 

@@ -182,7 +182,7 @@ public class DirectGMlUCS {
 		ClassifierTransformBridge.setInstance(rep);
 
 		AbstractUpdateAlgorithmStrategy.currentStrategy = new MlUCSUpdateAlgorithm(
-				ga, .1, UCS_EXPERIENCE_THRESHOLD, numberOfLabels);
+				ga, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD, numberOfLabels);
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(

@@ -14,8 +14,18 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test the Single Class Representation and the Complex Representation Abstract
+ * class.
+ * 
+ * @author Miltos Allamanis
+ * 
+ */
 public class ComplexRepresentationTest {
 
+	/**
+	 * A single class representation instance.
+	 */
 	SingleClassRepresentation rep;
 
 	@Test
@@ -76,7 +86,6 @@ public class ComplexRepresentationTest {
 	public void fixChromosomeTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"0011111111111110111111111111010");
-		Classifier ex1 = new Classifier(set1);
 
 		// Does fix work correctly?
 		ExtendedBitSet fixed = new ExtendedBitSet(

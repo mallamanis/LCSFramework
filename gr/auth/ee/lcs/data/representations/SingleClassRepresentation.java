@@ -58,6 +58,20 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		super(inputArff, precision, 1, generalizationRate);
 	}
 
+	/**
+	 * Constructs a Single class representation
+	 * 
+	 * @param inputArff
+	 *            the input .arff file
+	 * @param precision
+	 *            the precision bits to be for representing numerical attributed
+	 * @param attributeToIgnore
+	 *            the number of attributes to ignore at the end
+	 * @param generalizationRate
+	 *            the attribute generalization rate
+	 * @throws IOException
+	 *             when file is not found
+	 */
 	public SingleClassRepresentation(final String inputArff,
 			final int precision, final int attributeToIgnore,
 			final double generalizationRate) throws IOException {

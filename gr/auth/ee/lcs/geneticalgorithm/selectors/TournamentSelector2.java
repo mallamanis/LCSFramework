@@ -37,6 +37,16 @@ public class TournamentSelector2 implements INaturalSelector {
 	 */
 	private final int mode;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param sizeOfTournaments
+	 *            the tournament size (number of participants)
+	 * @param max
+	 *            true if the tournament selects the max fitness
+	 * @param comparisonMode
+	 *            the comparison mode to be used
+	 */
 	public TournamentSelector2(final double sizeOfTournaments,
 			final boolean max, final int comparisonMode) {
 		this.tournamentSize = 0;
@@ -148,6 +158,15 @@ public class TournamentSelector2 implements INaturalSelector {
 
 	}
 
+	/**
+	 * Convert micro-classifier index to macro-classifier indices.
+	 * 
+	 * @param microIndex
+	 *            the microclassifier index.
+	 * @param cumulativeNumerosity
+	 *            the cummulative numerosity array
+	 * @return the macro-classifier index
+	 */
 	private int getMacroIndex(int microIndex, int[] cumulativeNumerosity) {
 		int macroIndex = 0;
 		for (int i = 0; i < cumulativeNumerosity.length; i++) {

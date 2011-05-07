@@ -15,8 +15,17 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test the AccuracyEvaluator class.
+ * 
+ * @author Miltos Allamanis
+ * 
+ */
 public class AccuracyEvaluatorTest {
 
+	/**
+	 * A generic ml representation.
+	 */
 	GenericMultiLabelRepresentation rep;
 
 	@Before

@@ -2,6 +2,7 @@ package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -37,20 +38,23 @@ public class ArffLoader {
 	 * @throws IOException
 	 *             if the input file is not found
 	 */
-	public void loadInstances(final String filename,
+	public final void loadInstances(final String filename,
 			final boolean generateTestSet) throws IOException {
 		// Open .arff
 		final FileReader reader = new FileReader(filename);
 		final Instances set = new Instances(reader);
-		if (set.classIndex() < 0)
+		if (set.classIndex() < 0) {
 			set.setClassIndex(set.numAttributes() - 1);
+		}
 		set.randomize(new Random());
 		// set.stratify(10);
 
 		if (generateTestSet) {
-			final int fold = (int) Math.floor(Math.random() * 10);
-			trainSet = set.trainCV(10, fold);
-			testSet = set.testCV(10, fold);
+			final int numOfFolds = (int) SettingsLoader.getNumericSetting(
+					"NumberOfFolds", 10);
+			final int fold = (int) Math.floor(Math.random() * numOfFolds);
+			trainSet = set.trainCV(numOfFolds, fold);
+			testSet = set.testCV(numOfFolds, fold);
 		} else {
 			trainSet = set;
 		}
@@ -65,12 +69,12 @@ public class ArffLoader {
 	 * 
 	 * @param filename
 	 *            the .arff filename to be used
-	 * @param generateTestSet
-	 *            true if a test set is going to be generated
+	 * @param testFile
+	 *            the test file to be loaded
 	 * @throws IOException
 	 *             if the input file is not found
 	 */
-	public void loadInstancesWithTest(final String filename,
+	public final void loadInstancesWithTest(final String filename,
 			final String testFile) throws IOException {
 		// Open .arff
 		final FileReader reader = new FileReader(filename);

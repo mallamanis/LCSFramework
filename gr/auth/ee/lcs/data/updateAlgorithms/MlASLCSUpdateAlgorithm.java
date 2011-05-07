@@ -72,6 +72,9 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	private final double n;
 
+	/**
+	 * The number of labels used at the problem.
+	 */
 	private final int numOfLabels;
 
 	/**
@@ -147,7 +150,6 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	public Serializable createStateClassifierObject() {
-		// TODO: Initial parameters
 		return new SLCSClassifierData();
 	}
 
@@ -197,12 +199,22 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	}
 
 	@Override
-	public void performUpdate(final ClassifierSet matchSet,
+	public final void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		return; // Not used!
 	}
 
-	public void performUpdate(final ClassifierSet matchSet,
+	/**
+	 * Perform an update on the given sets.
+	 * 
+	 * @param matchSet
+	 *            the match set [M]
+	 * @param correctSet
+	 *            the correct set
+	 * @param instanceIndex
+	 *            the instance index
+	 */
+	public final void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet, final int instanceIndex) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
@@ -289,6 +301,15 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 
 	}
 
+	/**
+	 * Calculates the label niches.
+	 * 
+	 * @param correctSet
+	 *            the correct set
+	 * @param instanceIndex
+	 *            the index instance
+	 * @return the label niche set size per label
+	 */
 	private int[] calculateLabelNiches(final ClassifierSet correctSet,
 			final int instanceIndex) {
 		final int[] niches = new int[numOfLabels];
@@ -327,8 +348,20 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		return correctSet;
 	}
 
+	/**
+	 * Returns classifier's niche size per label.
+	 * 
+	 * @param aClassifier
+	 *            the classifier to return
+	 * @param instanceIndex
+	 *            the index of the instance to b
+	 * @param niches
+	 *            the
+	 * @return
+	 */
 	private double getClassifierNicheSize(final Classifier aClassifier,
 			final int instanceIndex, final int[] niches) {
+		// TODO: Does this even make sense?
 		int mean = 0;
 		int active = 0;
 		int minNiche = Integer.MAX_VALUE;

@@ -21,11 +21,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * A macroclassifier test.
+ * 
  * @author Miltos Allamanis
  * 
  */
 public class MacroclassifierTest {
 
+	/**
+	 * Set up a simple representation.
+	 */
 	SimpleBooleanRepresentation test;
 
 	/**

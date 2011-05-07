@@ -73,7 +73,7 @@ public class LCSTrainTemplate {
 	 *            set true to evolve population, false to only update it
 	 */
 	public final void train(final int iterations,
-			final ClassifierSet population, boolean evolve) {
+			final ClassifierSet population, final boolean evolve) {
 
 		final int numInstances = ClassifierTransformBridge.instances.length;
 		final InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(

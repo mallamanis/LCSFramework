@@ -361,6 +361,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * IClassificationStrategy
 		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
 		 */
+		@Override
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
 			final float[] lblProbs = buildConfidence(aSet, visionVector);

@@ -18,11 +18,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Test the strict- ml representation.
+ * 
  * @author Miltos Allamanis
  * 
  */
 public class StrictMlRepresentationTest {
 
+	/**
+	 * A global test representation instance.
+	 */
 	StrictMultiLabelRepresentation rep;
 
 	/**

@@ -17,11 +17,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * A Generic -ML repersentation test.
+ * 
  * @author Miltos Allamanis
  * 
  */
 public class GenericMlRepresentationTest {
 
+	/**
+	 * The reperesentation.
+	 */
 	GenericMultiLabelRepresentation rep;
 
 	/**

@@ -30,16 +30,22 @@ public class Macroclassifier implements Serializable {
 	 * 
 	 * @param newClassifier
 	 *            the microclassifier
-	 * @param classifierNumerosity
+	 * @param clNumerosity
 	 *            it's numerosity
 	 */
 	public Macroclassifier(final Classifier newClassifier,
-			final int classifierNumerosity) {
+			final int clNumerosity) {
 		myClassifier = newClassifier;
-		numerosity = classifierNumerosity;
+		numerosity = clNumerosity;
 	}
 
-	public Macroclassifier(Macroclassifier copy) {
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param copy
+	 *            the macroclassifier to copy
+	 */
+	public Macroclassifier(final Macroclassifier copy) {
 		myClassifier = copy.myClassifier;
 		numerosity = copy.numerosity;
 	}

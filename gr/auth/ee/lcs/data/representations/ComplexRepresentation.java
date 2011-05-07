@@ -690,7 +690,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 			// Randomize all bits of gene
 			for (int i = 1; i < lengthInBits; i++) {
-				if (Math.random() < 0.5) // TODO: Variable probability?
+				if (Math.random() < (.5))
 					myChromosome.set(positionInChromosome + i);
 				else
 					myChromosome.clear(positionInChromosome + i);
@@ -762,6 +762,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the rule consequents
 	 * @param labels
 	 *            the number of labels
+	 * @param generalizationRate
+	 *            the attribute generalization rate
 	 */
 	public ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
@@ -774,7 +776,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	}
 
 	/**
-	 * Arff Loader. TODO: In an inherited class (not representation specific)
+	 * Arff Loader.
 	 * 
 	 * @param inputArff
 	 *            the input .arff
@@ -782,6 +784,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            bits used for precision
 	 * @param labels
 	 *            the number of labels (classes) in the set
+	 * @param generalizationRate
+	 *            the attribute generalization rate (P#)
 	 * @throws IOException
 	 *             when .arff not found
 	 */
@@ -1039,8 +1043,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		// Add consequence
 		nlRule += "=>";
-		for (int i = attributeList.length - numberOfLabels; i < attributeList.length; i++)
+		for (int i = attributeList.length - numberOfLabels; i < attributeList.length; i++) {
 			nlRule += attributeList[i].toString(aClassifier);
+		}
 		return nlRule;
 	}
 

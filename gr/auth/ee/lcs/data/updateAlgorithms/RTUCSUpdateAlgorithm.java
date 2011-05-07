@@ -239,6 +239,14 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		data.fitness = comparisonValue;
 	}
 
+	/**
+	 * Share a the fitness among a set.
+	 * 
+	 * @param set
+	 *            a correct set to share fitness
+	 * @param fitnessToShare
+	 *            the numeric value of the fitness to share
+	 */
 	private void shareFitness(final ClassifierSet set, double fitnessToShare) {
 		double strengthSum = 0;
 		final int setSize = set.getNumberOfMacroclassifiers();
@@ -279,6 +287,12 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		}
 	}
 
+	/**
+	 * Update the wrong set classifiers.
+	 * 
+	 * @param set
+	 *            the [!C] set
+	 */
 	private void updateWrongSet(final ClassifierSet set) {
 		final int setSize = set.getNumberOfMacroclassifiers();
 		for (int i = 0; i < setSize; i++) {
