@@ -13,8 +13,17 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
  */
 public class SinglePointCrossover implements IBinaryGeneticOperator {
 
+	/**
+	 * The LCS instance being used.
+	 */
 	final AbstractLearningClassifierSystem myLcs;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param lcs
+	 *            the lcs to be used for creating new classifiers
+	 */
 	public SinglePointCrossover(AbstractLearningClassifierSystem lcs) {
 		myLcs = lcs;
 	}

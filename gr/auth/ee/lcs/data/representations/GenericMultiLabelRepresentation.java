@@ -320,7 +320,7 @@ public final class GenericMultiLabelRepresentation extends
 		 * @param targetLabelCardinality
 		 *            the target label cardinality
 		 */
-		public VotingClassificationStrategy(float targetLabelCardinality) {
+		public VotingClassificationStrategy(final float targetLabelCardinality) {
 			targetLC = targetLabelCardinality;
 		}
 
@@ -396,8 +396,6 @@ public final class GenericMultiLabelRepresentation extends
 		 * @param rules
 		 *            the rules used to classify the instances and provide
 		 *            confidence values.
-		 * @param targetLc
-		 *            the target Label Cardinality (LC) we are tring to achieve.
 		 */
 		public void proportionalCutCalibration(final double[][] instances,
 				final ClassifierSet rules) {
@@ -478,6 +476,8 @@ public final class GenericMultiLabelRepresentation extends
 	 *            the generalization rate to be used for the labels
 	 * @param attributeGeneralizationRate
 	 *            the generalization rate to be used for the attributes
+	 * @param lcs
+	 *            the LCS instance that the representation belongs
 	 */
 	public GenericMultiLabelRepresentation(
 			final AbstractAttribute[] attributes,
@@ -506,6 +506,8 @@ public final class GenericMultiLabelRepresentation extends
 	 *            the generalization rate of the labels (P#))
 	 * @param attributeGeneralizationRate
 	 *            the attribute generalization rate
+	 * @param lcs
+	 *            the LCS instance that the representation belongs.
 	 * @throws IOException
 	 *             when file is not found
 	 */

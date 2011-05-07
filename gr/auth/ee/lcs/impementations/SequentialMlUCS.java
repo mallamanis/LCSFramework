@@ -153,6 +153,9 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	StrictMultiLabelRepresentation rep;
 
 	/**

@@ -172,6 +172,9 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem's target LC.
+	 */
 	private final double targetLC;
 
 	/**

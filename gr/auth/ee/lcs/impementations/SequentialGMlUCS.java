@@ -169,6 +169,9 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	private GenericMultiLabelRepresentation rep;
 
 	/**

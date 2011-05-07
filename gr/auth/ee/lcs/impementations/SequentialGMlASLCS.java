@@ -131,8 +131,19 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The target Label Cardinality of the problem.
+	 */
 	private final float targetLC;
+
+	/**
+	 * The problem representation method.
+	 */
 	private final GenericMultiLabelRepresentation rep;
+
+	/**
+	 * A voting classification strategy.
+	 */
 	private final VotingClassificationStrategy str;
 
 	/**

@@ -14,7 +14,7 @@ import java.util.Arrays;
  * 
  * @author Miltos Allamanis
  */
-public class Classifier extends ExtendedBitSet implements Serializable {
+public final class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
 	 * The transform bridge.
@@ -26,15 +26,35 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	private final AbstractUpdateStrategy updateStrategy;
 
+	/**
+	 * The LCS instance.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
+	/**
+	 * Static method to create Classifiers.
+	 * 
+	 * @param lcs
+	 *            the LCS instance being used
+	 * @return the new classifier
+	 */
 	public static Classifier createNewClassifier(
-			AbstractLearningClassifierSystem lcs) {
+			final AbstractLearningClassifierSystem lcs) {
 		return new Classifier(lcs);
 	}
 
+	/**
+	 * Static method to create Classifiers.
+	 * 
+	 * @param lcs
+	 *            the lcs being used
+	 * @param chromosome
+	 *            the chromosome to be copied
+	 * @return the new classifier
+	 */
 	public static Classifier createNewClassifier(
-			AbstractLearningClassifierSystem lcs, ExtendedBitSet chromosome) {
+			final AbstractLearningClassifierSystem lcs,
+			final ExtendedBitSet chromosome) {
 		return new Classifier(lcs, chromosome);
 	}
 
@@ -106,6 +126,9 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
 	 * The default constructor. Creates a chromosome of the given size
+	 * 
+	 * @param lcs
+	 *            the LCS instance that the new classifier will belong to
 	 */
 	private Classifier(final AbstractLearningClassifierSystem lcs) {
 		super(lcs.getClassifierTransformBridge().getChromosomeSize());
@@ -120,8 +143,10 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @param chromosome
 	 *            the chromosome from which to create the classifier
+	 * @param lcs
+	 *            the LCS instance that the classifier belongs to
 	 */
-	private Classifier(AbstractLearningClassifierSystem lcs,
+	private Classifier(final AbstractLearningClassifierSystem lcs,
 			final ExtendedBitSet chromosome) {
 		super(chromosome);
 		this.transformBridge = lcs.getClassifierTransformBridge();
@@ -133,7 +158,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Build matches vector (with train instances) and initialize it.
 	 */
-	public final void buildMatches() {
+	public void buildMatches() {
 		this.matchInstances = new byte[myLcs.instances.length];
 		Arrays.fill(this.matchInstances, (byte) -1);
 	}
@@ -143,7 +168,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return true if the classifier is strong enough to subsume
 	 */
-	public final boolean canSubsume() {
+	public boolean canSubsume() {
 		return subsumes;
 	}
 
@@ -156,7 +181,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return a number that represents the correctness. This number may be 0,1
 	 *         for unilabel classification but it may also be in the range [0,1]
 	 */
-	public final float classifyCorrectly(final int instanceIndex) {
+	public float classifyCorrectly(final int instanceIndex) {
 		return transformBridge.classifyAbilityAll(this, instanceIndex);
 	}
 
@@ -170,7 +195,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return a float representing the classifier's ability to classify for
 	 *         this instance
 	 */
-	public final float classifyLabelCorrectly(final int instanceIndex,
+	public float classifyLabelCorrectly(final int instanceIndex,
 			final int labelIndex) {
 		return transformBridge.classifyAbilityLabel(this, instanceIndex,
 				labelIndex);
@@ -182,7 +207,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return the clone
 	 */
 	@Override
-	public final Object clone() {
+	public Object clone() {
 		return new Classifier(myLcs, this);
 	}
 
@@ -191,10 +216,15 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            the classifier against which check for equality
 	 * @return true if the classifiers have equal chromosomes
 	 */
-	public final boolean equals(final Classifier anotherClassifier) {
+	public boolean equals(final Classifier anotherClassifier) {
 		return transformBridge.areEqual(this, anotherClassifier);
 	}
 
+	/**
+	 * Get the string representation of the update-specific data.
+	 * 
+	 * @return a string with the representation
+	 */
 	public String getUpdateSpecificData() {
 		return updateStrategy.getData(this);
 	}
@@ -202,7 +232,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * Calls the bridge to fix itself.
 	 */
-	public final void fixChromosome() {
+	public void fixChromosome() {
 		transformBridge.fixChromosome(this);
 	}
 
@@ -211,7 +241,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the advocated action
 	 */
-	public final int[] getActionAdvocated() {
+	public int[] getActionAdvocated() {
 		if (actionCache == null) {
 			actionCache = transformBridge.getClassification(this);
 		}
@@ -223,7 +253,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the number of instances the classifier has checked
 	 */
-	public final int getCheckedInstances() {
+	public int getCheckedInstances() {
 		return checked;
 	}
 
@@ -234,7 +264,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            the mode of comparison
 	 * @return the value of comparison
 	 */
-	public final double getComparisonValue(final int mode) {
+	public double getComparisonValue(final int mode) {
 		return updateStrategy.getComparisonValue(this, mode);
 	}
 
@@ -243,7 +273,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the classifier's coverage as calculated by the current checks
 	 */
-	public final double getCoverage() {
+	public double getCoverage() {
 		if (this.checked == 0) {
 			return INITIAL_FITNESS;
 		} else {
@@ -257,7 +287,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the classifier's serial number
 	 */
-	public final int getSerial() {
+	public int getSerial() {
 		return this.serial;
 	}
 
@@ -266,7 +296,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the update object
 	 */
-	public final Serializable getUpdateDataObject() {
+	public Serializable getUpdateDataObject() {
 		return updateData;
 	}
 
@@ -278,7 +308,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            the vision vector to match
 	 * @return true if the classifier matches the visionVector
 	 */
-	public final boolean isMatch(final double[] visionVector) {
+	public boolean isMatch(final double[] visionVector) {
 		return transformBridge.isMatch(visionVector, this);
 	}
 
@@ -290,7 +320,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            the instance index to check for a match
 	 * @return true if the classifier matches the instance of the given index
 	 */
-	public final boolean isMatch(final int instanceIndex) {
+	public boolean isMatch(final int instanceIndex) {
 		if (this.matchInstances == null) {
 			buildMatches();
 		}
@@ -313,7 +343,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 *            the test classifier
 	 * @return true if the classifier is more general
 	 */
-	public final boolean isMoreGeneral(final Classifier testClassifier) {
+	public boolean isMoreGeneral(final Classifier testClassifier) {
 		return transformBridge.isMoreGeneral(this, testClassifier);
 	}
 
@@ -323,7 +353,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @param action
 	 *            the action to set the classifier to advocate for
 	 */
-	public final void setActionAdvocated(final int action) {
+	public void setActionAdvocated(final int action) {
 		transformBridge.setClassification(this, action);
 		actionCache = null;
 	}
@@ -336,8 +366,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @param comparisonValue
 	 *            the comparison value to set
 	 */
-	public final void setComparisonValue(final int mode,
-			final double comparisonValue) {
+	public void setComparisonValue(final int mode, final double comparisonValue) {
 		updateStrategy.setComparisonValue(this, mode, comparisonValue);
 	}
 
@@ -347,7 +376,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @param canSubsumeAbility
 	 *            true if the classifier is able to subsume
 	 */
-	public final void setSubsumptionAbility(final boolean canSubsumeAbility) {
+	public void setSubsumptionAbility(final boolean canSubsumeAbility) {
 		subsumes = canSubsumeAbility;
 	}
 
@@ -356,7 +385,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * 
 	 * @return the bitstring representation of the classifier
 	 */
-	public final String toBitString() {
+	public String toBitString() {
 		return transformBridge.toBitSetString(this);
 	}
 
@@ -366,7 +395,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return the classifier described in a string
 	 */
 	@Override
-	public final String toString() {
+	public String toString() {
 		return transformBridge.toNaturalLanguageString(this);
 	}
 

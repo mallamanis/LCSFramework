@@ -19,7 +19,7 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public class BestFitnessTournamentSelectorTest {
+public final class BestFitnessTournamentSelectorTest {
 
 	/**
 	 * A selector.

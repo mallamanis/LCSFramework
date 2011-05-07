@@ -76,6 +76,13 @@ public class TournamentSelector implements INaturalSelector {
 		percentSize = 0;
 	}
 
+	/**
+	 * Select form the population.
+	 * 
+	 * @param fromPopulation
+	 *            the population to select from
+	 * @return the index of the selected classifier in the fromPopulation
+	 */
 	private int select(final ClassifierSet fromPopulation) {
 		int size;
 		if (tournamentSize == 0) {

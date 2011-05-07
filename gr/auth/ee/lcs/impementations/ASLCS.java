@@ -33,14 +33,14 @@ import java.io.IOException;
  * @author Miltiadis Allamanis
  * 
  */
-public class ASLCS extends AbstractLearningClassifierSystem {
+public final class ASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The main for running AS-LCS.
 	 * 
 	 * @param args
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(final String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
 		final int iterations = (int) SettingsLoader.getNumericSetting(
@@ -150,6 +150,9 @@ public class ASLCS extends AbstractLearningClassifierSystem {
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
+	/**
+	 * The problem representation.
+	 */
 	private final SingleClassRepresentation rep;
 
 	/**
@@ -163,8 +166,8 @@ public class ASLCS extends AbstractLearningClassifierSystem {
 	 *            the population size to use
 	 * @throws IOException
 	 */
-	public ASLCS(String filename, int iterations, int populationSize)
-			throws IOException {
+	public ASLCS(final String filename, final int iterations,
+			final int populationSize) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;

@@ -171,6 +171,9 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	private StrictMultiLabelRepresentation rep;
 
 	/**

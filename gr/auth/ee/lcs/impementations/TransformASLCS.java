@@ -139,6 +139,9 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	GenericMultiLabelRepresentation rep;
 
 	/**

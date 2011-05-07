@@ -38,6 +38,9 @@ public class HammingLossEvaluator implements IEvaluator {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -47,6 +50,8 @@ public class HammingLossEvaluator implements IEvaluator {
 	 *            the set of Weka instances
 	 * @param print
 	 *            true to print results to stdout during evaluation
+	 * @param lcs
+	 *            the LCS instance used
 	 * @param numOfLabels
 	 *            the number of labels
 	 */
@@ -67,6 +72,8 @@ public class HammingLossEvaluator implements IEvaluator {
 	 *            true to print results to stdout
 	 * @param numOfLabels
 	 *            the number of labels for the problem
+	 * @param lcs
+	 *            the LCS instance used
 	 * @throws IOException
 	 *             if file is not found
 	 */
@@ -90,6 +97,8 @@ public class HammingLossEvaluator implements IEvaluator {
 	 *            true to turn printing on
 	 * @param numOfLabels
 	 *            the number of labels
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public HammingLossEvaluator(final double[][] instances,
 			final boolean print, final int numOfLabels,

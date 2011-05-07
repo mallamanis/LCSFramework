@@ -123,6 +123,9 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	private final GenericMultiLabelRepresentation rep;
 
 	/**

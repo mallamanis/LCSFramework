@@ -56,6 +56,9 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	 */
 	private static final int CHILDREN_PER_GENERATION = 2;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -71,6 +74,8 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	 *            the age of the population that activates the G.A.
 	 * @param crossoverRate
 	 *            the rate at which the crossover operator will be called
+	 * @param lcs
+	 *            the LCS instance used
 	 * 
 	 */
 	public SteadyStateGeneticAlgorithm(final INaturalSelector gaSelector,

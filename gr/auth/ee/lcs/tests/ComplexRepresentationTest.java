@@ -21,7 +21,7 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public class ComplexRepresentationTest {
+public final class ComplexRepresentationTest {
 
 	/**
 	 * A single class representation instance.

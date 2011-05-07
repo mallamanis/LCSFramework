@@ -11,7 +11,7 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
  * @author Miltos Allamanis
  * 
  */
-public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
+public final class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 
 	/**
 	 * The strictness factor for updating.
@@ -31,12 +31,14 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 *            the probability of running the GA on the match set
 	 * @param geneticAlgorithm
 	 *            the GA
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public ASLCSUpdateAlgorithm(final double nParameter,
 			final double fitnessThreshold, final int experienceThreshold,
-			double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm,
-			AbstractLearningClassifierSystem lcs) {
+			final double gaMatchSetRunProbability,
+			final IGeneticAlgorithmStrategy geneticAlgorithm,
+			final AbstractLearningClassifierSystem lcs) {
 		super(fitnessThreshold, experienceThreshold, gaMatchSetRunProbability,
 				geneticAlgorithm, lcs);
 		this.n = nParameter;
@@ -51,7 +53,7 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public final double getComparisonValue(final Classifier aClassifier,
+	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		SLCSClassifierData data = (SLCSClassifierData) aClassifier
 				.getUpdateDataObject();

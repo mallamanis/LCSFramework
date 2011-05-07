@@ -21,7 +21,8 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
  * @author Miltos Allamanis
  * 
  */
-public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
+public final class SimpleBooleanRepresentation extends
+		ClassifierTransformBridge {
 
 	/**
 	 * The P# (the covering operator generalization rate).
@@ -33,6 +34,9 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 */
 	private int chromosomeSize = 0;
 
+	/**
+	 * The LCS instance used.
+	 */
 	final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -42,9 +46,11 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 *            the generalization rate for covering
 	 * @param visionBits
 	 *            the bits used at vision
+	 * @param lcs
+	 *            the LCS instance used
 	 */
-	public SimpleBooleanRepresentation(double coveringGeneralizationRate,
-			int visionBits, final AbstractLearningClassifierSystem lcs) {
+	public SimpleBooleanRepresentation(final double coveringGeneralizationRate,
+			final int visionBits, final AbstractLearningClassifierSystem lcs) {
 		coverGeneralizationRate = coveringGeneralizationRate;
 		myLcs = lcs;
 		setVisionSize(visionBits);
@@ -54,7 +60,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	/**
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#areEqual(gr.auth.ee.lcs.classifiers.Classifier,gr.auth.ee.lcs.classifiers.Classifier)
 	 */
-	public boolean areEqual(Classifier cl1, Classifier cl2) {
+	public boolean areEqual(final Classifier cl1, final Classifier cl2) {
 		if (getClassification(cl1)[0] != getClassification(cl2)[0])
 			return false;
 
@@ -94,18 +100,21 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
+	public float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
 		return myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0] ? 1
 				: 0;
 	}
 
-	/**
-	 * Creates a simple random covering classifier.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier(double[],int)
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#createRandomCoveringClassifier
+	 * (double[])
 	 */
 	@Override
-	public Classifier createRandomCoveringClassifier(double[] visionVector) {
+	public Classifier createRandomCoveringClassifier(final double[] visionVector) {
 		Classifier coverClassifier = myLcs.getNewClassifier();
 
 		// Transform visionVector to BitSet (generalization not-set)
@@ -130,18 +139,20 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		return coverClassifier;
 	}
 
-	/**
-	 * In this representation there is nothing to fix. It does nothing
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#fixChromosome(gr.auth.ee.lcs.utilities.ExtendedBitSet)
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#fixChromosome(gr.auth.ee
+	 * .lcs.utilities.ExtendedBitSet)
 	 */
 	@Override
-	public void fixChromosome(ExtendedBitSet aChromosome) {
+	public void fixChromosome(final ExtendedBitSet aChromosome) {
 		return;
 	}
 
-	/**
-	 * Returns the size of the chromosome needed for this representation.
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#getChromosomeSize()
 	 */
@@ -150,19 +161,27 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		return chromosomeSize;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
+	 */
 	@Override
-	public int[] getClassification(Classifier aClassifier) {
+	public int[] getClassification(final Classifier aClassifier) {
 		return ((int[]) (aClassifier.transformData));
 	}
 
-	/**
-	 * Returns true if the input visionVector matches the chromosome.
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMatch(double[],
-	 *      gr.auth.ee.lcs.utilities.ExtendedBitSet)
+	 * gr.auth.ee.lcs.utilities.ExtendedBitSet)
 	 */
 	@Override
-	public boolean isMatch(double[] visionVector, ExtendedBitSet chromosome) {
+	public boolean isMatch(final double[] visionVector,
+			final ExtendedBitSet chromosome) {
 		for (int i = 0; i < chromosomeSize; i += 2) {
 			if (chromosome.get(i)) {
 				double test = chromosome.get(i + 1) ? 1 : 0;
@@ -173,13 +192,16 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 		return true;
 	}
 
-	/**
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#isMoreGeneral(gr.auth.ee.lcs.classifiers.Classifier,
-	 *      gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#isMoreGeneral(gr.auth.ee
+	 * .lcs.classifiers.Classifier, gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public boolean isMoreGeneral(Classifier baseClassifier,
-			Classifier testClassifier) {
+	public boolean isMoreGeneral(final Classifier baseClassifier,
+			final Classifier testClassifier) {
 		// If classifiers advocate for different actions, return false
 		if (baseClassifier.getActionAdvocated()[0] != testClassifier
 				.getActionAdvocated()[0])
@@ -202,7 +224,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	}
 
 	@Override
-	public void setClassification(Classifier aClassifier, int action) {
+	public void setClassification(final Classifier aClassifier, final int action) {
 		((int[]) (aClassifier.transformData))[0] = action;
 
 	}
@@ -215,16 +237,20 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * (gr.auth.ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public void setRepresentationSpecificClassifierData(Classifier aClassifier) {
+	public void setRepresentationSpecificClassifierData(
+			final Classifier aClassifier) {
 		aClassifier.transformData = new int[1];
 		return;
 	}
 
 	/**
 	 * Set the number of bits in the input. This size determines the size of the
-	 * chormosome In this representation the size of the chromosome is 2*size
+	 * chromosome In this representation the size of the chromosome is 2*size.
+	 * 
+	 * @param size
+	 *            the size of the vision vector
 	 */
-	public final void setVisionSize(final int size) {
+	public void setVisionSize(final int size) {
 		this.chromosomeSize = 2 * size;
 	}
 
@@ -236,7 +262,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public String toBitSetString(Classifier classifier) {
+	public String toBitSetString(final Classifier classifier) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -251,7 +277,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * @return a String representing the classifier in Natural Language
 	 */
 	@Override
-	public String toNaturalLanguageString(Classifier aClassifier) {
+	public String toNaturalLanguageString(final Classifier aClassifier) {
 		String output = "";
 		// Get Chromosome
 		ExtendedBitSet chromosome = aClassifier;
@@ -267,7 +293,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	}
 
 	@Override
-	public int[] classify(ClassifierSet aSet, double[] dataInstance) {
+	public int[] classify(final ClassifierSet aSet, final double[] dataInstance) {
 
 		INaturalSelector selector = new BestClassifierSelector(true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
@@ -285,7 +311,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	}
 
 	@Override
-	public int[] getDataInstanceLabels(double[] dataInstances) {
+	public int[] getDataInstanceLabels(final double[] dataInstances) {
 		int[] classes = new int[1];
 		classes[0] = (int) dataInstances[dataInstances.length - 1];
 		return classes;
@@ -312,8 +338,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * .auth.ee.lcs.classifiers.Classifier, int, int)
 	 */
 	@Override
-	public float classifyAbilityLabel(Classifier aClassifier,
-			int instanceIndex, int label) {
+	public float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
 		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
 

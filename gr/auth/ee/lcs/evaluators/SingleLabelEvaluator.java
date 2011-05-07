@@ -30,6 +30,9 @@ public class SingleLabelEvaluator implements IEvaluator {
 	 */
 	private final int label;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -39,6 +42,8 @@ public class SingleLabelEvaluator implements IEvaluator {
 	 *            the label's index that is under evaluation
 	 * @param evaluateSet
 	 *            the set to evaluate the label on
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public SingleLabelEvaluator(final int labelIndex,
 			final Instances evaluateSet, AbstractLearningClassifierSystem lcs) {

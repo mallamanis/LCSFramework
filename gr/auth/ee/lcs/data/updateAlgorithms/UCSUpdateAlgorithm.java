@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @navassoc - - - UCSClassifierData
  * @author Miltos Allamanis
  */
-public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
+public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		Serializable {
 
 	/**
@@ -35,7 +35,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	class UCSClassifierData implements Serializable {
+	final class UCSClassifierData implements Serializable {
 
 		/**
 		 * Serial code for serialization.
@@ -107,6 +107,9 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 */
 	private final transient double correctSetThreshold;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final transient AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -130,6 +133,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 *            the theta del UCS parameter (deletion age)
 	 * @param correctSetTheshold
 	 *            Threshold the threshold used to set a rule in the correct set
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public UCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
@@ -174,7 +179,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * createStateClassifierObject()
 	 */
 	@Override
-	public final Serializable createStateClassifierObject() {
+	public Serializable createStateClassifierObject() {
 		return new UCSClassifierData();
 	}
 
@@ -186,7 +191,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public final double getComparisonValue(final Classifier aClassifier,
+	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		UCSClassifierData data = (UCSClassifierData) aClassifier
 				.getUpdateDataObject();
@@ -222,7 +227,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	}
 
 	@Override
-	public final String getData(final Classifier aClassifier) {
+	public String getData(final Classifier aClassifier) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp;
@@ -295,7 +300,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	}
 
 	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
+	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -334,7 +339,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * @param population
 	 *            a set representing the population.
 	 */
-	private void updateMeanPopulationFitness(ClassifierSet population) {
+	private void updateMeanPopulationFitness(final ClassifierSet population) {
 		meanPopulationFitness = 0;
 		final int populationSize = population.getNumberOfMacroclassifiers();
 		for (int i = 0; i < populationSize; i++) {
@@ -358,7 +363,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * match set setB is the correct set
 	 */
 	@Override
-	public final void updateSet(final ClassifierSet population,
+	public void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		updateMeanPopulationFitness(population);

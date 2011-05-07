@@ -130,7 +130,14 @@ public class DirectGMlSSLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	private final GenericMultiLabelRepresentation rep;
+
+	/**
+	 * The voting classification strategy.
+	 */
 	private final VotingClassificationStrategy str;
 
 	/**

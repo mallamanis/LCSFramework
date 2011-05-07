@@ -21,7 +21,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class UniLabelRepresentation extends ComplexRepresentation {
+public final class UniLabelRepresentation extends ComplexRepresentation {
 
 	/**
 	 * A representation of the class "attribute".
@@ -29,7 +29,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class UniLabel extends AbstractAttribute {
+	public final class UniLabel extends AbstractAttribute {
 
 		/**
 		 * The classes' names.
@@ -56,21 +56,21 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		}
 
 		@Override
-		public final String toString(final ExtendedBitSet convertingClassifier) {
+		public String toString(final ExtendedBitSet convertingClassifier) {
 			final int index = convertingClassifier.getIntAt(
 					positionInChromosome, lengthInBits);
 			return classes[index];
 		}
 
 		@Override
-		public final boolean isMatch(final float attributeVision,
+		public boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
 			return testedChromosome
 					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
 		}
 
 		@Override
-		public final void randomCoveringValue(final float attributeValue,
+		public void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
 			final int coverClass = (int) (Math.random() * classes.length);
 			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
@@ -78,7 +78,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		}
 
 		@Override
-		public final void fixAttributeRepresentation(
+		public void fixAttributeRepresentation(
 				final ExtendedBitSet generatedClassifier) {
 			if (generatedClassifier
 					.getIntAt(positionInChromosome, lengthInBits) >= classes.length) {
@@ -92,7 +92,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		}
 
 		@Override
-		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
 					.getIntAt(positionInChromosome, lengthInBits));
@@ -100,7 +100,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		}
 
 		@Override
-		public final boolean isEqual(final ExtendedBitSet baseChromosome,
+		public boolean isEqual(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
 					.getIntAt(positionInChromosome, lengthInBits));
@@ -113,7 +113,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 *            the chromosome
 		 * @return the value of the label at the chromosome
 		 */
-		public final int getValue(final ExtendedBitSet chromosome) {
+		public int getValue(final ExtendedBitSet chromosome) {
 			return chromosome.getIntAt(positionInChromosome, lengthInBits);
 		}
 
@@ -125,8 +125,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 		 * @param value
 		 *            the value to set
 		 */
-		public final void setValue(final ExtendedBitSet chromosome,
-				final int value) {
+		public void setValue(final ExtendedBitSet chromosome, final int value) {
 			chromosome.setIntAt(positionInChromosome, lengthInBits, value);
 		}
 
@@ -202,6 +201,10 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 *            the number of precision bits to be used
 	 * @param labels
 	 *            the number of labels used at the problem
+	 * @param lcs
+	 *            the LCS instance that the representation belongs
+	 * @param generalizationRate
+	 *            the attribute generalization rate
 	 * @throws IOException
 	 *             when file is not found
 	 */
@@ -240,7 +243,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * .auth.ee.lcs.classifiers.Classifier, int, int)
 	 */
 	@Override
-	public final float classifyAbilityLabel(final Classifier aClassifier,
+	public float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
 		if (getClassification(aClassifier)[0] == label)
 			return 1;
@@ -256,7 +259,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public final int[] getClassification(final Classifier aClassifier) {
+	public int[] getClassification(final Classifier aClassifier) {
 		int[] label = new int[1];
 		label[0] = ((UniLabel) attributeList[attributeList.length
 				- numberOfLabels]).getValue(aClassifier);
@@ -388,7 +391,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 * [])
 	 */
 	@Override
-	public final int[] getDataInstanceLabels(final double[] dataInstance) {
+	public int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = dataInstance.length - numberOfLabels

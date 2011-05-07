@@ -34,6 +34,9 @@ import java.io.IOException;
  * 
  */
 public class DirectGMlUCS extends AbstractLearningClassifierSystem {
+	/**
+	 * The label generalization rate.
+	 */
 	private static final double LABEL_GENERALIZATION_RATE = .33;
 
 	/**
@@ -57,6 +60,9 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final String inputFile;
 
+	/**
+	 * Target LC for the problem.
+	 */
 	private final float targetLC;
 
 	/**
@@ -138,6 +144,10 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
+
+	/**
+	 * The problem representation.
+	 */
 	private final GenericMultiLabelRepresentation rep;
 
 	/**

@@ -20,14 +20,14 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public class ClassifierSetTest {
+public final class ClassifierSetTest {
 
 	SimpleBooleanRepresentation test;
 
 	MockLCS lcs;
 
 	/**
-	 * Setup test
+	 * Setup test.
 	 */
 	@Before
 	public void setup() {

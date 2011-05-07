@@ -76,6 +76,9 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 */
 	private final double subsumptionFitnessThreshold;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLCS;
 
 	/**
@@ -92,12 +95,14 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 *            the probability of running the GA at the matchset
 	 * @param geneticAlgorithm
 	 *            the GA to use
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
 			final int subsumptionExperience,
 			final double gaMatchSetRunProbability,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			AbstractLearningClassifierSystem lcs) {
+			final AbstractLearningClassifierSystem lcs) {
 		this.subsumptionFitnessThreshold = subsumptionFitness;
 		this.subsumptionExperienceThreshold = subsumptionExperience;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
@@ -127,7 +132,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * createStateClassifierObject()
 	 */
 	@Override
-	public Serializable createStateClassifierObject() {
+	public final Serializable createStateClassifierObject() {
 		return new SLCSClassifierData();
 	}
 
@@ -139,7 +144,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public String getData(Classifier aClassifier) {
+	public final String getData(final Classifier aClassifier) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
@@ -147,7 +152,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	}
 
 	@Override
-	public void performUpdate(final ClassifierSet matchSet,
+	public final void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		final int correctSetNumerosity = correctSet.getTotalNumerosity();
@@ -173,8 +178,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
 	 */
 	@Override
-	public final void setComparisonValue(Classifier aClassifier, int mode,
-			double comparisonValue) {
+	public final void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: More generic

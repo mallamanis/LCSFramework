@@ -21,7 +21,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class StrictMultiLabelRepresentation extends ComplexRepresentation {
+public final class StrictMultiLabelRepresentation extends ComplexRepresentation {
 
 	/**
 	 * The type of metric used to calculate a rule's (classifier) ability to
@@ -58,6 +58,10 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 *            the names of the rule consequents (labels)
 	 * @param labels
 	 *            the number of labels
+	 * @param lcs
+	 *            the LCS instance used
+	 * @param generalizationRate
+	 *            the attribute generalzation rate
 	 * @param type
 	 *            the type of the metric used
 	 */
@@ -81,6 +85,10 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 *            the number of labels of the probel
 	 * @param type
 	 *            the type of metric used for evaluating whole classifiers
+	 * @param lcs
+	 *            the LCS instance used
+	 * @param generalizationRate
+	 *            the attribute generalization rate
 	 * @throws IOException
 	 *             if file is not found
 	 */
@@ -99,7 +107,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * createClassRepresentation(weka.core.Instances)
 	 */
 	@Override
-	protected final void createClassRepresentation(final Instances instances) {
+	protected void createClassRepresentation(final Instances instances) {
 		for (int i = 0; i < numberOfLabels; i++) {
 
 			final int labelIndex = attributeList.length - numberOfLabels + i;
@@ -119,7 +127,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public final float classifyAbilityAll(final Classifier aClassifier,
+	public float classifyAbilityAll(final Classifier aClassifier,
 			final int instanceIndex) {
 		switch (metricType) {
 		case EXACT_MATCH:
@@ -222,7 +230,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public final int[] getClassification(final Classifier aClassifier) {
+	public int[] getClassification(final Classifier aClassifier) {
 		int[] labels = new int[numberOfLabels];
 		int labelIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
@@ -250,7 +258,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * [])
 	 */
 	@Override
-	public final int[] getDataInstanceLabels(final double[] dataInstance) {
+	public int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
@@ -279,8 +287,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public final void setClassification(final Classifier aClassifier,
-			final int action) {
+	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 
@@ -374,7 +381,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 			IClassificationStrategy {
 
 		@Override
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 			double bestFitness = Double.MIN_VALUE;
 			int bestClassifierIndex = -1;
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
@@ -463,7 +471,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public final float classifyAbilityLabel(final Classifier aClassifier,
+	public float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
 		final int currentLabelIndex = attributeList.length - numberOfLabels
 				+ label;

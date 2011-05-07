@@ -16,7 +16,7 @@ import org.junit.Test;
  * @author Miltiadis Allamanis
  * 
  */
-public class BRSelectorTest {
+public final class BRSelectorTest {
 
 	/**
 	 * @throws java.lang.Exception

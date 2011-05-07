@@ -27,8 +27,17 @@ public class ArffLoader {
 	 */
 	public Instances trainSet;
 
+	/**
+	 * The LCS instance.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
+	/**
+	 * Constructor. Creates a loader for the given LCS.
+	 * 
+	 * @param lcs
+	 *            the lcs where instances will be loaded on
+	 */
 	public ArffLoader(final AbstractLearningClassifierSystem lcs) {
 		myLcs = lcs;
 	}

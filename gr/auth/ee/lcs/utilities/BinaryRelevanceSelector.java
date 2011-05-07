@@ -9,7 +9,7 @@ package gr.auth.ee.lcs.utilities;
  * @author Miltiadis Allamanis
  * 
  */
-public class BinaryRelevanceSelector implements ILabelSelector {
+public final class BinaryRelevanceSelector implements ILabelSelector {
 
 	/**
 	 * The number of labels used at the selector.
@@ -27,7 +27,7 @@ public class BinaryRelevanceSelector implements ILabelSelector {
 	 * @param labels
 	 *            the number of labels at the problem
 	 */
-	public BinaryRelevanceSelector(int labels) {
+	public BinaryRelevanceSelector(final int labels) {
 		numberOfLabels = labels;
 	}
 
@@ -73,7 +73,7 @@ public class BinaryRelevanceSelector implements ILabelSelector {
 	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#getStatus(int)
 	 */
 	@Override
-	public boolean getStatus(int labelIndex) {
+	public boolean getStatus(final int labelIndex) {
 		return labelIndex == currentLabel;
 	}
 

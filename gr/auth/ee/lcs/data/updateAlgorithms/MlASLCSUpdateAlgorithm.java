@@ -20,7 +20,7 @@ import java.util.Arrays;
  * @author Miltos Allamanis
  * 
  */
-public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
+public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * A data object for the *SLCS update algorithms.
@@ -28,7 +28,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	class SLCSClassifierData implements Serializable {
+	final class SLCSClassifierData implements Serializable {
 
 		/**
 		 * serial for versions.
@@ -98,6 +98,9 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private final int subsumptionExperienceThreshold;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -115,6 +118,8 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the GA
 	 * @param labels
 	 *            the number of labels in the problem
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public MlASLCSUpdateAlgorithm(final double nParameter,
 			final double fitnessThreshold, final int experienceThreshold,
@@ -137,8 +142,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the index of the current sample
 	 */
 	@Override
-	public final void cover(final ClassifierSet population,
-			final int instanceIndex) {
+	public void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -194,7 +198,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public final String getData(final Classifier aClassifier) {
+	public String getData(final Classifier aClassifier) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
@@ -202,7 +206,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public final void performUpdate(final ClassifierSet matchSet,
+	public void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet) {
 		return; // Not used!
 	}
@@ -217,7 +221,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @param instanceIndex
 	 *            the instance index
 	 */
-	public final void performUpdate(final ClassifierSet matchSet,
+	public void performUpdate(final ClassifierSet matchSet,
 			final ClassifierSet correctSet, final int instanceIndex) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
@@ -256,8 +260,8 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
 	 */
 	@Override
-	public final void setComparisonValue(Classifier aClassifier, int mode,
-			double comparisonValue) {
+	public void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
 		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: More generic
@@ -265,7 +269,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public final void updateSet(final ClassifierSet population,
+	public void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 
@@ -390,7 +394,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @param aClassifier
 	 *            the classifier, whose subsumption ability is to be updated
 	 */
-	protected final void updateSubsumption(final Classifier aClassifier) {
+	protected void updateSubsumption(final Classifier aClassifier) {
 		aClassifier
 				.setSubsumptionAbility((aClassifier
 						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)

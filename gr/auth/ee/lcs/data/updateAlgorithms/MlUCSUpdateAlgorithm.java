@@ -21,7 +21,7 @@ import java.util.Random;
  * @author Miltos Allamanis
  * 
  */
-public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
+public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * The data used at each classifier.
@@ -29,7 +29,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	class MlUCSClassifierData implements Serializable {
+	final class MlUCSClassifierData implements Serializable {
 		/**
 		 * The serial used for serialization.
 		 */
@@ -131,6 +131,9 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private final int n = 10;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -140,6 +143,8 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the GA to be used
 	 * @param learningRate
 	 *            the learning rate to be applied at each iteration
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public MlUCSUpdateAlgorithm(
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
@@ -169,12 +174,12 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public final Serializable createStateClassifierObject() {
+	public Serializable createStateClassifierObject() {
 		return new MlUCSClassifierData(numberOfLabels);
 	}
 
 	@Override
-	public final double getComparisonValue(final Classifier aClassifier,
+	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
 				.getUpdateDataObject();
@@ -212,7 +217,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public final String getData(final Classifier aClassifier) {
+	public String getData(final Classifier aClassifier) {
 		MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
@@ -222,12 +227,13 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public void performUpdate(ClassifierSet matchSet, ClassifierSet correctSet) {
+	public void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
 		return;
 	}
 
 	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
+	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
 		// TODO Auto-generated method stub
 
@@ -444,7 +450,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public final void updateSet(final ClassifierSet population,
+	public void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();

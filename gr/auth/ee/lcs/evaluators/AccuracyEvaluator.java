@@ -33,6 +33,9 @@ public class AccuracyEvaluator implements IEvaluator {
 	 */
 	private final boolean printResults;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -42,6 +45,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 *            the instances to be used
 	 * @param print
 	 *            true to print results to stdout
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public AccuracyEvaluator(final Instances instances, final boolean print,
 			final AbstractLearningClassifierSystem lcs) {
@@ -57,6 +62,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 *            the arff file
 	 * @param print
 	 *            true to print output to stdout
+	 * @param lcs
+	 *            the LCS instance used
 	 * @throws IOException
 	 *             when file is not found
 	 */
@@ -76,6 +83,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 *            the instance double[][] array
 	 * @param print
 	 *            true to print results to stdout
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public AccuracyEvaluator(final double[][] instances, final boolean print,
 			final AbstractLearningClassifierSystem lcs) {

@@ -14,6 +14,9 @@ import java.util.Vector;
  */
 public class LCSTrainTemplate {
 
+	/**
+	 * The lcs instance.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -31,6 +34,8 @@ public class LCSTrainTemplate {
 	 * 
 	 * @param callbackFrequency
 	 *            the frequency at which to call the callbacks
+	 * @param lcs
+	 *            the LCS instance
 	 */
 	public LCSTrainTemplate(final int callbackFrequency,
 			final AbstractLearningClassifierSystem lcs) {

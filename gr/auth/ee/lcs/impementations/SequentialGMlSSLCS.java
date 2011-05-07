@@ -131,7 +131,14 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The problem representation.
+	 */
 	private GenericMultiLabelRepresentation rep;
+
+	/**
+	 * Voting classification method.
+	 */
 	private VotingClassificationStrategy str;
 
 	/**

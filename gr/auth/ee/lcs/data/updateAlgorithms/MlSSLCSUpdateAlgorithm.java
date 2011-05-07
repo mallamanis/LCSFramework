@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Miltos Allamanis
  * 
  */
-public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
+public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * The Ml-SS-LCS classifier data object.
@@ -26,7 +26,7 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	class MlSSLCSClassifierData implements Serializable {
+	public final class MlSSLCSClassifierData implements Serializable {
 
 		/**
 		 * The serial for serialization.
@@ -102,6 +102,9 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private final double strengthReward, penalty;
 
+	/**
+	 * The LCS instance used by the update algorithm.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -119,12 +122,14 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the subsumption experience
 	 * @param subsumptionAccuracy
 	 *            the subsumtion minimum accuracy
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public MlSSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final int labels,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
 			final int subsumptionExperience, final double subsumptionAccuracy,
-			AbstractLearningClassifierSystem lcs) {
+			final AbstractLearningClassifierSystem lcs) {
 		numberOfLabels = labels;
 		strengthReward = reward;
 		ga = geneticAlgorithm;
@@ -142,7 +147,7 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * .lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	public void cover(ClassifierSet population, int instanceIndex) {
+	public void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -169,7 +174,8 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public double getComparisonValue(Classifier aClassifier, int mode) {
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
 		MlSSLCSClassifierData data = (MlSSLCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
@@ -195,7 +201,7 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public String getData(Classifier aClassifier) {
+	public String getData(final Classifier aClassifier) {
 		MlSSLCSClassifierData data = ((MlSSLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + " str:" + data.str;
@@ -210,7 +216,8 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
-	public void performUpdate(ClassifierSet matchSet, ClassifierSet correctSet) {
+	public void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
 		return;
 	}
 
@@ -222,8 +229,8 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
 	 */
 	@Override
-	public void setComparisonValue(Classifier aClassifier, int mode,
-			double comparisonValue) {
+	public void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
 		MlSSLCSClassifierData data = ((MlSSLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
@@ -239,8 +246,9 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	public void updateSet(ClassifierSet population, ClassifierSet matchSet,
-			int instanceIndex, boolean evolve) {
+	public void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 
 		for (int lbl = 0; lbl < numberOfLabels; lbl++) {

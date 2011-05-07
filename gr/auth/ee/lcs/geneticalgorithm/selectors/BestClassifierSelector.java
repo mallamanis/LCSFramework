@@ -57,14 +57,13 @@ public final class BestClassifierSelector implements INaturalSelector {
 						howManyToSelect), true);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Select for population.
 	 * 
-	 * @see
-	 * gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(gr.auth.ee.lcs
-	 * .classifiers.ClassifierSet)
+	 * @param fromPopulation
+	 *            the population to select from
+	 * @return the index of the best classiifer in the set
 	 */
-
 	private int select(final ClassifierSet fromPopulation) {
 		// Search for the best classifier
 		double bestFitness = max ? Double.NEGATIVE_INFINITY

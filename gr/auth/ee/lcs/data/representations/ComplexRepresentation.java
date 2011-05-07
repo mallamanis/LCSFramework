@@ -754,6 +754,9 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	private IClassificationStrategy defaultClassificationStrategy = null;
 
+	/**
+	 * The LCS instance used by the representation.
+	 */
 	protected final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -767,6 +770,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the number of labels
 	 * @param generalizationRate
 	 *            the attribute generalization rate
+	 * @param lcs
+	 *            the LCS instance
 	 */
 	public ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
@@ -791,6 +796,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *            the number of labels (classes) in the set
 	 * @param generalizationRate
 	 *            the attribute generalization rate (P#)
+	 * @param lcs
+	 *            the LCS instance the representation belongs to
 	 * @throws IOException
 	 *             when .arff not found
 	 */

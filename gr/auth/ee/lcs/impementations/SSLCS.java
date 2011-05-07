@@ -121,6 +121,9 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
 
+	/**
+	 * The problem representation.
+	 */
 	private SingleClassRepresentation rep;
 
 	/**

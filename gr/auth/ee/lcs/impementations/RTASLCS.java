@@ -125,6 +125,9 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The threshold classification strategy used for the RT method.
+	 */
 	private ThresholdClassificationStrategy str;
 
 	/**

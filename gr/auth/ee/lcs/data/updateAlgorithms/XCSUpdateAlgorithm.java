@@ -14,14 +14,14 @@ import java.io.Serializable;
  * 
  * @author Miltos Allamanis
  */
-public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
+public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * An object representing the classifier data for the XCS update algorithm.
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public class XCSClassifierData implements Serializable {
+	public final class XCSClassifierData implements Serializable {
 
 		/**
 		 * Serialization Id.
@@ -98,8 +98,11 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	/**
 	 * Genetic Algorithm.
 	 */
-	public IGeneticAlgorithmStrategy ga;
+	private IGeneticAlgorithmStrategy ga;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -123,6 +126,8 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the probability of running the GA at the matchSet
 	 * @param geneticAlgorithm
 	 *            the GA object to be used
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public XCSUpdateAlgorithm(final double beta, final double P,
 			final double e0, final double alpha, final double n,
@@ -177,7 +182,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public final double getComparisonValue(final Classifier aClassifier,
+	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		final XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -203,7 +208,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * .ee.lcs.classifiers.Classifier)
 	 */
 	@Override
-	public final String getData(final Classifier aClassifier) {
+	public String getData(final Classifier aClassifier) {
 		String response;
 		XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -213,7 +218,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	/**
-	 * Perform Update
+	 * Perform Update.
 	 * 
 	 * @param actionSet
 	 *            the action set
@@ -221,7 +226,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the correct set
 	 */
 	@Override
-	public final void performUpdate(final ClassifierSet actionSet,
+	public void performUpdate(final ClassifierSet actionSet,
 			final ClassifierSet correctSet) {
 		double accuracySum = 0;
 
@@ -293,7 +298,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int, double)
 	 */
 	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
+	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
 		XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -331,7 +336,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	public final void updateSet(final ClassifierSet population,
+	public void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		/*
@@ -371,7 +376,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @param aClassifier
 	 *            the classifier, whose subsumption ability is to be updated
 	 */
-	protected final void updateSubsumption(final Classifier aClassifier) {
+	protected void updateSubsumption(final Classifier aClassifier) {
 		aClassifier
 				.setSubsumptionAbility((aClassifier
 						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)

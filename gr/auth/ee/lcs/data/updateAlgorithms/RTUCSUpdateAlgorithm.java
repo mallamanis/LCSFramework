@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author Miltos Allamanis
  * 
  */
-public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
+public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * A data object for the UCS update algorithm.
@@ -26,7 +26,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	class UCSClassifierData implements Serializable {
+	final class UCSClassifierData implements Serializable {
 
 		/**
 		 * Serial code for serialization.
@@ -103,6 +103,9 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -126,6 +129,8 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the theta del UCS parameter (deletion age)
 	 * @param correctSetTheshold
 	 *            Threshold the threshold used to set a rule in the correct set
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public RTUCSUpdateAlgorithm(final double alpha, final double nParameter,
 			final double acc0, final double learningRate,
@@ -170,7 +175,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * createStateClassifierObject()
 	 */
 	@Override
-	public final Serializable createStateClassifierObject() {
+	public Serializable createStateClassifierObject() {
 		return new UCSClassifierData();
 	}
 
@@ -182,7 +187,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * (gr.auth.ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
-	public final double getComparisonValue(final Classifier aClassifier,
+	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
 		UCSClassifierData data = (UCSClassifierData) aClassifier
 				.getUpdateDataObject();
@@ -213,7 +218,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public final String getData(final Classifier aClassifier) {
+	public String getData(final Classifier aClassifier) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp;
@@ -234,7 +239,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	@Override
-	public final void setComparisonValue(final Classifier aClassifier,
+	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
 		UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
@@ -249,7 +254,8 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @param fitnessToShare
 	 *            the numeric value of the fitness to share
 	 */
-	private void shareFitness(final ClassifierSet set, double fitnessToShare) {
+	private void shareFitness(final ClassifierSet set,
+			final double fitnessToShare) {
 		double strengthSum = 0;
 		final int setSize = set.getNumberOfMacroclassifiers();
 		for (int i = 0; i < setSize; i++) {
@@ -318,7 +324,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * match set setB is the correct set
 	 */
 	@Override
-	public final void updateSet(final ClassifierSet population,
+	public void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 

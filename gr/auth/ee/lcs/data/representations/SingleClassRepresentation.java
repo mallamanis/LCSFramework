@@ -34,6 +34,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 *            the attributes of the representation
 	 * @param ruleConsequents
 	 *            the names of the rule consequents
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public SingleClassRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequents, final double generalizationRate,
@@ -50,6 +52,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 *            the precision for the interval rules
 	 * @param generalizationRate
 	 *            the generalization rate used for the attibutes (P#)
+	 * @param lcs
+	 *            the LCS instance used
 	 * @throws IOException
 	 *             when file cannot be read
 	 * 
@@ -61,7 +65,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	}
 
 	/**
-	 * Constructs a Single class representation
+	 * Constructs a Single class representation.
 	 * 
 	 * @param inputArff
 	 *            the input .arff file
@@ -71,6 +75,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 *            the number of attributes to ignore at the end
 	 * @param generalizationRate
 	 *            the attribute generalization rate
+	 * @param lcs
+	 *            the LCS instance used
 	 * @throws IOException
 	 *             when file is not found
 	 */
@@ -247,14 +253,15 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
+	public float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
 				.getValue(aClassifier) == myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] ? 1
 				: 0;
 	}
 
 	@Override
-	public int[] getDataInstanceLabels(double[] dataInstance) {
+	public int[] getDataInstanceLabels(final double[] dataInstance) {
 		int[] classes = new int[1];
 		classes[0] = (int) dataInstance[dataInstance.length - 1];
 		return classes;
@@ -266,7 +273,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class BestFitnessClassificationStrategy implements
+	public final class BestFitnessClassificationStrategy implements
 			IClassificationStrategy {
 
 		/*
@@ -277,7 +284,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
 		 */
 		@Override
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 			INaturalSelector selector = new BestClassifierSelector(true,
 					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
@@ -300,11 +308,12 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public class VotingClassificationStrategy implements
+	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
 		@Override
-		public int[] classify(ClassifierSet aSet, double[] visionVector) {
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
 
 			// Initialize table
 			final int numOfClasses = ((UniLabel) attributeList[attributeList.length - 1]).classes.length;
@@ -349,7 +358,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	}
 
 	@Override
-	public final float classifyAbilityLabel(final Classifier aClassifier,
+	public float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
 		return classifyAbilityAll(aClassifier, instanceIndex);
 	}

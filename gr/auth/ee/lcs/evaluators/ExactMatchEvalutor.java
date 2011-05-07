@@ -33,6 +33,9 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 */
 	private final boolean printResults;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -42,6 +45,8 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 *            the set of instances to evaluate on
 	 * @param print
 	 *            true to turn printing on
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public ExactMatchEvalutor(final Instances instances, final boolean print,
 			final AbstractLearningClassifierSystem lcs) {
@@ -57,6 +62,8 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 *            the name of the test file
 	 * @param print
 	 *            true to turn printing on
+	 * @param lcs
+	 *            the LCS instance used
 	 * @throws IOException
 	 *             when file not found
 	 */
@@ -71,12 +78,14 @@ public class ExactMatchEvalutor implements IEvaluator {
 	}
 
 	/**
-	 * Constructor using a double array
+	 * Constructor using a double array.
 	 * 
 	 * @param instances
 	 *            the double[][] of instances
 	 * @param print
 	 *            true to turn printing on
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public ExactMatchEvalutor(final double[][] instances, final boolean print,
 			final AbstractLearningClassifierSystem lcs) {

@@ -24,7 +24,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 * @param update
 	 *            the update strategy
 	 */
-	public void setElements(final ClassifierTransformBridge bridge,
+	public final void setElements(final ClassifierTransformBridge bridge,
 			final AbstractUpdateStrategy update) {
 		transformBridge = bridge;
 		updateStrategy = update;
@@ -50,11 +50,21 @@ public abstract class AbstractLearningClassifierSystem {
 	 */
 	public abstract void train();
 
-	public ClassifierTransformBridge getClassifierTransformBridge() {
+	/**
+	 * Return the LCS's classifier transform bridge.
+	 * 
+	 * @return the lcs's classifier transform bridge
+	 */
+	public final ClassifierTransformBridge getClassifierTransformBridge() {
 		return transformBridge;
 	}
 
-	public AbstractUpdateStrategy getUpdateStrategy() {
+	/**
+	 * Returns the LCS's update strategy.
+	 * 
+	 * @return the update strategy
+	 */
+	public final AbstractUpdateStrategy getUpdateStrategy() {
 		return updateStrategy;
 	}
 
@@ -63,11 +73,18 @@ public abstract class AbstractLearningClassifierSystem {
 	 * 
 	 * @return the new classifier.
 	 */
-	public Classifier getNewClassifier() {
+	public final Classifier getNewClassifier() {
 		return Classifier.createNewClassifier(this);
 	};
 
-	public Classifier getNewClassifier(ExtendedBitSet chromosome) {
+	/**
+	 * Return a new classifier object for the specific LCS given a chromosome.
+	 * 
+	 * @param chromosome
+	 *            the chromosome to be replicated
+	 * @return a new classifier containing information about the LCS
+	 */
+	public final Classifier getNewClassifier(final ExtendedBitSet chromosome) {
 		return Classifier.createNewClassifier(this, chromosome);
 	}
 }

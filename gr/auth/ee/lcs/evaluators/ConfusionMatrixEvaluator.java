@@ -13,13 +13,16 @@ import weka.classifiers.evaluation.ConfusionMatrix;
  * @author Miltos Allamanis
  * 
  */
-public class ConfusionMatrixEvaluator implements IEvaluator {
+public final class ConfusionMatrixEvaluator implements IEvaluator {
 
 	/**
 	 * A Weka confusion matrix.
 	 */
 	private final ConfusionMatrix conf;
 
+	/**
+	 * The LCS instance being used.
+	 */
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -35,6 +38,8 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	 * @param set
 	 *            the set of instances to be used for creating the confusion
 	 *            matrix
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public ConfusionMatrixEvaluator(final String[] classNames,
 			final double[][] set, final AbstractLearningClassifierSystem lcs) {
@@ -51,7 +56,7 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public double evaluateSet(final ClassifierSet classifiers) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 

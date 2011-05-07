@@ -178,6 +178,9 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The lcs's repersentation.
+	 */
 	private final GenericMultiLabelRepresentation rep;
 
 	/**

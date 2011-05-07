@@ -197,7 +197,14 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The representation used.
+	 */
 	GenericMultiLabelRepresentation rep;
+
+	/**
+	 * The classification strategy.
+	 */
 	VotingClassificationStrategy vs;
 
 	/**

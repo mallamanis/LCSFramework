@@ -36,6 +36,8 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 *            the probability to run the GA on the matchset
 	 * @param geneticAlgorithm
 	 *            the GA to be used for exploration
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public SSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final double fitnessThreshold,

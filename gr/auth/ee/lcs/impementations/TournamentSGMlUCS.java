@@ -141,10 +141,19 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The target LC for the problem.
+	 */
 	private final float targetLC;
 
+	/**
+	 * The representation used by the LCS.
+	 */
 	private GenericMultiLabelRepresentation rep;
 
+	/**
+	 * The voting classifications strategy being used.
+	 */
 	private VotingClassificationStrategy str;
 
 	/**

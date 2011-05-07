@@ -36,6 +36,8 @@ public final class AllSingleLabelEvaluator implements IEvaluator {
 	 *            the number of labels at the problem
 	 * @param printResults
 	 *            print results to stout
+	 * @param lcs
+	 *            the LCS instance used
 	 */
 	public AllSingleLabelEvaluator(final Instances evaluateSet,
 			final int numberOfLabels, final boolean printResults,

@@ -19,7 +19,7 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public class AccuracyEvaluatorTest {
+public final class AccuracyEvaluatorTest {
 
 	/**
 	 * A generic ml representation.
