@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -32,15 +32,18 @@ public class MacroclassifierTest {
 	 * Set up a simple representation.
 	 */
 	SimpleBooleanRepresentation test;
+	
+	MockLCS lcs;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		test = new SimpleBooleanRepresentation(0.5, 4);
-		ClassifierTransformBridge.setInstance(test);
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new UCSUpdateAlgorithm(
+		lcs = new MockLCS();
+		test = new SimpleBooleanRepresentation(0.5, 4, lcs);
+		
+		UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(
 				.1,
 				10,
 				.99,
@@ -51,22 +54,23 @@ public class MacroclassifierTest {
 						new TournamentSelector(
 								10,
 								true,
-								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION),
-						new SinglePointCrossover(), (float) .8,
-						new UniformBitMutation(.04), 50), 100, 1);
+								AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
+						new SinglePointCrossover(lcs), (float) .8,
+						new UniformBitMutation(.04), 50, lcs), 100, 1, lcs);
+		lcs.setElements(test, update);
 	}
 
 	@Test
 	public final void testClone() {
-		Classifier parentClassifier = new Classifier(new ExtendedBitSet(
+		Classifier parentClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10110001"));
 		Classifier clone = (Classifier) parentClassifier.clone();
 		assertTrue(clone.equals(parentClassifier));
 		assertTrue(parentClassifier.equals(clone));
 		assertEquals(clone.experience, 0);
 		assertTrue(clone
-				.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
-				.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION));
+				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
+				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION));
 
 		ExtendedBitSet a = parentClassifier;
 		ExtendedBitSet b = clone;
@@ -83,7 +87,7 @@ public class MacroclassifierTest {
 	 */
 	@Test
 	public void testEquals() {
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10110001"));
 		testClassifier.setActionAdvocated(0);
 		Macroclassifier testMacro1 = new Macroclassifier(testClassifier, 1);
@@ -93,7 +97,7 @@ public class MacroclassifierTest {
 		assertTrue(testMacro1.equals(testClassifier));
 		assertTrue(testMacro2.equals(testClassifier));
 
-		Classifier testClassifier2 = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier2 = lcs.getNewClassifier(new ExtendedBitSet(
 				"10110001"));
 		testClassifier2.setActionAdvocated(0);
 		assertTrue(testMacro1.equals(testClassifier2));

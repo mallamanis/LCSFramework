@@ -3,13 +3,14 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
@@ -34,7 +35,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class SequentialGMlASLCS {
+public class SequentialGMlASLCS extends AbstractLearningClassifierSystem{
 	/**
 	 * @param args
 	 * @throws IOException
@@ -47,7 +48,7 @@ public class SequentialGMlASLCS {
 		final float lc = (float) 3.5;
 		SequentialGMlASLCS taslcs = new SequentialGMlASLCS(file, iterations,
 				populationSize, numOfLabels, .5, lc);
-		taslcs.run();
+		taslcs.train();
 
 	}
 
@@ -132,6 +133,8 @@ public class SequentialGMlASLCS {
 	private final int numberOfLabels;
 
 	private final float targetLC;
+	private final GenericMultiLabelRepresentation rep;
+	private final VotingClassificationStrategy str;
 
 	/**
 	 * Constructor.
@@ -146,47 +149,51 @@ public class SequentialGMlASLCS {
 	 *            the number of labels in the problem
 	 * @param labelGeneralizationProbability
 	 *            the probability of generalizing a label (during coverage)
+	 * @throws IOException 
 	 */
 	public SequentialGMlASLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability, float problemLC) {
+			final double labelGeneralizationProbability, float problemLC) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
 		this.targetLC = problemLC;
-	}
-
-	/**
-	 * Run the SGmlUCS
-	 * 
-	 * @throws IOException
-	 */
-	public void run() throws IOException {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
+		
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(
 						50,
 						true,
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION),
-				new SinglePointCrossover(), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA);
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
+				new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
+		rep = new GenericMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				GenericMultiLabelRepresentation.EXACT_MATCH,
-				labelGeneralizationRate, .7);
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				labelGeneralizationRate, .7, this);
+		str = rep.new VotingClassificationStrategy(
 				targetLC);
 		rep.setClassificationStrategy(str);
 
-		ClassifierTransformBridge.setInstance(rep);
-
 		ASLCSUpdateAlgorithm updateObj = new ASLCSUpdateAlgorithm(ASLCS_N,
-				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga);
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new SequentialMlUpdateAlgorithm(
+				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+		SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
+		
+		this.setElements(rep, strategy);
+	}
+
+	/**
+	 * Run the SGmlUCS.
+	 * 
+	 * @throws IOException
+	 */
+	@Override
+	public void train() {
+		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -194,12 +201,17 @@ public class SequentialGMlASLCS {
 						new TournamentSelector(
 								40,
 								true,
-								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION)));
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
 		ArffLoader loader = new ArffLoader();
-		loader.loadInstances(inputFile, true);
+		try {
+			loader.loadInstances(inputFile, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true);
+				ClassifierTransformBridge.instances, true, this);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
@@ -208,9 +220,9 @@ public class SequentialGMlASLCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
@@ -222,12 +234,12 @@ public class SequentialGMlASLCS {
 
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true);
+				true, this);
 		testEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels);
+				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
 		accEval.evaluateSet(rulePopulation);
 
 		System.out.println("Best Fitness");

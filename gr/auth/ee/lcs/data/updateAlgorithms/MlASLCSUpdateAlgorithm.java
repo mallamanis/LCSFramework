@@ -3,10 +3,11 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
@@ -20,7 +21,7 @@ import java.util.Arrays;
  * @author Miltos Allamanis
  * 
  */
-public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * A data object for the *SLCS update algorithms.
@@ -97,6 +98,8 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * The experience threshold for subsumption.
 	 */
 	private final int subsumptionExperienceThreshold;
+	
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * Object's Constructor.
@@ -117,13 +120,14 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	public MlASLCSUpdateAlgorithm(final double nParameter,
 			final double fitnessThreshold, final int experienceThreshold,
 			double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm, int labels) {
+			IGeneticAlgorithmStrategy geneticAlgorithm, int labels, AbstractLearningClassifierSystem lcs) {
 		this.subsumptionFitnessThreshold = fitnessThreshold;
 		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
 		this.ga = geneticAlgorithm;
 		this.n = nParameter;
 		numOfLabels = labels;
+		myLcs = lcs;
 	}
 
 	/**
@@ -135,7 +139,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	@Override
 	public final void cover(final ClassifierSet population,
 			final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),

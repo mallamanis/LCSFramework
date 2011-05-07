@@ -17,44 +17,9 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 public abstract class ClassifierTransformBridge {
 
 	/**
-	 * The singleton instance of the bridge.
-	 */
-	private static ClassifierTransformBridge instance;
-
-	/**
 	 * The instances of the current problem.
 	 */
 	public static double[][] instances;
-
-	/**
-	 * Calls to the bridge to fix a classifier.
-	 * 
-	 * @param toBeFixed
-	 *            the classifier to be fixed
-	 */
-	public static void fixClassifier(final Classifier toBeFixed) {
-		ClassifierTransformBridge.instance.fixChromosome(toBeFixed);
-	}
-
-	/**
-	 * Gets the static instance.
-	 * 
-	 * @return the static instance
-	 */
-	public static ClassifierTransformBridge getInstance() {
-		return instance;
-	}
-
-	/**
-	 * Sets the static instance of the bridge.
-	 * 
-	 * @param aBridge
-	 *            the bridge to set
-	 */
-	public static void setInstance(final ClassifierTransformBridge aBridge) {
-		ClassifierTransformBridge.instance = aBridge;
-		Classifier.setTransformBridge(aBridge);
-	}
 
 	/**
 	 * Tests if two classifiers are equal.

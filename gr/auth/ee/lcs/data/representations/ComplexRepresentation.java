@@ -1,5 +1,6 @@
 package gr.auth.ee.lcs.data.representations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
@@ -753,6 +754,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	private IClassificationStrategy defaultClassificationStrategy = null;
 
+	private final AbstractLearningClassifierSystem myLcs;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -767,12 +770,13 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	public ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
-			final double generalizationRate) {
+			final double generalizationRate, final AbstractLearningClassifierSystem lcs) {
 		super();
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
 		this.ruleConsequents = ruleConsequentsNames;
 		this.attributeGeneralizationRate = generalizationRate;
+		this.myLcs = lcs;
 	}
 
 	/**
@@ -790,9 +794,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *             when .arff not found
 	 */
 	public ComplexRepresentation(final String inputArff, final int precision,
-			final int labels, final double generalizationRate)
+			final int labels, final double generalizationRate, final AbstractLearningClassifierSystem lcs)
 			throws IOException {
 		super();
+		this.myLcs = lcs;
 		final FileReader reader = new FileReader(inputArff);
 		final Instances instances = new Instances(reader);
 
@@ -919,7 +924,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final Classifier createRandomCoveringClassifier(
 			final double[] visionVector) {
-		final Classifier generatedClassifier = new Classifier();
+		final Classifier generatedClassifier = myLcs.getNewClassifier();
 		for (int i = 0; i < attributeList.length; i++) {
 			attributeList[i].randomCoveringValue((float) visionVector[i],
 					generatedClassifier);

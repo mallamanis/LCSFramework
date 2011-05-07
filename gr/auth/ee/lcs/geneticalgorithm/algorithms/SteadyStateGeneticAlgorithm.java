@@ -1,9 +1,10 @@
 package gr.auth.ee.lcs.geneticalgorithm.algorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -49,13 +50,15 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	/**
 	 * The rate that the crossover is performed.
 	 */
-	final private float crossoverRate;
+	private final float crossoverRate;
 
 	/**
 	 * The number of children per generation.
 	 */
 	private static final int CHILDREN_PER_GENERATION = 2;
 
+	private final AbstractLearningClassifierSystem myLcs;
+	
 	/**
 	 * Default constructor.
 	 * 
@@ -75,12 +78,13 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			final IBinaryGeneticOperator crossoverOperator,
 			final float crossoverRate,
 			final IUnaryGeneticOperator mutationOperator,
-			final int gaActivationAge) {
+			final int gaActivationAge, final AbstractLearningClassifierSystem lcs) {
 		this.gaSelector = gaSelector;
 		this.crossoverOp = crossoverOperator;
 		this.mutationOp = mutationOperator;
 		this.gaActivationAge = gaActivationAge;
 		this.crossoverRate = crossoverRate;
+		this.myLcs = lcs;
 	}
 
 	/**
@@ -147,13 +151,13 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			} else {
 				child = (Classifier) ((i == 0) ? parentA : parentB).clone();
 				child.setComparisonValue(
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						((i == 0) ? parentA : parentB)
-								.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION));
+								.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION));
 			}
 
 			child = mutationOp.operate(child);
-			ClassifierTransformBridge.fixClassifier(child);
+			myLcs.getClassifierTransformBridge().fixChromosome(child);
 			population.addClassifier(new Macroclassifier(child, 1), true);
 
 		}

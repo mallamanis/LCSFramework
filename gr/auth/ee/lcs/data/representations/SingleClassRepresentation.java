@@ -3,9 +3,10 @@
  */
 package gr.auth.ee.lcs.data.representations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
@@ -35,8 +36,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 *            the names of the rule consequents
 	 */
 	public SingleClassRepresentation(final AbstractAttribute[] attributes,
-			final String[] ruleConsequents, final double generalizationRate) {
-		super(attributes, ruleConsequents, 1, generalizationRate);
+			final String[] ruleConsequents, final double generalizationRate, final AbstractLearningClassifierSystem lcs) {
+		super(attributes, ruleConsequents, 1, generalizationRate, lcs);
 	}
 
 	/**
@@ -53,9 +54,9 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * 
 	 */
 	public SingleClassRepresentation(final String inputArff,
-			final int precision, final double generalizationRate)
+			final int precision, final double generalizationRate, final AbstractLearningClassifierSystem lcs)
 			throws IOException {
-		super(inputArff, precision, 1, generalizationRate);
+		super(inputArff, precision, 1, generalizationRate, lcs);
 	}
 
 	/**
@@ -74,8 +75,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 */
 	public SingleClassRepresentation(final String inputArff,
 			final int precision, final int attributeToIgnore,
-			final double generalizationRate) throws IOException {
-		super(inputArff, precision, attributeToIgnore, generalizationRate);
+			final double generalizationRate, final AbstractLearningClassifierSystem lcs) throws IOException {
+		super(inputArff, precision, attributeToIgnore, generalizationRate, lcs);
 	}
 
 	/*
@@ -277,7 +278,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		public int[] classify(ClassifierSet aSet, double[] visionVector) {
 			INaturalSelector selector = new BestClassifierSelector(
 					true,
-					AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 			// Generate MatchSet
 			ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
@@ -321,7 +322,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 						* matchSet
 								.getClassifier(i)
 								.getComparisonValue(
-										AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+										AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 			}
 
 			// Find max

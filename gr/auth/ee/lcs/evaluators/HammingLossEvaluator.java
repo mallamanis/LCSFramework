@@ -3,6 +3,8 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -36,6 +38,8 @@ public class HammingLossEvaluator implements IEvaluator {
 	 * The number of labels used.
 	 */
 	private final int numberOfLabels;
+	
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * Constructor of the hamming loss evaluator.
@@ -48,10 +52,11 @@ public class HammingLossEvaluator implements IEvaluator {
 	 *            the number of labels
 	 */
 	public HammingLossEvaluator(final Instances instances, final boolean print,
-			final int numOfLabels) {
+			final int numOfLabels, final AbstractLearningClassifierSystem lcs) {
 		this.instances = InstanceToDoubleConverter.convert(instances);
 		printResults = print;
 		numberOfLabels = numOfLabels;
+		myLcs = lcs;
 	}
 
 	/**
@@ -67,12 +72,13 @@ public class HammingLossEvaluator implements IEvaluator {
 	 *             if file is not found
 	 */
 	public HammingLossEvaluator(final String arffFileName, final boolean print,
-			final int numOfLabels) throws IOException {
+			final int numOfLabels, AbstractLearningClassifierSystem lcs) throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
 				.convert(new Instances(reader));
 		numberOfLabels = numOfLabels;
+		myLcs = lcs;
 	}
 
 	/**
@@ -86,11 +92,11 @@ public class HammingLossEvaluator implements IEvaluator {
 	 *            the number of labels
 	 */
 	public HammingLossEvaluator(final double[][] instances,
-			final boolean print, final int numOfLabels) {
+			final boolean print, final int numOfLabels, final AbstractLearningClassifierSystem lcs) {
 		this.instances = instances;
 		printResults = print;
-
 		numberOfLabels = numOfLabels;
+		myLcs = lcs;
 	}
 
 	/*
@@ -102,8 +108,7 @@ public class HammingLossEvaluator implements IEvaluator {
 	 */
 	@Override
 	public double evaluateSet(ClassifierSet classifiers) {
-		final ClassifierTransformBridge bridge = ClassifierTransformBridge
-				.getInstance();
+		final ClassifierTransformBridge bridge = myLcs.getClassifierTransformBridge();
 		int numberOfSymmetricDifferences = 0;
 		for (int i = 0; i < instances.length; i++) {
 

@@ -1,5 +1,6 @@
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
@@ -16,6 +17,7 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 * The strictness factor for updating.
 	 */
 	private final double n;
+	
 
 	/**
 	 * Object's Constructor.
@@ -34,10 +36,11 @@ public class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	public ASLCSUpdateAlgorithm(final double nParameter,
 			final double fitnessThreshold, final int experienceThreshold,
 			double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm) {
+			IGeneticAlgorithmStrategy geneticAlgorithm, AbstractLearningClassifierSystem lcs) {
 		super(fitnessThreshold, experienceThreshold, gaMatchSetRunProbability,
-				geneticAlgorithm);
+				geneticAlgorithm, lcs);
 		this.n = nParameter;
+		
 	}
 
 	/*

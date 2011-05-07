@@ -9,6 +9,7 @@ import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Before;
@@ -32,7 +33,7 @@ public class ComplexRepresentationTest {
 	public void advocatedActionTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"0111111111111110111111111111010");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 
 		assertEquals(ex1.getActionAdvocated()[0], 1);
 
@@ -55,7 +56,7 @@ public class ComplexRepresentationTest {
 	@Test
 	public void checkStringOutput() {
 		ExtendedBitSet set = new ExtendedBitSet("11101111111111000000000011011");
-		Classifier ex = new Classifier(set);
+		Classifier ex = lcs.getNewClassifier(set);
 
 		// TODO: Fix and test
 
@@ -113,11 +114,11 @@ public class ComplexRepresentationTest {
 	public void moreGeneralTest1() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"11111111111111000000000011011");
-		Classifier ex2 = new Classifier(set2);
+		Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -128,11 +129,11 @@ public class ComplexRepresentationTest {
 	public void moreGeneralTest2() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000001010");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"11111111111111000000000011011");
-		Classifier ex2 = new Classifier(set2);
+		Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -142,11 +143,11 @@ public class ComplexRepresentationTest {
 	public void moreGeneralTest3() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011010");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"00000000010001000000001010010");
-		Classifier ex2 = new Classifier(set2);
+		Classifier ex2 =lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -156,25 +157,27 @@ public class ComplexRepresentationTest {
 	public void realValuesTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011010");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 =lcs.getNewClassifier(set1);
 		double[] st = { 1, .1, 2 };
 		assertTrue(rep.isMatch(st, ex1));
 
 		set1 = new ExtendedBitSet("11101111111111001000000011010");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.isMatch(st, ex1));
 
 		set1 = new ExtendedBitSet("11100111111111001000000011010");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.isMatch(st, ex1));
 	}
 
+	MockLCS lcs;
+	
 	@Before
 	public void setUp() throws Exception {
+		lcs = new MockLCS();
 		SingleClassRepresentation.AbstractAttribute list[] = new AbstractAttribute[4];
 		String[] names = { "Good", "Mediocre", "Bad" };
-		rep = new SingleClassRepresentation(list, names, .7);
-		ClassifierTransformBridge.setInstance(rep);
+		rep = new SingleClassRepresentation(list, names, .7, lcs);
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
@@ -183,6 +186,9 @@ public class ComplexRepresentationTest {
 		list[2] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom2",
 				attribute, 0);
 		list[3] = rep.new UniLabel(rep.getChromosomeSize(), "class", names);
+		UCSUpdateAlgorithm update = 
+			new UCSUpdateAlgorithm(0, 0, 0, 0, 0, 0, null, 0, 0, lcs);
+		lcs.setElements(rep, update);
 
 	}
 
@@ -190,9 +196,9 @@ public class ComplexRepresentationTest {
 	public void testVoting() {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 
-		Classifier ex1 = new Classifier(new ExtendedBitSet(
+		Classifier ex1 = lcs.getNewClassifier(new ExtendedBitSet(
 				"1011101111111111001000000011010"));
-		Classifier ex2 = new Classifier(new ExtendedBitSet(
+		Classifier ex2 = lcs.getNewClassifier(new ExtendedBitSet(
 				"0111100111111111001000000011010"));
 
 		ClassifierSet set = new ClassifierSet(null);

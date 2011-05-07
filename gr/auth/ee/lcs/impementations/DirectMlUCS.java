@@ -3,13 +3,14 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
@@ -32,7 +33,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class DirectMlUCS {
+public class DirectMlUCS extends AbstractLearningClassifierSystem{
 	/**
 	 * @param args
 	 * @throws IOException
@@ -44,7 +45,7 @@ public class DirectMlUCS {
 		final int populationSize = 2000;
 		DirectMlUCS dmlucs = new DirectMlUCS(file, iterations, populationSize,
 				numOfLabels);
-		dmlucs.run();
+		dmlucs.train();
 
 	}
 
@@ -144,13 +145,30 @@ public class DirectMlUCS {
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
+	 * @throws IOException 
 	 */
 	public DirectMlUCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels) {
+			final int populationSize, final int numOfLabels) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
+		
+		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
+
+		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
+				inputFile, PRECISION_BITS, numberOfLabels,
+				StrictMultiLabelRepresentation.HAMMING_LOSS, .7, this);
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		
+		MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(
+				ga, .1, UCS_EXPERIENCE_THRESHOLD, numberOfLabels, this);
+		
+		this.setElements(rep, strategy);
 	}
 
 	/**
@@ -158,34 +176,27 @@ public class DirectMlUCS {
 	 * 
 	 * @throws IOException
 	 */
-	public void run() throws IOException {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA);
-
-		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.HAMMING_LOSS, .7);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
-		ClassifierTransformBridge.setInstance(rep);
-
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new MlUCSUpdateAlgorithm(
-				ga, .1, UCS_EXPERIENCE_THRESHOLD, numberOfLabels);
+	@Override
+	public void train()  {
+		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
-								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
 		ArffLoader loader = new ArffLoader();
-		loader.loadInstances(inputFile, true);
+		try {
+			loader.loadInstances(inputFile, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
 		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true);
+				ClassifierTransformBridge.instances, true, this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -193,9 +204,9 @@ public class DirectMlUCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
@@ -205,12 +216,12 @@ public class DirectMlUCS {
 
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true);
+				true, this);
 		testEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels);
+				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
 		accEval.evaluateSet(rulePopulation);
 	}
 

@@ -16,13 +16,7 @@ import java.io.Serializable;
  * 
  * @author Miltos Allamanis
  */
-public abstract class AbstractUpdateAlgorithmStrategy {
-
-	/**
-	 * The static strategy used throughout the algorithms. Works like a
-	 * singleton.
-	 */
-	public static AbstractUpdateAlgorithmStrategy currentStrategy;
+public abstract class AbstractUpdateStrategy {
 
 	/**
 	 * Comparison mode used for LCS exploitation.
@@ -38,42 +32,6 @@ public abstract class AbstractUpdateAlgorithmStrategy {
 	 * Comparison mode used for exploration.
 	 */
 	public static final int COMPARISON_MODE_EXPLORATION = 2;
-
-	/**
-	 * Bridge to selected strategy.
-	 * 
-	 * @return returns the data object as specified by the implementation
-	 */
-	public static Serializable createDefaultDataObject() {
-		if (currentStrategy != null)
-			return currentStrategy.createStateClassifierObject();
-		else
-			return null;
-	}
-
-	/**
-	 * A bridge between update data and the actual implementation.
-	 * 
-	 * @param population
-	 *            the current population
-	 * @param matchSet
-	 *            the match set
-	 * @param evolve
-	 *            true if the update algorithm should also evolve the set
-	 * @param instanceIndex
-	 *            the index of the instance that will be used for updating the
-	 *            population
-	 * 
-	 */
-	public static void updateData(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex,
-			final boolean evolve) {
-		if (currentStrategy != null) {
-			currentStrategy.updateSet(population, matchSet, instanceIndex,
-					evolve);
-
-		}
-	}
 
 	/**
 	 * Covers an instance adding it to the population.
@@ -150,7 +108,7 @@ public abstract class AbstractUpdateAlgorithmStrategy {
 	 * @param evolve
 	 *            true to update the data and evolve the set
 	 */
-	protected abstract void updateSet(ClassifierSet population,
+	public abstract void updateSet(ClassifierSet population,
 			ClassifierSet matchSet, int instanceIndex, boolean evolve);
 
 }

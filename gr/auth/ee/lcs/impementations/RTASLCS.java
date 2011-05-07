@@ -3,13 +3,14 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.UniLabelRepresentation;
@@ -29,12 +30,12 @@ import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import java.io.IOException;
 
 /**
- * An Rank-and-Threshold AS-LCS Update Algorithm
+ * An Rank-and-Threshold AS-LCS Update Algorithm.
  * 
  * @author Miltos Allamanis
  * 
  */
-public class RTASLCS {
+public class RTASLCS extends AbstractLearningClassifierSystem{
 	/**
 	 * @param args
 	 * @throws IOException
@@ -46,7 +47,7 @@ public class RTASLCS {
 		final int populationSize = 6000;
 		RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize,
 				numOfLabels);
-		rtaslcs.run();
+		rtaslcs.train();
 
 	}
 
@@ -116,7 +117,7 @@ public class RTASLCS {
 	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
 	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.0;
 
@@ -125,6 +126,8 @@ public class RTASLCS {
 	 */
 	private final int numberOfLabels;
 
+	private ThresholdClassificationStrategy str;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -136,13 +139,30 @@ public class RTASLCS {
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
+	 * @throws IOException 
 	 */
 	public RTASLCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels) {
+			final int populationSize, final int numOfLabels) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
+		
+		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
+
+		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
+				PRECISION_BITS, numberOfLabels, .7, this);
+		 str = rep.new ThresholdClassificationStrategy();
+		rep.setClassificationStrategy(str);
+
+		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+		
+		this.setElements(rep, update);
 	}
 
 	/**
@@ -150,35 +170,28 @@ public class RTASLCS {
 	 * 
 	 * @throws IOException
 	 */
-	public void run() throws IOException {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA);
-
-		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
-				PRECISION_BITS, numberOfLabels, .7);
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
-		rep.setClassificationStrategy(str);
-		ClassifierTransformBridge.setInstance(rep);
-
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga);
+	@Override
+	public void train() {
+		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
-								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
 		ArffLoader loader = new ArffLoader();
-		loader.loadInstances(inputFile, true);
-		AccuracyEvaluator acc = new AccuracyEvaluator(loader.trainSet, true);
+		try {
+			loader.loadInstances(inputFile, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		AccuracyEvaluator acc = new AccuracyEvaluator(loader.trainSet, true, this);
 		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true);
+				ClassifierTransformBridge.instances, true, this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.registerHook(acc);
 		myExample.train(iterations, rulePopulation);
@@ -189,21 +202,21 @@ public class RTASLCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set (pre-calibration)");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true);
+				true, this);
 		testEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels);
+				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
 		accEval.evaluateSet(rulePopulation);
 
 		str.proportionalCutCalibration(ClassifierTransformBridge.instances,

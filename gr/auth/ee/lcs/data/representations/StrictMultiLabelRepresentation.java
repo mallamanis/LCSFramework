@@ -3,9 +3,10 @@
  */
 package gr.auth.ee.lcs.data.representations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.IOException;
@@ -62,8 +63,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 */
 	public StrictMultiLabelRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
-			final int type, final double generalizationRate) {
-		super(attributes, ruleConsequentsNames, labels, generalizationRate);
+			final int type, final double generalizationRate, final AbstractLearningClassifierSystem lcs) {
+		super(attributes, ruleConsequentsNames, labels, generalizationRate, lcs);
 		metricType = type;
 	}
 
@@ -84,8 +85,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 */
 	public StrictMultiLabelRepresentation(final String inputArff,
 			final int precision, final int labels, final int type,
-			final double generalizationRate) throws IOException {
-		super(inputArff, precision, labels, generalizationRate);
+			final double generalizationRate, final AbstractLearningClassifierSystem lcs) throws IOException {
+		super(inputArff, precision, labels, generalizationRate, lcs);
 		metricType = type;
 	}
 
@@ -382,7 +383,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 				final int numerosity = matchSet.getClassifierNumerosity(i);
 				final double fitness = numerosity
 						* currentClassifier
-								.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+								.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 				if (fitness > bestFitness) {
 					bestFitness = fitness;
 					bestClassifierIndex = i;
@@ -427,7 +428,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 					final int classifierNumerosity = matchSet
 							.getClassifierNumerosity(i);
 					final double fitness = currentClassifier
-							.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+							.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 					final boolean labelActivated = ((Label) attributeList[attributeList.length
 							- numberOfLabels + label])
 							.getValue(currentClassifier);

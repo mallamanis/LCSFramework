@@ -1,7 +1,8 @@
 package gr.auth.ee.lcs.geneticalgorithm.operators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -12,6 +13,12 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
  */
 public class SinglePointCrossover implements IBinaryGeneticOperator {
 
+	final AbstractLearningClassifierSystem myLcs; 
+	
+	public SinglePointCrossover(AbstractLearningClassifierSystem lcs) {
+		myLcs = lcs;
+	}
+	
 	/**
 	 * The implementation of the abstract method.
 	 * 
@@ -27,15 +34,15 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 		 */
 		final int mutationPoint = (int) Math.round(Math.random()
 				* chromosomeSize - 1);
-		child = new Classifier(performCrossover(classifierA, classifierB,
+		child = myLcs.getNewClassifier(performCrossover(classifierA, classifierB,
 				mutationPoint));
 		double newFitness = classifierA
-				.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION)
+				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
 				+ classifierB
-						.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+						.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		newFitness /= 2;
 		child.setComparisonValue(
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION,
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION,
 				newFitness);
 		// TODO: Set specific update data
 		return child;

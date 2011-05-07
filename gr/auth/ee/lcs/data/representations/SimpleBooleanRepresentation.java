@@ -3,9 +3,10 @@
  */
 package gr.auth.ee.lcs.data.representations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
@@ -31,6 +32,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * Chromosome Size.
 	 */
 	private int chromosomeSize = 0;
+	
+	final AbstractLearningClassifierSystem myLcs; 
 
 	/**
 	 * The costructor.
@@ -41,8 +44,9 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 *            the bits used at vision
 	 */
 	public SimpleBooleanRepresentation(double coveringGeneralizationRate,
-			int visionBits) {
+			int visionBits, final AbstractLearningClassifierSystem lcs) {
 		coverGeneralizationRate = coveringGeneralizationRate;
+		myLcs = lcs;
 		setVisionSize(visionBits);
 	}
 
@@ -102,7 +106,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public Classifier createRandomCoveringClassifier(double[] visionVector) {
-		Classifier coverClassifier = new Classifier();
+		Classifier coverClassifier = myLcs.getNewClassifier();
 
 		// Transform visionVector to BitSet (generalization not-set)
 		ExtendedBitSet chromosome = coverClassifier;
@@ -266,7 +270,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	public int[] classify(ClassifierSet aSet, double[] dataInstance) {
 
 		INaturalSelector selector = new BestClassifierSelector(true,
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 		// Generate MatchSet
 		ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);

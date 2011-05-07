@@ -3,10 +3,11 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
@@ -21,7 +22,7 @@ import java.util.Random;
  * @author Miltos Allamanis
  * 
  */
-public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * The data used at each classifier.
@@ -112,7 +113,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	private final double b;
 
 	/**
-	 * Acc0
+	 * Acc0.
 	 */
 	private final double acc0 = .99;
 
@@ -131,6 +132,8 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	private final int n = 10;
 
+	private final AbstractLearningClassifierSystem myLcs;
+	
 	/**
 	 * The constructor.
 	 * 
@@ -142,11 +145,12 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	public MlUCSUpdateAlgorithm(
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
 			final double learningRate, final int ageThreshold,
-			final int numberOfLabels) {
+			final int numberOfLabels, final AbstractLearningClassifierSystem lcs) {
 		this.ga = geneticAlgorithm;
 		this.b = learningRate;
 		deleteAge = ageThreshold;
 		this.numberOfLabels = numberOfLabels;
+		myLcs = lcs;
 	}
 
 	/**
@@ -159,7 +163,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -442,7 +446,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	}
 
 	@Override
-	protected final void updateSet(final ClassifierSet population,
+	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();

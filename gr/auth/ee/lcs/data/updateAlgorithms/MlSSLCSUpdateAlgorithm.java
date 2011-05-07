@@ -3,10 +3,11 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
@@ -18,7 +19,7 @@ import java.io.Serializable;
  * @author Miltos Allamanis
  * 
  */
-public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+public class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * The Ml-SS-LCS classifier data object.
@@ -102,6 +103,8 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	private final double strengthReward, penalty;
 
+	private final AbstractLearningClassifierSystem myLcs;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -121,13 +124,14 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	public MlSSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final int labels,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final int subsumptionExperience, final double subsumptionAccuracy) {
+			final int subsumptionExperience, final double subsumptionAccuracy,AbstractLearningClassifierSystem lcs) {
 		numberOfLabels = labels;
 		strengthReward = reward;
 		ga = geneticAlgorithm;
 		penalty = penaltyPercent;
 		subsumptionExperienceThreshold = subsumptionExperience;
 		subsumptionAccuracyThreshold = subsumptionAccuracy;
+		myLcs = lcs;
 	}
 
 	/*
@@ -139,7 +143,7 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	public void cover(ClassifierSet population, int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -236,7 +240,7 @@ public class MlSSLCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	protected void updateSet(ClassifierSet population, ClassifierSet matchSet,
+	public void updateSet(ClassifierSet population, ClassifierSet matchSet,
 			int instanceIndex, boolean evolve) {
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 

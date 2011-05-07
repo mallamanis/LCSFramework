@@ -17,6 +17,10 @@ import org.junit.Test;
  */
 public class SinglePointCrossoverTest extends SinglePointCrossover {
 
+	public SinglePointCrossoverTest() {
+		super(null);
+	}
+	
 	/**
 	 * Test method for
 	 * {@link gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover#performCrossover(gr.auth.ee.lcs.utilities.ExtendedBitSet, gr.auth.ee.lcs.utilities.ExtendedBitSet, int)}

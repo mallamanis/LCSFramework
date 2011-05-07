@@ -3,13 +3,14 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
@@ -35,7 +36,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class TransformASLCS {
+public class TransformASLCS extends AbstractLearningClassifierSystem{
 	/**
 	 * @param args
 	 * @throws IOException
@@ -50,7 +51,7 @@ public class TransformASLCS {
 				numOfLabels);
 		TransformASLCS trucs = new TransformASLCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
-		trucs.run();
+		trucs.train();
 
 	}
 
@@ -138,6 +139,8 @@ public class TransformASLCS {
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
+	
+	GenericMultiLabelRepresentation rep;
 
 	/**
 	 * Constructor.
@@ -150,16 +153,34 @@ public class TransformASLCS {
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
+	 * @throws IOException 
 	 */
 	public TransformASLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final float problemLC, ILabelSelector transformSelector) {
+			final float problemLC, ILabelSelector transformSelector) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.targetLC = problemLC;
 		this.selector = transformSelector;
+		
+		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
+
+		rep = new GenericMultiLabelRepresentation(
+				inputFile, PRECISION_BITS, numberOfLabels,
+				GenericMultiLabelRepresentation.EXACT_MATCH, 0, .7, this);
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		
+		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+		
+		this.setElements(rep, strategy);
+		
 	}
 
 	/**
@@ -167,33 +188,25 @@ public class TransformASLCS {
 	 * 
 	 * @throws IOException
 	 */
-	public void run() throws IOException {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA);
-
-		GenericMultiLabelRepresentation rep = new GenericMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH, 0, .7);
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		ClassifierTransformBridge.setInstance(rep);
-
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga);
+	@Override
+	public void train() {
+		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		
 
 		ClassifierSet rulePopulation = new ClassifierSet(null);
 
 		ArffLoader loader = new ArffLoader();
-		loader.loadInstances(inputFile, true);
+		try {
+			loader.loadInstances(inputFile, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true);
+				ClassifierTransformBridge.instances, true, this);
 		// myExample.registerHook(new FileLogger(inputFile + "_result.txt",
 		// eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
-				loader.trainSet, numberOfLabels, true);
+				loader.trainSet, numberOfLabels, true, this);
 		// myExample.registerHook(slEval);
 
 		do {
@@ -203,7 +216,7 @@ public class TransformASLCS {
 					new FixedSizeSetWorstFitnessDeletion(
 							populationSize,
 							new RouletteWheelSelector(
-									AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
+									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 									true)));
 			myExample.train(iterations, brpopulation);
 			myExample.updatePopulation(iterations / 10, brpopulation);
@@ -217,37 +230,37 @@ public class TransformASLCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 
 		ExactMatchEvalutor trainEval = new ExactMatchEvalutor(loader.trainSet,
-				true);
+				true, this);
 		trainEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator trainhamEval = new HammingLossEvaluator(
-				loader.trainSet, true, numberOfLabels);
+				loader.trainSet, true, numberOfLabels, this);
 		trainhamEval.evaluateSet(rulePopulation);
 		AccuracyEvaluator trainaccEval = new AccuracyEvaluator(loader.trainSet,
-				true);
+				true, this);
 		trainaccEval.evaluateSet(rulePopulation);
 
 		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 		AllSingleLabelEvaluator teEval = new AllSingleLabelEvaluator(
-				loader.testSet, numberOfLabels, true);
+				loader.testSet, numberOfLabels, true, this);
 		teEval.evaluateSet(rulePopulation);
 		eval.evaluateSet(rulePopulation);
 		slEval.evaluateSet(rulePopulation);
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true);
+				true, this);
 		testEval.evaluateSet(rulePopulation);
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels);
+				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
 		accEval.evaluateSet(rulePopulation);
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);

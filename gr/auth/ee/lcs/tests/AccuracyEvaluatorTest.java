@@ -1,10 +1,11 @@
 package gr.auth.ee.lcs.tests;
 
 import static org.junit.Assert.assertTrue;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
@@ -21,22 +22,25 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public class AccuracyEvaluatorTest {
+public class AccuracyEvaluatorTest{
 
 	/**
 	 * A generic ml representation.
 	 */
 	GenericMultiLabelRepresentation rep;
+	
+	MockLCS lcs;
 
 	@Before
 	public void setUp() throws Exception {
+		lcs = new MockLCS();
+		
 		// Create instances
-
 		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new GenericMultiLabelRepresentation(list, names, 3,
-				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7);
-		ClassifierTransformBridge.setInstance(rep);
+				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7,lcs);
+		
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
@@ -47,22 +51,23 @@ public class AccuracyEvaluatorTest {
 		list[4] = rep.new GenericLabel(rep.getChromosomeSize(), "Bad", .33);
 
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		ClassifierTransformBridge.setInstance(rep);
+		
 
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				5, .99, 50, 0.01, null);
+		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(
+				5, .99, 50, 0.01, null, lcs);
+		lcs.setElements(rep, update);
 	}
 
 	@Test
 	public void testEvaluateSet() {
 		double[][] instances = { { 0, 1, 1, 0, 1 }, { 0, 1, 1, 0, 1 } };
 		ExtendedBitSet set1 = new ExtendedBitSet("11011101111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 		ex1.experience = 100;
 		ClassifierSet set = new ClassifierSet(null);
 		ex1.setComparisonValue(0, 1);
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
-		AccuracyEvaluator a = new AccuracyEvaluator(instances, false);
+		AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
 		assertTrue(a.evaluateSet(set) == 1);
 	}
 
@@ -70,13 +75,13 @@ public class AccuracyEvaluatorTest {
 	public void test2EvaluateSet() {
 		double[][] instances = { { 0, 1, 1, 1, 1 }, { 0, 1, 1, 0, 1 } };
 		ExtendedBitSet set1 = new ExtendedBitSet("11011101111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 
 		ClassifierSet set = new ClassifierSet(null);
 		ex1.setComparisonValue(0, 1);
 		ex1.experience = 100;
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
-		AccuracyEvaluator a = new AccuracyEvaluator(instances, false);
+		AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
 		final double evalResult = a.evaluateSet(set);
 		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
 	}

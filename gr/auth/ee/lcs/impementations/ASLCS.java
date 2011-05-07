@@ -3,13 +3,14 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
@@ -33,7 +34,7 @@ import java.io.IOException;
  * @author Miltiadis Allamanis
  * 
  */
-public class ASLCS {
+public class ASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The main for running AS-LCS.
 	 * 
@@ -48,7 +49,7 @@ public class ASLCS {
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
 		ASLCS aslcs = new ASLCS(file, iterations, populationSize);
-		aslcs.run();
+		aslcs.train();
 	}
 
 	/**
@@ -150,6 +151,8 @@ public class ASLCS {
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
+	private final SingleClassRepresentation rep;
+	
 	/**
 	 * The AS-LCS constructor.
 	 * 
@@ -159,11 +162,28 @@ public class ASLCS {
 	 *            the number of iterations to run the training
 	 * @param populationSize
 	 *            the population size to use
+	 * @throws IOException 
 	 */
-	public ASLCS(String filename, int iterations, int populationSize) {
+	public ASLCS(String filename, int iterations, int populationSize) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
+		
+		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
+
+		 rep = new SingleClassRepresentation(
+				inputFile, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE,this);
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		
+		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
+				MATCHSET_GA_RUN_PROBABILITY, ga, this);
+		
+		this.setElements(rep, strategy);
 	}
 
 	/**
@@ -172,34 +192,26 @@ public class ASLCS {
 	 * @throws IOException
 	 *             if file not found
 	 */
-	public void run() throws IOException {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE);
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA);
-
-		SingleClassRepresentation rep = new SingleClassRepresentation(
-				inputFile, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
-		ClassifierTransformBridge.setInstance(rep);
-
-		AbstractUpdateAlgorithmStrategy.currentStrategy = new ASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
-				MATCHSET_GA_RUN_PROBABILITY, ga);
-
+	@Override
+	public void train(){
+		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
-								AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_DELETION,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
 		ArffLoader trainer = new ArffLoader();
-		trainer.loadInstances(inputFile, true);
+		try {
+			trainer.loadInstances(inputFile, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true);
+				ClassifierTransformBridge.instances, true, this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 		System.out.println("Performing only updates...");
@@ -210,9 +222,9 @@ public class ASLCS {
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 		rulePopulation.print();
@@ -220,16 +232,16 @@ public class ASLCS {
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), ClassifierTransformBridge.instances);
+				rep.getLabelNames(), ClassifierTransformBridge.instances, this);
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
-				true);
+				true, this);
 		testEval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator testconf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(),
-				InstanceToDoubleConverter.convert(trainer.testSet));
+				InstanceToDoubleConverter.convert(trainer.testSet), this);
 		testconf.evaluateSet(rulePopulation);
 
 	}

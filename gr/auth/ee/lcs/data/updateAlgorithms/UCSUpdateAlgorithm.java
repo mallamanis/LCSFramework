@@ -3,10 +3,11 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
@@ -20,7 +21,7 @@ import java.io.Serializable;
  * @navassoc - - - UCSClassifierData
  * @author Miltos Allamanis
  */
-public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implements Serializable {
+public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements Serializable {
 
 	/**
 	 * Generated Serial.
@@ -105,6 +106,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implemen
 	 * classified as correct (and added to the correct set).
 	 */
 	private final transient double correctSetThreshold;
+	
+	private final transient AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * Default constructor.
@@ -133,7 +136,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implemen
 			final int experienceThreshold,
 			final double gaMatchSetRunProbability,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final int thetaDel, final double correctSetTheshold) {
+			final int thetaDel, final double correctSetTheshold, final AbstractLearningClassifierSystem lcs) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -143,6 +146,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implemen
 		this.ga = geneticAlgorithm;
 		deleteAge = thetaDel;
 		this.correctSetThreshold = correctSetTheshold;
+		myLcs = lcs;
 
 	}
 
@@ -156,7 +160,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implemen
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -354,7 +358,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implemen
 	 * match set setB is the correct set
 	 */
 	@Override
-	protected final void updateSet(final ClassifierSet population,
+	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		updateMeanPopulationFitness(population);
@@ -377,7 +381,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implemen
 		 * Update
 		 */
 		// Number of active labels? (no don't cares)
-		final int numberOfLabels = ClassifierTransformBridge.getInstance()
+		final int numberOfLabels = myLcs.getClassifierTransformBridge()
 				.getDataInstanceLabels(
 						ClassifierTransformBridge.instances[instanceIndex]).length;
 		performUpdate(matchSet, correctSet);

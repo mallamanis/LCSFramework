@@ -6,7 +6,7 @@ package gr.auth.ee.lcs.data.updateAlgorithms;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -17,12 +17,12 @@ import java.util.Random;
  * 
  */
 public class SequentialMlUpdateAlgorithm extends
-		AbstractUpdateAlgorithmStrategy {
+		AbstractUpdateStrategy {
 
 	/**
 	 * The update strategy used by the problem.
 	 */
-	private final AbstractUpdateAlgorithmStrategy strategy;
+	private final AbstractUpdateStrategy strategy;
 
 	/**
 	 * The GA to be used at updating.
@@ -45,7 +45,7 @@ public class SequentialMlUpdateAlgorithm extends
 	 *            the GA to be used
 	 */
 	public SequentialMlUpdateAlgorithm(
-			final AbstractUpdateAlgorithmStrategy updateMethod,
+			final AbstractUpdateStrategy updateMethod,
 			final IGeneticAlgorithmStrategy geneticAlgorithm, int numberOfLabels) {
 		this.strategy = updateMethod;
 		this.numberOfLabels = numberOfLabels;
@@ -170,7 +170,7 @@ public class SequentialMlUpdateAlgorithm extends
 	}
 
 	@Override
-	protected final void updateSet(final ClassifierSet population,
+	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		// Generate random labels

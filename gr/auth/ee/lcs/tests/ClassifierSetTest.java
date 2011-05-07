@@ -25,13 +25,16 @@ public class ClassifierSetTest {
 
 	SimpleBooleanRepresentation test;
 
+	MockLCS lcs;
+	
 	/**
 	 * Setup test
 	 */
 	@Before
 	public void setup() {
-		test = new SimpleBooleanRepresentation(0.5, 4);
-		ClassifierTransformBridge.setInstance(test);
+		lcs = new MockLCS();
+		test = new SimpleBooleanRepresentation(0.5, 4, lcs);
+		lcs.setElements(test, null);
 
 	}
 
@@ -43,7 +46,7 @@ public class ClassifierSetTest {
 	@Test
 	public void testAddClassifier() {
 		ClassifierSet testSet = new ClassifierSet(null);
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10010111"));
 		testClassifier.setActionAdvocated(1);
 
@@ -58,7 +61,7 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getTotalNumerosity(), 5);
 		// Create a classifier with the same chromosome but different advocated
 		// action
-		Classifier testClassifier2 = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier2 = lcs.getNewClassifier(new ExtendedBitSet(
 				"10010111"));
 		testClassifier2.setActionAdvocated(0);
 		testSet.addClassifier(new Macroclassifier(testClassifier2, 3), true);
@@ -69,7 +72,7 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getClassifierNumerosity(testClassifier2), 13);
 		assertEquals(testSet.getTotalNumerosity(), 13 + 5);
 
-		Classifier testClassifier3 = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier3 = lcs.getNewClassifier(new ExtendedBitSet(
 				"10001100"));
 		testClassifier3.setActionAdvocated(1);
 
@@ -90,7 +93,7 @@ public class ClassifierSetTest {
 	@Test
 	public void testDeleteClassifier() {
 		ClassifierSet testSet = new ClassifierSet(null);
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10010111"));
 		testClassifier.setActionAdvocated(1);
 
@@ -118,7 +121,7 @@ public class ClassifierSetTest {
 
 	@Test
 	public void testRemoveAll() {
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10010111"));
 		ClassifierSet testSet = new ClassifierSet(null);
 		for (int i = 0; i < 10; i++)
@@ -143,7 +146,7 @@ public class ClassifierSetTest {
 	@Test
 	public void testSubsumptionClassifierSet() {
 		ClassifierSet testSet = new ClassifierSet(null);
-		Classifier subsumableClassifier = new Classifier(new ExtendedBitSet(
+		Classifier subsumableClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10010110"));
 		subsumableClassifier.setSubsumptionAbility(true);
 		testSet.addClassifier(new Macroclassifier(subsumableClassifier, 1),
@@ -152,7 +155,7 @@ public class ClassifierSetTest {
 		assertEquals(testSet.getTotalNumerosity(), 1);
 		assertEquals(testSet.getClassifierNumerosity(subsumableClassifier), 1);
 
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"10010111"));
 		assertTrue(subsumableClassifier.isMoreGeneral(testClassifier));
 

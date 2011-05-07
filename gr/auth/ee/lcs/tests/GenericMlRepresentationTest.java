@@ -29,16 +29,20 @@ public class GenericMlRepresentationTest {
 	 */
 	GenericMultiLabelRepresentation rep;
 
+	MockLCS lcs;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		lcs = new MockLCS();
+		
 		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new GenericMultiLabelRepresentation(list, names, 3,
-				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7);
-		ClassifierTransformBridge.setInstance(rep);
+				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7, lcs);
+		
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
@@ -49,7 +53,8 @@ public class GenericMlRepresentationTest {
 		list[4] = rep.new GenericLabel(rep.getChromosomeSize(), "Bad", .33);
 
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(0));
-		ClassifierTransformBridge.setInstance(rep);
+		
+		lcs.setElements(rep, null);
 	}
 
 	/**
@@ -60,18 +65,18 @@ public class GenericMlRepresentationTest {
 	@Test
 	public void testClassifyAbilityAll() {
 		ExtendedBitSet set1 = new ExtendedBitSet("11011100111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 		double[][] instances = { { 2, 0, 1, 0, 1 } };
 		ClassifierTransformBridge.instances = instances;
 
 		assertTrue(rep.classifyAbilityAll(ex1, 0) == 1);
 
 		set1 = new ExtendedBitSet("11111100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.classifyAbilityAll(ex1, 0) == 0);
 
 		set1 = new ExtendedBitSet("11101000111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.classifyAbilityAll(ex1, 0) == 1);
 
 	}
@@ -84,7 +89,7 @@ public class GenericMlRepresentationTest {
 	@Test
 	public void testClassifyAbilityLabel() {
 		ExtendedBitSet set1 = new ExtendedBitSet("11011100111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 		double[][] instances = { { 2, 0, 1, 0, 1 } };
 		ClassifierTransformBridge.instances = instances;
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == 1);
@@ -92,25 +97,25 @@ public class GenericMlRepresentationTest {
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 2) == 1);
 
 		set1 = new ExtendedBitSet("11111100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == 1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 1) == -1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 2) == 1);
 
 		set1 = new ExtendedBitSet("10111100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == 1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 1) == -1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 2) == 0);
 
 		set1 = new ExtendedBitSet("10101000111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == 0);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 1) == 0);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 2) == 0);
 
 		set1 = new ExtendedBitSet("01110100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == -1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 1) == -1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 2) == -1);
@@ -124,29 +129,29 @@ public class GenericMlRepresentationTest {
 	@Test
 	public void testGetClassification() {
 		ExtendedBitSet set1 = new ExtendedBitSet("11011100111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 		int[] instanceLabels = rep.getClassification(ex1);
 		int[] expected = { 0, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected));
 
 		set1 = new ExtendedBitSet("11001100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
 		assertTrue(Arrays.equals(instanceLabels, expected));
 
 		set1 = new ExtendedBitSet("10001100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
 		int[] expected2 = { 0 };
 		assertTrue(Arrays.equals(instanceLabels, expected2));
 
 		set1 = new ExtendedBitSet("00001100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
 		assertTrue(Arrays.equals(instanceLabels, expected2));
 
 		set1 = new ExtendedBitSet("1000100111011");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
 		int[] expected3 = {};
 		assertTrue(Arrays.equals(instanceLabels, expected3));
@@ -183,34 +188,34 @@ public class GenericMlRepresentationTest {
 	@Test
 	public void testMoreGeneral() {
 		ExtendedBitSet set1 = new ExtendedBitSet("11011100111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 =lcs.getNewClassifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet("11011100111011");
-		Classifier ex2 = new Classifier(set2);
+		Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 		assertTrue(rep.isMoreGeneral(ex1, ex1));
 
 		set2 = new ExtendedBitSet("11011100111010");
-		ex2 = new Classifier(set1);
+		ex2 = lcs.getNewClassifier(set1);
 		assertTrue(rep.isMoreGeneral(ex2, ex1));
 
 		set1 = new ExtendedBitSet("11011100111011");
-		ex1 = new Classifier(set1);
+		ex1 =lcs.getNewClassifier(set1);
 		set2 = new ExtendedBitSet("11011100111010");
-		ex2 = new Classifier(set2);
+		ex2 = lcs.getNewClassifier(set2);
 		assertFalse(rep.isMoreGeneral(ex1, ex2));
 		assertTrue(rep.isMoreGeneral(ex2, ex1));
 
 		set2 = new ExtendedBitSet("11001100111011");
-		ex2 = new Classifier(set2);
+		ex2 = lcs.getNewClassifier(set2);
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 
 		set1 = new ExtendedBitSet("11011100101010");
-		ex1 = new Classifier(set1);
+		ex1 = lcs.getNewClassifier(set1);
 		set2 = new ExtendedBitSet("11001100111011");
-		ex2 = new Classifier(set2);
+		ex2 = lcs.getNewClassifier(set2);
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 	}
@@ -222,32 +227,32 @@ public class GenericMlRepresentationTest {
 		int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
 		System.out.print(Arrays.toString(instanceLabels1));
 		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
-		Classifier ex = new Classifier(set);
+		Classifier ex = lcs.getNewClassifier(set);
 
 		assertTrue(rep.classifyAbsolute(ex, 0) == 1);
 		assertTrue(rep.classifyHamming(ex, 0) == 1);
 		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
 
 		set = new ExtendedBitSet("11000001010101");
-		ex = new Classifier(set);
+		ex = lcs.getNewClassifier(set);
 		assertTrue(rep.classifyAbsolute(ex, 0) == 1);
 		assertTrue(rep.classifyHamming(ex, 0) == 1);
 		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
 
 		set = new ExtendedBitSet("10000001010101");
-		ex = new Classifier(set);
+		ex = lcs.getNewClassifier(set);
 		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
 		assertTrue(rep.classifyHamming(ex, 0) == 0);
 		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
 
 		set = new ExtendedBitSet("11110001010101");
-		ex = new Classifier(set);
+		ex = lcs.getNewClassifier(set);
 		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
 		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (1. / 2.)) < 0.0001);
 		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
 
 		set = new ExtendedBitSet("11110101010101");
-		ex = new Classifier(set);
+		ex = lcs.getNewClassifier(set);
 		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
 		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2. / 3.)) < 0.0001);
 		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
@@ -256,7 +261,7 @@ public class GenericMlRepresentationTest {
 	@Test
 	public void testVoting() {
 		ExtendedBitSet set1 = new ExtendedBitSet("11011100111011");
-		Classifier ex1 = new Classifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 		// TODO
 	}
 

@@ -3,6 +3,8 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -28,6 +30,8 @@ public class SingleLabelEvaluator implements IEvaluator {
 	 * The label index of the label under evaluation.
 	 */
 	private final int label;
+	
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * Constructor.
@@ -38,15 +42,15 @@ public class SingleLabelEvaluator implements IEvaluator {
 	 *            the set to evaluate the label on
 	 */
 	public SingleLabelEvaluator(final int labelIndex,
-			final Instances evaluateSet) {
+			final Instances evaluateSet, AbstractLearningClassifierSystem lcs) {
 		label = labelIndex;
 		instanceSet = evaluateSet;
+		myLcs = lcs;
 	}
 
 	@Override
 	public final double evaluateSet(final ClassifierSet classifiers) {
-		final ClassifierTransformBridge bridge = ClassifierTransformBridge
-				.getInstance();
+		final ClassifierTransformBridge bridge = myLcs.getClassifierTransformBridge();
 		int tp = 0;
 		double[][] instances = InstanceToDoubleConverter.convert(instanceSet);
 

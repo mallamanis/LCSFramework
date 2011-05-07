@@ -3,9 +3,10 @@
  */
 package gr.auth.ee.lcs.data.representations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ProportionalCut;
@@ -206,9 +207,9 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 *             when file is not found
 	 */
 	public UniLabelRepresentation(final String inputArff, final int precision,
-			final int labels, final double generalizationRate)
+			final int labels, final double generalizationRate, final AbstractLearningClassifierSystem lcs)
 			throws IOException {
-		super(inputArff, precision, labels, generalizationRate);
+		super(inputArff, precision, labels, generalizationRate, lcs);
 
 	}
 
@@ -315,7 +316,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 				final int classification = getClassification(cl)[0];
 
 				lblProbs[classification] += numerosity
-						* cl.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+						* cl.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 			}
 

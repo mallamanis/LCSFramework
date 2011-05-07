@@ -3,10 +3,11 @@
  */
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
@@ -18,7 +19,7 @@ import java.io.Serializable;
  * @author Miltos Allamanis
  * 
  */
-public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * A data object for the UCS update algorithm.
@@ -102,6 +103,8 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * The number of labels used.
 	 */
 	private final int numberOfLabels;
+	
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * Default constructor.
@@ -131,7 +134,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 			final double gaMatchSetRunProbability,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
 			final int thetaDel, final double correctSetTheshold,
-			final int labels) {
+			final int labels, final AbstractLearningClassifierSystem lcs) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -142,6 +145,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		deleteAge = thetaDel;
 		this.correctSetThreshold = correctSetTheshold;
 		numberOfLabels = labels;
+		myLcs = lcs;
 	}
 
 	/**
@@ -154,7 +158,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -316,11 +320,11 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * match set setB is the correct set
 	 */
 	@Override
-	protected final void updateSet(final ClassifierSet population,
+	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 
-		final int[] classifications = ClassifierTransformBridge.getInstance()
+		final int[] classifications = myLcs.getClassifierTransformBridge()
 				.getDataInstanceLabels(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		final int numOfCorrectSets = classifications.length;

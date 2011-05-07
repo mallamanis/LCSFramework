@@ -3,6 +3,7 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IEvaluator;
 import weka.core.Instances;
@@ -37,11 +38,11 @@ public final class AllSingleLabelEvaluator implements IEvaluator {
 	 *            print results to stout
 	 */
 	public AllSingleLabelEvaluator(final Instances evaluateSet,
-			final int numberOfLabels, final boolean printResults) {
+			final int numberOfLabels, final boolean printResults, final AbstractLearningClassifierSystem lcs) {
 		print = printResults;
 		evaluators = new SingleLabelEvaluator[numberOfLabels];
 		for (int i = 0; i < numberOfLabels; i++)
-			evaluators[i] = new SingleLabelEvaluator(i, evaluateSet);
+			evaluators[i] = new SingleLabelEvaluator(i, evaluateSet, lcs);
 	}
 
 	/*

@@ -1,9 +1,10 @@
 package gr.auth.ee.lcs.data.updateAlgorithms;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * 
  * @author Miltos Allamanis
  */
-public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * An object representing the classifier data for the XCS update algorithm.
@@ -29,7 +30,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		private static final long serialVersionUID = -4348877142305226957L;
 
 		/**
-		 * XCS Prediction Error
+		 * XCS Prediction Error.
 		 */
 		public double predictionError = 0;
 
@@ -99,6 +100,8 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * Genetic Algorithm.
 	 */
 	public IGeneticAlgorithmStrategy ga;
+	
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * Constructor.
@@ -126,7 +129,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 			final double e0, final double alpha, final double n,
 			final double fitnessThreshold, final int experienceThreshold,
 			final double gaMatchSetRunProbability,
-			final IGeneticAlgorithmStrategy geneticAlgorithm) {
+			final IGeneticAlgorithmStrategy geneticAlgorithm, AbstractLearningClassifierSystem lcs) {
 		this.subsumptionFitnessThreshold = fitnessThreshold;
 		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.beta = beta;
@@ -136,6 +139,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 		this.n = n;
 		this.ga = geneticAlgorithm;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
+		myLcs = lcs;
 	}
 
 	/**
@@ -148,7 +152,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = ClassifierTransformBridge.getInstance()
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
 				.createRandomCoveringClassifier(
 						ClassifierTransformBridge.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
@@ -328,7 +332,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
 	 * gr.auth.ee.lcs.classifiers.ClassifierSet, int)
 	 */
 	@Override
-	protected final void updateSet(final ClassifierSet population,
+	public final void updateSet(final ClassifierSet population,
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 		/*

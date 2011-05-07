@@ -3,9 +3,10 @@
  */
 package gr.auth.ee.lcs.data.representations;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.AbstractUpdateAlgorithmStrategy;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.ProportionalCut;
@@ -259,7 +260,7 @@ public final class GenericMultiLabelRepresentation extends
 					final int numerosity = matchSet.getClassifierNumerosity(i);
 					final double fitness = numerosity
 							* currentClassifier
-									.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+									.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 					if (fitness > confidenceTable[label]) {
 						final String cons = (attributeList[attributeList.length
 								- numberOfLabels + label])
@@ -347,7 +348,7 @@ public final class GenericMultiLabelRepresentation extends
 				final int classifierNumerosity = matchSet
 						.getClassifierNumerosity(i);
 				final double fitness = currentClassifier
-						.getComparisonValue(AbstractUpdateAlgorithmStrategy.COMPARISON_MODE_EXPLOITATION);
+						.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 				for (int label = 0; label < numberOfLabels; label++) {
 					final String cons = (attributeList[attributeList.length
@@ -482,9 +483,9 @@ public final class GenericMultiLabelRepresentation extends
 			final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final int type, final double lblgeneralizationRate,
-			final double attributeGeneralizationRate) {
+			final double attributeGeneralizationRate, final AbstractLearningClassifierSystem lcs) {
 		super(attributes, ruleConsequentsNames, labels,
-				attributeGeneralizationRate);
+				attributeGeneralizationRate, lcs);
 		metricType = type;
 		labelGeneralizationRate = lblgeneralizationRate;
 	}
@@ -510,8 +511,8 @@ public final class GenericMultiLabelRepresentation extends
 	public GenericMultiLabelRepresentation(final String inputArff,
 			final int precision, final int labels, final int type,
 			final double lblgeneralizationRate,
-			final double attributeGeneralizationRate) throws IOException {
-		super(inputArff, precision, labels, attributeGeneralizationRate);
+			final double attributeGeneralizationRate, final AbstractLearningClassifierSystem lcs) throws IOException {
+		super(inputArff, precision, labels, attributeGeneralizationRate, lcs);
 		metricType = type;
 		labelGeneralizationRate = lblgeneralizationRate;
 	}

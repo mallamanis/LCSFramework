@@ -11,6 +11,7 @@ import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -21,6 +22,13 @@ import org.junit.Test;
  */
 public class SimpleBooleanRepresentationTest {
 
+	MockLCS lcs;
+	
+	@Before
+	public void setUp() {
+		lcs = new MockLCS();
+	}
+	
 	/**
 	 * Test method for
 	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#isMatch(double[], gr.auth.ee.lcs.utilities.ExtendedBitSet)}
@@ -28,10 +36,10 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testIsMatch() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4);
-		ClassifierTransformBridge.setInstance(test);
+		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4, lcs);
+		lcs.setElements(test, null);
 		// Test Mask 1##0
-		Classifier testClassifier = new Classifier(new ExtendedBitSet(
+		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"11100001"));
 		double visionVector[] = new double[4];
 
@@ -54,7 +62,7 @@ public class SimpleBooleanRepresentationTest {
 		assertFalse(test.isMatch(visionVector, testClassifier));
 
 		// Test Mask ####
-		testClassifier = new Classifier(new ExtendedBitSet("00000000"));
+		testClassifier = lcs.getNewClassifier(new ExtendedBitSet("00000000"));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
@@ -75,7 +83,7 @@ public class SimpleBooleanRepresentationTest {
 		assertTrue(test.isMatch(visionVector, testClassifier));
 
 		// Test Mask 0000
-		testClassifier = new Classifier(new ExtendedBitSet("01010101"));
+		testClassifier = lcs.getNewClassifier(new ExtendedBitSet("01010101"));
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
@@ -96,7 +104,7 @@ public class SimpleBooleanRepresentationTest {
 		assertFalse(test.isMatch(visionVector, testClassifier));
 
 		// Test Mask 1111
-		testClassifier = new Classifier(new ExtendedBitSet("11111111"));
+		testClassifier = lcs.getNewClassifier(new ExtendedBitSet("11111111"));
 
 		visionVector[0] = 1;
 		visionVector[1] = 1;
@@ -124,19 +132,19 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testToNaturalLanguageString() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4);
-		ClassifierTransformBridge.setInstance(test);
+		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4, lcs);
+		lcs.setElements(test, null);
 		Classifier testClassifier;
 
-		testClassifier = new Classifier(new ExtendedBitSet("01110110"));
+		testClassifier = lcs.getNewClassifier(new ExtendedBitSet("01110110"));
 		testClassifier.setActionAdvocated(0);
 		assertEquals(test.toNaturalLanguageString(testClassifier), "010#=>0");
 
-		testClassifier = new Classifier(new ExtendedBitSet("10011111"));
+		testClassifier = lcs.getNewClassifier(new ExtendedBitSet("10011111"));
 		testClassifier.setActionAdvocated(1);
 		assertEquals(test.toNaturalLanguageString(testClassifier), "#011=>1");
 
-		testClassifier = new Classifier(new ExtendedBitSet("00000000"));
+		testClassifier = lcs.getNewClassifier(new ExtendedBitSet("00000000"));
 		testClassifier.setActionAdvocated(1);
 		assertEquals(test.toNaturalLanguageString(testClassifier), "####=>1");
 	}
@@ -149,8 +157,9 @@ public class SimpleBooleanRepresentationTest {
 	@Test
 	public void testCreateRandomCoveringClassifier() {
 		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0.5,
-				4);
-		ClassifierTransformBridge.setInstance(test);
+				4, lcs);
+		lcs.setElements(test, null);
+		
 		double visionVector[] = new double[4];
 		Classifier testClassifier;
 
@@ -183,33 +192,34 @@ public class SimpleBooleanRepresentationTest {
 	@Test
 	public void testIsMoreGeneral() {
 		SimpleBooleanRepresentation testRep = new SimpleBooleanRepresentation(
-				0.5, 4);
-		ClassifierTransformBridge.setInstance(testRep);
-		Classifier base = new Classifier();
-		Classifier test = new Classifier();
+				0.5, 4, lcs);
+		lcs.setElements(testRep, null);
+		
+		Classifier base = lcs.getNewClassifier();
+		Classifier test =lcs.getNewClassifier();
 
-		base = new Classifier(new ExtendedBitSet("10110010")); // #1##
-		test = new Classifier(new ExtendedBitSet("11110110")); // 110#
+		base = lcs.getNewClassifier(new ExtendedBitSet("10110010")); // #1##
+		test = lcs.getNewClassifier(new ExtendedBitSet("11110110")); // 110#
 		base.setActionAdvocated(1);
 		test.setActionAdvocated(1);
 		assertTrue(testRep.isMoreGeneral(base, test));
 
-		base = new Classifier(new ExtendedBitSet("11110010")); // 11##
-		test = new Classifier(new ExtendedBitSet("11110110")); // 110#
+		base = lcs.getNewClassifier(new ExtendedBitSet("11110010")); // 11##
+		test = lcs.getNewClassifier(new ExtendedBitSet("11110110")); // 110#
 		base.setActionAdvocated(1);
 		test.setActionAdvocated(0);
 		assertFalse(testRep.isMoreGeneral(base, test));
 
-		base = new Classifier(new ExtendedBitSet("11110010")); // 11##
-		test = new Classifier(new ExtendedBitSet("10110110")); // #10#
+		base = lcs.getNewClassifier(new ExtendedBitSet("11110010")); // 11##
+		test = lcs.getNewClassifier(new ExtendedBitSet("10110110")); // #10#
 		base.setActionAdvocated(0);
 		test.setActionAdvocated(0);
 		assertFalse(testRep.isMoreGeneral(base, test));
 
-		test = new Classifier(new ExtendedBitSet("11110010")); // 11##
+		test = lcs.getNewClassifier(new ExtendedBitSet("11110010")); // 11##
 		assertTrue(testRep.isMoreGeneral(base, test));
 
-		test = new Classifier(new ExtendedBitSet("10110010")); // #1##
+		test = lcs.getNewClassifier(new ExtendedBitSet("10110010")); // #1##
 		assertFalse(testRep.isMoreGeneral(base, test));
 
 	}
@@ -222,9 +232,9 @@ public class SimpleBooleanRepresentationTest {
 	@Test
 	public void testGetChromosomeSize() {
 		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0.5,
-				4);
+				4, lcs);
 		assertEquals(test.getChromosomeSize(), 8);
-		test = new SimpleBooleanRepresentation(0.5, 5);
+		test = new SimpleBooleanRepresentation(0.5, 5, lcs);
 		assertEquals(test.getChromosomeSize(), 10);
 	}
 
@@ -236,7 +246,7 @@ public class SimpleBooleanRepresentationTest {
 	@Test
 	public void testSetVisionSize() {
 		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0.5,
-				4);
+				4, lcs);
 		test.setVisionSize(10);
 		assertEquals(test.getChromosomeSize(), 20);
 	}

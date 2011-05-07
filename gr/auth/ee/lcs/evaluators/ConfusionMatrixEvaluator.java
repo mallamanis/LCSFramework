@@ -3,6 +3,8 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -18,6 +20,8 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	 * A Weka confusion matrix.
 	 */
 	private final ConfusionMatrix conf;
+	
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The instances.
@@ -25,7 +29,7 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	private final double[][] instances;
 
 	/**
-	 * Constructor for creating a confusion matrix
+	 * Constructor for creating a confusion matrix.
 	 * 
 	 * @param classNames
 	 *            the class names
@@ -34,9 +38,10 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	 *            matrix
 	 */
 	public ConfusionMatrixEvaluator(final String[] classNames,
-			final double[][] set) {
+			final double[][] set, final AbstractLearningClassifierSystem lcs) {
 		conf = new ConfusionMatrix(classNames);
 		this.instances = set;
+		myLcs = lcs;
 	}
 
 	/*
@@ -48,8 +53,7 @@ public class ConfusionMatrixEvaluator implements IEvaluator {
 	 */
 	@Override
 	public double evaluateSet(ClassifierSet classifiers) {
-		final ClassifierTransformBridge bridge = ClassifierTransformBridge
-				.getInstance();
+		final ClassifierTransformBridge bridge = myLcs.getClassifierTransformBridge();
 
 		for (int i = 0; i < instances.length; i++) {
 			final int[] classes = bridge.classify(classifiers, instances[i]);
