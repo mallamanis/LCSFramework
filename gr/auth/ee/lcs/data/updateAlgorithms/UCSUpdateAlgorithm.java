@@ -20,7 +20,12 @@ import java.io.Serializable;
  * @navassoc - - - UCSClassifierData
  * @author Miltos Allamanis
  */
-public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy {
+public class UCSUpdateAlgorithm extends AbstractUpdateAlgorithmStrategy implements Serializable {
+
+	/**
+	 * Generated Serial.
+	 */
+	private static final long serialVersionUID = 6158544873341943970L;
 
 	/**
 	 * A data object for the UCS update algorithm.
