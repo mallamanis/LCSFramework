@@ -39,19 +39,6 @@ public class RouletteWheelSelector implements INaturalSelector {
 		this.max = max;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(gr.auth.ee.lcs
-	 * .classifiers.ClassifierSet)
-	 */
-	@Override
-	public final int select(final ClassifierSet fromPopulation) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	/**
 	 * Roulette Wheel selection strategy.
 	 * 

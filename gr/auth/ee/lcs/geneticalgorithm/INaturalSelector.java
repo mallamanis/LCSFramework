@@ -23,13 +23,4 @@ public interface INaturalSelector {
 	void select(int howManyToSelect, ClassifierSet fromPopulation,
 			ClassifierSet toPopulation);
 
-	/**
-	 * The selection strategy.
-	 * 
-	 * @param fromPopulation
-	 *            the ClassifierSet to select classifiers from
-	 * @return the macroclassifier index of the selected by the NaturalSelector
-	 */
-	int select(ClassifierSet fromPopulation);
-
 }

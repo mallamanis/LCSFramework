@@ -76,8 +76,8 @@ public class TournamentSelector implements INaturalSelector {
 		percentSize = 0;
 	}
 
-	@Override
-	public int select(final ClassifierSet fromPopulation) {
+	
+	private int select(final ClassifierSet fromPopulation) {
 		int size;
 		if (tournamentSize == 0) {
 			size = (int) Math.floor(fromPopulation.getTotalNumerosity()
