@@ -7,7 +7,6 @@ import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ProportionalCut;
 
@@ -207,8 +206,8 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	 *             when file is not found
 	 */
 	public UniLabelRepresentation(final String inputArff, final int precision,
-			final int labels, final double generalizationRate, final AbstractLearningClassifierSystem lcs)
-			throws IOException {
+			final int labels, final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, labels, generalizationRate, lcs);
 
 	}
@@ -223,7 +222,7 @@ public class UniLabelRepresentation extends ComplexRepresentation {
 	@Override
 	public float classifyAbilityAll(final Classifier aClassifier,
 			final int instanceIndex) {
-		final int[] possibleLabels = getDataInstanceLabels(ClassifierTransformBridge.instances[instanceIndex]);
+		final int[] possibleLabels = getDataInstanceLabels(myLcs.instances[instanceIndex]);
 		final int ruleLabel = getClassification(aClassifier)[0];
 
 		if (Arrays.binarySearch(possibleLabels, ruleLabel) < 0) {

@@ -13,12 +13,12 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
  */
 public class SinglePointCrossover implements IBinaryGeneticOperator {
 
-	final AbstractLearningClassifierSystem myLcs; 
-	
+	final AbstractLearningClassifierSystem myLcs;
+
 	public SinglePointCrossover(AbstractLearningClassifierSystem lcs) {
 		myLcs = lcs;
 	}
-	
+
 	/**
 	 * The implementation of the abstract method.
 	 * 
@@ -34,16 +34,15 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 		 */
 		final int mutationPoint = (int) Math.round(Math.random()
 				* chromosomeSize - 1);
-		child = myLcs.getNewClassifier(performCrossover(classifierA, classifierB,
-				mutationPoint));
+		child = myLcs.getNewClassifier(performCrossover(classifierA,
+				classifierB, mutationPoint));
 		double newFitness = classifierA
 				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
 				+ classifierB
 						.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		newFitness /= 2;
 		child.setComparisonValue(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION,
-				newFitness);
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION, newFitness);
 		// TODO: Set specific update data
 		return child;
 	}

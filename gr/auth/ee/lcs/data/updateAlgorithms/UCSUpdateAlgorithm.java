@@ -8,7 +8,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -21,7 +20,8 @@ import java.io.Serializable;
  * @navassoc - - - UCSClassifierData
  * @author Miltos Allamanis
  */
-public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements Serializable {
+public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
+		Serializable {
 
 	/**
 	 * Generated Serial.
@@ -106,7 +106,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements Serial
 	 * classified as correct (and added to the correct set).
 	 */
 	private final transient double correctSetThreshold;
-	
+
 	private final transient AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -136,7 +136,8 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements Serial
 			final int experienceThreshold,
 			final double gaMatchSetRunProbability,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final int thetaDel, final double correctSetTheshold, final AbstractLearningClassifierSystem lcs) {
+			final int thetaDel, final double correctSetTheshold,
+			final AbstractLearningClassifierSystem lcs) {
 		this.a = alpha;
 		this.n = nParameter;
 		this.accuracy0 = acc0;
@@ -161,8 +162,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements Serial
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -382,8 +382,7 @@ public class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements Serial
 		 */
 		// Number of active labels? (no don't cares)
 		final int numberOfLabels = myLcs.getClassifierTransformBridge()
-				.getDataInstanceLabels(
-						ClassifierTransformBridge.instances[instanceIndex]).length;
+				.getDataInstanceLabels(myLcs.instances[instanceIndex]).length;
 		performUpdate(matchSet, correctSet);
 
 		/*

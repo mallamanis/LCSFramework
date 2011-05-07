@@ -38,7 +38,8 @@ public final class AllSingleLabelEvaluator implements IEvaluator {
 	 *            print results to stout
 	 */
 	public AllSingleLabelEvaluator(final Instances evaluateSet,
-			final int numberOfLabels, final boolean printResults, final AbstractLearningClassifierSystem lcs) {
+			final int numberOfLabels, final boolean printResults,
+			final AbstractLearningClassifierSystem lcs) {
 		print = printResults;
 		evaluators = new SingleLabelEvaluator[numberOfLabels];
 		for (int i = 0; i < numberOfLabels; i++)

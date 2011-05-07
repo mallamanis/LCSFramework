@@ -17,11 +17,6 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 public abstract class ClassifierTransformBridge {
 
 	/**
-	 * The instances of the current problem.
-	 */
-	public static double[][] instances;
-
-	/**
 	 * Tests if two classifiers are equal.
 	 * 
 	 * @param cl1

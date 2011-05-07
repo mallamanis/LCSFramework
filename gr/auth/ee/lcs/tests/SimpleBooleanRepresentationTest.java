@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -23,12 +22,12 @@ import org.junit.Test;
 public class SimpleBooleanRepresentationTest {
 
 	MockLCS lcs;
-	
+
 	@Before
 	public void setUp() {
 		lcs = new MockLCS();
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation#isMatch(double[], gr.auth.ee.lcs.utilities.ExtendedBitSet)}
@@ -36,7 +35,8 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testIsMatch() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4, lcs);
+		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0,
+				4, lcs);
 		lcs.setElements(test, null);
 		// Test Mask 1##0
 		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
@@ -132,7 +132,8 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testToNaturalLanguageString() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0, 4, lcs);
+		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0,
+				4, lcs);
 		lcs.setElements(test, null);
 		Classifier testClassifier;
 
@@ -159,7 +160,7 @@ public class SimpleBooleanRepresentationTest {
 		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0.5,
 				4, lcs);
 		lcs.setElements(test, null);
-		
+
 		double visionVector[] = new double[4];
 		Classifier testClassifier;
 
@@ -194,9 +195,9 @@ public class SimpleBooleanRepresentationTest {
 		SimpleBooleanRepresentation testRep = new SimpleBooleanRepresentation(
 				0.5, 4, lcs);
 		lcs.setElements(testRep, null);
-		
+
 		Classifier base = lcs.getNewClassifier();
-		Classifier test =lcs.getNewClassifier();
+		Classifier test = lcs.getNewClassifier();
 
 		base = lcs.getNewClassifier(new ExtendedBitSet("10110010")); // #1##
 		test = lcs.getNewClassifier(new ExtendedBitSet("11110110")); // 110#

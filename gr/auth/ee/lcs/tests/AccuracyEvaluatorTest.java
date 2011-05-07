@@ -1,12 +1,9 @@
 package gr.auth.ee.lcs.tests;
 
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
@@ -22,25 +19,25 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public class AccuracyEvaluatorTest{
+public class AccuracyEvaluatorTest {
 
 	/**
 	 * A generic ml representation.
 	 */
 	GenericMultiLabelRepresentation rep;
-	
+
 	MockLCS lcs;
 
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		
+
 		// Create instances
 		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new GenericMultiLabelRepresentation(list, names, 3,
-				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7,lcs);
-		
+				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7, lcs);
+
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
@@ -51,10 +48,9 @@ public class AccuracyEvaluatorTest{
 		list[4] = rep.new GenericLabel(rep.getChromosomeSize(), "Bad", .33);
 
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		
 
-		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(
-				5, .99, 50, 0.01, null, lcs);
+		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99, 50,
+				0.01, null, lcs);
 		lcs.setElements(rep, update);
 	}
 

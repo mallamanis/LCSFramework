@@ -17,7 +17,6 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	 */
 	private final double strengthReward, penalty;
 
-	
 	/**
 	 * Constructor of update algorithm.
 	 * 
@@ -41,7 +40,8 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	public SSLCSUpdateAlgorithm(final double reward,
 			final double penaltyPercent, final double fitnessThreshold,
 			final int experienceThreshold, double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm, final AbstractLearningClassifierSystem lcs) {
+			IGeneticAlgorithmStrategy geneticAlgorithm,
+			final AbstractLearningClassifierSystem lcs) {
 		super(fitnessThreshold, experienceThreshold, gaMatchSetRunProbability,
 				geneticAlgorithm, lcs);
 		strengthReward = reward;

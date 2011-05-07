@@ -5,7 +5,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -100,7 +99,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * Genetic Algorithm.
 	 */
 	public IGeneticAlgorithmStrategy ga;
-	
+
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -129,7 +128,8 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final double e0, final double alpha, final double n,
 			final double fitnessThreshold, final int experienceThreshold,
 			final double gaMatchSetRunProbability,
-			final IGeneticAlgorithmStrategy geneticAlgorithm, AbstractLearningClassifierSystem lcs) {
+			final IGeneticAlgorithmStrategy geneticAlgorithm,
+			AbstractLearningClassifierSystem lcs) {
 		this.subsumptionFitnessThreshold = fitnessThreshold;
 		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.beta = beta;
@@ -153,8 +153,7 @@ public class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}

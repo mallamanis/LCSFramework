@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
@@ -33,7 +32,7 @@ import java.io.IOException;
  * @author Miltiadis Allamanis
  * 
  */
-public class DirectGASLCS extends AbstractLearningClassifierSystem{
+public class DirectGASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -123,7 +122,7 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem{
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
-	
+
 	private final GenericMultiLabelRepresentation rep;
 
 	/**
@@ -137,7 +136,7 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem{
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public DirectGASLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) throws IOException {
@@ -145,20 +144,20 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem{
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new GenericMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH, .01, .7, this);
+		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH,
+				.01, .7, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		
-		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+
+		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
+				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
 	}
 
 	/**
@@ -169,7 +168,6 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem{
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -178,15 +176,15 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem{
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -211,7 +209,8 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem{
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(

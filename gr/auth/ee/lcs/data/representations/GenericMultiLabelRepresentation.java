@@ -483,7 +483,8 @@ public final class GenericMultiLabelRepresentation extends
 			final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final int type, final double lblgeneralizationRate,
-			final double attributeGeneralizationRate, final AbstractLearningClassifierSystem lcs) {
+			final double attributeGeneralizationRate,
+			final AbstractLearningClassifierSystem lcs) {
 		super(attributes, ruleConsequentsNames, labels,
 				attributeGeneralizationRate, lcs);
 		metricType = type;
@@ -511,7 +512,8 @@ public final class GenericMultiLabelRepresentation extends
 	public GenericMultiLabelRepresentation(final String inputArff,
 			final int precision, final int labels, final int type,
 			final double lblgeneralizationRate,
-			final double attributeGeneralizationRate, final AbstractLearningClassifierSystem lcs) throws IOException {
+			final double attributeGeneralizationRate,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, labels, attributeGeneralizationRate, lcs);
 		metricType = type;
 		labelGeneralizationRate = lblgeneralizationRate;
@@ -538,7 +540,7 @@ public final class GenericMultiLabelRepresentation extends
 		final int currentLabelIndex = attributeList.length - numberOfLabels
 				+ label;
 		if (attributeList[currentLabelIndex].isMatch(
-				(float) instances[instanceIndex][currentLabelIndex],
+				(float) myLcs.instances[instanceIndex][currentLabelIndex],
 				aClassifier)) {
 			final String value = attributeList[currentLabelIndex]
 					.toString(aClassifier);
@@ -565,7 +567,7 @@ public final class GenericMultiLabelRepresentation extends
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
 			if (!attributeList[currentLabelIndex].isMatch(
-					(float) instances[instanceIndex][currentLabelIndex],
+					(float) myLcs.instances[instanceIndex][currentLabelIndex],
 					aClassifier))
 				return 0;
 		}
@@ -599,7 +601,7 @@ public final class GenericMultiLabelRepresentation extends
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
-			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
+			final String actualLabel = myLcs.instances[instanceIndex][currentLabelIndex] == 1 ? "1"
 					: "0";
 			final String classifiedLabel = attributeList[currentLabelIndex]
 					.toString(aClassifier);
@@ -641,7 +643,7 @@ public final class GenericMultiLabelRepresentation extends
 				continue;
 			totalClassifications++;
 			if (attributeList[currentLabelIndex].isMatch(
-					(float) instances[instanceIndex][currentLabelIndex],
+					(float) myLcs.instances[instanceIndex][currentLabelIndex],
 					aClassifier))
 				result++;
 		}

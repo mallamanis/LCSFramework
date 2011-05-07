@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -147,7 +146,7 @@ public class ComplexRepresentationTest {
 
 		ExtendedBitSet set2 = new ExtendedBitSet(
 				"00000000010001000000001010010");
-		Classifier ex2 =lcs.getNewClassifier(set2);
+		Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -157,7 +156,7 @@ public class ComplexRepresentationTest {
 	public void realValuesTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011010");
-		Classifier ex1 =lcs.getNewClassifier(set1);
+		Classifier ex1 = lcs.getNewClassifier(set1);
 		double[] st = { 1, .1, 2 };
 		assertTrue(rep.isMatch(st, ex1));
 
@@ -171,7 +170,7 @@ public class ComplexRepresentationTest {
 	}
 
 	MockLCS lcs;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
@@ -186,8 +185,8 @@ public class ComplexRepresentationTest {
 		list[2] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom2",
 				attribute, 0);
 		list[3] = rep.new UniLabel(rep.getChromosomeSize(), "class", names);
-		UCSUpdateAlgorithm update = 
-			new UCSUpdateAlgorithm(0, 0, 0, 0, 0, 0, null, 0, 0, lcs);
+		UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(0, 0, 0, 0, 0, 0,
+				null, 0, 0, lcs);
 		lcs.setElements(rep, update);
 
 	}

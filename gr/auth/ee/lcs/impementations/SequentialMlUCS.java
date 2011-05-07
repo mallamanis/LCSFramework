@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
@@ -153,7 +152,7 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
-	
+
 	StrictMultiLabelRepresentation rep;
 
 	/**
@@ -167,7 +166,7 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public SequentialMlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) throws IOException {
@@ -175,16 +174,15 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new StrictMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH,
+		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				SettingsLoader.getNumericSetting("AttributeGeneralizationRate",
 						0.33), this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
@@ -195,8 +193,8 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 						0.01), ga, THETA_GA, 1, this);
 		SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
-		
-		this.setElements(rep, strategy);		
+
+		this.setElements(rep, strategy);
 	}
 
 	/**
@@ -207,7 +205,6 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -216,15 +213,15 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample
 				.registerHook(new FileLogger(inputFile + "_resultSMlUCS", eval));
 		myExample.train(iterations, rulePopulation);
@@ -250,7 +247,8 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 	}
 }

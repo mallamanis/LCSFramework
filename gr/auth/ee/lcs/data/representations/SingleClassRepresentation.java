@@ -36,7 +36,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 *            the names of the rule consequents
 	 */
 	public SingleClassRepresentation(final AbstractAttribute[] attributes,
-			final String[] ruleConsequents, final double generalizationRate, final AbstractLearningClassifierSystem lcs) {
+			final String[] ruleConsequents, final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) {
 		super(attributes, ruleConsequents, 1, generalizationRate, lcs);
 	}
 
@@ -54,8 +55,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * 
 	 */
 	public SingleClassRepresentation(final String inputArff,
-			final int precision, final double generalizationRate, final AbstractLearningClassifierSystem lcs)
-			throws IOException {
+			final int precision, final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, 1, generalizationRate, lcs);
 	}
 
@@ -75,7 +76,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 */
 	public SingleClassRepresentation(final String inputArff,
 			final int precision, final int attributeToIgnore,
-			final double generalizationRate, final AbstractLearningClassifierSystem lcs) throws IOException {
+			final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, attributeToIgnore, generalizationRate, lcs);
 	}
 
@@ -247,7 +249,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	@Override
 	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
 		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier) == instances[instanceIndex][instances[instanceIndex].length - 1] ? 1
+				.getValue(aClassifier) == myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] ? 1
 				: 0;
 	}
 
@@ -276,8 +278,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		 */
 		@Override
 		public int[] classify(ClassifierSet aSet, double[] visionVector) {
-			INaturalSelector selector = new BestClassifierSelector(
-					true,
+			INaturalSelector selector = new BestClassifierSelector(true,
 					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 			// Generate MatchSet

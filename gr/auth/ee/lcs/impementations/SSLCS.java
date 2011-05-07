@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SSLCSUpdateAlgorithm;
@@ -32,7 +31,7 @@ import java.io.IOException;
  * @author Miltiadis Allamanis
  * 
  */
-public class SSLCS extends AbstractLearningClassifierSystem{
+public class SSLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The main for running SS-LCS.
 	 * 
@@ -123,7 +122,7 @@ public class SSLCS extends AbstractLearningClassifierSystem{
 	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
 
 	private SingleClassRepresentation rep;
-	
+
 	/**
 	 * The SS-LCS constructor.
 	 * 
@@ -133,29 +132,27 @@ public class SSLCS extends AbstractLearningClassifierSystem{
 	 *            the number of iterations to run the training
 	 * @param populationSize
 	 *            the population size to use
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public SSLCS(String filename, int iterations, int populationSize) throws IOException {
+	public SSLCS(String filename, int iterations, int populationSize)
+			throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector2(
-						40,
-						true,
+				new TournamentSelector2(40, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new SingleClassRepresentation(
-				inputFile, PRECISION_BITS, .7, this);
+		rep = new SingleClassRepresentation(inputFile, PRECISION_BITS, .7, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
-		
-		SSLCSUpdateAlgorithm strategy = new SSLCSUpdateAlgorithm(
-				SSLCS_REWARD, SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
+
+		SSLCSUpdateAlgorithm strategy = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
+				SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
 				SSLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
-		
+
 		this.setElements(rep, strategy);
 	}
 
@@ -168,25 +165,22 @@ public class SSLCS extends AbstractLearningClassifierSystem{
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector2(
-								80,
-								true,
+						new TournamentSelector2(80, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader trainer = new ArffLoader();
+		ArffLoader trainer = new ArffLoader(this);
 		try {
 			trainer.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -204,7 +198,7 @@ public class SSLCS extends AbstractLearningClassifierSystem{
 
 		eval.evaluateSet(rulePopulation);
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), ClassifierTransformBridge.instances, this);
+				rep.getLabelNames(), this.instances, this);
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");

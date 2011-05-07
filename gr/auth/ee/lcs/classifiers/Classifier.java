@@ -1,10 +1,12 @@
 package gr.auth.ee.lcs.classifiers;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Represents a single classifier/ rule. Connects to the representation through
@@ -17,19 +19,23 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * The transform bridge.
 	 */
-	private ClassifierTransformBridge transformBridge;
-	
+	private final ClassifierTransformBridge transformBridge;
+
 	/**
 	 * Update Strategy.
 	 */
-	private AbstractUpdateStrategy updateStrategy;
-	
-	public static Classifier createNewClassifier(ClassifierTransformBridge bridge, AbstractUpdateStrategy update) {
-		return new Classifier(bridge, update);
+	private final AbstractUpdateStrategy updateStrategy;
+
+	private final AbstractLearningClassifierSystem myLcs;
+
+	public static Classifier createNewClassifier(
+			AbstractLearningClassifierSystem lcs) {
+		return new Classifier(lcs);
 	}
-	
-	public static Classifier createNewClassifier(ClassifierTransformBridge bridge, AbstractUpdateStrategy update, ExtendedBitSet chromosome) {
-		return new Classifier(bridge, update, chromosome);
+
+	public static Classifier createNewClassifier(
+			AbstractLearningClassifierSystem lcs, ExtendedBitSet chromosome) {
+		return new Classifier(lcs, chromosome);
 	}
 
 	/**
@@ -101,10 +107,11 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * The default constructor. Creates a chromosome of the given size
 	 */
-	private Classifier(ClassifierTransformBridge bridge, AbstractUpdateStrategy update) {
-		super(bridge.getChromosomeSize());
-		this.transformBridge = bridge;
-		this.updateStrategy = update;
+	private Classifier(final AbstractLearningClassifierSystem lcs) {
+		super(lcs.getClassifierTransformBridge().getChromosomeSize());
+		this.transformBridge = lcs.getClassifierTransformBridge();
+		this.updateStrategy = lcs.getUpdateStrategy();
+		myLcs = lcs;
 		setConstructionData();
 	}
 
@@ -114,10 +121,12 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @param chromosome
 	 *            the chromosome from which to create the classifier
 	 */
-	private Classifier(ClassifierTransformBridge bridge, AbstractUpdateStrategy update, final ExtendedBitSet chromosome) {
+	private Classifier(AbstractLearningClassifierSystem lcs,
+			final ExtendedBitSet chromosome) {
 		super(chromosome);
-		this.transformBridge = bridge;
-		this.updateStrategy = update;
+		this.transformBridge = lcs.getClassifierTransformBridge();
+		this.updateStrategy = lcs.getUpdateStrategy();
+		myLcs = lcs;
 		setConstructionData();
 	}
 
@@ -125,10 +134,8 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * Build matches vector (with train instances) and initialize it.
 	 */
 	public final void buildMatches() {
-		this.matchInstances = new byte[transformBridge.instances.length];
-		for (int i = 0; i < transformBridge.instances.length; i++) {
-			matchInstances[i] = -1;
-		}
+		this.matchInstances = new byte[myLcs.instances.length];
+		Arrays.fill(this.matchInstances, (byte) -1);
 	}
 
 	/**
@@ -176,7 +183,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	@Override
 	public final Object clone() {
-		return new Classifier(this.transformBridge,this.updateStrategy,this);
+		return new Classifier(myLcs, this);
 	}
 
 	/**
@@ -187,7 +194,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	public final boolean equals(final Classifier anotherClassifier) {
 		return transformBridge.areEqual(this, anotherClassifier);
 	}
-	
+
 	public String getUpdateSpecificData() {
 		return updateStrategy.getData(this);
 	}
@@ -228,8 +235,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 * @return the value of comparison
 	 */
 	public final double getComparisonValue(final int mode) {
-		return updateStrategy
-				.getComparisonValue(this, mode);
+		return updateStrategy.getComparisonValue(this, mode);
 	}
 
 	/**
@@ -292,9 +298,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 		// if we haven't cached the answer, then answer...
 		if (this.matchInstances[instanceIndex] == -1) {
 			this.matchInstances[instanceIndex] = (byte) ((transformBridge
-					.isMatch(
-							transformBridge.instances[instanceIndex],
-							this)) ? 1 : 0);
+					.isMatch(myLcs.instances[instanceIndex], this)) ? 1 : 0);
 			this.checked++;
 			this.covered += this.matchInstances[instanceIndex];
 		}
@@ -334,8 +338,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public final void setComparisonValue(final int mode,
 			final double comparisonValue) {
-		updateStrategy.setComparisonValue(
-				this, mode, comparisonValue);
+		updateStrategy.setComparisonValue(this, mode, comparisonValue);
 	}
 
 	/**
@@ -374,7 +377,7 @@ public class Classifier extends ExtendedBitSet implements Serializable {
 		if (updateStrategy != null)
 			updateData = updateStrategy.createStateClassifierObject();
 
-		if (transformBridge !=null)
+		if (transformBridge != null)
 			transformBridge.setRepresentationSpecificClassifierData(this);
 
 		this.serial = currentSerial++;

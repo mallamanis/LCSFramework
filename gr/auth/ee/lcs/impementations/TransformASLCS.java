@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
@@ -36,7 +35,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class TransformASLCS extends AbstractLearningClassifierSystem{
+public class TransformASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -139,7 +138,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem{
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
-	
+
 	GenericMultiLabelRepresentation rep;
 
 	/**
@@ -153,34 +152,35 @@ public class TransformASLCS extends AbstractLearningClassifierSystem{
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public TransformASLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final float problemLC, ILabelSelector transformSelector) throws IOException {
+			final float problemLC, ILabelSelector transformSelector)
+			throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.targetLC = problemLC;
 		this.selector = transformSelector;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new GenericMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH, 0, .7, this);
+		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH, 0,
+				.7, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		
-		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(
-				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
-		
+
+		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
+				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+
 		this.setElements(rep, strategy);
-		
+
 	}
 
 	/**
@@ -191,18 +191,17 @@ public class TransformASLCS extends AbstractLearningClassifierSystem{
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(null);
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		// myExample.registerHook(new FileLogger(inputFile + "_result.txt",
 		// eval));
 		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
@@ -260,13 +259,13 @@ public class TransformASLCS extends AbstractLearningClassifierSystem{
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);
 		rep.setClassificationStrategy(str);
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation);
+		str.proportionalCutCalibration(this.instances, rulePopulation);
 		System.out.println("Evaluating on test set (voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);

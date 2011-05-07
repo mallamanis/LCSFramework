@@ -63,7 +63,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 */
 	public StrictMultiLabelRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
-			final int type, final double generalizationRate, final AbstractLearningClassifierSystem lcs) {
+			final int type, final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) {
 		super(attributes, ruleConsequentsNames, labels, generalizationRate, lcs);
 		metricType = type;
 	}
@@ -85,7 +86,8 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 	 */
 	public StrictMultiLabelRepresentation(final String inputArff,
 			final int precision, final int labels, final int type,
-			final double generalizationRate, final AbstractLearningClassifierSystem lcs) throws IOException {
+			final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, labels, generalizationRate, lcs);
 		metricType = type;
 	}
@@ -148,7 +150,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
-			final String actualLabel = instances[instanceIndex][currentLabelIndex] == 1 ? "1"
+			final String actualLabel = myLcs.instances[instanceIndex][currentLabelIndex] == 1 ? "1"
 					: "0";
 			final String classifiedLabel = attributeList[currentLabelIndex]
 					.toString(aClassifier);
@@ -182,7 +184,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
 			if (attributeList[currentLabelIndex].isMatch(
-					(float) instances[instanceIndex][currentLabelIndex],
+					(float) myLcs.instances[instanceIndex][currentLabelIndex],
 					aClassifier))
 				result++;
 		}
@@ -205,7 +207,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
 			if (!attributeList[currentLabelIndex].isMatch(
-					(float) instances[instanceIndex][currentLabelIndex],
+					(float) myLcs.instances[instanceIndex][currentLabelIndex],
 					aClassifier))
 				return 0;
 		}
@@ -466,7 +468,7 @@ public class StrictMultiLabelRepresentation extends ComplexRepresentation {
 		final int currentLabelIndex = attributeList.length - numberOfLabels
 				+ label;
 		if (attributeList[currentLabelIndex].isMatch(
-				(float) instances[instanceIndex][currentLabelIndex],
+				(float) myLcs.instances[instanceIndex][currentLabelIndex],
 				aClassifier)) {
 			return 1;
 		}

@@ -6,7 +6,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
@@ -31,25 +30,23 @@ public class BestFitnessTournamentSelectorTest {
 	 * A population.
 	 */
 	ClassifierSet population;
-	
+
 	MockLCS lcs;
 
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
-				.33, 2, lcs);
-		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(
-				5, .99, 50, 0.01, null, lcs);
+		SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(.33,
+				2, lcs);
+		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99, 50,
+				0.01, null, lcs);
 		lcs.setElements(rep, update);
-		
+
 		population = new ClassifierSet(null);
 		for (int i = 0; i < 3; i++) {
 			Classifier aClassifier = lcs.getNewClassifier();
-			aClassifier
-					.setComparisonValue(
-							AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION,
-							i + 1);
+			aClassifier.setComparisonValue(
+					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION, i + 1);
 			aClassifier.setActionAdvocated(i);
 			aClassifier.experience = 100;
 			population.addClassifier(new Macroclassifier(aClassifier, i + 1),

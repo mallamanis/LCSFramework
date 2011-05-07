@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
@@ -178,7 +177,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
-	
+
 	private final GenericMultiLabelRepresentation rep;
 
 	/**
@@ -192,7 +191,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public DirectGUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) throws IOException {
@@ -200,24 +199,22 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new GenericMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH,
+		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				LABEL_GENERALIZATION_RATE, ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		
-		UCSUpdateAlgorithm strategy = new UCSUpdateAlgorithm(
-				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
-				THETA_GA, 1, this);
-		
+
+		UCSUpdateAlgorithm strategy = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
+				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
+
 		this.setElements(rep, strategy);
 	}
 
@@ -229,7 +226,6 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -238,15 +234,15 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
@@ -273,7 +269,8 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 
 		VotingClassificationStrategy vs = rep.new VotingClassificationStrategy(

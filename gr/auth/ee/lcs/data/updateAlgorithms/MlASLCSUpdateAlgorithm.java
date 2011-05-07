@@ -8,7 +8,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -98,7 +97,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * The experience threshold for subsumption.
 	 */
 	private final int subsumptionExperienceThreshold;
-	
+
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -120,7 +119,8 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	public MlASLCSUpdateAlgorithm(final double nParameter,
 			final double fitnessThreshold, final int experienceThreshold,
 			double gaMatchSetRunProbability,
-			IGeneticAlgorithmStrategy geneticAlgorithm, int labels, AbstractLearningClassifierSystem lcs) {
+			IGeneticAlgorithmStrategy geneticAlgorithm, int labels,
+			AbstractLearningClassifierSystem lcs) {
 		this.subsumptionFitnessThreshold = fitnessThreshold;
 		this.subsumptionExperienceThreshold = experienceThreshold;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
@@ -140,8 +140,7 @@ public class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	public final void cover(final ClassifierSet population,
 			final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}

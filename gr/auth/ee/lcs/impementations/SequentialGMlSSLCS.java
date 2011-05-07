@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
@@ -134,7 +133,7 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 
 	private GenericMultiLabelRepresentation rep;
 	private VotingClassificationStrategy str;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -148,32 +147,29 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	 *            the number of labels in the problem
 	 * @param labelGeneralizationProbability
 	 *            the probability of generalizing a label (during coverage)
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public SequentialGMlSSLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability, final float problemLC) throws IOException {
+			final double labelGeneralizationProbability, final float problemLC)
+			throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
 		this.targetLC = problemLC;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector(
-						50,
-						true,
+				new TournamentSelector(50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new GenericMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.HAMMING_LOSS,
+		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, GenericMultiLabelRepresentation.HAMMING_LOSS,
 				labelGeneralizationRate, .7, this);
-		str = rep.new VotingClassificationStrategy(
-				targetLC);
+		str = rep.new VotingClassificationStrategy(targetLC);
 		rep.setClassificationStrategy(str);
 
 		SSLCSUpdateAlgorithm updateObj = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
@@ -191,25 +187,22 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector(
-								40,
-								false,
+						new TournamentSelector(40, false,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
@@ -228,8 +221,7 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 
 		eval.evaluateSet(rulePopulation);
 		// TODO: Calibrate on set
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation);
+		str.proportionalCutCalibration(this.instances, rulePopulation);
 		System.out.println("Evaluating on test set");
 		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true, this);
@@ -237,7 +229,8 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 
 	}

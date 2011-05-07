@@ -4,7 +4,6 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -33,7 +32,7 @@ public class AccuracyEvaluator implements IEvaluator {
 	 * A boolean indicating if the evaluator is going to print the results.
 	 */
 	private final boolean printResults;
-	
+
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -44,7 +43,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 * @param print
 	 *            true to print results to stdout
 	 */
-	public AccuracyEvaluator(final Instances instances, final boolean print, final AbstractLearningClassifierSystem lcs) {
+	public AccuracyEvaluator(final Instances instances, final boolean print,
+			final AbstractLearningClassifierSystem lcs) {
 		this.instances = InstanceToDoubleConverter.convert(instances);
 		printResults = print;
 		myLcs = lcs;
@@ -60,8 +60,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 * @throws IOException
 	 *             when file is not found
 	 */
-	public AccuracyEvaluator(final String arffFileName, final boolean print, final AbstractLearningClassifierSystem lcs)
-			throws IOException {
+	public AccuracyEvaluator(final String arffFileName, final boolean print,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		printResults = print;
 		final FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
@@ -77,7 +77,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 * @param print
 	 *            true to print results to stdout
 	 */
-	public AccuracyEvaluator(final double[][] instances, final boolean print, final AbstractLearningClassifierSystem lcs) {
+	public AccuracyEvaluator(final double[][] instances, final boolean print,
+			final AbstractLearningClassifierSystem lcs) {
 		this.printResults = print;
 		this.instances = instances;
 		myLcs = lcs;
@@ -92,7 +93,8 @@ public class AccuracyEvaluator implements IEvaluator {
 	 */
 	@Override
 	public final double evaluateSet(final ClassifierSet classifiers) {
-		final ClassifierTransformBridge bridge = myLcs.getClassifierTransformBridge();
+		final ClassifierTransformBridge bridge = myLcs
+				.getClassifierTransformBridge();
 
 		double sumOfAccuracies = 0;
 		double sumOfRecall = 0;

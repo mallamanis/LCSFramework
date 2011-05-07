@@ -8,7 +8,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -103,7 +102,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * The number of labels used.
 	 */
 	private final int numberOfLabels;
-	
+
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -159,8 +158,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -325,8 +323,7 @@ public class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final boolean evolve) {
 
 		final int[] classifications = myLcs.getClassifierTransformBridge()
-				.getDataInstanceLabels(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.getDataInstanceLabels(myLcs.instances[instanceIndex]);
 		final int numOfCorrectSets = classifications.length;
 		ClassifierSet[] correctSets = new ClassifierSet[numOfCorrectSets];
 		for (int i = 0; i < numOfCorrectSets; i++)

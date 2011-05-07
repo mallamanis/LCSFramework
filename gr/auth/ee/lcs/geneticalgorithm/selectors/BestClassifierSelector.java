@@ -64,7 +64,7 @@ public final class BestClassifierSelector implements INaturalSelector {
 	 * gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(gr.auth.ee.lcs
 	 * .classifiers.ClassifierSet)
 	 */
-	
+
 	private int select(final ClassifierSet fromPopulation) {
 		// Search for the best classifier
 		double bestFitness = max ? Double.NEGATIVE_INFINITY
@@ -75,7 +75,10 @@ public final class BestClassifierSelector implements INaturalSelector {
 		for (int i = 0; i < popSize; i++) {
 			final double temp = fromPopulation.getClassifier(i)
 					.getComparisonValue(mode)
-					* fromPopulation.getClassifierNumerosity(i); //TODO: Numerosity is correct?
+					* fromPopulation.getClassifierNumerosity(i); // TODO:
+																	// Numerosity
+																	// is
+																	// correct?
 			if ((max ? 1. : -1.) * (temp - bestFitness) > 0) {
 				bestFitness = temp;
 				bestIndex = i;

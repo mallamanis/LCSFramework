@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -26,7 +25,7 @@ public class ClassifierSetTest {
 	SimpleBooleanRepresentation test;
 
 	MockLCS lcs;
-	
+
 	/**
 	 * Setup test
 	 */
@@ -146,8 +145,8 @@ public class ClassifierSetTest {
 	@Test
 	public void testSubsumptionClassifierSet() {
 		ClassifierSet testSet = new ClassifierSet(null);
-		Classifier subsumableClassifier = lcs.getNewClassifier(new ExtendedBitSet(
-				"10010110"));
+		Classifier subsumableClassifier = lcs
+				.getNewClassifier(new ExtendedBitSet("10010110"));
 		subsumableClassifier.setSubsumptionAbility(true);
 		testSet.addClassifier(new Macroclassifier(subsumableClassifier, 1),
 				false);

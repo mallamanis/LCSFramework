@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -32,7 +31,7 @@ public class MacroclassifierTest {
 	 * Set up a simple representation.
 	 */
 	SimpleBooleanRepresentation test;
-	
+
 	MockLCS lcs;
 
 	/**
@@ -42,19 +41,11 @@ public class MacroclassifierTest {
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
 		test = new SimpleBooleanRepresentation(0.5, 4, lcs);
-		
-		UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(
-				.1,
-				10,
-				.99,
-				.1,
-				50,
-				0,
-				new SteadyStateGeneticAlgorithm(
-						new TournamentSelector(
-								10,
-								true,
-								AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
+
+		UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(.1, 10, .99, .1, 50,
+				0, new SteadyStateGeneticAlgorithm(new TournamentSelector(10,
+						true,
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 						new SinglePointCrossover(lcs), (float) .8,
 						new UniformBitMutation(.04), 50, lcs), 100, 1, lcs);
 		lcs.setElements(test, update);

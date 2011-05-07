@@ -4,7 +4,6 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -33,7 +32,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 * A boolean indicating if the evaluator is going to print the results.
 	 */
 	private final boolean printResults;
-	
+
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -44,7 +43,8 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 * @param print
 	 *            true to turn printing on
 	 */
-	public ExactMatchEvalutor(final Instances instances, final boolean print, final AbstractLearningClassifierSystem lcs) {
+	public ExactMatchEvalutor(final Instances instances, final boolean print,
+			final AbstractLearningClassifierSystem lcs) {
 		this.instances = InstanceToDoubleConverter.convert(instances);
 		printResults = print;
 		myLcs = lcs;
@@ -60,14 +60,14 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 * @throws IOException
 	 *             when file not found
 	 */
-	public ExactMatchEvalutor(final String arffFileName, final boolean print, final AbstractLearningClassifierSystem lcs)
-			throws IOException {
+	public ExactMatchEvalutor(final String arffFileName, final boolean print,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		printResults = print;
 		FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
 				.convert(new Instances(reader));
 		myLcs = lcs;
-		
+
 	}
 
 	/**
@@ -78,7 +78,8 @@ public class ExactMatchEvalutor implements IEvaluator {
 	 * @param print
 	 *            true to turn printing on
 	 */
-	public ExactMatchEvalutor(final double[][] instances, final boolean print, final AbstractLearningClassifierSystem lcs) {
+	public ExactMatchEvalutor(final double[][] instances, final boolean print,
+			final AbstractLearningClassifierSystem lcs) {
 		printResults = print;
 		this.instances = instances;
 		myLcs = lcs;
@@ -86,7 +87,8 @@ public class ExactMatchEvalutor implements IEvaluator {
 
 	@Override
 	public final double evaluateSet(final ClassifierSet classifiers) {
-		final ClassifierTransformBridge bridge = myLcs.getClassifierTransformBridge();
+		final ClassifierTransformBridge bridge = myLcs
+				.getClassifierTransformBridge();
 
 		int tp = 0, fp = 0;
 		for (int i = 0; i < instances.length; i++) {

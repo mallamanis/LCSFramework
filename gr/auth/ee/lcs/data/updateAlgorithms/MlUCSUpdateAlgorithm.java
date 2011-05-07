@@ -8,7 +8,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -133,7 +132,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	private final int n = 10;
 
 	private final AbstractLearningClassifierSystem myLcs;
-	
+
 	/**
 	 * The constructor.
 	 * 
@@ -164,8 +163,7 @@ public class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
 		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}

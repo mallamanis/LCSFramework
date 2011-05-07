@@ -5,7 +5,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
@@ -76,7 +75,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * The fitness threshold for subsumption.
 	 */
 	private final double subsumptionFitnessThreshold;
-	
+
 	private final AbstractLearningClassifierSystem myLCS;
 
 	/**
@@ -97,7 +96,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
 			final int subsumptionExperience,
 			final double gaMatchSetRunProbability,
-			final IGeneticAlgorithmStrategy geneticAlgorithm, AbstractLearningClassifierSystem lcs) {
+			final IGeneticAlgorithmStrategy geneticAlgorithm,
+			AbstractLearningClassifierSystem lcs) {
 		this.subsumptionFitnessThreshold = subsumptionFitness;
 		this.subsumptionExperienceThreshold = subsumptionExperience;
 		this.matchSetRunProbability = gaMatchSetRunProbability;
@@ -115,8 +115,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	public final void cover(final ClassifierSet population,
 			final int instanceIndex) {
 		Classifier coveringClassifier = myLCS.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(
-						ClassifierTransformBridge.instances[instanceIndex]);
+				.createRandomCoveringClassifier(myLCS.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -258,7 +257,5 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 						.getComparisonValue(COMPARISON_MODE_EXPLOITATION) > subsumptionFitnessThreshold)
 						&& (aClassifier.experience > subsumptionExperienceThreshold));
 	}
-	
-	
 
 }

@@ -5,7 +5,6 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
@@ -58,7 +57,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	private static final int CHILDREN_PER_GENERATION = 2;
 
 	private final AbstractLearningClassifierSystem myLcs;
-	
+
 	/**
 	 * Default constructor.
 	 * 
@@ -78,7 +77,8 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 			final IBinaryGeneticOperator crossoverOperator,
 			final float crossoverRate,
 			final IUnaryGeneticOperator mutationOperator,
-			final int gaActivationAge, final AbstractLearningClassifierSystem lcs) {
+			final int gaActivationAge,
+			final AbstractLearningClassifierSystem lcs) {
 		this.gaSelector = gaSelector;
 		this.crossoverOp = crossoverOperator;
 		this.mutationOp = mutationOperator;

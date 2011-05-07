@@ -1,6 +1,5 @@
 package gr.auth.ee.lcs;
 
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
@@ -27,6 +26,12 @@ public class ArffLoader {
 	 * The current trainSet.
 	 */
 	public Instances trainSet;
+
+	private final AbstractLearningClassifierSystem myLcs;
+
+	public ArffLoader(final AbstractLearningClassifierSystem lcs) {
+		myLcs = lcs;
+	}
 
 	/**
 	 * Load instances into the global train store and create test set.
@@ -59,8 +64,7 @@ public class ArffLoader {
 			trainSet = set;
 		}
 
-		ClassifierTransformBridge.instances = InstanceToDoubleConverter
-				.convert(trainSet);
+		myLcs.instances = InstanceToDoubleConverter.convert(trainSet);
 
 	}
 
@@ -85,8 +89,7 @@ public class ArffLoader {
 		// set.stratify(10);
 		trainSet = set;
 
-		ClassifierTransformBridge.instances = InstanceToDoubleConverter
-				.convert(trainSet);
+		myLcs.instances = InstanceToDoubleConverter.convert(trainSet);
 
 		final FileReader testReader = new FileReader(filename);
 		testSet = new Instances(testReader);

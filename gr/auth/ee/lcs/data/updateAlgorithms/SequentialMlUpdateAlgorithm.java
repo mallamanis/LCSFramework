@@ -16,8 +16,7 @@ import java.util.Random;
  * @author Miltos Allamanis
  * 
  */
-public class SequentialMlUpdateAlgorithm extends
-		AbstractUpdateStrategy {
+public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * The update strategy used by the problem.

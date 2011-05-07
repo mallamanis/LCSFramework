@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -164,7 +163,6 @@ public class UCS extends AbstractLearningClassifierSystem {
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
-	
 	/**
 	 * The UCS constructor.
 	 * 
@@ -174,29 +172,27 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 *            the number of iterations to run the training
 	 * @param populationSize
 	 *            the population size to use
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public UCS(String filename, int iterations, int populationSize) throws IOException {
+	public UCS(String filename, int iterations, int populationSize)
+			throws IOException {
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
-		
-		SingleClassRepresentation rep = new SingleClassRepresentation(
-				filename, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE, this);
-		UCSUpdateAlgorithm ucsUpdate = new UCSUpdateAlgorithm(
-				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
-				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
-				THETA_GA, 1, this);
+
+		SingleClassRepresentation rep = new SingleClassRepresentation(filename,
+				PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE, this);
+		UCSUpdateAlgorithm ucsUpdate = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
+				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		this.setElements(rep, ucsUpdate);
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 	}
-	
-
 
 	/**
 	 * Run the UCS.
@@ -207,7 +203,6 @@ public class UCS extends AbstractLearningClassifierSystem {
 	@Override
 	public final void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -216,14 +211,14 @@ public class UCS extends AbstractLearningClassifierSystem {
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader trainer = new ArffLoader();
+		ArffLoader trainer = new ArffLoader(this);
 		try {
 			trainer.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
 
@@ -245,8 +240,9 @@ public class UCS extends AbstractLearningClassifierSystem {
 		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		SingleClassRepresentation rep = (SingleClassRepresentation) this.getClassifierTransformBridge();
-		
+		SingleClassRepresentation rep = (SingleClassRepresentation) this
+				.getClassifierTransformBridge();
+
 		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(),
 				InstanceToDoubleConverter.convert(trainer.testSet), this);

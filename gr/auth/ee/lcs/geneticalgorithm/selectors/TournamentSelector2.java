@@ -75,7 +75,6 @@ public class TournamentSelector2 implements INaturalSelector {
 		percentSize = 0;
 	}
 
-	
 	private int select(ClassifierSet fromPopulation) {
 		int size;
 		if (tournamentSize == 0)

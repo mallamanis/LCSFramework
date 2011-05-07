@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
@@ -35,7 +34,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
+public class TournamentSGMlUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -143,11 +142,11 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
 	private final int numberOfLabels;
 
 	private final float targetLC;
-	
+
 	private GenericMultiLabelRepresentation rep;
 
 	private VotingClassificationStrategy str;
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -161,32 +160,29 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
 	 *            the number of labels in the problem
 	 * @param labelGeneralizationProbability
 	 *            the probability of generalizing a label (during coverage)
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public TournamentSGMlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
-			final double labelGeneralizationProbability, float problemLC) throws IOException {
+			final double labelGeneralizationProbability, float problemLC)
+			throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 		this.labelGeneralizationRate = labelGeneralizationProbability;
 		this.targetLC = problemLC;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector(
-						(int) 50,
-						true,
+				new TournamentSelector((int) 50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new GenericMultiLabelRepresentation(
-				inputFile, PRECISION_BITS, numberOfLabels,
-				GenericMultiLabelRepresentation.EXACT_MATCH,
+		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH,
 				labelGeneralizationRate, .7, this);
-		str = rep.new VotingClassificationStrategy(
-				targetLC);
+		str = rep.new VotingClassificationStrategy(targetLC);
 		rep.setClassificationStrategy(str);
 
 		UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
@@ -194,9 +190,9 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
 				ga, THETA_GA, 1, this);
 		SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
-		
+
 		this.setElements(rep, strategy);
-		
+
 	}
 
 	/**
@@ -207,23 +203,21 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
+
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector(
-								(int) 40,
-								true,
+						new TournamentSelector((int) 40, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
 				eval));
 		myExample.train(iterations, rulePopulation);
@@ -240,8 +234,7 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
 		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 		// TODO: Calibrate on set
-		str.proportionalCutCalibration(ClassifierTransformBridge.instances,
-				rulePopulation);
+		str.proportionalCutCalibration(this.instances, rulePopulation);
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
@@ -251,7 +244,8 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem{
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 
 	}

@@ -1,10 +1,7 @@
 package gr.auth.ee.lcs;
 
-import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.InadequeteClassifierDeletionStrategy;
-import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 
 import java.util.Vector;
@@ -16,7 +13,7 @@ import java.util.Vector;
  * 
  */
 public class LCSTrainTemplate {
-	
+
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
@@ -35,7 +32,8 @@ public class LCSTrainTemplate {
 	 * @param callbackFrequency
 	 *            the frequency at which to call the callbacks
 	 */
-	public LCSTrainTemplate(final int callbackFrequency, final AbstractLearningClassifierSystem lcs) {
+	public LCSTrainTemplate(final int callbackFrequency,
+			final AbstractLearningClassifierSystem lcs) {
 		hooks = new Vector<IEvaluator>();
 		hookCallbackRate = callbackFrequency;
 		myLcs = lcs;
@@ -79,7 +77,7 @@ public class LCSTrainTemplate {
 	public final void train(final int iterations,
 			final ClassifierSet population, final boolean evolve) {
 
-		final int numInstances = ClassifierTransformBridge.instances.length;
+		final int numInstances = myLcs.instances.length;
 		final InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
 				0);
 

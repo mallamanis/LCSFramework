@@ -754,8 +754,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	private IClassificationStrategy defaultClassificationStrategy = null;
 
-	private final AbstractLearningClassifierSystem myLcs;
-	
+	protected final AbstractLearningClassifierSystem myLcs;
+
 	/**
 	 * Constructor.
 	 * 
@@ -770,7 +770,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	public ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
-			final double generalizationRate, final AbstractLearningClassifierSystem lcs) {
+			final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) {
 		super();
 		this.attributeList = attributes;
 		this.numberOfLabels = labels;
@@ -794,8 +795,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 *             when .arff not found
 	 */
 	public ComplexRepresentation(final String inputArff, final int precision,
-			final int labels, final double generalizationRate, final AbstractLearningClassifierSystem lcs)
-			throws IOException {
+			final int labels, final double generalizationRate,
+			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super();
 		this.myLcs = lcs;
 		final FileReader reader = new FileReader(inputArff);

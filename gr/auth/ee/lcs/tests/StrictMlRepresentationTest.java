@@ -6,7 +6,6 @@ package gr.auth.ee.lcs.tests;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
@@ -29,7 +28,7 @@ public class StrictMlRepresentationTest {
 	 * A global test representation instance.
 	 */
 	StrictMultiLabelRepresentation rep;
-	
+
 	MockLCS lcs;
 
 	/**
@@ -42,7 +41,7 @@ public class StrictMlRepresentationTest {
 		String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new StrictMultiLabelRepresentation(list, names, 3,
 				StrictMultiLabelRepresentation.EXACT_MATCH, .7, lcs);
-		
+
 		String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
@@ -61,7 +60,7 @@ public class StrictMlRepresentationTest {
 		ExtendedBitSet set1 = new ExtendedBitSet("10100111011");
 		Classifier ex1 = lcs.getNewClassifier(set1);
 		double[][] instances = { { 2, 0, 1, 0, 1 } };
-		ClassifierTransformBridge.instances = instances;
+		lcs.instances = instances;
 
 		assertTrue(rep.classifyAbilityAll(ex1, 0) == 1);
 
@@ -80,7 +79,7 @@ public class StrictMlRepresentationTest {
 		ExtendedBitSet set1 = new ExtendedBitSet("10100111011");
 		Classifier ex1 = lcs.getNewClassifier(set1);
 		double[][] instances = { { 2, 0, 1, 0, 1 } };
-		ClassifierTransformBridge.instances = instances;
+		lcs.instances = instances;
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == 1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 1) == 1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 2) == 1);
@@ -203,7 +202,7 @@ public class StrictMlRepresentationTest {
 	@Test
 	public void classificationMethods() {
 		double[][] instances = { { 1, 1, 0, 0, 1 } };
-		ClassifierTransformBridge.instances = instances;
+		lcs.instances = instances;
 
 		ExtendedBitSet set = new ExtendedBitSet("10001010101");
 		Classifier ex = lcs.getNewClassifier(set);

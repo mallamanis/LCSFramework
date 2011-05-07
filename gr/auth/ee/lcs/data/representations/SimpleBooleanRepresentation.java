@@ -32,8 +32,8 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 * Chromosome Size.
 	 */
 	private int chromosomeSize = 0;
-	
-	final AbstractLearningClassifierSystem myLcs; 
+
+	final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The costructor.
@@ -95,7 +95,7 @@ public class SimpleBooleanRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public float classifyAbilityAll(Classifier aClassifier, int instanceIndex) {
-		return this.instances[instanceIndex][this.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0] ? 1
+		return myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0] ? 1
 				: 0;
 	}
 

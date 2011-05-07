@@ -11,7 +11,6 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDele
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlSSLCSUpdateAlgorithm;
@@ -132,7 +131,7 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 	 *            the number of labels in the problem
 	 * @param labelGeneralizationProbability
 	 *            the probability of generalizing a label (during coverage)
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public DirectMlSSLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) throws IOException {
@@ -140,11 +139,9 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
-		
+
 		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector(
-						50,
-						true,
+				new TournamentSelector(50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
@@ -157,7 +154,7 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		MlSSLCSUpdateAlgorithm strategy = new MlSSLCSUpdateAlgorithm(
 				SSLCS_REWARD, SSLCS_PENALTY, numberOfLabels, ga, 50, .99, this);
 		this.setElements(rep, strategy);
-		
+
 	}
 
 	/**
@@ -168,25 +165,22 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 	@Override
 	public void train() {
 		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
-		
 
 		ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector(
-								40,
-								true,
+						new TournamentSelector(40, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader loader = new ArffLoader();
+		ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(
-				ClassifierTransformBridge.instances, true, this);
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+				this);
 		myExample.registerHook(new FileLogger(inputFile
 				+ "_resultDGMlSSLCS.txt", eval));
 		myExample.train(iterations, rulePopulation);
@@ -212,7 +206,8 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
 				true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true, this);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
 
 	}
