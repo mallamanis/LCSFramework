@@ -276,14 +276,14 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			IClassificationStrategy {
 
 		/**
-		 * Constructor
+		 * Constructor.
 		 */
 		public ThresholdClassificationStrategy() {
 			pCut = new ProportionalCut();
 		}
 
 		/**
-		 * The pCut method used
+		 * The pCut method used.
 		 */
 		private final ProportionalCut pCut;
 
