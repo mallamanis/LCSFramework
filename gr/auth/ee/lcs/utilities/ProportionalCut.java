@@ -41,26 +41,6 @@ public class ProportionalCut {
 	}
 
 	/**
-	 * Returns the number of active labels for a given threshold.
-	 * 
-	 * @param lblProbs
-	 *            the normalized confidence array of all labels.
-	 * @param threshold
-	 *            the threshold
-	 * @return an integer indicating the number of labels that are active
-	 */
-	public int getNumberOfActiveLabels(final float[] lblProbs,
-			final float threshold) {
-		// Classify
-		int activeLabels = 0;
-		for (int i = 0; i < lblProbs.length; i++) {
-			if (lblProbs[i] >= threshold)
-				activeLabels++;
-		}
-		return activeLabels;
-	}
-
-	/**
 	 * Calibrate threshold with a given step for threshold values.
 	 * 
 	 * @param confidenceValues
@@ -86,6 +66,26 @@ public class ProportionalCut {
 				this.threshold = th;
 			}
 		}
+	}
+
+	/**
+	 * Returns the number of active labels for a given threshold.
+	 * 
+	 * @param lblProbs
+	 *            the normalized confidence array of all labels.
+	 * @param threshold
+	 *            the threshold
+	 * @return an integer indicating the number of labels that are active
+	 */
+	public int getNumberOfActiveLabels(final float[] lblProbs,
+			final float threshold) {
+		// Classify
+		int activeLabels = 0;
+		for (int i = 0; i < lblProbs.length; i++) {
+			if (lblProbs[i] >= threshold)
+				activeLabels++;
+		}
+		return activeLabels;
 	}
 
 	/**

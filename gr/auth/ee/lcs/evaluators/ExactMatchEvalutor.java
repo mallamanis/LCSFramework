@@ -39,6 +39,23 @@ public class ExactMatchEvalutor implements IEvaluator {
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
+	 * Constructor using a double array.
+	 * 
+	 * @param instances
+	 *            the double[][] of instances
+	 * @param print
+	 *            true to turn printing on
+	 * @param lcs
+	 *            the LCS instance used
+	 */
+	public ExactMatchEvalutor(final double[][] instances, final boolean print,
+			final AbstractLearningClassifierSystem lcs) {
+		printResults = print;
+		this.instances = instances;
+		myLcs = lcs;
+	}
+
+	/**
 	 * The constructor.
 	 * 
 	 * @param instances
@@ -75,23 +92,6 @@ public class ExactMatchEvalutor implements IEvaluator {
 				.convert(new Instances(reader));
 		myLcs = lcs;
 
-	}
-
-	/**
-	 * Constructor using a double array.
-	 * 
-	 * @param instances
-	 *            the double[][] of instances
-	 * @param print
-	 *            true to turn printing on
-	 * @param lcs
-	 *            the LCS instance used
-	 */
-	public ExactMatchEvalutor(final double[][] instances, final boolean print,
-			final AbstractLearningClassifierSystem lcs) {
-		printResults = print;
-		this.instances = instances;
-		myLcs = lcs;
 	}
 
 	@Override

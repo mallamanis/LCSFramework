@@ -45,6 +45,18 @@ public class LCSTrainTemplate {
 	}
 
 	/**
+	 * Execute hooks.
+	 * 
+	 * @param aSet
+	 *            the set on which to run the callbacks
+	 */
+	private void executeCallbacks(final ClassifierSet aSet) {
+		for (int i = 0; i < hooks.size(); i++) {
+			hooks.elementAt(i).evaluateSet(aSet);
+		}
+	}
+
+	/**
 	 * Register an evaluator to be called during training.
 	 * 
 	 * @param evaluator
@@ -153,18 +165,6 @@ public class LCSTrainTemplate {
 	public final void updatePopulation(final int iterations,
 			final ClassifierSet population) {
 		train(iterations, population, false);
-	}
-
-	/**
-	 * Execute hooks.
-	 * 
-	 * @param aSet
-	 *            the set on which to run the callbacks
-	 */
-	private void executeCallbacks(final ClassifierSet aSet) {
-		for (int i = 0; i < hooks.size(); i++) {
-			hooks.elementAt(i).evaluateSet(aSet);
-		}
 	}
 
 }

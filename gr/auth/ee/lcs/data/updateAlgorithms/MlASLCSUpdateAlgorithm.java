@@ -136,6 +136,32 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	/**
+	 * Calculates the label niches.
+	 * 
+	 * @param correctSet
+	 *            the correct set
+	 * @param instanceIndex
+	 *            the index instance
+	 * @return the label niche set size per label
+	 */
+	private int[] calculateLabelNiches(final ClassifierSet correctSet,
+			final int instanceIndex) {
+		final int[] niches = new int[numOfLabels];
+		Arrays.fill(niches, 0);
+
+		final int correctSetSize = correctSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < correctSetSize; i++) {
+			final Classifier cl = correctSet.getClassifier(i);
+			for (int label = 0; label < numOfLabels; label++) {
+				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
+					niches[label]++;
+				}
+			}
+		}
+		return niches;
+	}
+
+	/**
 	 * Calls covering operator.
 	 * 
 	 * @param instanceIndex
@@ -158,6 +184,60 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public Serializable createStateClassifierObject() {
 		return new SLCSClassifierData();
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/**
+	 * Returns classifier's niche size per label.
+	 * 
+	 * @param aClassifier
+	 *            the classifier to return
+	 * @param instanceIndex
+	 *            the index of the instance to b
+	 * @param niches
+	 *            the
+	 * @return
+	 */
+	private double getClassifierNicheSize(final Classifier aClassifier,
+			final int instanceIndex, final int[] niches) {
+		// TODO: Does this even make sense?
+		int mean = 0;
+		int active = 0;
+		int minNiche = Integer.MAX_VALUE;
+		for (int label = 0; label < numOfLabels; label++) {
+			if (aClassifier.classifyLabelCorrectly(instanceIndex, label) > 0) {
+				if (niches[label] < minNiche)
+					minNiche = niches[label];
+				mean += niches[label];
+				active++;
+			}
+		}
+		return minNiche;
+		/*
+		 * final double result = ((double)minNiche) /
+		 * (((double)mean)/((double)active)); return Double.isNaN(result)?1000:
+		 * result;
+		 */
 	}
 
 	/*
@@ -306,86 +386,6 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				ga.evolveSet(correctSet, population);
 		}
 
-	}
-
-	/**
-	 * Calculates the label niches.
-	 * 
-	 * @param correctSet
-	 *            the correct set
-	 * @param instanceIndex
-	 *            the index instance
-	 * @return the label niche set size per label
-	 */
-	private int[] calculateLabelNiches(final ClassifierSet correctSet,
-			final int instanceIndex) {
-		final int[] niches = new int[numOfLabels];
-		Arrays.fill(niches, 0);
-
-		final int correctSetSize = correctSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < correctSetSize; i++) {
-			final Classifier cl = correctSet.getClassifier(i);
-			for (int label = 0; label < numOfLabels; label++) {
-				if (cl.classifyLabelCorrectly(instanceIndex, label) > 0) {
-					niches[label]++;
-				}
-			}
-		}
-		return niches;
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
-	/**
-	 * Returns classifier's niche size per label.
-	 * 
-	 * @param aClassifier
-	 *            the classifier to return
-	 * @param instanceIndex
-	 *            the index of the instance to b
-	 * @param niches
-	 *            the
-	 * @return
-	 */
-	private double getClassifierNicheSize(final Classifier aClassifier,
-			final int instanceIndex, final int[] niches) {
-		// TODO: Does this even make sense?
-		int mean = 0;
-		int active = 0;
-		int minNiche = Integer.MAX_VALUE;
-		for (int label = 0; label < numOfLabels; label++) {
-			if (aClassifier.classifyLabelCorrectly(instanceIndex, label) > 0) {
-				if (niches[label] < minNiche)
-					minNiche = niches[label];
-				mean += niches[label];
-				active++;
-			}
-		}
-		return minNiche;
-		/*
-		 * final double result = ((double)minNiche) /
-		 * (((double)mean)/((double)active)); return Double.isNaN(result)?1000:
-		 * result;
-		 */
 	}
 
 	/**

@@ -17,21 +17,6 @@ import java.util.Arrays;
 public final class Classifier extends ExtendedBitSet implements Serializable {
 
 	/**
-	 * The transform bridge.
-	 */
-	private final ClassifierTransformBridge transformBridge;
-
-	/**
-	 * Update Strategy.
-	 */
-	private final AbstractUpdateStrategy updateStrategy;
-
-	/**
-	 * The LCS instance.
-	 */
-	private final AbstractLearningClassifierSystem myLcs;
-
-	/**
 	 * Static method to create Classifiers.
 	 * 
 	 * @param lcs
@@ -57,6 +42,21 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 			final ExtendedBitSet chromosome) {
 		return new Classifier(lcs, chromosome);
 	}
+
+	/**
+	 * The transform bridge.
+	 */
+	private final ClassifierTransformBridge transformBridge;
+
+	/**
+	 * Update Strategy.
+	 */
+	private final AbstractUpdateStrategy updateStrategy;
+
+	/**
+	 * The LCS instance.
+	 */
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The initial Fitness of a classifier.
@@ -221,15 +221,6 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Get the string representation of the update-specific data.
-	 * 
-	 * @return a string with the representation
-	 */
-	public String getUpdateSpecificData() {
-		return updateStrategy.getData(this);
-	}
-
-	/**
 	 * Calls the bridge to fix itself.
 	 */
 	public void fixChromosome() {
@@ -298,6 +289,15 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public Serializable getUpdateDataObject() {
 		return updateData;
+	}
+
+	/**
+	 * Get the string representation of the update-specific data.
+	 * 
+	 * @return a string with the representation
+	 */
+	public String getUpdateSpecificData() {
+		return updateStrategy.getData(this);
 	}
 
 	/**
@@ -371,6 +371,19 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
+	 * Sets the update-specific and transform-specific data needed.
+	 */
+	private void setConstructionData() {
+		if (updateStrategy != null)
+			updateData = updateStrategy.createStateClassifierObject();
+
+		if (transformBridge != null)
+			transformBridge.setRepresentationSpecificClassifierData(this);
+
+		this.serial = currentSerial++;
+	}
+
+	/**
 	 * Sets the classifier's subsumption ability.
 	 * 
 	 * @param canSubsumeAbility
@@ -397,19 +410,6 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	@Override
 	public String toString() {
 		return transformBridge.toNaturalLanguageString(this);
-	}
-
-	/**
-	 * Sets the update-specific and transform-specific data needed.
-	 */
-	private void setConstructionData() {
-		if (updateStrategy != null)
-			updateData = updateStrategy.createStateClassifierObject();
-
-		if (transformBridge != null)
-			transformBridge.setRepresentationSpecificClassifierData(this);
-
-		this.serial = currentSerial++;
 	}
 
 }

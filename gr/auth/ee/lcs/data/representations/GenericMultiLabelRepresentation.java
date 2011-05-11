@@ -27,14 +27,68 @@ public final class GenericMultiLabelRepresentation extends
 		ComplexRepresentation {
 
 	/**
-	 * The accuracy don't (#) care value.
+	 * A classification strategy selecting the labels according to the highest
+	 * fitness of a classifier. If a classifier has an # then the next
+	 * classifier is selected.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
 	 */
-	public static final double ACCURACY_DONT_CARE_VALUE = 0.5;
+	public final class BestFitnessClassificationStrategy implements
+			IClassificationStrategy {
 
-	/**
-	 * The Hamming don't care (#) value.
-	 */
-	public static final double HAMMING_DONT_CARE_VALUE = 1;
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+			final double[] decisionTable = new double[numberOfLabels];
+			final double[] confidenceTable = new double[numberOfLabels];
+			Arrays.fill(decisionTable, 0);
+			Arrays.fill(confidenceTable, 0);
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			final int setSize = matchSet.getNumberOfMacroclassifiers();
+			for (int i = 0; i < setSize; i++) {
+				// For each classifier
+				for (int label = 0; label < numberOfLabels; label++) {
+					final Classifier currentClassifier = matchSet
+							.getClassifier(i);
+					final int numerosity = matchSet.getClassifierNumerosity(i);
+					final double fitness = numerosity
+							* currentClassifier
+									.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+					if (fitness > confidenceTable[label]) {
+						final String cons = (attributeList[attributeList.length
+								- numberOfLabels + label])
+								.toString(currentClassifier);
+						if (cons == "#")
+							continue;
+						confidenceTable[label] = fitness;
+						if (cons == "1")
+							decisionTable[label] = 1;
+						else
+							decisionTable[label] = 0;
+
+					}
+				}
+			}
+
+			int numberOfActiveLabels = 0;
+			for (int i = 0; i < decisionTable.length; i++)
+				if (decisionTable[i] == 1)
+					numberOfActiveLabels++;
+
+			final int[] result = new int[numberOfActiveLabels];
+			int currentIndex = 0;
+			for (int i = 0; i < decisionTable.length; i++)
+				if (decisionTable[i] == 1) {
+					result[currentIndex] = i;
+					currentIndex++;
+				}
+
+			return result;
+		}
+
+	}
 
 	/**
 	 * A boolean label representation with dont'cares. The only difference
@@ -70,13 +124,16 @@ public final class GenericMultiLabelRepresentation extends
 		}
 
 		/**
-		 * A setter for the active variable.
+		 * Enforce label deactivation.
 		 * 
-		 * @param isActive
-		 *            true if we want to set the label active
+		 * @param aClassifier
+		 *            the classifier to deactivate
 		 */
-		public final void setActive(final boolean isActive) {
-			active = isActive;
+		public final void enforceDeactivation(final Classifier aClassifier) {
+			if (active)
+				return;
+			aClassifier.clear(positionInChromosome);
+			aClassifier.clear(positionInChromosome + 1);
 		}
 
 		/*
@@ -196,16 +253,13 @@ public final class GenericMultiLabelRepresentation extends
 		}
 
 		/**
-		 * Enforce label deactivation.
+		 * A setter for the active variable.
 		 * 
-		 * @param aClassifier
-		 *            the classifier to deactivate
+		 * @param isActive
+		 *            true if we want to set the label active
 		 */
-		public final void enforceDeactivation(final Classifier aClassifier) {
-			if (active)
-				return;
-			aClassifier.clear(positionInChromosome);
-			aClassifier.clear(positionInChromosome + 1);
+		public final void setActive(final boolean isActive) {
+			active = isActive;
 		}
 
 		/*
@@ -227,70 +281,6 @@ public final class GenericMultiLabelRepresentation extends
 				return "#";
 			}
 
-		}
-
-	}
-
-	/**
-	 * A classification strategy selecting the labels according to the highest
-	 * fitness of a classifier. If a classifier has an # then the next
-	 * classifier is selected.
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	public final class BestFitnessClassificationStrategy implements
-			IClassificationStrategy {
-
-		@Override
-		public int[] classify(final ClassifierSet aSet,
-				final double[] visionVector) {
-			final double[] decisionTable = new double[numberOfLabels];
-			final double[] confidenceTable = new double[numberOfLabels];
-			Arrays.fill(decisionTable, 0);
-			Arrays.fill(confidenceTable, 0);
-
-			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
-			final int setSize = matchSet.getNumberOfMacroclassifiers();
-			for (int i = 0; i < setSize; i++) {
-				// For each classifier
-				for (int label = 0; label < numberOfLabels; label++) {
-					final Classifier currentClassifier = matchSet
-							.getClassifier(i);
-					final int numerosity = matchSet.getClassifierNumerosity(i);
-					final double fitness = numerosity
-							* currentClassifier
-									.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-					if (fitness > confidenceTable[label]) {
-						final String cons = (attributeList[attributeList.length
-								- numberOfLabels + label])
-								.toString(currentClassifier);
-						if (cons == "#")
-							continue;
-						confidenceTable[label] = fitness;
-						if (cons == "1")
-							decisionTable[label] = 1;
-						else
-							decisionTable[label] = 0;
-
-					}
-				}
-			}
-
-			int numberOfActiveLabels = 0;
-			for (int i = 0; i < decisionTable.length; i++)
-				if (decisionTable[i] == 1)
-					numberOfActiveLabels++;
-
-			final int[] result = new int[numberOfActiveLabels];
-			int currentIndex = 0;
-			for (int i = 0; i < decisionTable.length; i++)
-				if (decisionTable[i] == 1) {
-					result[currentIndex] = i;
-					currentIndex++;
-				}
-
-			return result;
 		}
 
 	}
@@ -322,6 +312,29 @@ public final class GenericMultiLabelRepresentation extends
 		 */
 		public VotingClassificationStrategy(final float targetLabelCardinality) {
 			targetLC = targetLabelCardinality;
+		}
+
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+
+			float[] votingTable = getConfidenceArray(aSet, visionVector);
+
+			int numberOfActiveLabels = 0;
+			for (int i = 0; i < votingTable.length; i++)
+				if (votingTable[i] > voteThreshold)
+					numberOfActiveLabels++;
+
+			final int[] result = new int[numberOfActiveLabels];
+
+			int currentIndex = 0;
+			for (int i = 0; i < votingTable.length; i++)
+				if (votingTable[i] > voteThreshold) {
+					result[currentIndex] = i;
+					currentIndex++;
+				}
+
+			return result;
 		}
 
 		/**
@@ -410,30 +423,17 @@ public final class GenericMultiLabelRepresentation extends
 
 		}
 
-		@Override
-		public int[] classify(final ClassifierSet aSet,
-				final double[] visionVector) {
-
-			float[] votingTable = getConfidenceArray(aSet, visionVector);
-
-			int numberOfActiveLabels = 0;
-			for (int i = 0; i < votingTable.length; i++)
-				if (votingTable[i] > voteThreshold)
-					numberOfActiveLabels++;
-
-			final int[] result = new int[numberOfActiveLabels];
-
-			int currentIndex = 0;
-			for (int i = 0; i < votingTable.length; i++)
-				if (votingTable[i] > voteThreshold) {
-					result[currentIndex] = i;
-					currentIndex++;
-				}
-
-			return result;
-		}
-
 	}
+
+	/**
+	 * The accuracy don't (#) care value.
+	 */
+	public static final double ACCURACY_DONT_CARE_VALUE = 0.5;
+
+	/**
+	 * The Hamming don't care (#) value.
+	 */
+	public static final double HAMMING_DONT_CARE_VALUE = 1;
 
 	/**
 	 * The metric type used for calculating classifier's ability to classify an
@@ -519,6 +519,32 @@ public final class GenericMultiLabelRepresentation extends
 		super(inputArff, precision, labels, attributeGeneralizationRate, lcs);
 		metricType = type;
 		labelGeneralizationRate = lblgeneralizationRate;
+	}
+
+	/**
+	 * Activate all labels.
+	 */
+	public void activateAllLabels() {
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			((GenericLabel) attributeList[currentLabelIndex]).setActive(true);
+		}
+	}
+
+	/**
+	 * Activate only a specific label.
+	 * 
+	 * @param selector
+	 *            the selector used to activate labels
+	 */
+	public void activateLabel(final ILabelSelector selector) {
+		for (int i = 0; i < numberOfLabels; i++) {
+			final int currentLabelIndex = attributeList.length - numberOfLabels
+					+ i;
+			((GenericLabel) attributeList[currentLabelIndex])
+					.setActive(selector.getStatus(i));
+		}
 	}
 
 	@Override
@@ -714,38 +740,6 @@ public final class GenericMultiLabelRepresentation extends
 		return result;
 	}
 
-	@Override
-	public void setClassification(final Classifier aClassifier, final int action) {
-		final int labelIndex = attributeList.length - numberOfLabels + action;
-		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
-	}
-
-	/**
-	 * Activate all labels.
-	 */
-	public void activateAllLabels() {
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			((GenericLabel) attributeList[currentLabelIndex]).setActive(true);
-		}
-	}
-
-	/**
-	 * Activate only a specific label.
-	 * 
-	 * @param selector
-	 *            the selector used to activate labels
-	 */
-	public void activateLabel(final ILabelSelector selector) {
-		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
-					+ i;
-			((GenericLabel) attributeList[currentLabelIndex])
-					.setActive(selector.getStatus(i));
-		}
-	}
-
 	/**
 	 * Make sure all labels in the set are correctly deactivated.
 	 * 
@@ -763,6 +757,12 @@ public final class GenericMultiLabelRepresentation extends
 						.enforceDeactivation(cl);
 			}
 		}
+	}
+
+	@Override
+	public void setClassification(final Classifier aClassifier, final int action) {
+		final int labelIndex = attributeList.length - numberOfLabels + action;
+		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 	}
 
 }

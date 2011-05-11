@@ -161,88 +161,6 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	/**
-	 * Calls covering operator.
-	 * 
-	 * @param population
-	 *            the population where the new covering classifier will be added
-	 * @param instanceIndex
-	 *            the index of the current sample
-	 */
-	@Override
-	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
-		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
-				false);
-	}
-
-	@Override
-	public Serializable createStateClassifierObject() {
-		return new MlUCSClassifierData(numberOfLabels);
-	}
-
-	@Override
-	public double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
-				.getUpdateDataObject();
-
-		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? 0.1 : 1);
-			return Double.isNaN(value) ? 0 : value;
-		case COMPARISON_MODE_DELETION:
-
-			if (aClassifier.experience > deleteAge) {
-				final double result = data.globalCs; // data.fitness;
-				return Double.isNaN(result) ? 1 : result;
-			}
-
-			return 0;
-
-		case COMPARISON_MODE_EXPLOITATION:
-
-			final double exploitValue = data.acc
-					* (aClassifier.experience < deleteAge ? 0 : 1);
-			return Double.isNaN(exploitValue) ? 0 : exploitValue;
-		default:
-			return 0;
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
-	 * .ee.lcs.classifiers.Classifier)
-	 */
-	@Override
-	public String getData(final Classifier aClassifier) {
-		MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
-				.getUpdateDataObject());
-		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
-				+ "tp:" + Arrays.toString(data.tp) + "globalCs:"
-				+ data.globalCs + "cs:" + Arrays.toString(data.cs); // TODO
-																	// more
-	}
-
-	@Override
-	public void performUpdate(final ClassifierSet matchSet,
-			final ClassifierSet correctSet) {
-		return;
-	}
-
-	@Override
-	public void setComparisonValue(final Classifier aClassifier,
-			final int mode, final double comparisonValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
 	 * Build active label array.
 	 * 
 	 * @param cl
@@ -262,6 +180,27 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		}
 
 		data.activeLabels = active;
+	}
+
+	/**
+	 * Calls covering operator.
+	 * 
+	 * @param population
+	 *            the population where the new covering classifier will be added
+	 * @param instanceIndex
+	 *            the index of the current sample
+	 */
+	@Override
+	public void cover(final ClassifierSet population, final int instanceIndex) {
+		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
+				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
+				false);
+	}
+
+	@Override
+	public Serializable createStateClassifierObject() {
+		return new MlUCSClassifierData(numberOfLabels);
 	}
 
 	/**
@@ -365,6 +304,67 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				labelMatchSet.addClassifier(cl, false);
 		}
 		return labelMatchSet;
+	}
+
+	@Override
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
+				.getUpdateDataObject();
+
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			final double value = data.fitness
+					* (aClassifier.experience < deleteAge ? 0.1 : 1);
+			return Double.isNaN(value) ? 0 : value;
+		case COMPARISON_MODE_DELETION:
+
+			if (aClassifier.experience > deleteAge) {
+				final double result = data.globalCs; // data.fitness;
+				return Double.isNaN(result) ? 1 : result;
+			}
+
+			return 0;
+
+		case COMPARISON_MODE_EXPLOITATION:
+
+			final double exploitValue = data.acc
+					* (aClassifier.experience < deleteAge ? 0 : 1);
+			return Double.isNaN(exploitValue) ? 0 : exploitValue;
+		default:
+			return 0;
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
+	 */
+	@Override
+	public String getData(final Classifier aClassifier) {
+		MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
+				+ "tp:" + Arrays.toString(data.tp) + "globalCs:"
+				+ data.globalCs + "cs:" + Arrays.toString(data.cs); // TODO
+																	// more
+	}
+
+	@Override
+	public void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
+		return;
+	}
+
+	@Override
+	public void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**

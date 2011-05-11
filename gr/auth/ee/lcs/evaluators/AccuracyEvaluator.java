@@ -39,6 +39,23 @@ public class AccuracyEvaluator implements IEvaluator {
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
+	 * A constructor using only instances.
+	 * 
+	 * @param instances
+	 *            the instance double[][] array
+	 * @param print
+	 *            true to print results to stdout
+	 * @param lcs
+	 *            the LCS instance used
+	 */
+	public AccuracyEvaluator(final double[][] instances, final boolean print,
+			final AbstractLearningClassifierSystem lcs) {
+		this.printResults = print;
+		this.instances = instances;
+		myLcs = lcs;
+	}
+
+	/**
 	 * Constructor for creating evaluator with a Weka instance set.
 	 * 
 	 * @param instances
@@ -73,23 +90,6 @@ public class AccuracyEvaluator implements IEvaluator {
 		final FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
 				.convert(new Instances(reader));
-		myLcs = lcs;
-	}
-
-	/**
-	 * A constructor using only instances.
-	 * 
-	 * @param instances
-	 *            the instance double[][] array
-	 * @param print
-	 *            true to print results to stdout
-	 * @param lcs
-	 *            the LCS instance used
-	 */
-	public AccuracyEvaluator(final double[][] instances, final boolean print,
-			final AbstractLearningClassifierSystem lcs) {
-		this.printResults = print;
-		this.instances = instances;
 		myLcs = lcs;
 	}
 

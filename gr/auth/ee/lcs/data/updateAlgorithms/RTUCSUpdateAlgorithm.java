@@ -295,25 +295,6 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		}
 	}
 
-	/**
-	 * Update the wrong set classifiers.
-	 * 
-	 * @param set
-	 *            the [!C] set
-	 */
-	private void updateWrongSet(final ClassifierSet set) {
-		final int setSize = set.getNumberOfMacroclassifiers();
-		for (int i = 0; i < setSize; i++) {
-			Classifier cl = set.getClassifier(i);
-			UCSClassifierData data = ((UCSClassifierData) cl
-					.getUpdateDataObject());
-			cl.experience++;
-			data.msa += 1;
-			data.fp += 1;
-
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -382,5 +363,24 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			}
 		}
 
+	}
+
+	/**
+	 * Update the wrong set classifiers.
+	 * 
+	 * @param set
+	 *            the [!C] set
+	 */
+	private void updateWrongSet(final ClassifierSet set) {
+		final int setSize = set.getNumberOfMacroclassifiers();
+		for (int i = 0; i < setSize; i++) {
+			Classifier cl = set.getClassifier(i);
+			UCSClassifierData data = ((UCSClassifierData) cl
+					.getUpdateDataObject());
+			cl.experience++;
+			data.msa += 1;
+			data.fp += 1;
+
+		}
 	}
 }

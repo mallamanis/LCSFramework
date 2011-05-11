@@ -28,6 +28,70 @@ public final class SettingsLoader {
 	private final Properties lcsProperties;
 
 	/**
+	 * The unique static instance of the SettingsLoader.
+	 */
+	private static SettingsLoader instance;
+
+	/**
+	 * Static getter for the singleton instance.
+	 * 
+	 * @param propertyName
+	 *            the name of the property file to be used
+	 * @param defaultValue
+	 *            the default value of the property
+	 * @return he numeric property at the loaded file or the default value if
+	 *         one is not found
+	 */
+	public static double getNumericSetting(final String propertyName,
+			final double defaultValue) {
+		final double value = instance.getNumericProperty(propertyName,
+				defaultValue);
+		final String output = "Parameter " + propertyName + " set to " + value;
+		CLASS_LOGGER.config(output);
+		return value;
+	}
+
+	/**
+	 * Static getter of a string property from the loaded file.
+	 * 
+	 * @param propertyName
+	 *            the name of the property
+	 * @param defaultValue
+	 *            the default value of the property
+	 * @return the string of the property at the loaded file or the default
+	 *         value if one is not found
+	 */
+	public static String getStringSetting(final String propertyName,
+			final String defaultValue) {
+		final String value = instance.getStringProperty(propertyName,
+				defaultValue);
+		CLASS_LOGGER.config("Parameter " + propertyName + " set to " + value);
+		return value;
+	}
+
+	/**
+	 * Load to the static store the settings file.
+	 * 
+	 * @throws IOException
+	 *             when default file is not found
+	 */
+	public static void loadSettings() throws IOException {
+		instance = new SettingsLoader();
+	}
+
+	/**
+	 * Load to the static store a settings file.
+	 * 
+	 * @param filename
+	 *            the filename to load
+	 * @throws IOException
+	 *             when file is not found
+	 */
+	public static void loadSettings(final String filename) throws IOException {
+		instance = new SettingsLoader(filename);
+	}
+
+	/**
 	 * Constructor, loads defaultLcs.properties file.
 	 * 
 	 * @throws IOException
@@ -49,21 +113,6 @@ public final class SettingsLoader {
 	private SettingsLoader(final String file) throws IOException {
 		lcsProperties = new Properties();
 		loadProperties(file);
-	}
-
-	/**
-	 * Load the properties from a file.
-	 * 
-	 * @param filename
-	 *            the .properties filename
-	 * @throws IOException
-	 *             when default properties file is not found
-	 */
-	private void loadProperties(final String filename) throws IOException {
-		final FileInputStream input = new FileInputStream(
-				"defaultLcs.properties");
-		lcsProperties.load(input);
-		CLASS_LOGGER.fine("Loaded properties file " + filename);
 	}
 
 	/**
@@ -89,25 +138,6 @@ public final class SettingsLoader {
 	}
 
 	/**
-	 * Static getter for the singleton instance.
-	 * 
-	 * @param propertyName
-	 *            the name of the property file to be used
-	 * @param defaultValue
-	 *            the default value of the property
-	 * @return he numeric property at the loaded file or the default value if
-	 *         one is not found
-	 */
-	public static double getNumericSetting(final String propertyName,
-			final double defaultValue) {
-		final double value = instance.getNumericProperty(propertyName,
-				defaultValue);
-		final String output = "Parameter " + propertyName + " set to " + value;
-		CLASS_LOGGER.config(output);
-		return value;
-	}
-
-	/**
 	 * Return a string property.
 	 * 
 	 * @param propertyName
@@ -124,48 +154,18 @@ public final class SettingsLoader {
 	}
 
 	/**
-	 * Static getter of a string property from the loaded file.
-	 * 
-	 * @param propertyName
-	 *            the name of the property
-	 * @param defaultValue
-	 *            the default value of the property
-	 * @return the string of the property at the loaded file or the default
-	 *         value if one is not found
-	 */
-	public static String getStringSetting(final String propertyName,
-			final String defaultValue) {
-		final String value = instance.getStringProperty(propertyName,
-				defaultValue);
-		CLASS_LOGGER.config("Parameter " + propertyName + " set to " + value);
-		return value;
-	}
-
-	/**
-	 * The unique static instance of the SettingsLoader.
-	 */
-	private static SettingsLoader instance;
-
-	/**
-	 * Load to the static store the settings file.
-	 * 
-	 * @throws IOException
-	 *             when default file is not found
-	 */
-	public static void loadSettings() throws IOException {
-		instance = new SettingsLoader();
-	}
-
-	/**
-	 * Load to the static store a settings file.
+	 * Load the properties from a file.
 	 * 
 	 * @param filename
-	 *            the filename to load
+	 *            the .properties filename
 	 * @throws IOException
-	 *             when file is not found
+	 *             when default properties file is not found
 	 */
-	public static void loadSettings(final String filename) throws IOException {
-		instance = new SettingsLoader(filename);
+	private void loadProperties(final String filename) throws IOException {
+		final FileInputStream input = new FileInputStream(
+				"defaultLcs.properties");
+		lcsProperties.load(input);
+		CLASS_LOGGER.fine("Loaded properties file " + filename);
 	}
 
 }

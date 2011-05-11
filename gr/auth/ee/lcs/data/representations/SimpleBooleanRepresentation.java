@@ -92,6 +92,24 @@ public final class SimpleBooleanRepresentation extends
 
 	}
 
+	@Override
+	public int[] classify(final ClassifierSet aSet, final double[] dataInstance) {
+
+		INaturalSelector selector = new BestClassifierSelector(true,
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+
+		// Generate MatchSet
+		ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);
+
+		if (matchSet.getTotalNumerosity() == 0)
+			return null;
+		ClassifierSet results = new ClassifierSet(null);
+		selector.select(1, matchSet, results);
+
+		return results.getClassifier(0).getActionAdvocated();
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -104,6 +122,19 @@ public final class SimpleBooleanRepresentation extends
 			final int instanceIndex) {
 		return myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0] ? 1
 				: 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbilityLabel(gr
+	 * .auth.ee.lcs.classifiers.Classifier, int, int)
+	 */
+	@Override
+	public float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
+		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
 
 	/*
@@ -171,6 +202,26 @@ public final class SimpleBooleanRepresentation extends
 	@Override
 	public int[] getClassification(final Classifier aClassifier) {
 		return ((int[]) (aClassifier.transformData));
+	}
+
+	@Override
+	public int[] getDataInstanceLabels(final double[] dataInstances) {
+		int[] classes = new int[1];
+		classes[0] = (int) dataInstances[dataInstances.length - 1];
+		return classes;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#getLabelNames()
+	 */
+	@Override
+	public String[] getLabelNames() {
+		String[] str = new String[2];
+		str[0] = "0";
+		str[1] = "1";
+		return str;
 	}
 
 	/*
@@ -290,57 +341,6 @@ public final class SimpleBooleanRepresentation extends
 		}
 		output += "=>" + getClassification(aClassifier)[0];
 		return output;
-	}
-
-	@Override
-	public int[] classify(final ClassifierSet aSet, final double[] dataInstance) {
-
-		INaturalSelector selector = new BestClassifierSelector(true,
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-
-		// Generate MatchSet
-		ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);
-
-		if (matchSet.getTotalNumerosity() == 0)
-			return null;
-		ClassifierSet results = new ClassifierSet(null);
-		selector.select(1, matchSet, results);
-
-		return results.getClassifier(0).getActionAdvocated();
-
-	}
-
-	@Override
-	public int[] getDataInstanceLabels(final double[] dataInstances) {
-		int[] classes = new int[1];
-		classes[0] = (int) dataInstances[dataInstances.length - 1];
-		return classes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.ClassifierTransformBridge#getLabelNames()
-	 */
-	@Override
-	public String[] getLabelNames() {
-		String[] str = new String[2];
-		str[0] = "0";
-		str[1] = "1";
-		return str;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#classifyAbilityLabel(gr
-	 * .auth.ee.lcs.classifiers.Classifier, int, int)
-	 */
-	@Override
-	public float classifyAbilityLabel(final Classifier aClassifier,
-			final int instanceIndex, final int label) {
-		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
 
 }

@@ -17,20 +17,6 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 public abstract class AbstractLearningClassifierSystem {
 
 	/**
-	 * Constructor.
-	 * 
-	 * @param bridge
-	 *            the classifier transform bridge
-	 * @param update
-	 *            the update strategy
-	 */
-	public final void setElements(final ClassifierTransformBridge bridge,
-			final AbstractUpdateStrategy update) {
-		transformBridge = bridge;
-		updateStrategy = update;
-	}
-
-	/**
 	 * The train set.
 	 */
 	public double[][] instances;
@@ -46,17 +32,32 @@ public abstract class AbstractLearningClassifierSystem {
 	private AbstractUpdateStrategy updateStrategy;
 
 	/**
-	 * Run the LCS and train it.
-	 */
-	public abstract void train();
-
-	/**
 	 * Return the LCS's classifier transform bridge.
 	 * 
 	 * @return the lcs's classifier transform bridge
 	 */
 	public final ClassifierTransformBridge getClassifierTransformBridge() {
 		return transformBridge;
+	}
+
+	/**
+	 * Create a new classifier for the specific LCS.
+	 * 
+	 * @return the new classifier.
+	 */
+	public final Classifier getNewClassifier() {
+		return Classifier.createNewClassifier(this);
+	}
+
+	/**
+	 * Return a new classifier object for the specific LCS given a chromosome.
+	 * 
+	 * @param chromosome
+	 *            the chromosome to be replicated
+	 * @return a new classifier containing information about the LCS
+	 */
+	public final Classifier getNewClassifier(final ExtendedBitSet chromosome) {
+		return Classifier.createNewClassifier(this, chromosome);
 	}
 
 	/**
@@ -69,22 +70,21 @@ public abstract class AbstractLearningClassifierSystem {
 	}
 
 	/**
-	 * Create a new classifier for the specific LCS.
+	 * Constructor.
 	 * 
-	 * @return the new classifier.
+	 * @param bridge
+	 *            the classifier transform bridge
+	 * @param update
+	 *            the update strategy
 	 */
-	public final Classifier getNewClassifier() {
-		return Classifier.createNewClassifier(this);
+	public final void setElements(final ClassifierTransformBridge bridge,
+			final AbstractUpdateStrategy update) {
+		transformBridge = bridge;
+		updateStrategy = update;
 	};
 
 	/**
-	 * Return a new classifier object for the specific LCS given a chromosome.
-	 * 
-	 * @param chromosome
-	 *            the chromosome to be replicated
-	 * @return a new classifier containing information about the LCS
+	 * Run the LCS and train it.
 	 */
-	public final Classifier getNewClassifier(final ExtendedBitSet chromosome) {
-		return Classifier.createNewClassifier(this, chromosome);
-	}
+	public abstract void train();
 }

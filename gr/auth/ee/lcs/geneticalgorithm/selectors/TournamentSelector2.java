@@ -76,6 +76,25 @@ public class TournamentSelector2 implements INaturalSelector {
 	}
 
 	/**
+	 * Convert micro-classifier index to macro-classifier indices.
+	 * 
+	 * @param microIndex
+	 *            the microclassifier index.
+	 * @param cumulativeNumerosity
+	 *            the cummulative numerosity array
+	 * @return the macro-classifier index
+	 */
+	private int getMacroIndex(int microIndex, int[] cumulativeNumerosity) {
+		int macroIndex = 0;
+		for (int i = 0; i < cumulativeNumerosity.length; i++) {
+			if (cumulativeNumerosity[i] > microIndex)
+				break;
+			macroIndex++;
+		}
+		return macroIndex;
+	}
+
+	/**
 	 * Select from a set using a tournament.
 	 * 
 	 * @param fromPopulation
@@ -162,25 +181,6 @@ public class TournamentSelector2 implements INaturalSelector {
 		}
 		return bestMacroclassifierParticipant;
 
-	}
-
-	/**
-	 * Convert micro-classifier index to macro-classifier indices.
-	 * 
-	 * @param microIndex
-	 *            the microclassifier index.
-	 * @param cumulativeNumerosity
-	 *            the cummulative numerosity array
-	 * @return the macro-classifier index
-	 */
-	private int getMacroIndex(int microIndex, int[] cumulativeNumerosity) {
-		int macroIndex = 0;
-		for (int i = 0; i < cumulativeNumerosity.length; i++) {
-			if (cumulativeNumerosity[i] > microIndex)
-				break;
-			macroIndex++;
-		}
-		return macroIndex;
 	}
 
 }

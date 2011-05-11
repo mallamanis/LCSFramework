@@ -27,6 +27,22 @@ public class PWSelectorTest {
 
 	/**
 	 * Test method for
+	 * {@link gr.auth.ee.lcs.utilities.PairwiseLabelSelector#hasNext()}.
+	 */
+	@Test
+	public void testHasNext() {
+		PairwiseLabelSelector selector = new PairwiseLabelSelector(10);
+
+		for (int i = 0; i < 44; i++) { // 44 = N(N-1)/2 -1
+			assertTrue(selector.hasNext());
+			selector.next();
+		}
+
+		assertFalse(selector.hasNext());
+	}
+
+	/**
+	 * Test method for
 	 * {@link gr.auth.ee.lcs.utilities.PairwiseLabelSelector#next()}.
 	 */
 	@Test
@@ -79,22 +95,6 @@ public class PWSelectorTest {
 		assertTrue(selector.getStatus(2));
 		assertFalse(selector.getStatus(1));
 		assertTrue(selector.hasNext());
-	}
-
-	/**
-	 * Test method for
-	 * {@link gr.auth.ee.lcs.utilities.PairwiseLabelSelector#hasNext()}.
-	 */
-	@Test
-	public void testHasNext() {
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(10);
-
-		for (int i = 0; i < 44; i++) { // 44 = N(N-1)/2 -1
-			assertTrue(selector.hasNext());
-			selector.next();
-		}
-
-		assertFalse(selector.hasNext());
 	}
 
 }

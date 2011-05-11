@@ -26,6 +26,207 @@ import weka.core.Instances;
 public final class SingleClassRepresentation extends ComplexRepresentation {
 
 	/**
+	 * Inner class for classifying using only the the exploitation fitness.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public final class BestFitnessClassificationStrategy implements
+			IClassificationStrategy {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.
+		 * IClassificationStrategy
+		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
+		 */
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+			INaturalSelector selector = new BestClassifierSelector(true,
+					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+
+			// Generate MatchSet
+			ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+
+			if (matchSet.getTotalNumerosity() == 0)
+				return null;
+			ClassifierSet results = new ClassifierSet(null);
+			selector.select(1, matchSet, results);
+
+			return results.getClassifier(0).getActionAdvocated();
+		}
+
+	}
+
+	/**
+	 * A representation of the class "attribute".
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public class UniLabel extends AbstractAttribute {
+
+		/**
+		 * The classes' names.
+		 */
+		private String[] classes;
+
+		/**
+		 * The constructor.
+		 * 
+		 * @param startPosition
+		 *            the starting position at the gene
+		 * @param attributeName
+		 *            the name of the attribute
+		 * @param classNames
+		 *            a String[] containing the names of the classes.
+		 */
+		public UniLabel(final int startPosition, final String attributeName,
+				final String[] classNames) {
+			super(startPosition, attributeName, 0);
+			lengthInBits = (int) Math.ceil(Math.log10(classNames.length)
+					/ Math.log10(2));
+			chromosomeSize += lengthInBits;
+			classes = classNames;
+		}
+
+		@Override
+		public final void fixAttributeRepresentation(
+				final ExtendedBitSet generatedClassifier) {
+			if (generatedClassifier
+					.getIntAt(positionInChromosome, lengthInBits) >= classes.length) {
+
+				int randClass = (int) Math
+						.floor(Math.random() * classes.length);
+				generatedClassifier.setIntAt(positionInChromosome,
+						lengthInBits, randClass);
+			}
+
+		}
+
+		/**
+		 * Gets the label value.
+		 * 
+		 * @param chromosome
+		 *            the chromosome
+		 * @return the value of the label at the chromosome
+		 */
+		public final int getValue(final ExtendedBitSet chromosome) {
+			return chromosome.getIntAt(positionInChromosome, lengthInBits);
+		}
+
+		@Override
+		public final boolean isEqual(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
+			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
+					.getIntAt(positionInChromosome, lengthInBits));
+		}
+
+		@Override
+		public final boolean isMatch(final float attributeVision,
+				final ExtendedBitSet testedChromosome) {
+			return testedChromosome
+					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
+		}
+
+		@Override
+		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
+				final ExtendedBitSet testChromosome) {
+			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
+					.getIntAt(positionInChromosome, lengthInBits))
+				return true;
+			else
+				return false;
+		}
+
+		@Override
+		public final void randomCoveringValue(final float attributeValue,
+				final Classifier generatedClassifier) {
+			int coverClass = (int) attributeValue;
+			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
+					coverClass);
+		}
+
+		/**
+		 * Sets the label value.
+		 * 
+		 * @param chromosome
+		 *            the chromosome to set the label
+		 * @param value
+		 *            the value to set
+		 */
+		public final void setValue(final ExtendedBitSet chromosome,
+				final int value) {
+			chromosome.setIntAt(positionInChromosome, lengthInBits, value);
+		}
+
+		@Override
+		public final String toString(final ExtendedBitSet convertingClassifier) {
+			int index = convertingClassifier.getIntAt(positionInChromosome,
+					lengthInBits);
+			return classes[index];
+		}
+
+	}
+
+	/**
+	 * A Classification strategy using voting.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public final class VotingClassificationStrategy implements
+			IClassificationStrategy {
+
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+
+			// Initialize table
+			final int numOfClasses = ((UniLabel) attributeList[attributeList.length - 1]).classes.length;
+			double[] votingTable = new double[numOfClasses];
+			Arrays.fill(votingTable, 0);
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+
+			// Let each classifier vote
+			final int setSize = matchSet.getNumberOfMacroclassifiers();
+			for (int i = 0; i < setSize; i++) {
+				final int advocatingClass = ((UniLabel) attributeList[attributeList.length - 1])
+						.getValue(matchSet.getClassifier(i));
+				votingTable[advocatingClass] += matchSet
+						.getClassifierNumerosity(i)
+						* matchSet
+								.getClassifier(i)
+								.getComparisonValue(
+										AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+			}
+
+			// Find max
+			double maxVotes = votingTable[0];
+			int maxIndex = 0;
+			for (int i = 1; i < numOfClasses; i++) {
+				if (maxVotes < votingTable[i]) {
+					maxIndex = i;
+					maxVotes = votingTable[i];
+				}
+			}
+
+			if (maxVotes == 0) {
+				// TODO: Select majority class
+			}
+
+			// Wrap it
+			int[] results = new int[1];
+			results[0] = maxIndex;
+			return results;
+		}
+
+	}
+
+	/**
 	 * Call superclass's constructor.
 	 * 
 	 * @param generalizationRate
@@ -87,6 +288,20 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		super(inputArff, precision, attributeToIgnore, generalizationRate, lcs);
 	}
 
+	@Override
+	public float classifyAbilityAll(final Classifier aClassifier,
+			final int instanceIndex) {
+		return ((UniLabel) attributeList[attributeList.length - 1])
+				.getValue(aClassifier) == myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] ? 1
+				: 0;
+	}
+
+	@Override
+	public float classifyAbilityLabel(final Classifier aClassifier,
+			final int instanceIndex, final int label) {
+		return classifyAbilityAll(aClassifier, instanceIndex);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -127,6 +342,13 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		return result;
 	}
 
+	@Override
+	public int[] getDataInstanceLabels(final double[] dataInstance) {
+		int[] classes = new int[1];
+		classes[0] = (int) dataInstance[dataInstance.length - 1];
+		return classes;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -139,228 +361,6 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
 				aClassifier, action);
 
-	}
-
-	/**
-	 * A representation of the class "attribute".
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	public class UniLabel extends AbstractAttribute {
-
-		/**
-		 * The classes' names.
-		 */
-		private String[] classes;
-
-		/**
-		 * The constructor.
-		 * 
-		 * @param startPosition
-		 *            the starting position at the gene
-		 * @param attributeName
-		 *            the name of the attribute
-		 * @param classNames
-		 *            a String[] containing the names of the classes.
-		 */
-		public UniLabel(final int startPosition, final String attributeName,
-				final String[] classNames) {
-			super(startPosition, attributeName, 0);
-			lengthInBits = (int) Math.ceil(Math.log10(classNames.length)
-					/ Math.log10(2));
-			chromosomeSize += lengthInBits;
-			classes = classNames;
-		}
-
-		@Override
-		public final String toString(final ExtendedBitSet convertingClassifier) {
-			int index = convertingClassifier.getIntAt(positionInChromosome,
-					lengthInBits);
-			return classes[index];
-		}
-
-		@Override
-		public final boolean isMatch(final float attributeVision,
-				final ExtendedBitSet testedChromosome) {
-			return testedChromosome
-					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
-		}
-
-		@Override
-		public final void randomCoveringValue(final float attributeValue,
-				final Classifier generatedClassifier) {
-			int coverClass = (int) attributeValue;
-			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
-					coverClass);
-		}
-
-		@Override
-		public final void fixAttributeRepresentation(
-				final ExtendedBitSet generatedClassifier) {
-			if (generatedClassifier
-					.getIntAt(positionInChromosome, lengthInBits) >= classes.length) {
-
-				int randClass = (int) Math
-						.floor(Math.random() * classes.length);
-				generatedClassifier.setIntAt(positionInChromosome,
-						lengthInBits, randClass);
-			}
-
-		}
-
-		@Override
-		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
-				final ExtendedBitSet testChromosome) {
-			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
-					.getIntAt(positionInChromosome, lengthInBits))
-				return true;
-			else
-				return false;
-		}
-
-		@Override
-		public final boolean isEqual(final ExtendedBitSet baseChromosome,
-				final ExtendedBitSet testChromosome) {
-			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
-					.getIntAt(positionInChromosome, lengthInBits));
-		}
-
-		/**
-		 * Gets the label value.
-		 * 
-		 * @param chromosome
-		 *            the chromosome
-		 * @return the value of the label at the chromosome
-		 */
-		public final int getValue(final ExtendedBitSet chromosome) {
-			return chromosome.getIntAt(positionInChromosome, lengthInBits);
-		}
-
-		/**
-		 * Sets the label value.
-		 * 
-		 * @param chromosome
-		 *            the chromosome to set the label
-		 * @param value
-		 *            the value to set
-		 */
-		public final void setValue(final ExtendedBitSet chromosome,
-				final int value) {
-			chromosome.setIntAt(positionInChromosome, lengthInBits, value);
-		}
-
-	}
-
-	@Override
-	public float classifyAbilityAll(final Classifier aClassifier,
-			final int instanceIndex) {
-		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier) == myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] ? 1
-				: 0;
-	}
-
-	@Override
-	public int[] getDataInstanceLabels(final double[] dataInstance) {
-		int[] classes = new int[1];
-		classes[0] = (int) dataInstance[dataInstance.length - 1];
-		return classes;
-	}
-
-	/**
-	 * Inner class for classifying using only the the exploitation fitness.
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	public final class BestFitnessClassificationStrategy implements
-			IClassificationStrategy {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation.
-		 * IClassificationStrategy
-		 * #classify(gr.auth.ee.lcs.classifiers.ClassifierSet, double[])
-		 */
-		@Override
-		public int[] classify(final ClassifierSet aSet,
-				final double[] visionVector) {
-			INaturalSelector selector = new BestClassifierSelector(true,
-					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-
-			// Generate MatchSet
-			ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
-
-			if (matchSet.getTotalNumerosity() == 0)
-				return null;
-			ClassifierSet results = new ClassifierSet(null);
-			selector.select(1, matchSet, results);
-
-			return results.getClassifier(0).getActionAdvocated();
-		}
-
-	}
-
-	/**
-	 * A Classification strategy using voting.
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	public final class VotingClassificationStrategy implements
-			IClassificationStrategy {
-
-		@Override
-		public int[] classify(final ClassifierSet aSet,
-				final double[] visionVector) {
-
-			// Initialize table
-			final int numOfClasses = ((UniLabel) attributeList[attributeList.length - 1]).classes.length;
-			double[] votingTable = new double[numOfClasses];
-			Arrays.fill(votingTable, 0);
-
-			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
-
-			// Let each classifier vote
-			final int setSize = matchSet.getNumberOfMacroclassifiers();
-			for (int i = 0; i < setSize; i++) {
-				final int advocatingClass = ((UniLabel) attributeList[attributeList.length - 1])
-						.getValue(matchSet.getClassifier(i));
-				votingTable[advocatingClass] += matchSet
-						.getClassifierNumerosity(i)
-						* matchSet
-								.getClassifier(i)
-								.getComparisonValue(
-										AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-			}
-
-			// Find max
-			double maxVotes = votingTable[0];
-			int maxIndex = 0;
-			for (int i = 1; i < numOfClasses; i++) {
-				if (maxVotes < votingTable[i]) {
-					maxIndex = i;
-					maxVotes = votingTable[i];
-				}
-			}
-
-			if (maxVotes == 0) {
-				// TODO: Select majority class
-			}
-
-			// Wrap it
-			int[] results = new int[1];
-			results[0] = maxIndex;
-			return results;
-		}
-
-	}
-
-	@Override
-	public float classifyAbilityLabel(final Classifier aClassifier,
-			final int instanceIndex, final int label) {
-		return classifyAbilityAll(aClassifier, instanceIndex);
 	}
 
 }

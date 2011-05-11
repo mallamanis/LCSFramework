@@ -136,6 +136,27 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		return new SLCSClassifierData();
 	}
 
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -227,27 +248,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		else
 			ga.evolveSet(correctSet, population);
 
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
 	}
 
 	/**

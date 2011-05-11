@@ -30,6 +30,44 @@ public class GenericMlRepresentationTest {
 
 	MockLCS lcs;
 
+	@Test
+	public void classificationMethods() {
+		double[][] instances = { { 1, 1, 0, 0, 1 } };
+		lcs.instances = instances;
+		int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
+		System.out.print(Arrays.toString(instanceLabels1));
+		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
+		Classifier ex = lcs.getNewClassifier(set);
+
+		assertTrue(rep.classifyAbsolute(ex, 0) == 1);
+		assertTrue(rep.classifyHamming(ex, 0) == 1);
+		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
+
+		set = new ExtendedBitSet("11000001010101");
+		ex = lcs.getNewClassifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0) == 1);
+		assertTrue(rep.classifyHamming(ex, 0) == 1);
+		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
+
+		set = new ExtendedBitSet("10000001010101");
+		ex = lcs.getNewClassifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
+		assertTrue(rep.classifyHamming(ex, 0) == 0);
+		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
+
+		set = new ExtendedBitSet("11110001010101");
+		ex = lcs.getNewClassifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (1. / 2.)) < 0.0001);
+		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
+
+		set = new ExtendedBitSet("11110101010101");
+		ex = lcs.getNewClassifier(set);
+		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
+		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2. / 3.)) < 0.0001);
+		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
+	}
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -217,44 +255,6 @@ public class GenericMlRepresentationTest {
 		ex2 = lcs.getNewClassifier(set2);
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
-	}
-
-	@Test
-	public void classificationMethods() {
-		double[][] instances = { { 1, 1, 0, 0, 1 } };
-		lcs.instances = instances;
-		int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
-		System.out.print(Arrays.toString(instanceLabels1));
-		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
-		Classifier ex = lcs.getNewClassifier(set);
-
-		assertTrue(rep.classifyAbsolute(ex, 0) == 1);
-		assertTrue(rep.classifyHamming(ex, 0) == 1);
-		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
-
-		set = new ExtendedBitSet("11000001010101");
-		ex = lcs.getNewClassifier(set);
-		assertTrue(rep.classifyAbsolute(ex, 0) == 1);
-		assertTrue(rep.classifyHamming(ex, 0) == 1);
-		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
-
-		set = new ExtendedBitSet("10000001010101");
-		ex = lcs.getNewClassifier(set);
-		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
-		assertTrue(rep.classifyHamming(ex, 0) == 0);
-		assertTrue(rep.classifyAccuracy(ex, 0) == 1);
-
-		set = new ExtendedBitSet("11110001010101");
-		ex = lcs.getNewClassifier(set);
-		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
-		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (1. / 2.)) < 0.0001);
-		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
-
-		set = new ExtendedBitSet("11110101010101");
-		ex = lcs.getNewClassifier(set);
-		assertTrue(rep.classifyAbsolute(ex, 0) == 0);
-		assertTrue(Math.abs(rep.classifyHamming(ex, 0) - (2. / 3.)) < 0.0001);
-		assertTrue(rep.classifyAccuracy(ex, 0) == .5);
 	}
 
 	@Test

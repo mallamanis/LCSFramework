@@ -44,6 +44,27 @@ public class HammingLossEvaluator implements IEvaluator {
 	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
+	 * Constructor using double[][] of instances.
+	 * 
+	 * @param instances
+	 *            the instances
+	 * @param print
+	 *            true to turn printing on
+	 * @param numOfLabels
+	 *            the number of labels
+	 * @param lcs
+	 *            the LCS instance used
+	 */
+	public HammingLossEvaluator(final double[][] instances,
+			final boolean print, final int numOfLabels,
+			final AbstractLearningClassifierSystem lcs) {
+		this.instances = instances;
+		printResults = print;
+		numberOfLabels = numOfLabels;
+		myLcs = lcs;
+	}
+
+	/**
 	 * Constructor of the hamming loss evaluator.
 	 * 
 	 * @param instances
@@ -84,27 +105,6 @@ public class HammingLossEvaluator implements IEvaluator {
 		FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
 				.convert(new Instances(reader));
-		numberOfLabels = numOfLabels;
-		myLcs = lcs;
-	}
-
-	/**
-	 * Constructor using double[][] of instances.
-	 * 
-	 * @param instances
-	 *            the instances
-	 * @param print
-	 *            true to turn printing on
-	 * @param numOfLabels
-	 *            the number of labels
-	 * @param lcs
-	 *            the LCS instance used
-	 */
-	public HammingLossEvaluator(final double[][] instances,
-			final boolean print, final int numOfLabels,
-			final AbstractLearningClassifierSystem lcs) {
-		this.instances = instances;
-		printResults = print;
 		numberOfLabels = numOfLabels;
 		myLcs = lcs;
 	}

@@ -14,12 +14,6 @@ import weka.core.Instances;
 public final class InstanceToDoubleConverter {
 
 	/**
-	 * Private Constructor to avoid instanciation.
-	 */
-	private InstanceToDoubleConverter() {
-	};
-
-	/**
 	 * Perform the conversion.
 	 * 
 	 * @param set
@@ -38,5 +32,11 @@ public final class InstanceToDoubleConverter {
 
 		return result;
 
+	};
+
+	/**
+	 * Private Constructor to avoid instanciation.
+	 */
+	private InstanceToDoubleConverter() {
 	}
 }

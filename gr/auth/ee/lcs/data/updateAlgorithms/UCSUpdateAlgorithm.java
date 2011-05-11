@@ -24,11 +24,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		Serializable {
 
 	/**
-	 * Generated Serial.
-	 */
-	private static final long serialVersionUID = 6158544873341943970L;
-
-	/**
 	 * A data object for the UCS update algorithm.
 	 * 
 	 * @stereotype ConcreteProduct
@@ -75,6 +70,11 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	}
 
 	/**
+	 * Generated Serial.
+	 */
+	private static final long serialVersionUID = 6158544873341943970L;
+
+	/**
 	 * Genetic Algorithm.
 	 */
 	private final transient IGeneticAlgorithmStrategy ga;
@@ -111,6 +111,11 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * The LCS instance being used.
 	 */
 	private final transient AbstractLearningClassifierSystem myLcs;
+
+	/**
+	 * The mean population fitness of the population being updated.
+	 */
+	private transient double meanPopulationFitness = 0;
 
 	/**
 	 * Default constructor.
@@ -181,6 +186,27 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	@Override
 	public Serializable createStateClassifierObject() {
 		return new UCSClassifierData();
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/*
@@ -306,32 +332,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
 	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
-	/**
-	 * The mean population fitness of the population being updated.
-	 */
-	private transient double meanPopulationFitness = 0;
 
 	/**
 	 * Update the mean fitness variable.

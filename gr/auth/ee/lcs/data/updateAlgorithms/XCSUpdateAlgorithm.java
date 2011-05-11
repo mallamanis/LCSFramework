@@ -174,6 +174,27 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return new XCSClassifierData();
 	}
 
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -304,27 +325,6 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: Mode changes?
 
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
 	}
 
 	/*

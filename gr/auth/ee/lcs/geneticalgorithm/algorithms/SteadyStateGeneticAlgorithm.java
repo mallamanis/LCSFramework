@@ -92,27 +92,6 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		this.myLcs = lcs;
 	}
 
-	/**
-	 * Get the population mean age.
-	 * 
-	 * @param set
-	 *            the set of classifiers to find the mean age
-	 * @return an int representing the set's mean age (rounded)
-	 */
-	private int getMeanAge(final ClassifierSet set) {
-		int meanAge = 0;
-		// Cache value for optimization
-		final int evolveSetSize = set.getNumberOfMacroclassifiers();
-
-		for (int i = 0; i < evolveSetSize; i++) {
-			meanAge += set.getClassifierNumerosity(i)
-					* set.getClassifier(i).timestamp;
-		}
-		meanAge /= ((double) set.getTotalNumerosity());
-
-		return meanAge;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -167,6 +146,27 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 
 		}
 
+	}
+
+	/**
+	 * Get the population mean age.
+	 * 
+	 * @param set
+	 *            the set of classifiers to find the mean age
+	 * @return an int representing the set's mean age (rounded)
+	 */
+	private int getMeanAge(final ClassifierSet set) {
+		int meanAge = 0;
+		// Cache value for optimization
+		final int evolveSetSize = set.getNumberOfMacroclassifiers();
+
+		for (int i = 0; i < evolveSetSize; i++) {
+			meanAge += set.getClassifierNumerosity(i)
+					* set.getClassifier(i).timestamp;
+		}
+		meanAge /= ((double) set.getTotalNumerosity());
+
+		return meanAge;
 	}
 
 }

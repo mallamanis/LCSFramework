@@ -28,6 +28,8 @@ public final class ComplexRepresentationTest {
 	 */
 	SingleClassRepresentation rep;
 
+	MockLCS lcs;
+
 	@Test
 	public void advocatedActionTest() {
 		ExtendedBitSet set1 = new ExtendedBitSet(
@@ -168,8 +170,6 @@ public final class ComplexRepresentationTest {
 		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.isMatch(st, ex1));
 	}
-
-	MockLCS lcs;
 
 	@Before
 	public void setUp() throws Exception {

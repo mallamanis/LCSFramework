@@ -391,6 +391,36 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
+		/**
+		 * Return the numeric high bound of the interval.
+		 * 
+		 * @param chromosome
+		 *            the chromosome containing the interval
+		 * @return the numeric value of the high bound
+		 */
+		private float getHighBoundValue(final ExtendedBitSet chromosome) {
+			final int part = chromosome.getIntAt(positionInChromosome + 1
+					+ precisionBits, precisionBits);
+
+			return ((float) part) / ((float) totalParts)
+					* (maxValue - minValue) + minValue;
+		}
+
+		/**
+		 * Return the numeric lower bound of the interval.
+		 * 
+		 * @param chromosome
+		 *            the chromosome containing the interval
+		 * @return the numeric value of the lower bound
+		 */
+		private float getLowBoundValue(final ExtendedBitSet chromosome) {
+			final int part = chromosome.getIntAt(positionInChromosome + 1,
+					precisionBits);
+
+			return ((float) part) / ((float) totalParts)
+					* (maxValue - minValue) + minValue;
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -510,36 +540,6 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 					+ String.format("%.3f",
 							getHighBoundValue(convertingChromosome)) + "]";
 			return value;
-		}
-
-		/**
-		 * Return the numeric high bound of the interval.
-		 * 
-		 * @param chromosome
-		 *            the chromosome containing the interval
-		 * @return the numeric value of the high bound
-		 */
-		private float getHighBoundValue(final ExtendedBitSet chromosome) {
-			final int part = chromosome.getIntAt(positionInChromosome + 1
-					+ precisionBits, precisionBits);
-
-			return ((float) part) / ((float) totalParts)
-					* (maxValue - minValue) + minValue;
-		}
-
-		/**
-		 * Return the numeric lower bound of the interval.
-		 * 
-		 * @param chromosome
-		 *            the chromosome containing the interval
-		 * @return the numeric value of the lower bound
-		 */
-		private float getLowBoundValue(final ExtendedBitSet chromosome) {
-			final int part = chromosome.getIntAt(positionInChromosome + 1,
-					precisionBits);
-
-			return ((float) part) / ((float) totalParts)
-					* (maxValue - minValue) + minValue;
 		}
 
 	}
@@ -922,6 +922,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return strategy.classify(aSet, visionVector);
 	}
 
+	/**
+	 * Create the class representation depending on the problem.
+	 * 
+	 * @param instances
+	 *            the Weka instances
+	 */
+	protected abstract void createClassRepresentation(Instances instances);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1061,13 +1069,5 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		}
 		return nlRule;
 	}
-
-	/**
-	 * Create the class representation depending on the problem.
-	 * 
-	 * @param instances
-	 *            the Weka instances
-	 */
-	protected abstract void createClassRepresentation(Instances instances);
 
 }

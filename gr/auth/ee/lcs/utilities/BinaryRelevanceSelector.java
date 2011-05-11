@@ -34,6 +34,28 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#getStatus(int)
+	 */
+	@Override
+	public boolean getStatus(final int labelIndex) {
+		return labelIndex == currentLabel;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#hasNext()
+	 */
+	@Override
+	public boolean hasNext() {
+		if (currentLabel < numberOfLabels - 1)
+			return true;
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#next()
 	 */
 	@Override
@@ -53,28 +75,6 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 	@Override
 	public void reset() {
 		currentLabel = 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#hasNext()
-	 */
-	@Override
-	public boolean hasNext() {
-		if (currentLabel < numberOfLabels - 1)
-			return true;
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#getStatus(int)
-	 */
-	@Override
-	public boolean getStatus(final int labelIndex) {
-		return labelIndex == currentLabel;
 	}
 
 }

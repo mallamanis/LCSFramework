@@ -34,6 +34,29 @@ public class PairwiseLabelSelector implements ILabelSelector {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#getStatus(int)
+	 */
+	@Override
+	public boolean getStatus(int labelIndex) {
+		return (labelIndex == i || labelIndex == j);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#hasNext()
+	 */
+	@Override
+	public boolean hasNext() {
+		if (i == numberOfLabels - 2 && j == numberOfLabels - 1)
+			return false;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#next()
 	 */
 	@Override
@@ -57,29 +80,6 @@ public class PairwiseLabelSelector implements ILabelSelector {
 	public void reset() {
 		i = 0;
 		j = 1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#hasNext()
-	 */
-	@Override
-	public boolean hasNext() {
-		if (i == numberOfLabels - 2 && j == numberOfLabels - 1)
-			return false;
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.utilities.ILabelSelector#getStatus(int)
-	 */
-	@Override
-	public boolean getStatus(int labelIndex) {
-		return (labelIndex == i || labelIndex == j);
-
 	}
 
 }
