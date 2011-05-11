@@ -176,7 +176,7 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 	 * The problem's target LC.
 	 */
 	private final double targetLC;
-	
+
 	/**
 	 * The classification strategy.
 	 */
@@ -268,8 +268,8 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		str.proportionalCutCalibration(this.instances,
-		 rulePopulation, (float) targetLC);
+		str.proportionalCutCalibration(this.instances, rulePopulation,
+				(float) targetLC);
 		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 

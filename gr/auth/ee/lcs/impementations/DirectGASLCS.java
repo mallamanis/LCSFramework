@@ -23,6 +23,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
@@ -38,10 +39,14 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 1000;
-		final int populationSize = 2000;
+		SettingsLoader.loadSettings();
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		final int iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
 		DirectGASLCS dgaslcs = new DirectGASLCS(file, iterations,
 				populationSize, numOfLabels);
 		dgaslcs.train();
@@ -66,57 +71,86 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float) SettingsLoader
+			.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader
+			.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 100);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
+			"callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
+			"precisionBits", 5);
 
 	/**
-	 * The AS-LCS n power parameter.
+	 * The UCS n power parameter.
 	 */
-	private final int ASLCS_N = 10;
+	private final int ASLCS_N = (int) SettingsLoader.getNumericSetting(
+			"ASLCS_N", 10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double ASLCS_ACC0 = .99;
+	private final double ASLCS_ACC0 = SettingsLoader.getNumericSetting(
+			"ASLCS_Acc0", .99);
 
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int ASLCS_EXPERIENCE_THRESHOLD = 20;
+	private final int ASLCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("ASLCS_ExperienceTheshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
 	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
+
+	/**
+	 * The attribute generalization rate.
+	 */
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
+			.getNumericSetting("AttributeGeneralizationRate", 0.33);
+
+	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
+			.getNumericSetting("GAMatchSetRunProbability", 0.01);
+
+	/**
+	 * Percentage of only updates (and no exploration).
+	 */
+	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
+			.getNumericSetting("UpdateOnlyPercentage", .1);
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -148,7 +182,7 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -156,11 +190,15 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 
 		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH,
-				.01, .7, this);
+				SettingsLoader.getNumericSetting("LabelGeneralizationRate",
+						0.33), ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
-				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+		final ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
+				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
+				MATCHSET_GA_RUN_PROBABILITY, ga, this);
+
+		this.setElements(rep, strategy);
 	}
 
 	/**
@@ -190,7 +228,9 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.train(iterations, rulePopulation);
-
+		myExample.updatePopulation(
+				(int) (UPDATE_ONLY_ITERATION_PERCENTAGE * iterations),
+				rulePopulation);
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -217,7 +257,8 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 		accEval.evaluateSet(rulePopulation);
 
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
-				(float) 3.5));
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1)));
 		System.out.println("Evaluating on test set(voting)");
 		testEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);

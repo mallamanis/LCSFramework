@@ -25,6 +25,7 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
@@ -40,10 +41,14 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/genbase2.arff";
-		final int numOfLabels = 27;
-		final int iterations = 200;
-		final int populationSize = 6000;
+		SettingsLoader.loadSettings();
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		final int iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
 		RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize,
 				numOfLabels);
 		rtaslcs.train();
@@ -68,57 +73,92 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float) SettingsLoader
+			.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader
+			.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 900;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 100);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 200;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
+			"callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
+			"precisionBits", 5);
 
 	/**
-	 * The ASLCS n power parameter.
+	 * The UCS n power parameter.
 	 */
-	private final int ASLCS_N = 10;
+	private final int ASLCS_N = (int) SettingsLoader.getNumericSetting(
+			"ASLCS_N", 10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double ASLCS_ACC0 = .99;
+	private final double ASLCS_ACC0 = SettingsLoader.getNumericSetting(
+			"ASLCS_Acc0", .99);
 
 	/**
-	 * The ASLCS experience threshold.
+	 * The UCS experience threshold.
 	 */
-	private final int ASLCS_EXPERIENCE_THRESHOLD = 20;
+	private final int ASLCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("ASLCS_ExperienceTheshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 5;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
 	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = 0.0;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
+
+	/**
+	 * The attribute generalization rate.
+	 */
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
+			.getNumericSetting("AttributeGeneralizationRate", 0.33);
+
+	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
+			.getNumericSetting("GAMatchSetRunProbability", 0.01);
+
+	/**
+	 * Percentage of only updates (and no exploration).
+	 */
+	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
+			.getNumericSetting("UpdateOnlyPercentage", .1);
+
+	/**
+	 * Problem LC.
+	 */
+	private final float LABEL_CARDINALITY = (float) SettingsLoader
+			.getNumericSetting("datasetLabelCardinality", 1);
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -157,12 +197,14 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
 		UniLabelRepresentation rep = new UniLabelRepresentation(inputFile,
-				PRECISION_BITS, numberOfLabels, .7, this);
+				PRECISION_BITS, numberOfLabels, ATTRIBUTE_GENERALIZATION_RATE,
+				this);
 		str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 
 		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(ASLCS_N,
-				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD, .01, ga, this);
+				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
+				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
 		this.setElements(rep, update);
 	}
@@ -197,6 +239,9 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
 		myExample.registerHook(acc);
 		myExample.train(iterations, rulePopulation);
+		myExample.updatePopulation(
+				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
 
 		// rulePopulation.print();
 		System.out.println("Post process...");
@@ -223,7 +268,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		accEval.evaluateSet(rulePopulation);
 
 		str.proportionalCutCalibration(this.instances, rulePopulation,
-				(float) 1.252);
+				LABEL_CARDINALITY);
 		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
@@ -238,7 +283,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 
 		str.proportionalCutCalibration(
 				InstanceToDoubleConverter.convert(loader.testSet),
-				rulePopulation, (float) 1.252);
+				rulePopulation, LABEL_CARDINALITY);
 
 		System.out.println("Evaluating on test set (Pcut on test)");
 

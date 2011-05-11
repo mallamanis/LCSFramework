@@ -23,6 +23,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
@@ -38,10 +39,16 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 1000;
-		final int populationSize = 2000;
+		SettingsLoader.loadSettings();
+
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		final int iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
+
 		DirectMlUCS dmlucs = new DirectMlUCS(file, iterations, populationSize,
 				numOfLabels);
 		dmlucs.train();
@@ -66,67 +73,97 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float) SettingsLoader
+			.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader
+			.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 500;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 100);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 100;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
+			"callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
+			"precisionBits", 5);
 
 	/**
 	 * The UCS alpha parameter.
 	 */
-	private final double UCS_ALPHA = .1;
+	private final double UCS_ALPHA = SettingsLoader.getNumericSetting(
+			"UCS_Alpha", .1);
 
 	/**
 	 * The UCS n power parameter.
 	 */
-	private final int UCS_N = 10;
+	private final int UCS_N = (int) SettingsLoader.getNumericSetting("UCS_N",
+			10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double UCS_ACC0 = .99;
-
+	private final double UCS_ACC0 = SettingsLoader.getNumericSetting(
+			"UCS_Acc0", .99);
 	/**
 	 * The learning rate (beta) parameter.
 	 */
-	private final double UCS_LEARNING_RATE = .1;
+	private final double UCS_LEARNING_RATE = SettingsLoader.getNumericSetting(
+			"UCS_beta", .1);
 
 	/**
 	 * The UCS experience threshold.
 	 */
-	private final int UCS_EXPERIENCE_THRESHOLD = 200;
+	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .5;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
+
+	/**
+	 * The attribute generalization rate.
+	 */
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
+			.getNumericSetting("AttributeGeneralizationRate", 0.33);
+
+	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
+			.getNumericSetting("GAMatchSetRunProbability", 0.01);
+
+	/**
+	 * Percentage of only updates (and no exploration).
+	 */
+	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
+			.getNumericSetting("UpdateOnlyPercentage", .1);
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -161,11 +198,13 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 
 		StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.HAMMING_LOSS, .7, this);
+				StrictMultiLabelRepresentation.HAMMING_LOSS,
+				ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 
-		MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga, .1,
-				UCS_EXPERIENCE_THRESHOLD, numberOfLabels, this);
+		MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
+				UCS_LEARNING_RATE, UCS_ACC0, UCS_N, UCS_EXPERIENCE_THRESHOLD,
+				numberOfLabels, this);
 
 		this.setElements(rep, strategy);
 	}
@@ -195,8 +234,11 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
 		myExample.train(iterations, rulePopulation);
+		myExample.updatePopulation(
+				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
 
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(

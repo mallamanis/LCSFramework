@@ -38,32 +38,32 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		/**
 		 * The per-label tp.
 		 */
-		private final int tp[];
+		private final int[] tp;
 
 		/**
 		 * The per-label fp.
 		 */
-		private final int fp[];
+		private final int[] fp;
 
 		/**
 		 * fitness0 per-label variable.
 		 */
-		private final float fitness0[];
+		private final float[] fitness0;
 
 		/**
 		 * The per-label fitness.
 		 */
-		private final float labelFitness[];
+		private final float[] labelFitness;
 
 		/**
 		 * The per-label correct set.
 		 */
-		private final float cs[];
+		private final float[] cs;
 
 		/**
 		 * A boolean array indicating on which variables the rule is active.
 		 */
-		private final boolean active[];
+		private final boolean[] active;
 
 		/**
 		 * Strength.
@@ -91,7 +91,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		 * @param numberOfLabels
 		 *            the number of labels used
 		 */
-		public MlUCSClassifierData(int numberOfLabels) {
+		public MlUCSClassifierData(final int numberOfLabels) {
 			tp = new int[numberOfLabels];
 			fp = new int[numberOfLabels];
 			cs = new float[numberOfLabels];
@@ -114,7 +114,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	/**
 	 * Acc0.
 	 */
-	private final double acc0 = .99;
+	private final double acc0;
 
 	/**
 	 * Genetic Algorithm.
@@ -129,7 +129,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	/**
 	 * The UCS n parameter.
 	 */
-	private final int n = 10;
+	private final int n;
 
 	/**
 	 * The LCS instance being used.
@@ -148,13 +148,16 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	public MlUCSUpdateAlgorithm(
 			final IGeneticAlgorithmStrategy geneticAlgorithm,
-			final double learningRate, final int ageThreshold,
-			final int numberOfLabels, final AbstractLearningClassifierSystem lcs) {
+			final double learningRate, final double ucsAcc0, final int ucsN,
+			final int ageThreshold, final int numberOfLabels,
+			final AbstractLearningClassifierSystem lcs) {
 		this.ga = geneticAlgorithm;
 		this.b = learningRate;
 		deleteAge = ageThreshold;
 		this.numberOfLabels = numberOfLabels;
 		myLcs = lcs;
+		acc0 = ucsAcc0;
+		n = ucsN;
 	}
 
 	/**
