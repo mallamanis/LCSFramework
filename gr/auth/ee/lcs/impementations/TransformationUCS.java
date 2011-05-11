@@ -50,7 +50,7 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 	public static void main(String[] args) throws IOException {
 
 		SettingsLoader.loadSettings();
-		Handler fileLogging = new FileHandler("ouput.log");
+		Handler fileLogging = new FileHandler("output.log");
 
 		Logger.getLogger("").setLevel(Level.CONFIG);
 		Logger.getLogger("").addHandler(fileLogging);

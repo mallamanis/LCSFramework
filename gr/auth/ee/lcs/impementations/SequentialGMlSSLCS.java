@@ -25,6 +25,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
@@ -40,13 +41,20 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		final String file = "/home/miltiadis/Desktop/datasets/mlTestbeds/mlidentity7.arff";
-		final int numOfLabels = 7;
-		final int iterations = 100;
-		final int populationSize = 1000;
-		final float lc = (float) 3.5;
+		SettingsLoader.loadSettings();
+
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		final int iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
+		final float lc = (float) SettingsLoader.getNumericSetting(
+				"datasetLabelCardinality", 1);
 		SequentialGMlSSLCS sgmlucs = new SequentialGMlSSLCS(file, iterations,
-				populationSize, numOfLabels, .33, lc);
+				populationSize, numOfLabels, SettingsLoader.getNumericSetting(
+						"LabelGeneralizationRate", 0.33), lc);
 		sgmlucs.train();
 
 	}
@@ -74,52 +82,92 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The GA crossover rate.
 	 */
-	private final float CROSSOVER_RATE = (float) 0.8;
+	private final float CROSSOVER_RATE = (float) SettingsLoader
+			.getNumericSetting("crossoverRate", .8);
 
 	/**
 	 * The GA mutation rate.
 	 */
-	private final double MUTATION_RATE = (float) .04;
+	private final double MUTATION_RATE = (float) SettingsLoader
+			.getNumericSetting("mutationRate", .04);
 
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = 100;
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 100);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
 	 */
-	private final int CALLBACK_RATE = 10;
+	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
+			"callbackRate", 100);
 
 	/**
-	 * The number of bits to use for representing continuous variables
+	 * The number of bits to use for representing continuous variables.
 	 */
-	private final int PRECISION_BITS = 7;
+	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
+			"precisionBits", 5);
 
 	/**
-	 * The UCS n power parameter.
+	 * The SSLCS penalty parameter.
 	 */
-	private final int SSLCS_PENALTY = 5;
+	private final double SSLCS_PENALTY = SettingsLoader.getNumericSetting(
+			"SSLCSPenaltyPercent", 10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double SSLCS_REWARD = 1;
+	private final double SSLCS_REWARD = SettingsLoader.getNumericSetting(
+			"SSLCS_REWARD", 1);
+
+	/**
+	 * The SSLCS subsumption experience threshold.
+	 */
+	private final int SSLCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("SSLCSExperienceThreshold", 10);
+
+	/**
+	 * The SSLCS subsumption experience threshold.
+	 */
+	private final double SSLCS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("SSLCSFitnessThreshold", .99);
 
 	/**
 	 * The post-process experience threshold used.
 	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = 10;
+	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Experience_Theshold", 0);
 
 	/**
 	 * Coverage threshold for post processing.
 	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = 0;
+	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
 
 	/**
-	 * Post-process threshold for fitness;
+	 * Post-process threshold for fitness.
 	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = .01;
+	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
+			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
+
+	/**
+	 * The attribute generalization rate.
+	 */
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
+			.getNumericSetting("AttributeGeneralizationRate", 0.33);
+
+	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
+			.getNumericSetting("GAMatchSetRunProbability", 0.01);
+
+	/**
+	 * Percentage of only updates (and no exploration).
+	 */
+	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
+			.getNumericSetting("UpdateOnlyPercentage", .1);
 
 	/**
 	 * The generalization rate used for labels.
@@ -175,12 +223,14 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 
 		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, GenericMultiLabelRepresentation.HAMMING_LOSS,
-				labelGeneralizationRate, .7, this);
+				labelGeneralizationRate, ATTRIBUTE_GENERALIZATION_RATE, this);
 		str = rep.new VotingClassificationStrategy(targetLC);
 		rep.setClassificationStrategy(str);
 
 		SSLCSUpdateAlgorithm updateObj = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
-				SSLCS_PENALTY, .99, 50, 0.01, ga, this);
+				SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
+				SSLCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
+				this);
 		SequentialMlUpdateAlgorithm update = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 		this.setElements(rep, update);
@@ -210,9 +260,12 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
+		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS",
 				eval));
 		myExample.train(iterations, rulePopulation);
+		myExample.updatePopulation(
+				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
 
 		System.out.println("Post process...");
 		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
