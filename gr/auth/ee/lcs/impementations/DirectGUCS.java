@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.MeanVotingClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -284,6 +285,18 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 				InstanceToDoubleConverter.convert(loader.testSet),
 				rulePopulation);
 		System.out.println("Evaluating on test set(voting)");
+		testEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
+
+		MeanVotingClassificationStrategy mvs = rep.new MeanVotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(mvs);
+		mvs.proportionalCutCalibration(
+				InstanceToDoubleConverter.convert(loader.testSet),
+				rulePopulation);
+		System.out.println("Evaluating on test set(mean voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);

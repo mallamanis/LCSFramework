@@ -291,6 +291,147 @@ public final class GenericMultiLabelRepresentation extends
 	 * @author Miltos Allamanis
 	 * 
 	 */
+	public final class MeanVotingClassificationStrategy implements
+			IClassificationStrategy {
+
+		/**
+		 * The target Label Cardinality we are trying to reach.
+		 */
+		private final float targetLC;
+
+		/**
+		 * The threshold on which to decide for the label bipartition.
+		 */
+		private double voteThreshold;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param targetLabelCardinality
+		 *            the target label cardinality
+		 */
+		public MeanVotingClassificationStrategy(
+				final float targetLabelCardinality) {
+			targetLC = targetLabelCardinality;
+		}
+
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+
+			float[] votingTable = getConfidenceArray(aSet, visionVector);
+
+			int numberOfActiveLabels = 0;
+			for (int i = 0; i < votingTable.length; i++)
+				if (votingTable[i] > voteThreshold)
+					numberOfActiveLabels++;
+
+			final int[] result = new int[numberOfActiveLabels];
+
+			int currentIndex = 0;
+			for (int i = 0; i < votingTable.length; i++)
+				if (votingTable[i] > voteThreshold) {
+					result[currentIndex] = i;
+					currentIndex++;
+				}
+
+			return result;
+		}
+
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
+
+			ProportionalCut pCut = new ProportionalCut();
+			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.voteThreshold);
+
+		}
+
+		/**
+		 * Create and normalized the confidence array for a vision vector.
+		 * 
+		 * @param aSet
+		 *            the set of rules to be used for confidence output
+		 * @param visionVector
+		 *            the vision vector
+		 * @return a float array containing the normalized confidence for each
+		 *         label
+		 */
+		private float[] getConfidenceArray(final ClassifierSet aSet,
+				final double[] visionVector) {
+			final float[] votingTable = new float[numberOfLabels];
+			final float[] fitnessSum = new float[numberOfLabels];
+			Arrays.fill(votingTable, 0);
+			Arrays.fill(fitnessSum, 0);
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			// Let each classifier vote
+			final int setSize = matchSet.getNumberOfMacroclassifiers();
+			for (int i = 0; i < setSize; i++) {
+				// For each classifier
+				final Classifier currentClassifier = matchSet.getClassifier(i);
+				final int classifierNumerosity = matchSet
+						.getClassifierNumerosity(i);
+				final double fitness = currentClassifier
+						.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+
+				for (int label = 0; label < numberOfLabels; label++) {
+					final String cons = (attributeList[attributeList.length
+							- numberOfLabels + label])
+							.toString(currentClassifier);
+					if (cons == "#")
+						continue;
+					fitnessSum[label] += classifierNumerosity * fitness;
+					if (cons == "1")
+						votingTable[label] += classifierNumerosity * fitness;
+				}
+			}
+
+			for (int i = 0; i < votingTable.length; i++) {
+				if (fitnessSum[i] > 0) {
+					votingTable[i] /= fitnessSum[i];
+				} else {
+					votingTable[i] = 0;
+				}
+			}
+
+			// Find sum (and make all positive)
+			double sumVote = 0;
+			for (int i = 0; i < votingTable.length; i++) {
+				sumVote += votingTable[i];
+			}
+
+			// Normalize
+			if (sumVote > 0) {
+				for (int i = 0; i < votingTable.length; i++) {
+					votingTable[i] /= sumVote;
+				}
+			}
+			return votingTable;
+		}
+
+	}
+
+	/**
+	 * A Voting Classification Strategy.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
 	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
@@ -335,6 +476,29 @@ public final class GenericMultiLabelRepresentation extends
 				}
 
 			return result;
+		}
+
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
+
+			ProportionalCut pCut = new ProportionalCut();
+			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.voteThreshold);
+
 		}
 
 		/**
@@ -398,29 +562,6 @@ public final class GenericMultiLabelRepresentation extends
 				}
 			}
 			return votingTable;
-		}
-
-		/**
-		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
-		 * threshold.
-		 * 
-		 * @param instances
-		 *            the instances to calibrate threshold on
-		 * @param rules
-		 *            the rules used to classify the instances and provide
-		 *            confidence values.
-		 */
-		public void proportionalCutCalibration(final double[][] instances,
-				final ClassifierSet rules) {
-			float[][] confidenceValues = new float[instances.length][];
-			for (int i = 0; i < instances.length; i++) {
-				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
-			}
-
-			ProportionalCut pCut = new ProportionalCut();
-			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
-			System.out.println("Threshold set to " + this.voteThreshold);
-
 		}
 
 	}
@@ -644,7 +785,7 @@ public final class GenericMultiLabelRepresentation extends
 			}
 		}
 		if (wrong + correct > 0)
-			return ((float) correct) / ((float) (wrong + correct));
+			return (correct) / ((wrong + correct));
 		else
 			return 0;
 	}
@@ -676,23 +817,9 @@ public final class GenericMultiLabelRepresentation extends
 				result++;
 		}
 
-		final float hammingWin = ((float) result)
-				/ ((float) totalClassifications);
+		final float hammingWin = (result) / (totalClassifications);
 
 		return Double.isNaN(hammingWin) ? 0 : hammingWin;
-	}
-
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		for (int i = 0; i < numberOfLabels; i++) {
-
-			final int labelIndex = attributeList.length - numberOfLabels + i;
-
-			final String attributeName = instances.attribute(labelIndex).name();
-
-			attributeList[labelIndex] = new GenericLabel(chromosomeSize,
-					attributeName, labelGeneralizationRate);
-		}
 	}
 
 	@Override
@@ -763,6 +890,19 @@ public final class GenericMultiLabelRepresentation extends
 	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
+	}
+
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		for (int i = 0; i < numberOfLabels; i++) {
+
+			final int labelIndex = attributeList.length - numberOfLabels + i;
+
+			final String attributeName = instances.attribute(labelIndex).name();
+
+			attributeList[labelIndex] = new GenericLabel(chromosomeSize,
+					attributeName, labelGeneralizationRate);
+		}
 	}
 
 }

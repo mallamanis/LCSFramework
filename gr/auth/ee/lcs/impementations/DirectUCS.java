@@ -174,7 +174,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The problem representation.
 	 */
-	private StrictMultiLabelRepresentation rep;
+	private final StrictMultiLabelRepresentation rep;
 
 	/**
 	 * Constructor.
@@ -205,7 +205,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new MeanVotingClassificationStrategy());
 
 		UCSUpdateAlgorithm strategy = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
 				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,

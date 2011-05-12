@@ -140,6 +140,77 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	}
 
 	/**
+	 * Voting Classification Strategy for the Strict Representation.
+	 * 
+	 * @author Miltos Allamanis
+	 * 
+	 */
+	public final class MeanVotingClassificationStrategy implements
+			IClassificationStrategy {
+
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+			double[] fitnessSum = new double[numberOfLabels];
+			double[] voteSum = new double[numberOfLabels];
+			Arrays.fill(fitnessSum, 0);
+			Arrays.fill(voteSum, 0);
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			final int setSize = matchSet.getNumberOfMacroclassifiers();
+
+			for (int i = 0; i < setSize; i++) {
+				// For each classifier
+				for (int label = 0; label < numberOfLabels; label++) {
+					final Classifier currentClassifier = matchSet
+							.getClassifier(i);
+					final int classifierNumerosity = matchSet
+							.getClassifierNumerosity(i);
+					final double fitness = currentClassifier
+							.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+					final boolean labelActivated = ((Label) attributeList[attributeList.length
+							- numberOfLabels + label])
+							.getValue(currentClassifier);
+					fitnessSum[label] += classifierNumerosity * fitness;
+					if (labelActivated)
+						voteSum[label] += classifierNumerosity * fitness;
+
+				}
+			}
+
+			for (int i = 0; i < voteSum.length; i++) {
+				if (fitnessSum[i] > 0) {
+					voteSum[i] /= fitnessSum[i];
+				} else {
+					voteSum[i] = 0;
+				}
+			}
+
+			// TODO: Configurable threshold
+			final double threshold = 0.5;
+
+			int numberOfActiveLabels = 0;
+			for (int i = 0; i < voteSum.length; i++) {
+				if (voteSum[i] > threshold)
+					numberOfActiveLabels++;
+			}
+
+			int[] result = new int[numberOfActiveLabels];
+
+			int currentIndex = 0;
+			for (int i = 0; i < voteSum.length; i++)
+				if (voteSum[i] > threshold) {
+					result[currentIndex] = i;
+					currentIndex++;
+				}
+
+			return result;
+
+		}
+
+	}
+
+	/**
 	 * A voting strategy using voting. Each classifier can vote for or against a
 	 * label. The votes are proportional to each classifier's numerosity and
 	 * fitness. When a label has positive votes the input is classified with
@@ -180,6 +251,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 				}
 			}
 
+			// TODO: Threshold
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++) {
 				if (votingTable[i] > 0)
@@ -340,7 +412,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		}
 
 		if (wrong + correct > 0)
-			return ((float) correct) / ((float) (wrong + correct));
+			return (correct) / ((wrong + correct));
 		else
 			return 0;
 	}
@@ -391,25 +463,6 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 				result++;
 		}
 		return result / numberOfLabels;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
-	 * createClassRepresentation(weka.core.Instances)
-	 */
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		for (int i = 0; i < numberOfLabels; i++) {
-
-			final int labelIndex = attributeList.length - numberOfLabels + i;
-
-			final String attributeName = instances.attribute(labelIndex).name();
-
-			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
-		}
-
 	}
 
 	/*
@@ -480,6 +533,25 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
+	 * createClassRepresentation(weka.core.Instances)
+	 */
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		for (int i = 0; i < numberOfLabels; i++) {
+
+			final int labelIndex = attributeList.length - numberOfLabels + i;
+
+			final String attributeName = instances.attribute(labelIndex).name();
+
+			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
+		}
 
 	}
 
