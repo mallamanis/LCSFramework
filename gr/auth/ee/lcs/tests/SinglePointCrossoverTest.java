@@ -104,7 +104,7 @@ public class SinglePointCrossoverTest extends SinglePointCrossover {
 		
 		// Check if at least once all possible crossovers have been made
 		for (int i = 0; i < atLeastOnce.length; i++)
-			assertTrue("This test might fail with probabilty 1-(.125)^500",atLeastOnce[i]);
+			assertTrue("This test might fail with probabilty (.125)^500",atLeastOnce[i]);
 
 	}
 

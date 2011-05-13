@@ -32,6 +32,9 @@ public final class BestFitnessTournamentSelectorTest {
 	 */
 	ClassifierSet population;
 
+	/**
+	 * The mock lcs.
+	 */
 	MockLCS lcs;
 
 	@Before
