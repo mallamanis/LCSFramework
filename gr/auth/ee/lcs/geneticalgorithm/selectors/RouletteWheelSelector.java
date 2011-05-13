@@ -55,13 +55,15 @@ public class RouletteWheelSelector implements INaturalSelector {
 			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
 		// Find total sum
 		double fitnessSum = 0;
-		final int numberOfMacroclassifiers = fromPopulation.getNumberOfMacroclassifiers();
-		
+		final int numberOfMacroclassifiers = fromPopulation
+				.getNumberOfMacroclassifiers();
+
 		for (int i = 0; i < numberOfMacroclassifiers; i++) {
 			final double fitnessValue = fromPopulation
 					.getClassifierNumerosity(i)
 					* fromPopulation.getClassifier(i).getComparisonValue(mode);
-			fitnessSum += max ? fitnessValue : 1 / (fitnessValue + Double.MIN_NORMAL);
+			fitnessSum += max ? fitnessValue
+					: 1 / (fitnessValue + Double.MIN_NORMAL);
 		}
 
 		// Repeat roulette for howManyToSelect times
@@ -76,7 +78,8 @@ public class RouletteWheelSelector implements INaturalSelector {
 						.getClassifierNumerosity(selectedIndex)
 						* fromPopulation.getClassifier(selectedIndex)
 								.getComparisonValue(mode);
-				tempSum += max ? tempValue : 1 / (tempValue + Double.MIN_NORMAL);
+				tempSum += max ? tempValue
+						: 1 / (tempValue + Double.MIN_NORMAL);
 			} while (tempSum < rand);
 			// Add selectedIndex
 			toPopulation.addClassifier(

@@ -11,13 +11,18 @@ import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 
 /**
  * Simple Mock Update Strategy.
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class MockUpdateStrategy extends AbstractUpdateStrategy {
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#cover(gr.auth.ee.lcs.classifiers.ClassifierSet, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.AbstractUpdateStrategy#cover(gr.auth.ee.lcs.classifiers
+	 * .ClassifierSet, int)
 	 */
 	@Override
 	public void cover(ClassifierSet population, int instanceIndex) {
@@ -25,8 +30,11 @@ public class MockUpdateStrategy extends AbstractUpdateStrategy {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#createStateClassifierObject()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.AbstractUpdateStrategy#createStateClassifierObject()
 	 */
 	@Override
 	public Serializable createStateClassifierObject() {
@@ -34,8 +42,12 @@ public class MockUpdateStrategy extends AbstractUpdateStrategy {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#getComparisonValue(gr.auth.ee.lcs.classifiers.Classifier, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.AbstractUpdateStrategy#getComparisonValue(gr.auth
+	 * .ee.lcs.classifiers.Classifier, int)
 	 */
 	@Override
 	public double getComparisonValue(Classifier aClassifier, int mode) {
@@ -43,8 +55,12 @@ public class MockUpdateStrategy extends AbstractUpdateStrategy {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#getData(gr.auth.ee.lcs.classifiers.Classifier)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.AbstractUpdateStrategy#getData(gr.auth.ee.lcs.classifiers
+	 * .Classifier)
 	 */
 	@Override
 	public String getData(Classifier aClassifier) {
@@ -52,8 +68,12 @@ public class MockUpdateStrategy extends AbstractUpdateStrategy {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#performUpdate(gr.auth.ee.lcs.classifiers.ClassifierSet, gr.auth.ee.lcs.classifiers.ClassifierSet)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.AbstractUpdateStrategy#performUpdate(gr.auth.ee.lcs
+	 * .classifiers.ClassifierSet, gr.auth.ee.lcs.classifiers.ClassifierSet)
 	 */
 	@Override
 	public void performUpdate(ClassifierSet matchSet, ClassifierSet correctSet) {
@@ -61,8 +81,12 @@ public class MockUpdateStrategy extends AbstractUpdateStrategy {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#setComparisonValue(gr.auth.ee.lcs.classifiers.Classifier, int, double)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.AbstractUpdateStrategy#setComparisonValue(gr.auth
+	 * .ee.lcs.classifiers.Classifier, int, double)
 	 */
 	@Override
 	public void setComparisonValue(Classifier aClassifier, int mode,
@@ -71,8 +95,12 @@ public class MockUpdateStrategy extends AbstractUpdateStrategy {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#updateSet(gr.auth.ee.lcs.classifiers.ClassifierSet, gr.auth.ee.lcs.classifiers.ClassifierSet, int, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.AbstractUpdateStrategy#updateSet(gr.auth.ee.lcs.
+	 * classifiers.ClassifierSet, gr.auth.ee.lcs.classifiers.ClassifierSet, int,
+	 * boolean)
 	 */
 	@Override
 	public void updateSet(ClassifierSet population, ClassifierSet matchSet,

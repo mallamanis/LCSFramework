@@ -16,7 +16,7 @@ public class MockLCS extends AbstractLearningClassifierSystem {
 	public MockLCS() {
 		this.setElements(new MockTransformBridge(), new MockUpdateStrategy());
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -25,7 +25,6 @@ public class MockLCS extends AbstractLearningClassifierSystem {
 	@Override
 	public void train() {
 		// TODO Auto-generated method stub
-		
 
 	}
 

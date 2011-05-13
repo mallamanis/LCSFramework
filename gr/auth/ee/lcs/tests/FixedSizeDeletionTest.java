@@ -19,24 +19,22 @@ import org.junit.Test;
 
 /**
  * A test for the fixed size population control.
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class FixedSizeDeletionTest {
-
 
 	/**
 	 * The mock lcs.
 	 */
 	MockLCS lcs;
-	
 
 	/**
 	 * A population.
 	 */
 	ClassifierSet population;
-	
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -49,16 +47,15 @@ public class FixedSizeDeletionTest {
 				0.01, null, lcs);
 		lcs.setElements(rep, update);
 
-		population =  new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						3,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));		
+		population = new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(3,
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_DELETION, true)));
 	}
 
 	/**
-	 * Test method for {@link gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion#controlPopulation(gr.auth.ee.lcs.classifiers.ClassifierSet)}.
+	 * Test method for
+	 * {@link gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion#controlPopulation(gr.auth.ee.lcs.classifiers.ClassifierSet)}
+	 * .
 	 */
 	@Test
 	public void testControlPopulation() {
@@ -70,23 +67,23 @@ public class FixedSizeDeletionTest {
 			aClassifier.experience = 100;
 			population.addClassifier(new Macroclassifier(aClassifier, i + 1),
 					false);
-			if (i >2)
+			if (i > 2)
 				assertEquals(population.getTotalNumerosity(), 3);
 			else
-				assertTrue(population.getTotalNumerosity() <=3);
+				assertTrue(population.getTotalNumerosity() <= 3);
 		}
-		
+
 		for (int i = 0; i < 200; i++) {
 			Classifier aClassifier = lcs.getNewClassifier();
 			aClassifier.setComparisonValue(
 					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION, 0);
 			aClassifier.setActionAdvocated(i);
-			
+
 			population.addClassifier(new Macroclassifier(aClassifier, i + 1),
 					false);
-			
+
 			assertEquals(population.getTotalNumerosity(), 3);
-			
+
 		}
 	}
 
