@@ -9,6 +9,7 @@ import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
+import gr.auth.ee.lcs.tests.mocks.MockLCS;
 
 import org.junit.Before;
 import org.junit.Test;

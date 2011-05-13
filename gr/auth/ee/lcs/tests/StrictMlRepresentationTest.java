@@ -9,6 +9,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.util.Arrays;

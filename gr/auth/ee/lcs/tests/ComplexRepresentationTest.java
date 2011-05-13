@@ -9,6 +9,7 @@ import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
+import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Before;
