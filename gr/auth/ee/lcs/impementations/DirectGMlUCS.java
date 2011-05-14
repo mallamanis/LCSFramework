@@ -52,7 +52,7 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
+		final DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
 				populationSize, numOfLabels, lc);
 		dmlucs.train();
 
@@ -205,7 +205,7 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		this.numberOfLabels = numOfLabels;
 		this.targetLC = problemLC;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -216,7 +216,7 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				LABEL_GENERALIZATION_RATE, ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
+		final MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
 				UCS_LEARNING_RATE, UCS_ACC0, UCS_N, UCS_EXPERIENCE_THRESHOLD,
 				numberOfLabels, this);
 
@@ -230,16 +230,17 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader loader = new ArffLoader(this);
+		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -256,11 +257,11 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		// rulePopulation.print();
 		System.out.println("Post process...");
 		// rulePopulation.print();
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -271,16 +272,16 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels, this);
+		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
+				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
-				this);
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+				true, this);
 		accEval.evaluateSet(rulePopulation);
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);
 		rep.setClassificationStrategy(str);
 		// TODO: Calibrate on set

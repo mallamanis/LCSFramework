@@ -64,8 +64,8 @@ public final class SimpleBooleanRepresentation extends
 		if (getClassification(cl1)[0] != getClassification(cl2)[0])
 			return false;
 
-		ExtendedBitSet baseChromosome = cl1;
-		ExtendedBitSet testChromosome = cl2;
+		final ExtendedBitSet baseChromosome = cl1;
+		final ExtendedBitSet testChromosome = cl2;
 
 		// For each chromosome
 		for (int i = 0; i < chromosomeSize; i += 2) {
@@ -95,15 +95,15 @@ public final class SimpleBooleanRepresentation extends
 	@Override
 	public int[] classify(final ClassifierSet aSet, final double[] dataInstance) {
 
-		INaturalSelector selector = new BestClassifierSelector(true,
+		final INaturalSelector selector = new BestClassifierSelector(true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 		// Generate MatchSet
-		ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);
+		final ClassifierSet matchSet = aSet.generateMatchSet(dataInstance);
 
 		if (matchSet.getTotalNumerosity() == 0)
 			return null;
-		ClassifierSet results = new ClassifierSet(null);
+		final ClassifierSet results = new ClassifierSet(null);
 		selector.select(1, matchSet, results);
 
 		return results.getClassifier(0).getActionAdvocated();
@@ -120,7 +120,7 @@ public final class SimpleBooleanRepresentation extends
 	@Override
 	public float classifyAbilityAll(final Classifier aClassifier,
 			final int instanceIndex) {
-		return myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0] ? 1
+		return (myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] == ((int[]) (aClassifier.transformData))[0]) ? 1
 				: 0;
 	}
 
@@ -146,10 +146,10 @@ public final class SimpleBooleanRepresentation extends
 	 */
 	@Override
 	public Classifier createRandomCoveringClassifier(final double[] visionVector) {
-		Classifier coverClassifier = myLcs.getNewClassifier();
+		final Classifier coverClassifier = myLcs.getNewClassifier();
 
 		// Transform visionVector to BitSet (generalization not-set)
-		ExtendedBitSet chromosome = coverClassifier;
+		final ExtendedBitSet chromosome = coverClassifier;
 		for (int i = 1; i < chromosomeSize; i += 2) {
 			if (visionVector[i / 2] == 0)
 				chromosome.clear(i);
@@ -165,7 +165,7 @@ public final class SimpleBooleanRepresentation extends
 				chromosome.clear(i);
 		}
 		// coverClassifier.actionAdvocated=advocatingAction;
-		((int[]) (coverClassifier.transformData))[0] = (Math.random() < .5 ? 1
+		((int[]) (coverClassifier.transformData))[0] = ((Math.random() < .5) ? 1
 				: 0);
 		return coverClassifier;
 	}
@@ -206,7 +206,7 @@ public final class SimpleBooleanRepresentation extends
 
 	@Override
 	public int[] getDataInstanceLabels(final double[] dataInstances) {
-		int[] classes = new int[1];
+		final int[] classes = new int[1];
 		classes[0] = (int) dataInstances[dataInstances.length - 1];
 		return classes;
 	}
@@ -218,7 +218,7 @@ public final class SimpleBooleanRepresentation extends
 	 */
 	@Override
 	public String[] getLabelNames() {
-		String[] str = new String[2];
+		final String[] str = new String[2];
 		str[0] = "0";
 		str[1] = "1";
 		return str;
@@ -258,8 +258,8 @@ public final class SimpleBooleanRepresentation extends
 				.getActionAdvocated()[0])
 			return false;
 
-		ExtendedBitSet baseChromosome = baseClassifier;
-		ExtendedBitSet testChromosome = testClassifier;
+		final ExtendedBitSet baseChromosome = baseClassifier;
+		final ExtendedBitSet testChromosome = testClassifier;
 
 		// For each chromosome
 		for (int i = 0; i < chromosomeSize; i += 2) {
@@ -331,7 +331,7 @@ public final class SimpleBooleanRepresentation extends
 	public String toNaturalLanguageString(final Classifier aClassifier) {
 		String output = "";
 		// Get Chromosome
-		ExtendedBitSet chromosome = aClassifier;
+		final ExtendedBitSet chromosome = aClassifier;
 		for (int i = 0; i < chromosomeSize; i += 2) {
 			if (chromosome.get(i)) {
 				output = (chromosome.get(i + 1) ? "1" : "0") + output;

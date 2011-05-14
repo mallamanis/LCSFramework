@@ -60,10 +60,10 @@ public final class GenericMultiLabelRepresentation extends
 						final String cons = (attributeList[attributeList.length
 								- numberOfLabels + label])
 								.toString(currentClassifier);
-						if (cons == "#")
+						if (cons.equals("#"))
 							continue;
 						confidenceTable[label] = fitness;
-						if (cons == "1")
+						if (cons.equals("1"))
 							decisionTable[label] = 1;
 						else
 							decisionTable[label] = 0;
@@ -190,11 +190,10 @@ public final class GenericMultiLabelRepresentation extends
 			if (!active)
 				return true;
 			if (testedChromosome.get(this.positionInChromosome)) {
-				if ((attributeVision == 0 ? false : true) == testedChromosome
-						.get(this.positionInChromosome + 1))
-					return true;
-				else
-					return false;
+				final boolean matches = (((attributeVision == 0)) ? false
+						: true) == testedChromosome
+						.get(this.positionInChromosome + 1);
+				return matches;
 			} else {
 				return true;
 			}
@@ -245,7 +244,7 @@ public final class GenericMultiLabelRepresentation extends
 			else
 				generatedClassifier.set(positionInChromosome + 1);
 
-			if (Math.random() < generalizationRate)
+			if (Math.random() < labelGeneralizationRate)
 				generatedClassifier.clear(positionInChromosome);
 			else
 				generatedClassifier.set(positionInChromosome);
@@ -319,7 +318,7 @@ public final class GenericMultiLabelRepresentation extends
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
 
-			float[] votingTable = getConfidenceArray(aSet, visionVector);
+			final float[] votingTable = getConfidenceArray(aSet, visionVector);
 
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++)
@@ -350,12 +349,12 @@ public final class GenericMultiLabelRepresentation extends
 		 */
 		public void proportionalCutCalibration(final double[][] instances,
 				final ClassifierSet rules) {
-			float[][] confidenceValues = new float[instances.length][];
+			final float[][] confidenceValues = new float[instances.length][];
 			for (int i = 0; i < instances.length; i++) {
 				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
 			}
 
-			ProportionalCut pCut = new ProportionalCut();
+			final ProportionalCut pCut = new ProportionalCut();
 			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
 			System.out.println("Threshold set to " + this.voteThreshold);
 
@@ -393,10 +392,10 @@ public final class GenericMultiLabelRepresentation extends
 					final String cons = (attributeList[attributeList.length
 							- numberOfLabels + label])
 							.toString(currentClassifier);
-					if (cons == "#")
+					if (cons.equals("#"))
 						continue;
 					fitnessSum[label] += classifierNumerosity * fitness;
-					if (cons == "1")
+					if (cons.equals("1"))
 						votingTable[label] += classifierNumerosity * fitness;
 				}
 			}
@@ -459,7 +458,7 @@ public final class GenericMultiLabelRepresentation extends
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
 
-			float[] votingTable = getConfidenceArray(aSet, visionVector);
+			final float[] votingTable = getConfidenceArray(aSet, visionVector);
 
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++)
@@ -490,12 +489,12 @@ public final class GenericMultiLabelRepresentation extends
 		 */
 		public void proportionalCutCalibration(final double[][] instances,
 				final ClassifierSet rules) {
-			float[][] confidenceValues = new float[instances.length][];
+			final float[][] confidenceValues = new float[instances.length][];
 			for (int i = 0; i < instances.length; i++) {
 				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
 			}
 
-			ProportionalCut pCut = new ProportionalCut();
+			final ProportionalCut pCut = new ProportionalCut();
 			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
 			System.out.println("Threshold set to " + this.voteThreshold);
 
@@ -531,9 +530,9 @@ public final class GenericMultiLabelRepresentation extends
 					final String cons = (attributeList[attributeList.length
 							- numberOfLabels + label])
 							.toString(currentClassifier);
-					if (cons == "#")
+					if (cons.equals("#"))
 						continue;
-					if (cons == "1")
+					if (cons.equals("1"))
 						votingTable[label] += classifierNumerosity * fitness;
 					else
 						votingTable[label] -= classifierNumerosity * fitness;
@@ -713,7 +712,7 @@ public final class GenericMultiLabelRepresentation extends
 				aClassifier)) {
 			final String value = attributeList[currentLabelIndex]
 					.toString(aClassifier);
-			if (value != "#")
+			if (!value.equals("#"))
 				return 1;
 			return 0;
 		}
@@ -747,7 +746,7 @@ public final class GenericMultiLabelRepresentation extends
 					+ i;
 			final String value = attributeList[currentLabelIndex]
 					.toString(aClassifier);
-			if (value != "#")
+			if (!value.equals("#"))
 				return 1;
 		}
 
@@ -770,15 +769,15 @@ public final class GenericMultiLabelRepresentation extends
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
-			final String actualLabel = myLcs.instances[instanceIndex][currentLabelIndex] == 1 ? "1"
+			final String actualLabel = ((myLcs.instances[instanceIndex][currentLabelIndex] == 1)) ? "1"
 					: "0";
 			final String classifiedLabel = attributeList[currentLabelIndex]
 					.toString(aClassifier);
-			if (classifiedLabel == "#") {
-				if (actualLabel == "1")
+			if (classifiedLabel.equals("#")) {
+				if (actualLabel.equals("1"))
 					correct += ACCURACY_DONT_CARE_VALUE;
-			} else if (classifiedLabel == actualLabel) {
-				if (actualLabel == "1")
+			} else if (classifiedLabel.equals(actualLabel)) {
+				if (actualLabel.equals("1"))
 					correct++;
 			} else {
 				wrong++;
@@ -808,7 +807,7 @@ public final class GenericMultiLabelRepresentation extends
 					+ i;
 			final String value = attributeList[currentLabelIndex]
 					.toString(aClassifier);
-			if (value == "#")
+			if (value.equals("#"))
 				continue;
 			totalClassifications++;
 			if (attributeList[currentLabelIndex].isMatch(
@@ -824,23 +823,21 @@ public final class GenericMultiLabelRepresentation extends
 
 	@Override
 	public int[] getClassification(final Classifier aClassifier) {
-		int[] labels = new int[numberOfLabels];
+		final int[] labels = new int[numberOfLabels];
 		int labelIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels
 					+ i;
 			final String value = attributeList[currentLabelIndex]
 					.toString(aClassifier);
-			if (value == "1") {
+			if (value.equals("1")) {
 				labels[labelIndex] = i;
 				labelIndex++;
 			}
 		}
-		int[] result = new int[labelIndex];
+		final int[] result = new int[labelIndex];
 
-		for (int i = 0; i < labelIndex; i++) {
-			result[i] = labels[i];
-		}
+		System.arraycopy(labels, 0, result, 0, labelIndex);
 
 		return result;
 	}
@@ -854,7 +851,7 @@ public final class GenericMultiLabelRepresentation extends
 			if (dataInstance[currentLabelIndex] == 1)
 				numOfLabels++;
 		}
-		int[] result = new int[numOfLabels];
+		final int[] result = new int[numOfLabels];
 		int resultIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = attributeList.length - numberOfLabels

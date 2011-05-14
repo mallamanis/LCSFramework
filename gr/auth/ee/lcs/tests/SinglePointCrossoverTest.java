@@ -66,13 +66,13 @@ public class SinglePointCrossoverTest extends SinglePointCrossover {
 	 */
 	@Test
 	public void testOperateCrossover() {
-		ExtendedBitSet chromosome1 = new ExtendedBitSet("0000000");
-		ExtendedBitSet chromosome2 = new ExtendedBitSet("1111111");
+		final ExtendedBitSet chromosome1 = new ExtendedBitSet("0000000");
+		final ExtendedBitSet chromosome2 = new ExtendedBitSet("1111111");
 
-		Classifier cl1 = Classifier.createNewClassifier(lcs, chromosome1);
-		Classifier cl2 = Classifier.createNewClassifier(lcs, chromosome2);
+		final Classifier cl1 = Classifier.createNewClassifier(lcs, chromosome1);
+		final Classifier cl2 = Classifier.createNewClassifier(lcs, chromosome2);
 
-		boolean atLeastOnce[] = new boolean[8];
+		final boolean atLeastOnce[] = new boolean[8];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {

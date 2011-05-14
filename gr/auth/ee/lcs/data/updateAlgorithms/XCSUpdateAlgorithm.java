@@ -98,7 +98,7 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	/**
 	 * Genetic Algorithm.
 	 */
-	private IGeneticAlgorithmStrategy ga;
+	private final IGeneticAlgorithmStrategy ga;
 
 	/**
 	 * The LCS instance being used.
@@ -157,8 +157,9 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLcs
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -185,7 +186,7 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
 			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
+		final ClassifierSet correctSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -230,8 +231,8 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public String getData(final Classifier aClassifier) {
-		String response;
-		XCSClassifierData data = ((XCSClassifierData) aClassifier
+		final String response;
+		final XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		response = "predictionError:" + data.predictionError
 				+ ", predictedPayOff:" + data.predictedPayOff;
@@ -321,7 +322,7 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
-		XCSClassifierData data = ((XCSClassifierData) aClassifier
+		final XCSClassifierData data = ((XCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: Mode changes?
 
@@ -342,7 +343,8 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		/*
 		 * Generate correct set
 		 */
-		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+		final ClassifierSet correctSet = generateCorrectSet(matchSet,
+				instanceIndex);
 
 		/*
 		 * Cover if necessary

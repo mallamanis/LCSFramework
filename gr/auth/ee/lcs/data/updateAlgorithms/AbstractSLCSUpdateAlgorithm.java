@@ -119,8 +119,9 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	@Override
 	public final void cover(final ClassifierSet population,
 			final int instanceIndex) {
-		Classifier coveringClassifier = myLCS.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLCS.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLCS
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLCS.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -147,7 +148,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
 			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
+		final ClassifierSet correctSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -166,7 +167,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 */
 	@Override
 	public final String getData(final Classifier aClassifier) {
-		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
 				+ data.ns;
@@ -201,7 +202,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	@Override
 	public final void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
-		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: More generic
 
@@ -225,7 +226,8 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 
-		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+		final ClassifierSet correctSet = generateCorrectSet(matchSet,
+				instanceIndex);
 
 		/*
 		 * Cover if necessary

@@ -162,8 +162,9 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLcs
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -189,13 +190,13 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		UCSClassifierData data = (UCSClassifierData) aClassifier
+		final UCSClassifierData data = (UCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? 0 : 1);
+					* ((aClassifier.experience < deleteAge) ? 0 : 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
@@ -209,7 +210,7 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		case COMPARISON_MODE_EXPLOITATION:
 			final double acc = (((double) (data.tp)) / (double) (data.msa));
 			final double exploitValue = acc
-					* (aClassifier.experience < deleteAge ? 0 : 1);
+					* ((aClassifier.experience < deleteAge) ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
 		default:
 			return 0;
@@ -219,7 +220,7 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	@Override
 	public String getData(final Classifier aClassifier) {
-		UCSClassifierData data = ((UCSClassifierData) aClassifier
+		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp;
 	}
@@ -241,7 +242,7 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
-		UCSClassifierData data = ((UCSClassifierData) aClassifier
+		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
 	}
@@ -312,11 +313,11 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		final int[] classifications = myLcs.getClassifierTransformBridge()
 				.getDataInstanceLabels(myLcs.instances[instanceIndex]);
 		final int numOfCorrectSets = classifications.length;
-		ClassifierSet[] correctSets = new ClassifierSet[numOfCorrectSets];
+		final ClassifierSet[] correctSets = new ClassifierSet[numOfCorrectSets];
 		for (int i = 0; i < numOfCorrectSets; i++)
 			correctSets[i] = new ClassifierSet(null);
 
-		ClassifierSet wrongSet = new ClassifierSet(null);
+		final ClassifierSet wrongSet = new ClassifierSet(null);
 
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {

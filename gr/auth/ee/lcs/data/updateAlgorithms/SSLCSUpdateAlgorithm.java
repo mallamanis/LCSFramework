@@ -60,7 +60,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	@Override
 	public final double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		SLCSClassifierData data = (SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = (SLCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
 		switch (mode) {
@@ -88,7 +88,7 @@ public class SSLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	@Override
 	public final void updateFitness(final Classifier aClassifier,
 			final int numerosity, final ClassifierSet correctSet) {
-		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		if (Double.isNaN(data.str) || Double.isInfinite(data.str))
 			data.str = 0;

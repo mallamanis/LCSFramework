@@ -52,9 +52,10 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		SequentialGMlASLCS taslcs = new SequentialGMlASLCS(file, iterations,
-				populationSize, numOfLabels, SettingsLoader.getNumericSetting(
-						"LabelGeneralizationRate", 0.33), lc);
+		final SequentialGMlASLCS taslcs = new SequentialGMlASLCS(file,
+				iterations, populationSize, numOfLabels,
+				SettingsLoader.getNumericSetting("LabelGeneralizationRate",
+						0.33), lc);
 		taslcs.train();
 
 	}
@@ -209,7 +210,7 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 		this.labelGeneralizationRate = labelGeneralizationProbability;
 		this.targetLC = problemLC;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -221,10 +222,10 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 		str = rep.new VotingClassificationStrategy(targetLC);
 		rep.setClassificationStrategy(str);
 
-		ASLCSUpdateAlgorithm updateObj = new ASLCSUpdateAlgorithm(ASLCS_N,
-				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
+		final ASLCSUpdateAlgorithm updateObj = new ASLCSUpdateAlgorithm(
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
-		SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
+		final SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 
 		this.setElements(rep, strategy);
@@ -237,15 +238,16 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new TournamentSelector(40, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader loader = new ArffLoader(this);
+		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -262,11 +264,11 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 				rulePopulation);
 
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -277,14 +279,14 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels, this);
+		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
+				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
-				this);
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+				true, this);
 		accEval.evaluateSet(rulePopulation);
 
 		System.out.println("Best Fitness");

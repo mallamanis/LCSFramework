@@ -57,7 +57,8 @@ public class SingleLabelEvaluator implements IEvaluator {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 		int tp = 0;
-		double[][] instances = InstanceToDoubleConverter.convert(instanceSet);
+		final double[][] instances = InstanceToDoubleConverter
+				.convert(instanceSet);
 
 		for (int i = 0; i < instances.length; i++) {
 

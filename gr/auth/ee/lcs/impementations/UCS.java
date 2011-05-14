@@ -48,7 +48,7 @@ public class UCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1000);
-		UCS ucs = new UCS(file, iterations, populationSize);
+		final UCS ucs = new UCS(file, iterations, populationSize);
 		ucs.train();
 	}
 
@@ -176,16 +176,16 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 */
 	public UCS(String filename, int iterations, int populationSize)
 			throws IOException {
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		SingleClassRepresentation rep = new SingleClassRepresentation(filename,
-				PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE, this);
-		UCSUpdateAlgorithm ucsUpdate = new UCSUpdateAlgorithm(UCS_ALPHA, UCS_N,
-				UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+		final SingleClassRepresentation rep = new SingleClassRepresentation(
+				filename, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE, this);
+		final UCSUpdateAlgorithm ucsUpdate = new UCSUpdateAlgorithm(UCS_ALPHA,
+				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 		this.setElements(rep, ucsUpdate);
@@ -202,16 +202,17 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public final void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader trainer = new ArffLoader(this);
+		final ArffLoader trainer = new ArffLoader(this);
 		try {
 			trainer.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -228,11 +229,11 @@ public class UCS extends AbstractLearningClassifierSystem {
 				rulePopulation);
 
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -240,22 +241,22 @@ public class UCS extends AbstractLearningClassifierSystem {
 		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		SingleClassRepresentation rep = (SingleClassRepresentation) this
+		final SingleClassRepresentation rep = (SingleClassRepresentation) this
 				.getClassifierTransformBridge();
 
-		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
+		final ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(),
 				InstanceToDoubleConverter.convert(trainer.testSet), this);
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				trainer.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set (best)");
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		ConfusionMatrixEvaluator conf2 = new ConfusionMatrixEvaluator(
+		final ConfusionMatrixEvaluator conf2 = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(),
 				InstanceToDoubleConverter.convert(trainer.testSet), this);
 		conf2.evaluateSet(rulePopulation);

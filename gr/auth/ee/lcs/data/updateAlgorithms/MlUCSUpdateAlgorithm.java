@@ -192,8 +192,9 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLcs
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -271,7 +272,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
 			final int instanceIndex, final int labelIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
+		final ClassifierSet correctSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -295,7 +296,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
 			final int instanceIndex, final int labelIndex) {
-		ClassifierSet labelMatchSet = new ClassifierSet(null);
+		final ClassifierSet labelMatchSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -309,13 +310,13 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
+		final MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? 0.1 : 1);
+					* ((aClassifier.experience < deleteAge) ? 0.1 : 1);
 			return Double.isNaN(value) ? 0 : value;
 		case COMPARISON_MODE_DELETION:
 
@@ -329,7 +330,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		case COMPARISON_MODE_EXPLOITATION:
 
 			final double exploitValue = data.acc
-					* (aClassifier.experience < deleteAge ? 0 : 1);
+					* ((aClassifier.experience < deleteAge) ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
 		default:
 			return 0;
@@ -346,7 +347,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public String getData(final Classifier aClassifier) {
-		MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
+		final MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
 				+ "tp:" + Arrays.toString(data.tp) + "globalCs:"

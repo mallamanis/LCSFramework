@@ -34,7 +34,7 @@ public class StrictMlRepresentationTest {
 
 	@Test
 	public void classificationMethods() {
-		double[][] instances = { { 1, 1, 0, 0, 1 } };
+		final double[][] instances = { { 1, 1, 0, 0, 1 } };
 		lcs.instances = instances;
 
 		ExtendedBitSet set = new ExtendedBitSet("10001010101");
@@ -69,12 +69,12 @@ public class StrictMlRepresentationTest {
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
-		String[] names = { "Good", "Mediocre", "Bad" };
+		final GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
+		final String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new StrictMultiLabelRepresentation(list, names, 3,
 				StrictMultiLabelRepresentation.EXACT_MATCH, .7, lcs);
 
-		String[] attribute = { "A", "B", "A+" };
+		final String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
 		list[1] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom2",
@@ -91,7 +91,7 @@ public class StrictMlRepresentationTest {
 	public void testClassifyAbilityAll() {
 		ExtendedBitSet set1 = new ExtendedBitSet("10100111011");
 		Classifier ex1 = lcs.getNewClassifier(set1);
-		double[][] instances = { { 2, 0, 1, 0, 1 } };
+		final double[][] instances = { { 2, 0, 1, 0, 1 } };
 		lcs.instances = instances;
 
 		assertTrue(rep.classifyAbilityAll(ex1, 0) == 1);
@@ -110,7 +110,7 @@ public class StrictMlRepresentationTest {
 	public void testClassifyAbilityLabel() {
 		ExtendedBitSet set1 = new ExtendedBitSet("10100111011");
 		Classifier ex1 = lcs.getNewClassifier(set1);
-		double[][] instances = { { 2, 0, 1, 0, 1 } };
+		final double[][] instances = { { 2, 0, 1, 0, 1 } };
 		lcs.instances = instances;
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 0) == 1);
 		assertTrue(rep.classifyAbilityLabel(ex1, 0, 1) == 1);
@@ -145,25 +145,25 @@ public class StrictMlRepresentationTest {
 		ExtendedBitSet set1 = new ExtendedBitSet("10100111011");
 		Classifier ex1 = lcs.getNewClassifier(set1);
 		int[] instanceLabels = rep.getClassification(ex1);
-		int[] expected = { 0, 2 };
+		final int[] expected = { 0, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected));
 
 		set1 = new ExtendedBitSet("00100111011");
 		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
-		int[] expected2 = { 0 };
+		final int[] expected2 = { 0 };
 		assertTrue(Arrays.equals(instanceLabels, expected2));
 
 		set1 = new ExtendedBitSet("11100111011");
 		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
-		int[] expected3 = { 0, 1, 2 };
+		final int[] expected3 = { 0, 1, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected3));
 
 		set1 = new ExtendedBitSet("0000111011");
 		ex1 = lcs.getNewClassifier(set1);
 		instanceLabels = rep.getClassification(ex1);
-		int[] expected4 = {};
+		final int[] expected4 = {};
 		assertTrue(Arrays.equals(instanceLabels, expected4));
 	}
 
@@ -175,23 +175,23 @@ public class StrictMlRepresentationTest {
 	@Test
 	public void testGetDataInstanceLabels() {
 		double[][] instances = { { 2, 0, 1, 0, 1 } };
-		int[] instanceLabels = rep.getDataInstanceLabels(instances[0]);
-		int[] expected = { 0, 2 };
+		final int[] instanceLabels = rep.getDataInstanceLabels(instances[0]);
+		final int[] expected = { 0, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected));
 
-		double[][] instances2 = { { 1, 1, 0, 0, 1 } };
-		int[] instanceLabels2 = rep.getDataInstanceLabels(instances2[0]);
-		int[] expected2 = { 2 };
+		final double[][] instances2 = { { 1, 1, 0, 0, 1 } };
+		final int[] instanceLabels2 = rep.getDataInstanceLabels(instances2[0]);
+		final int[] expected2 = { 2 };
 		assertTrue(Arrays.equals(instanceLabels2, expected2));
 
-		double[][] instances3 = { { 1, 1, 0, 0, 0 } };
-		int[] instanceLabels3 = rep.getDataInstanceLabels(instances3[0]);
-		int[] expected3 = {};
+		final double[][] instances3 = { { 1, 1, 0, 0, 0 } };
+		final int[] instanceLabels3 = rep.getDataInstanceLabels(instances3[0]);
+		final int[] expected3 = {};
 		assertTrue(Arrays.equals(instanceLabels3, expected3));
 
 		double[][] instances4 = { { 1, 1, 1, 1, 1 } };
-		int[] instanceLabels4 = rep.getDataInstanceLabels(instances4[0]);
-		int[] expected4 = { 0, 1, 2 };
+		final int[] instanceLabels4 = rep.getDataInstanceLabels(instances4[0]);
+		final int[] expected4 = { 0, 1, 2 };
 		assertTrue(Arrays.equals(instanceLabels4, expected4));
 	}
 

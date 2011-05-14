@@ -55,11 +55,11 @@ public final class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		SLCSClassifierData data = (SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = (SLCSClassifierData) aClassifier
 				.getUpdateDataObject();
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
-			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
+			return data.fitness * ((aClassifier.experience < 8) ? 0 : 1);
 		case COMPARISON_MODE_DELETION:
 			return 1 / (data.fitness
 					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
@@ -68,12 +68,13 @@ public final class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 					: 1));
 			// TODO: Something else?
 		case COMPARISON_MODE_EXPLOITATION:
-			return data.fitness * (aClassifier.experience < 8 ? 0 : 1);
+			return data.fitness * ((aClassifier.experience < 8) ? 0 : 1);
 			/*
 			 * final double exploitationFitness = (((double) (data.tp)) /
 			 * (double) (data.msa)); return Double.isNaN(exploitationFitness) ?
 			 * .000001 : exploitationFitness;
 			 */
+		default:
 		}
 		return 0;
 	}
@@ -88,7 +89,7 @@ public final class ASLCSUpdateAlgorithm extends AbstractSLCSUpdateAlgorithm {
 	@Override
 	public void updateFitness(final Classifier aClassifier,
 			final int numerosity, final ClassifierSet correctSet) {
-		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		if (correctSet.getClassifierNumerosity(aClassifier) > 0)
 			data.tp += 1; // aClassifier at the correctSet

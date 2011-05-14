@@ -40,10 +40,10 @@ public final class BestFitnessTournamentSelectorTest {
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(.33,
-				2, lcs);
-		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99, 50,
-				0.01, null, lcs);
+		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
+				.33, 2, lcs);
+		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99,
+				50, 0.01, null, lcs);
 		lcs.setElements(rep, update);
 
 		population = new ClassifierSet(null);
@@ -62,7 +62,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament1() {
-		int participants[] = { 0, 0, 0 };
+		final int participants[] = { 0, 0, 0 };
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
@@ -71,7 +71,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament2() {
-		int participants[] = { 0, 1, 0 };
+		final int participants[] = { 0, 1, 0 };
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
@@ -80,7 +80,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament3() {
-		int participants[] = { 2, 1, 0 };
+		final int participants[] = { 2, 1, 0 };
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
@@ -89,7 +89,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament4() {
-		int participants[] = { 5, 1, 0 };
+		final int participants[] = { 5, 1, 0 };
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
@@ -99,7 +99,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament5() {
-		int participants[] = { 5, 5, 5 };
+		final int participants[] = { 5, 5, 5 };
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
@@ -108,7 +108,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament6() {
-		int participants[] = { 5, 1, 0 };
+		final int participants[] = { 5, 1, 0 };
 		mySelector = new TournamentSelector(3, false,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
@@ -117,7 +117,7 @@ public final class BestFitnessTournamentSelectorTest {
 
 	@Test
 	public void testTournament7() {
-		int participants[] = { 3, 5, 0 };
+		final int participants[] = { 3, 5, 0 };
 		mySelector = new TournamentSelector(3, false,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 

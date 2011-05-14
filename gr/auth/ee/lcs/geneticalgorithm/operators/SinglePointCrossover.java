@@ -37,7 +37,7 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 	public final Classifier operate(final Classifier classifierA,
 			final Classifier classifierB) {
 		final int chromosomeSize = classifierB.size();
-		Classifier child;
+		final Classifier child;
 		/*
 		 * The point at which the crossover will occur
 		 */

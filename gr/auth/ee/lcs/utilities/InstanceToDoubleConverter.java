@@ -22,7 +22,8 @@ public final class InstanceToDoubleConverter {
 	 *         attributes
 	 */
 	public static double[][] convert(final Instances set) {
-		double[][] result = new double[set.numInstances()][set.numAttributes()];
+		final double[][] result = new double[set.numInstances()][set
+				.numAttributes()];
 		for (int i = 0; i < set.numInstances(); i++) {
 
 			for (int j = 0; j < set.numAttributes(); j++) {

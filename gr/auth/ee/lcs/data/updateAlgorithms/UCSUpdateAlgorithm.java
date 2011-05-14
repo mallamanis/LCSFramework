@@ -171,8 +171,9 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLcs
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -199,7 +200,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
 			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
+		final ClassifierSet correctSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -219,14 +220,14 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		UCSClassifierData data = (UCSClassifierData) aClassifier
+		final UCSClassifierData data = (UCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
 		case COMPARISON_MODE_EXPLOITATION:
 			final double value = data.fitness
-					* (aClassifier.experience < deleteAge ? ((double) aClassifier.experience)
+					* ((aClassifier.experience < deleteAge) ? ((double) aClassifier.experience)
 							/ ((double) deleteAge)
 							: 1);
 			return Double.isNaN(value) ? 0 : value;
@@ -254,7 +255,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 
 	@Override
 	public String getData(final Classifier aClassifier) {
-		UCSClassifierData data = ((UCSClassifierData) aClassifier
+		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp;
 	}
@@ -328,7 +329,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	@Override
 	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
-		UCSClassifierData data = ((UCSClassifierData) aClassifier
+		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
 	}
@@ -371,7 +372,8 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		/*
 		 * Generate correct set
 		 */
-		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+		final ClassifierSet correctSet = generateCorrectSet(matchSet,
+				instanceIndex);
 
 		/*
 		 * Cover if necessary

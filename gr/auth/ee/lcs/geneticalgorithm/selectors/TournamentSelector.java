@@ -92,7 +92,7 @@ public class TournamentSelector implements INaturalSelector {
 			size = tournamentSize;
 		}
 
-		int[] participants = new int[size];
+		final int[] participants = new int[size];
 		// Create random participants
 		for (int j = 0; j < participants.length; j++) {
 			participants[j] = (int) Math.floor((Math.random() * fromPopulation

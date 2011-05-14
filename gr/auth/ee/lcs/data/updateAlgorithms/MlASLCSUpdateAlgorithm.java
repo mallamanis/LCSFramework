@@ -169,8 +169,9 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLcs
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 	}
@@ -197,7 +198,7 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
 			final int instanceIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
+		final ClassifierSet correctSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -250,11 +251,11 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		SLCSClassifierData data = (SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = (SLCSClassifierData) aClassifier
 				.getUpdateDataObject();
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
-			return data.fitness * (aClassifier.experience < 5 ? 0 : 1);
+			return data.fitness * ((aClassifier.experience < 5) ? 0 : 1);
 		case COMPARISON_MODE_DELETION:
 			return 1 / (data.fitness
 					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
@@ -266,8 +267,10 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
 			return Double.isNaN(exploitationFitness) ? .000001
 					: exploitationFitness;
+		default:
 		}
 		return 0;
+
 	}
 
 	/*
@@ -279,7 +282,7 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public String getData(final Classifier aClassifier) {
-		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
 				+ data.ns;
@@ -342,7 +345,7 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
-		SLCSClassifierData data = ((SLCSClassifierData) aClassifier
+		final SLCSClassifierData data = ((SLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue; // TODO: More generic
 
@@ -353,7 +356,8 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final ClassifierSet matchSet, final int instanceIndex,
 			final boolean evolve) {
 
-		ClassifierSet correctSet = generateCorrectSet(matchSet, instanceIndex);
+		final ClassifierSet correctSet = generateCorrectSet(matchSet,
+				instanceIndex);
 
 		final int[] niches = calculateLabelNiches(correctSet, instanceIndex);
 		boolean emptyLabel = false;

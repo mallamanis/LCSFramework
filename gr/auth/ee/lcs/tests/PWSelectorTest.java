@@ -31,7 +31,7 @@ public class PWSelectorTest {
 	 */
 	@Test
 	public void testHasNext() {
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(10);
+		final PairwiseLabelSelector selector = new PairwiseLabelSelector(10);
 
 		for (int i = 0; i < 44; i++) { // 44 = N(N-1)/2 -1
 			assertTrue(selector.hasNext());
@@ -47,7 +47,7 @@ public class PWSelectorTest {
 	 */
 	@Test
 	public void testNext() {
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(3);
+		final PairwiseLabelSelector selector = new PairwiseLabelSelector(3);
 		assertTrue(selector.getStatus(0));
 		assertTrue(selector.getStatus(1));
 		assertFalse(selector.getStatus(2));
@@ -72,7 +72,7 @@ public class PWSelectorTest {
 	 */
 	@Test
 	public void testReset() {
-		PairwiseLabelSelector selector = new PairwiseLabelSelector(3);
+		final PairwiseLabelSelector selector = new PairwiseLabelSelector(3);
 		assertTrue(selector.getStatus(0));
 		assertTrue(selector.getStatus(1));
 		assertFalse(selector.getStatus(2));

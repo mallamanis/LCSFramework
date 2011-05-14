@@ -46,7 +46,7 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-		SSLCS sslcs = new SSLCS(file, iterations, populationSize);
+		final SSLCS sslcs = new SSLCS(file, iterations, populationSize);
 		sslcs.train();
 	}
 
@@ -158,7 +158,7 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The problem representation.
 	 */
-	private SingleClassRepresentation rep;
+	private final SingleClassRepresentation rep;
 
 	/**
 	 * The SS-LCS constructor.
@@ -177,7 +177,7 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector2(40, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -187,8 +187,8 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 				ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 
-		SSLCSUpdateAlgorithm strategy = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
-				SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
+		final SSLCSUpdateAlgorithm strategy = new SSLCSUpdateAlgorithm(
+				SSLCS_REWARD, SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
 				SSLCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
 				this);
 
@@ -203,15 +203,16 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new TournamentSelector2(80, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader trainer = new ArffLoader(this);
+		final ArffLoader trainer = new ArffLoader(this);
 		try {
 			trainer.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -226,11 +227,11 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -238,13 +239,13 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
+		final ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(), this.instances, this);
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				trainer.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
 
 	}

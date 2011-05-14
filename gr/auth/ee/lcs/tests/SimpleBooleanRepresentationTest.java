@@ -36,11 +36,11 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testCreateRandomCoveringClassifier() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0.5,
-				4, lcs);
+		final SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(
+				0.5, 4, lcs);
 		lcs.setElements(test, null);
 
-		double visionVector[] = new double[4];
+		final double visionVector[] = new double[4];
 		Classifier testClassifier;
 
 		visionVector[0] = 0;
@@ -85,13 +85,13 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testIsMatch() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0,
-				4, lcs);
+		final SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(
+				0, 4, lcs);
 		lcs.setElements(test, null);
 		// Test Mask 1##0
 		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
 				"11100001"));
-		double visionVector[] = new double[4];
+		final double visionVector[] = new double[4];
 
 		visionVector[0] = 0;
 		visionVector[1] = 0;
@@ -182,7 +182,7 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testIsMoreGeneral() {
-		SimpleBooleanRepresentation testRep = new SimpleBooleanRepresentation(
+		final SimpleBooleanRepresentation testRep = new SimpleBooleanRepresentation(
 				0.5, 4, lcs);
 		lcs.setElements(testRep, null);
 
@@ -222,8 +222,8 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testSetVisionSize() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0.5,
-				4, lcs);
+		final SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(
+				0.5, 4, lcs);
 		test.setVisionSize(10);
 		assertEquals(test.getChromosomeSize(), 20);
 	}
@@ -235,8 +235,8 @@ public class SimpleBooleanRepresentationTest {
 	 */
 	@Test
 	public void testToNaturalLanguageString() {
-		SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(0,
-				4, lcs);
+		final SimpleBooleanRepresentation test = new SimpleBooleanRepresentation(
+				0, 4, lcs);
 		lcs.setElements(test, null);
 		Classifier testClassifier;
 

@@ -68,25 +68,28 @@ public class SortPopulationControl implements IPopulationControlStrategy {
 
 				final int experienceThreshold = 10;
 
-				final double expFitA = experienceA < experienceThreshold ? 0
+				final double expFitA = (experienceA < experienceThreshold) ? 0
 						: fitnessA;
-				final double expFitB = experienceB < experienceThreshold ? 0
+				final double expFitB = (experienceB < experienceThreshold) ? 0
 						: fitnessB;
 
-				if (expFitA > expFitB)
+				if (expFitA > expFitB) {
 					return -1;
-				else if (expFitA < expFitB)
+				} else if (expFitA < expFitB) {
 					return 1;
+				}
 
-				if (coverageA > coverageB)
+				if (coverageA > coverageB) {
 					return -1;
-				else if (coverageA < coverageB)
+				} else if (coverageA < coverageB) {
 					return 1;
+				}
 
-				if (experienceA > experienceB)
+				if (experienceA > experienceB) {
 					return -1;
-				else if (experienceA < experienceB)
+				} else if (experienceA < experienceB) {
 					return 1;
+				}
 
 				return 0;
 			}

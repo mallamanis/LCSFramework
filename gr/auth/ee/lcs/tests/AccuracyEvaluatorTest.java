@@ -34,12 +34,12 @@ public final class AccuracyEvaluatorTest {
 		lcs = new MockLCS();
 
 		// Create instances
-		GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
-		String[] names = { "Good", "Mediocre", "Bad" };
+		final GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
+		final String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new GenericMultiLabelRepresentation(list, names, 3,
 				GenericMultiLabelRepresentation.EXACT_MATCH, .33, .7, lcs);
 
-		String[] attribute = { "A", "B", "A+" };
+		final String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
 		list[1] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom2",
@@ -50,36 +50,36 @@ public final class AccuracyEvaluatorTest {
 
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99, 50,
-				0.01, null, lcs);
+		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99,
+				50, 0.01, null, lcs);
 		lcs.setElements(rep, update);
 	}
 
 	@Test
 	public void test2EvaluateSet() {
-		double[][] instances = { { 0, 1, 1, 1, 1 }, { 0, 1, 1, 0, 1 } };
-		ExtendedBitSet set1 = new ExtendedBitSet("11011101111011");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final double[][] instances = { { 0, 1, 1, 1, 1 }, { 0, 1, 1, 0, 1 } };
+		final ExtendedBitSet set1 = new ExtendedBitSet("11011101111011");
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 
-		ClassifierSet set = new ClassifierSet(null);
+		final ClassifierSet set = new ClassifierSet(null);
 		ex1.setComparisonValue(0, 1);
 		ex1.experience = 100;
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
-		AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
+		final AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
 		final double evalResult = a.evaluateSet(set);
 		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
 	}
 
 	@Test
 	public void testEvaluateSet() {
-		double[][] instances = { { 0, 1, 1, 0, 1 }, { 0, 1, 1, 0, 1 } };
-		ExtendedBitSet set1 = new ExtendedBitSet("11011101111011");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final double[][] instances = { { 0, 1, 1, 0, 1 }, { 0, 1, 1, 0, 1 } };
+		final ExtendedBitSet set1 = new ExtendedBitSet("11011101111011");
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 		ex1.experience = 100;
-		ClassifierSet set = new ClassifierSet(null);
+		final ClassifierSet set = new ClassifierSet(null);
 		ex1.setComparisonValue(0, 1);
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
-		AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
+		final AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
 		assertTrue(a.evaluateSet(set) == 1);
 	}
 

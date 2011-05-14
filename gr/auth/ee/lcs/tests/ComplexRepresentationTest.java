@@ -33,9 +33,9 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void advocatedActionTest() {
-		ExtendedBitSet set1 = new ExtendedBitSet(
+		final ExtendedBitSet set1 = new ExtendedBitSet(
 				"0111111111111110111111111111010");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 
 		assertEquals(ex1.getActionAdvocated()[0], 1);
 
@@ -57,8 +57,9 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void checkStringOutput() {
-		ExtendedBitSet set = new ExtendedBitSet("11101111111111000000000011011");
-		Classifier ex = lcs.getNewClassifier(set);
+		final ExtendedBitSet set = new ExtendedBitSet(
+				"11101111111111000000000011011");
+		final Classifier ex = lcs.getNewClassifier(set);
 
 		// TODO: Fix and test
 
@@ -66,7 +67,7 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void coverageMatches() {
-		double visionVector[] = { 0, 1.1256, 2, 0 };
+		final double visionVector[] = { 0, 1.1256, 2, 0 };
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
 			Classifier cover = rep.createRandomCoveringClassifier(visionVector);
 			assertTrue(rep.isMatch(visionVector, cover));
@@ -75,7 +76,7 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void coverageRandom() {
-		double visionVector[] = { 0, 1.1256, 2, 0 };
+		final double visionVector[] = { 0, 1.1256, 2, 0 };
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
 			visionVector[1] = (float) (Math.random() * (5.785 + 2.3) - 2.3);
 			visionVector[0] = (int) Math.floor(Math.random() * 3);
@@ -87,11 +88,11 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void fixChromosomeTest() {
-		ExtendedBitSet set1 = new ExtendedBitSet(
+		final ExtendedBitSet set1 = new ExtendedBitSet(
 				"0011111111111110111111111111010");
 
 		// Does fix work correctly?
-		ExtendedBitSet fixed = new ExtendedBitSet(
+		final ExtendedBitSet fixed = new ExtendedBitSet(
 				"0011101111111111111111111011010");
 		rep.fixChromosome(set1);
 		assertTrue(set1.equals(fixed));
@@ -104,7 +105,7 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void fixClassTest() {
-		ExtendedBitSet set1 = new ExtendedBitSet(
+		final ExtendedBitSet set1 = new ExtendedBitSet(
 				"1111111111111110111111111111010");
 
 		// Does fix work correctly?
@@ -114,13 +115,13 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void moreGeneralTest1() {
-		ExtendedBitSet set1 = new ExtendedBitSet(
+		final ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011011");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 
-		ExtendedBitSet set2 = new ExtendedBitSet(
+		final ExtendedBitSet set2 = new ExtendedBitSet(
 				"11111111111111000000000011011");
-		Classifier ex2 = lcs.getNewClassifier(set2);
+		final Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -129,13 +130,13 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void moreGeneralTest2() {
-		ExtendedBitSet set1 = new ExtendedBitSet(
+		final ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000001010");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 
-		ExtendedBitSet set2 = new ExtendedBitSet(
+		final ExtendedBitSet set2 = new ExtendedBitSet(
 				"11111111111111000000000011011");
-		Classifier ex2 = lcs.getNewClassifier(set2);
+		final Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -143,13 +144,13 @@ public final class ComplexRepresentationTest {
 
 	@Test
 	public void moreGeneralTest3() {
-		ExtendedBitSet set1 = new ExtendedBitSet(
+		final ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011010");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 
-		ExtendedBitSet set2 = new ExtendedBitSet(
+		final ExtendedBitSet set2 = new ExtendedBitSet(
 				"00000000010001000000001010010");
-		Classifier ex2 = lcs.getNewClassifier(set2);
+		final Classifier ex2 = lcs.getNewClassifier(set2);
 
 		assertFalse(rep.isMoreGeneral(ex2, ex1));
 		assertTrue(rep.isMoreGeneral(ex1, ex2));
@@ -160,7 +161,7 @@ public final class ComplexRepresentationTest {
 		ExtendedBitSet set1 = new ExtendedBitSet(
 				"11101111111111000000000011010");
 		Classifier ex1 = lcs.getNewClassifier(set1);
-		double[] st = { 1, .1, 2 };
+		final double[] st = { 1, .1, 2 };
 		assertTrue(rep.isMatch(st, ex1));
 
 		set1 = new ExtendedBitSet("11101111111111001000000011010");
@@ -175,10 +176,10 @@ public final class ComplexRepresentationTest {
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		SingleClassRepresentation.AbstractAttribute list[] = new AbstractAttribute[4];
-		String[] names = { "Good", "Mediocre", "Bad" };
+		final SingleClassRepresentation.AbstractAttribute list[] = new AbstractAttribute[4];
+		final String[] names = { "Good", "Mediocre", "Bad" };
 		rep = new SingleClassRepresentation(list, names, .7, lcs);
-		String[] attribute = { "A", "B", "A+" };
+		final String[] attribute = { "A", "B", "A+" };
 		list[0] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom",
 				attribute, 0);
 		list[1] = rep.new IntervalAttribute(rep.getChromosomeSize(), "int",
@@ -186,8 +187,8 @@ public final class ComplexRepresentationTest {
 		list[2] = rep.new NominalAttribute(rep.getChromosomeSize(), "nom2",
 				attribute, 0);
 		list[3] = rep.new UniLabel(rep.getChromosomeSize(), "class", names);
-		UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(0, 0, 0, 0, 0, 0,
-				null, 0, 0, lcs);
+		final UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(0, 0, 0, 0, 0,
+				0, null, 0, 0, lcs);
 		lcs.setElements(rep, update);
 
 	}
@@ -196,9 +197,9 @@ public final class ComplexRepresentationTest {
 	public void testVoting() {
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 
-		Classifier ex1 = lcs.getNewClassifier(new ExtendedBitSet(
+		final Classifier ex1 = lcs.getNewClassifier(new ExtendedBitSet(
 				"1011101111111111001000000011010"));
-		Classifier ex2 = lcs.getNewClassifier(new ExtendedBitSet(
+		final Classifier ex2 = lcs.getNewClassifier(new ExtendedBitSet(
 				"0111100111111111001000000011010"));
 
 		ClassifierSet set = new ClassifierSet(null);

@@ -41,10 +41,10 @@ public class FixedSizeDeletionTest {
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(.33,
-				2, lcs);
-		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99, 50,
-				0.01, null, lcs);
+		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
+				.33, 2, lcs);
+		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99,
+				50, 0.01, null, lcs);
 		lcs.setElements(rep, update);
 
 		population = new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(3,

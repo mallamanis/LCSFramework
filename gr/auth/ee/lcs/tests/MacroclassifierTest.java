@@ -43,8 +43,9 @@ public class MacroclassifierTest {
 		lcs = new MockLCS();
 		test = new SimpleBooleanRepresentation(0.5, 4, lcs);
 
-		UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(.1, 10, .99, .1, 50,
-				0, new SteadyStateGeneticAlgorithm(new TournamentSelector(10,
+		final UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(.1, 10, .99,
+				.1, 50, 0,
+				new SteadyStateGeneticAlgorithm(new TournamentSelector(10,
 						true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 						new SinglePointCrossover(lcs), (float) .8,
@@ -54,9 +55,9 @@ public class MacroclassifierTest {
 
 	@Test
 	public final void testClone() {
-		Classifier parentClassifier = lcs.getNewClassifier(new ExtendedBitSet(
-				"10110001"));
-		Classifier clone = (Classifier) parentClassifier.clone();
+		final Classifier parentClassifier = lcs
+				.getNewClassifier(new ExtendedBitSet("10110001"));
+		final Classifier clone = (Classifier) parentClassifier.clone();
 		assertTrue(clone.equals(parentClassifier));
 		assertTrue(parentClassifier.equals(clone));
 		assertEquals(clone.experience, 0);
@@ -64,8 +65,8 @@ public class MacroclassifierTest {
 				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION) == parentClassifier
 				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION));
 
-		ExtendedBitSet a = parentClassifier;
-		ExtendedBitSet b = clone;
+		final ExtendedBitSet a = parentClassifier;
+		final ExtendedBitSet b = clone;
 
 		assertEquals(a, b);
 		assertTrue(parentClassifier.getSerial() != clone.getSerial());
@@ -79,18 +80,20 @@ public class MacroclassifierTest {
 	 */
 	@Test
 	public void testEquals() {
-		Classifier testClassifier = lcs.getNewClassifier(new ExtendedBitSet(
-				"10110001"));
+		final Classifier testClassifier = lcs
+				.getNewClassifier(new ExtendedBitSet("10110001"));
 		testClassifier.setActionAdvocated(0);
-		Macroclassifier testMacro1 = new Macroclassifier(testClassifier, 1);
-		Macroclassifier testMacro2 = new Macroclassifier(testClassifier, 0);
+		final Macroclassifier testMacro1 = new Macroclassifier(testClassifier,
+				1);
+		final Macroclassifier testMacro2 = new Macroclassifier(testClassifier,
+				0);
 		assertTrue(testMacro1.equals(testMacro2));
 		assertTrue(testMacro2.equals(testMacro1));
 		assertTrue(testMacro1.equals(testClassifier));
 		assertTrue(testMacro2.equals(testClassifier));
 
-		Classifier testClassifier2 = lcs.getNewClassifier(new ExtendedBitSet(
-				"10110001"));
+		final Classifier testClassifier2 = lcs
+				.getNewClassifier(new ExtendedBitSet("10110001"));
 		testClassifier2.setActionAdvocated(0);
 		assertTrue(testMacro1.equals(testClassifier2));
 	}

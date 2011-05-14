@@ -52,9 +52,10 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		SequentialGMlSSLCS sgmlucs = new SequentialGMlSSLCS(file, iterations,
-				populationSize, numOfLabels, SettingsLoader.getNumericSetting(
-						"LabelGeneralizationRate", 0.33), lc);
+		final SequentialGMlSSLCS sgmlucs = new SequentialGMlSSLCS(file,
+				iterations, populationSize, numOfLabels,
+				SettingsLoader.getNumericSetting("LabelGeneralizationRate",
+						0.33), lc);
 		sgmlucs.train();
 
 	}
@@ -182,12 +183,12 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The problem representation.
 	 */
-	private GenericMultiLabelRepresentation rep;
+	private final GenericMultiLabelRepresentation rep;
 
 	/**
 	 * Voting classification method.
 	 */
-	private VotingClassificationStrategy str;
+	private final VotingClassificationStrategy str;
 
 	/**
 	 * Constructor.
@@ -215,7 +216,7 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 		this.labelGeneralizationRate = labelGeneralizationProbability;
 		this.targetLC = problemLC;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -227,11 +228,11 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 		str = rep.new VotingClassificationStrategy(targetLC);
 		rep.setClassificationStrategy(str);
 
-		SSLCSUpdateAlgorithm updateObj = new SSLCSUpdateAlgorithm(SSLCS_REWARD,
-				SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
+		final SSLCSUpdateAlgorithm updateObj = new SSLCSUpdateAlgorithm(
+				SSLCS_REWARD, SSLCS_PENALTY, SSLCS_FITNESS_THRESHOLD,
 				SSLCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
 				this);
-		SequentialMlUpdateAlgorithm update = new SequentialMlUpdateAlgorithm(
+		final SequentialMlUpdateAlgorithm update = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 		this.setElements(rep, update);
 	}
@@ -243,15 +244,16 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new TournamentSelector(40, false,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
-		ArffLoader loader = new ArffLoader(this);
+		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
@@ -268,11 +270,11 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 				rulePopulation);
 
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -283,14 +285,14 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 		// TODO: Calibrate on set
 		str.proportionalCutCalibration(this.instances, rulePopulation);
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels, this);
+		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
+				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
-				this);
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+				true, this);
 		accEval.evaluateSet(rulePopulation);
 
 	}

@@ -38,8 +38,8 @@ public class FileLogger implements IEvaluator {
 	 *            the evaluator which we are going to output.
 	 */
 	public FileLogger(final String filename, final IEvaluator evaluator) {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+		final Calendar cal = Calendar.getInstance();
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 		file = filename + sdf.format(cal.getTime()) + ".txt";
 		actualEvaluator = evaluator;
 		try {

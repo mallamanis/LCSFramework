@@ -123,7 +123,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 		 */
 		private float[] buildConfidence(final ClassifierSet aSet,
 				final double[] visionVector) {
-			float[] lblProbs = new float[numberOfLabels];
+			final float[] lblProbs = new float[numberOfLabels];
 			Arrays.fill(lblProbs, 0);
 
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
@@ -190,7 +190,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 		 */
 		public void proportionalCutCalibration(final double[][] instances,
 				final ClassifierSet rules, final float targetLc) {
-			float[][] confidenceValues = new float[instances.length][];
+			final float[][] confidenceValues = new float[instances.length][];
 			for (int i = 0; i < instances.length; i++) {
 				confidenceValues[i] = buildConfidence(rules, instances[i]);
 			}
@@ -370,7 +370,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 
 	@Override
 	protected void createClassRepresentation(final Instances instances) {
-		String[] ruleConsequents = new String[numberOfLabels];
+		final String[] ruleConsequents = new String[numberOfLabels];
 		this.ruleConsequents = ruleConsequents;
 
 		for (int i = 0; i < numberOfLabels; i++)
@@ -394,7 +394,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 	 */
 	@Override
 	public int[] getClassification(final Classifier aClassifier) {
-		int[] label = new int[1];
+		final int[] label = new int[1];
 		label[0] = ((UniLabel) attributeList[attributeList.length
 				- numberOfLabels]).getValue(aClassifier);
 		return label;
@@ -416,7 +416,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			if (dataInstance[currentLabelIndex] == 1)
 				numOfLabels++;
 		}
-		int[] result = new int[numOfLabels];
+		final int[] result = new int[numOfLabels];
 		int resultIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
 			final int currentLabelIndex = dataInstance.length - numberOfLabels

@@ -81,7 +81,7 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
 			final int instanceIndex, final int labelIndex) {
-		ClassifierSet correctSet = new ClassifierSet(null);
+		final ClassifierSet correctSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);
@@ -105,7 +105,7 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
 			final int instanceIndex, final int labelIndex) {
-		ClassifierSet labelMatchSet = new ClassifierSet(null);
+		final ClassifierSet labelMatchSet = new ClassifierSet(null);
 		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
 		for (int i = 0; i < matchSetSize; i++) {
 			Macroclassifier cl = matchSet.getMacroclassifier(i);

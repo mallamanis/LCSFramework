@@ -44,15 +44,15 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		@Override
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
-			INaturalSelector selector = new BestClassifierSelector(true,
+			final INaturalSelector selector = new BestClassifierSelector(true,
 					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 			// Generate MatchSet
-			ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
 
 			if (matchSet.getTotalNumerosity() == 0)
 				return null;
-			ClassifierSet results = new ClassifierSet(null);
+			final ClassifierSet results = new ClassifierSet(null);
 			selector.select(1, matchSet, results);
 
 			return results.getClassifier(0).getActionAdvocated();
@@ -71,7 +71,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		/**
 		 * The classes' names.
 		 */
-		private String[] classes;
+		private final String[] classes;
 
 		/**
 		 * The constructor.
@@ -98,8 +98,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			if (generatedClassifier
 					.getIntAt(positionInChromosome, lengthInBits) >= classes.length) {
 
-				int randClass = (int) Math
-						.floor(Math.random() * classes.length);
+				final int randClass = (int) Math.floor(Math.random()
+						* classes.length);
 				generatedClassifier.setIntAt(positionInChromosome,
 						lengthInBits, randClass);
 			}
@@ -134,17 +134,15 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		@Override
 		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
-			if (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
-					.getIntAt(positionInChromosome, lengthInBits))
-				return true;
-			else
-				return false;
+			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
+					.getIntAt(positionInChromosome, lengthInBits));
+
 		}
 
 		@Override
 		public final void randomCoveringValue(final float attributeValue,
 				final Classifier generatedClassifier) {
-			int coverClass = (int) attributeValue;
+			final int coverClass = (int) attributeValue;
 			generatedClassifier.setIntAt(positionInChromosome, lengthInBits,
 					coverClass);
 		}
@@ -164,8 +162,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 
 		@Override
 		public final String toString(final ExtendedBitSet convertingClassifier) {
-			int index = convertingClassifier.getIntAt(positionInChromosome,
-					lengthInBits);
+			final int index = convertingClassifier.getIntAt(
+					positionInChromosome, lengthInBits);
 			return classes[index];
 		}
 
@@ -186,7 +184,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 
 			// Initialize table
 			final int numOfClasses = ((UniLabel) attributeList[attributeList.length - 1]).classes.length;
-			double[] votingTable = new double[numOfClasses];
+			final double[] votingTable = new double[numOfClasses];
 			Arrays.fill(votingTable, 0);
 
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
@@ -219,7 +217,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			}
 
 			// Wrap it
-			int[] results = new int[1];
+			final int[] results = new int[1];
 			results[0] = maxIndex;
 			return results;
 		}
@@ -291,8 +289,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	@Override
 	public float classifyAbilityAll(final Classifier aClassifier,
 			final int instanceIndex) {
-		return ((UniLabel) attributeList[attributeList.length - 1])
-				.getValue(aClassifier) == myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1] ? 1
+		return (((UniLabel) attributeList[attributeList.length - 1])
+				.getValue(aClassifier) == myLcs.instances[instanceIndex][myLcs.instances[instanceIndex].length - 1]) ? 1
 				: 0;
 	}
 
@@ -315,9 +313,9 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			instances.setClassIndex(instances.numAttributes() - 1);
 
 		// Rule Consequents
-		Enumeration<?> classNames = instances.classAttribute()
+		final Enumeration<?> classNames = instances.classAttribute()
 				.enumerateValues();
-		String[] ruleConsequents = new String[instances.numClasses()];
+		final String[] ruleConsequents = new String[instances.numClasses()];
 		this.ruleConsequents = ruleConsequents;
 		for (int i = 0; i < instances.numClasses(); i++)
 			ruleConsequents[i] = (String) classNames.nextElement();
@@ -336,7 +334,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 */
 	@Override
 	public int[] getClassification(final Classifier aClassifier) {
-		int[] result = new int[1];
+		final int[] result = new int[1];
 		result[0] = ((UniLabel) attributeList[attributeList.length - 1])
 				.getValue(aClassifier);
 		return result;
@@ -344,7 +342,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 
 	@Override
 	public int[] getDataInstanceLabels(final double[] dataInstance) {
-		int[] classes = new int[1];
+		final int[] classes = new int[1];
 		classes[0] = (int) dataInstance[dataInstance.length - 1];
 		return classes;
 	}

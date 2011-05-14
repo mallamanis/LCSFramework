@@ -47,7 +47,7 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-		ASLCS aslcs = new ASLCS(file, iterations, populationSize);
+		final ASLCS aslcs = new ASLCS(file, iterations, populationSize);
 		aslcs.train();
 	}
 
@@ -172,7 +172,7 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -182,7 +182,7 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 				ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
 
-		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
+		final ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
 				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
@@ -197,16 +197,17 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader trainer = new ArffLoader(this);
+		final ArffLoader trainer = new ArffLoader(this);
 		try {
 			trainer.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -222,11 +223,11 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -234,15 +235,15 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
+		final ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(), this.instances, this);
 		conf.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(trainer.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				trainer.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		ConfusionMatrixEvaluator testconf = new ConfusionMatrixEvaluator(
+		final ConfusionMatrixEvaluator testconf = new ConfusionMatrixEvaluator(
 				rep.getLabelNames(),
 				InstanceToDoubleConverter.convert(trainer.testSet), this);
 		testconf.evaluateSet(rulePopulation);

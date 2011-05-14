@@ -175,13 +175,14 @@ public class ClassifierSet implements Serializable {
 	public final void deleteClassifier(final Classifier aClassifier) {
 
 		int index;
-		for (index = 0; index < myMacroclassifiers.size(); index++) {
+		final int macroSize = myMacroclassifiers.size();
+		for (index = 0; index < macroSize; index++) {
 			if (myMacroclassifiers.elementAt(index).myClassifier.getSerial() == aClassifier
 					.getSerial())
 				break;
 		}
 
-		if (index == myMacroclassifiers.size())
+		if (index == macroSize)
 			return;
 		deleteClassifier(index);
 

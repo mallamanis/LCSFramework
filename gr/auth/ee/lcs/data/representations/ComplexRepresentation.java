@@ -217,11 +217,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				final ExtendedBitSet testedChromosome) {
 
 			if (testedChromosome.get(this.positionInChromosome)) {
-				if ((attributeVision == 0 ? false : true) == testedChromosome
-						.get(this.positionInChromosome + 1))
-					return true;
-				else
-					return false;
+				final boolean matches = (((attributeVision == 0)) ? false
+						: true) == testedChromosome
+						.get(this.positionInChromosome + 1);
+				return matches;
+
 			} else {
 				return true;
 			}

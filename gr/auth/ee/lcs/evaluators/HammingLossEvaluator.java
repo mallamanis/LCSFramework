@@ -102,7 +102,7 @@ public class HammingLossEvaluator implements IEvaluator {
 			final int numOfLabels, AbstractLearningClassifierSystem lcs)
 			throws IOException {
 		printResults = print;
-		FileReader reader = new FileReader(arffFileName);
+		final FileReader reader = new FileReader(arffFileName);
 		this.instances = InstanceToDoubleConverter
 				.convert(new Instances(reader));
 		numberOfLabels = numOfLabels;

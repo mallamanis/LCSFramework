@@ -47,7 +47,7 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-		DirectGMlASLCS dgaslcs = new DirectGMlASLCS(file, iterations,
+		final DirectGMlASLCS dgaslcs = new DirectGMlASLCS(file, iterations,
 				populationSize, numOfLabels);
 		dgaslcs.train();
 
@@ -191,7 +191,7 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -202,8 +202,8 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 				LABEL_GENERALIZATION_RATE, ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		MlASLCSUpdateAlgorithm strategy = new MlASLCSUpdateAlgorithm(ASLCS_N,
-				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
+		final MlASLCSUpdateAlgorithm strategy = new MlASLCSUpdateAlgorithm(
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, numberOfLabels, this);
 
 		this.setElements(rep, strategy);
@@ -216,16 +216,17 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(
+		final ClassifierSet rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 								true)));
 
-		ArffLoader loader = new ArffLoader(this);
+		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -240,11 +241,11 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
@@ -254,18 +255,18 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels, this);
+		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
+				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
-				this);
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+				true, this);
 		accEval.evaluateSet(rulePopulation);
 
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
-				(float) LABEL_CARDINALITY));
+				LABEL_CARDINALITY));
 		System.out.println("Evaluating on test set(voting)");
 		testEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);

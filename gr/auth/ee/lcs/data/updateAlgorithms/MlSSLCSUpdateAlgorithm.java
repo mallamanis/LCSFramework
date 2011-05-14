@@ -148,8 +148,9 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public void cover(final ClassifierSet population, final int instanceIndex) {
-		Classifier coveringClassifier = myLcs.getClassifierTransformBridge()
-				.createRandomCoveringClassifier(myLcs.instances[instanceIndex]);
+		final Classifier coveringClassifier = myLcs
+				.getClassifierTransformBridge().createRandomCoveringClassifier(
+						myLcs.instances[instanceIndex]);
 		population.addClassifier(new Macroclassifier(coveringClassifier, 1),
 				false);
 
@@ -176,18 +177,18 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public double getComparisonValue(final Classifier aClassifier,
 			final int mode) {
-		MlSSLCSClassifierData data = (MlSSLCSClassifierData) aClassifier
+		final MlSSLCSClassifierData data = (MlSSLCSClassifierData) aClassifier
 				.getUpdateDataObject();
 
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
-			return aClassifier.experience < 0 ? 1 : 1 / (data.fitness
+			return (aClassifier.experience < 0) ? 1 : 1 / (data.fitness
 					* data.activeLabels / numberOfLabels);
 		case COMPARISON_MODE_EXPLOITATION:
 			return data.str; // TODO: Or maybe tp/(tp+fp)?
 		case COMPARISON_MODE_EXPLORATION:
-			return aClassifier.experience < 10 ? 0 : (data.fitness);
+			return (aClassifier.experience < 10) ? 0 : (data.fitness);
 		default:
 			return 0;
 		}
@@ -202,7 +203,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public String getData(final Classifier aClassifier) {
-		MlSSLCSClassifierData data = ((MlSSLCSClassifierData) aClassifier
+		final MlSSLCSClassifierData data = ((MlSSLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + " str:" + data.str;
 	}
@@ -231,7 +232,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public void setComparisonValue(final Classifier aClassifier,
 			final int mode, final double comparisonValue) {
-		MlSSLCSClassifierData data = ((MlSSLCSClassifierData) aClassifier
+		final MlSSLCSClassifierData data = ((MlSSLCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
 
@@ -300,7 +301,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 			data.msa += 1;
 			currentClassifier.experience++;
-			data.fitness = data.str < 0 ? 0 : (data.str / data.msa);
+			data.fitness = (data.str < 0) ? 0 : (data.str / data.msa);
 			if ((((double) data.tp) / ((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold)
 					&& (currentClassifier.experience > subsumptionExperienceThreshold))
 				currentClassifier.setSubsumptionAbility(true);

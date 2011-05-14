@@ -55,7 +55,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 				"datasetLabelCardinality", 1);
 		final BinaryRelevanceSelector selector = new BinaryRelevanceSelector(
 				numOfLabels);
-		TransformASLCS trucs = new TransformASLCS(file, iterations,
+		final TransformASLCS trucs = new TransformASLCS(file, iterations,
 				populationSize, numOfLabels, lc, selector);
 		trucs.train();
 
@@ -204,7 +204,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 		this.targetLC = problemLC;
 		this.selector = transformSelector;
 
-		IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
+		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
@@ -215,7 +215,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 				ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
+		final ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
 				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
@@ -230,11 +230,12 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE, this);
+		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
+				this);
 
-		ClassifierSet rulePopulation = new ClassifierSet(null);
+		final ClassifierSet rulePopulation = new ClassifierSet(null);
 
-		ArffLoader loader = new ArffLoader(this);
+		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -244,7 +245,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 				this);
 		// myExample.registerHook(new FileLogger(inputFile + "_result.txt",
 		// eval));
-		AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
+		final AllSingleLabelEvaluator slEval = new AllSingleLabelEvaluator(
 				loader.trainSet, numberOfLabels, true, this);
 		// myExample.registerHook(slEval);
 
@@ -268,43 +269,43 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 		rep.activateAllLabels();
 
 		System.out.println("Post process...");
-		PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
+		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		SortPopulationControl sort = new SortPopulationControl(
+		final SortPopulationControl sort = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
 
-		ExactMatchEvalutor trainEval = new ExactMatchEvalutor(loader.trainSet,
-				true, this);
+		final ExactMatchEvalutor trainEval = new ExactMatchEvalutor(
+				loader.trainSet, true, this);
 		trainEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator trainhamEval = new HammingLossEvaluator(
+		final HammingLossEvaluator trainhamEval = new HammingLossEvaluator(
 				loader.trainSet, true, numberOfLabels, this);
 		trainhamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator trainaccEval = new AccuracyEvaluator(loader.trainSet,
-				true, this);
+		final AccuracyEvaluator trainaccEval = new AccuracyEvaluator(
+				loader.trainSet, true, this);
 		trainaccEval.evaluateSet(rulePopulation);
 
 		// rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-		AllSingleLabelEvaluator teEval = new AllSingleLabelEvaluator(
+		final AllSingleLabelEvaluator teEval = new AllSingleLabelEvaluator(
 				loader.testSet, numberOfLabels, true, this);
 		teEval.evaluateSet(rulePopulation);
 		eval.evaluateSet(rulePopulation);
 		slEval.evaluateSet(rulePopulation);
 		System.out.println("Evaluating on test set");
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
-				true, this);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
-				true, numberOfLabels, this);
+		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
+				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
-				this);
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+				true, this);
 		accEval.evaluateSet(rulePopulation);
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				targetLC);
 		rep.setClassificationStrategy(str);
 		str.proportionalCutCalibration(this.instances, rulePopulation);

@@ -43,10 +43,10 @@ public class RouletteSelectorTest {
 	@Before
 	public void setUp() throws Exception {
 		lcs = new MockLCS();
-		SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(.33,
-				2, lcs);
-		ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99, 50,
-				0.01, null, lcs);
+		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
+				.33, 2, lcs);
+		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99,
+				50, 0.01, null, lcs);
 		lcs.setElements(rep, update);
 
 		population = new ClassifierSet(null);
@@ -70,10 +70,10 @@ public class RouletteSelectorTest {
 	 */
 	@Test
 	public void testSelect() {
-		RouletteWheelSelector selector = new RouletteWheelSelector(
+		final RouletteWheelSelector selector = new RouletteWheelSelector(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, true);
 
-		boolean[] atLeastOnce = new boolean[3];
+		final boolean[] atLeastOnce = new boolean[3];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {
@@ -101,10 +101,10 @@ public class RouletteSelectorTest {
 	 */
 	@Test
 	public void testSelectMin() {
-		RouletteWheelSelector selector = new RouletteWheelSelector(
+		final RouletteWheelSelector selector = new RouletteWheelSelector(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, false);
 
-		boolean[] atLeastOnce = new boolean[3];
+		final boolean[] atLeastOnce = new boolean[3];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {
@@ -132,7 +132,7 @@ public class RouletteSelectorTest {
 	 */
 	@Test
 	public void testZeroSelection() {
-		ClassifierSet population = new ClassifierSet(null);
+		final ClassifierSet population = new ClassifierSet(null);
 		for (int i = 0; i < 3; i++) {
 			Classifier aClassifier = lcs.getNewClassifier();
 			aClassifier.setComparisonValue(
@@ -143,10 +143,10 @@ public class RouletteSelectorTest {
 					false);
 		}
 
-		RouletteWheelSelector selector = new RouletteWheelSelector(
+		final RouletteWheelSelector selector = new RouletteWheelSelector(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, true);
 
-		boolean[] atLeastOnce = new boolean[3];
+		final boolean[] atLeastOnce = new boolean[3];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {
@@ -171,7 +171,7 @@ public class RouletteSelectorTest {
 	 */
 	@Test
 	public void testZeroSelectionMin() {
-		ClassifierSet population = new ClassifierSet(null);
+		final ClassifierSet population = new ClassifierSet(null);
 		for (int i = 0; i < 3; i++) {
 			Classifier aClassifier = lcs.getNewClassifier();
 			aClassifier.setComparisonValue(
@@ -182,10 +182,10 @@ public class RouletteSelectorTest {
 					false);
 		}
 
-		RouletteWheelSelector selector = new RouletteWheelSelector(
+		final RouletteWheelSelector selector = new RouletteWheelSelector(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, false);
 
-		boolean[] atLeastOnce = new boolean[3];
+		final boolean[] atLeastOnce = new boolean[3];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {
@@ -213,7 +213,7 @@ public class RouletteSelectorTest {
 	 */
 	@Test
 	public void testZeroSelectionMin2() {
-		ClassifierSet population = new ClassifierSet(null);
+		final ClassifierSet population = new ClassifierSet(null);
 		for (int i = 0; i < 3; i++) {
 			Classifier aClassifier = lcs.getNewClassifier();
 			aClassifier.setComparisonValue(
@@ -224,10 +224,10 @@ public class RouletteSelectorTest {
 					false);
 		}
 
-		RouletteWheelSelector selector = new RouletteWheelSelector(
+		final RouletteWheelSelector selector = new RouletteWheelSelector(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, false);
 
-		boolean[] atLeastOnce = new boolean[3];
+		final boolean[] atLeastOnce = new boolean[3];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {

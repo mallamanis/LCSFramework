@@ -50,7 +50,7 @@ public class UniformMutationTest {
 		assertEquals(result2, "0000000");
 
 		mut = new UniformBitMutation(.5);
-		boolean[] atLeastOnce = new boolean[4];
+		final boolean[] atLeastOnce = new boolean[4];
 		Arrays.fill(atLeastOnce, false);
 
 		for (int i = 0; i < 500; i++) {

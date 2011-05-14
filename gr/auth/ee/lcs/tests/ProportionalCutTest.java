@@ -23,9 +23,9 @@ public class ProportionalCutTest {
 	 */
 	@Test
 	public void activeLabels() {
-		float[][] confValues = { { (float) .4, (float) .6 },
+		final float[][] confValues = { { (float) .4, (float) .6 },
 				{ (float) .8, (float) .2 }, { (float) .1, (float) .9 } };
-		ProportionalCut a = new ProportionalCut();
+		final ProportionalCut a = new ProportionalCut();
 
 		assertEquals(a.getNumberOfActiveLabels(confValues[0], (float) .8), 0);
 		assertEquals(a.getNumberOfActiveLabels(confValues[0], (float) .6), 1);
@@ -51,9 +51,9 @@ public class ProportionalCutTest {
 	 */
 	@Test
 	public void testPcut1() {
-		float[][] confValues = { { (float) .4, (float) .6 },
+		final float[][] confValues = { { (float) .4, (float) .6 },
 				{ (float) .8, (float) .2 }, { (float) .1, (float) .9 } };
-		ProportionalCut a = new ProportionalCut();
+		final ProportionalCut a = new ProportionalCut();
 		final float threshold = a.calibrate((float) 1.33, confValues);
 		assertTrue(threshold < .4);
 		assertTrue(threshold > .2);
@@ -64,11 +64,11 @@ public class ProportionalCutTest {
 	 */
 	@Test
 	public void testPcut2() {
-		float[][] confValues = {
+		final float[][] confValues = {
 				{ (float) (1. / 3.), (float) (1. / 3.), (float) (1. / 3.) },
 				{ (float) .5, (float) .2, (float) .3 },
 				{ (float) .1, (float) .2, (float) .7 } };
-		ProportionalCut a = new ProportionalCut();
+		final ProportionalCut a = new ProportionalCut();
 		float threshold = a.calibrate(3, confValues);
 		assertTrue(threshold < .1);
 
@@ -82,14 +82,14 @@ public class ProportionalCutTest {
 	 */
 	@Test
 	public void testPcut3() {
-		float[][] confValues = {
+		final float[][] confValues = {
 				{ (float) (1. / 5.), (float) (1. / 5.), (float) (1. / 5.),
 						(float) (1. / 5.), (float) (1. / 5.) },
 				{ (float) .5, (float) .15, (float) .15, (float) .15,
 						(float) .15 },
 				{ (float) 0.1, (float) 0.05, (float) 0.05, (float) .24,
 						(float) .24 } };
-		ProportionalCut a = new ProportionalCut();
+		final ProportionalCut a = new ProportionalCut();
 		float threshold = a.calibrate(5, confValues);
 		assertTrue(threshold < .05);
 

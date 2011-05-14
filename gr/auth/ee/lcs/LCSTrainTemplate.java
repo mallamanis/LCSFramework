@@ -104,7 +104,7 @@ public class LCSTrainTemplate {
 		while (repetition < iterations) {
 			while ((trainsBeforeHook < hookCallbackRate)
 					&& (repetition < iterations)) {
-				System.out.print(".");
+				System.out.print('.');
 
 				for (int i = 0; i < numInstances; i++) {
 					trainWithInstance(population, i);
