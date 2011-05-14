@@ -68,6 +68,16 @@ public final class AccuracyEvaluatorTest {
 		final AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
 		final double evalResult = a.evaluateSet(set);
 		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
+		
+		//final ExtendedBitSet set2 = new ExtendedBitSet("10011101111011");
+		//final Classifier ex2 = lcs.getNewClassifier(set2);
+		//set.deleteClassifier(0);
+		//ex2.setComparisonValue(0, 1);
+		//ex2.experience = 100;
+		//set.addClassifier(new Macroclassifier(ex2, 1), false);
+		//final double evalResult2 = a.evaluateSet(set);
+		//assertTrue(Math.abs(evalResult2 - 3 / 6.) < .0001); //TODO: fix
+		
 	}
 
 	@Test
