@@ -244,6 +244,11 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem {
 
 		this.setElements(rep, strategy);
 
+		rulePopulation = new ClassifierSet(
+				new FixedSizeSetWorstFitnessDeletion(
+						populationSize,
+						new TournamentSelector((int) 40, true,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 	}
 
 	/**
@@ -255,12 +260,6 @@ public class TournamentSGMlUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
-		final ClassifierSet rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						populationSize,
-						new TournamentSelector((int) 40, true,
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

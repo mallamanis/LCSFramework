@@ -203,6 +203,12 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 				SSLCS_REWARD, SSLCS_PENALTY, numberOfLabels, ga,
 				SSLCS_EXPERIENCE_THRESHOLD, SSLCS_FITNESS_THRESHOLD, this);
 		this.setElements(rep, strategy);
+		
+		rulePopulation = new ClassifierSet(
+				new FixedSizeSetWorstFitnessDeletion(
+						populationSize,
+						new TournamentSelector(40, true,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
 	}
 
@@ -216,11 +222,6 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		final ClassifierSet rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						populationSize,
-						new TournamentSelector(40, true,
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

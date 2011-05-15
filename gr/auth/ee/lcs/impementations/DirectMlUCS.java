@@ -207,6 +207,13 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 				numberOfLabels, this);
 
 		this.setElements(rep, strategy);
+		
+		rulePopulation = new ClassifierSet(
+				new FixedSizeSetWorstFitnessDeletion(
+						populationSize,
+						new RouletteWheelSelector(
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+								true)));
 	}
 
 	/**
@@ -219,12 +226,6 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		final ClassifierSet rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						populationSize,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

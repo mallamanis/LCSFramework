@@ -249,6 +249,8 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 				THETA_GA, 1, this);
 
 		this.setElements(rep, ucsStrategy);
+		
+		rulePopulation = new ClassifierSet(null);
 
 	}
 
@@ -261,8 +263,6 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
-		final ClassifierSet rulePopulation = new ClassifierSet(null);
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

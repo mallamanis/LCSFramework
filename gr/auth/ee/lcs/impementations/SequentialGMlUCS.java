@@ -20,6 +20,7 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -223,6 +224,13 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 				updateObj, ga, numberOfLabels);
 
 		this.setElements(rep, strategy);
+		
+		rulePopulation = new ClassifierSet(
+				new FixedSizeSetWorstFitnessDeletion(
+						populationSize,
+						new RouletteWheelSelector(
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+								true)));
 
 	}
 
@@ -236,12 +244,7 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		final ClassifierSet rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						populationSize,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));
+		
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
@@ -294,7 +297,7 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
 
-		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(7,
+		IdentityBAMEvaluator bamEval = new IdentityBAMEvaluator(7,
 				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
 		double result = bamEval.evaluateSet(rulePopulation);
 		System.out.println("BAM %:" + result);

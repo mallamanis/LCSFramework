@@ -192,6 +192,13 @@ public class UCS extends AbstractLearningClassifierSystem {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
+		
+		rulePopulation = new ClassifierSet(
+				new FixedSizeSetWorstFitnessDeletion(
+						populationSize,
+						new RouletteWheelSelector(
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+								true)));
 	}
 
 	/**
@@ -205,13 +212,6 @@ public class UCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		final ClassifierSet rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						populationSize,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));
-
 		final ArffLoader trainer = new ArffLoader(this);
 		try {
 			trainer.loadInstances(inputFile, true);
@@ -220,7 +220,7 @@ public class UCS extends AbstractLearningClassifierSystem {
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
 		myExample.train(iterations, rulePopulation);
 
 		System.out.println("Performing only updates...");

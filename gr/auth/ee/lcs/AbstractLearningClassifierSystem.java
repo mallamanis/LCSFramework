@@ -4,6 +4,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
@@ -30,6 +31,11 @@ public abstract class AbstractLearningClassifierSystem {
 	 * The Abstract Update Algorithm Strategy of the LCS.
 	 */
 	private AbstractUpdateStrategy updateStrategy;
+	
+	/**
+	 * The rule population. 
+	 */
+	protected ClassifierSet rulePopulation;
 
 	/**
 	 * Return the LCS's classifier transform bridge.

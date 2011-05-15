@@ -220,6 +220,8 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
 		this.setElements(rep, strategy);
+		
+		rulePopulation = new ClassifierSet(null);
 
 	}
 
@@ -232,8 +234,6 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
-		final ClassifierSet rulePopulation = new ClassifierSet(null);
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
