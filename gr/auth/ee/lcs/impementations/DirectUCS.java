@@ -18,6 +18,7 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -276,6 +277,11 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
+
+		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(7,
+				PositionBAMEvaluator.STRICT_REPRESENTATION, this);
+		double result = bamEval.evaluateSet(rulePopulation);
+		System.out.println("BAM %:" + result);
 
 	}
 

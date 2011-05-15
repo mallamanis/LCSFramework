@@ -49,13 +49,15 @@ public final class GenericMultiLabelRepresentation extends
 			final int setSize = matchSet.getNumberOfMacroclassifiers();
 			for (int i = 0; i < setSize; i++) {
 				// For each classifier
+				final Classifier currentClassifier = matchSet.getClassifier(i);
+				final int numerosity = matchSet.getClassifierNumerosity(i);
+				final double fitness = numerosity
+						* currentClassifier
+								.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+
+				// For each label
 				for (int label = 0; label < numberOfLabels; label++) {
-					final Classifier currentClassifier = matchSet
-							.getClassifier(i);
-					final int numerosity = matchSet.getClassifierNumerosity(i);
-					final double fitness = numerosity
-							* currentClassifier
-									.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+
 					if (fitness > confidenceTable[label]) {
 						final String cons = (attributeList[attributeList.length
 								- numberOfLabels + label])
