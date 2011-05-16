@@ -250,7 +250,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
@@ -269,17 +269,31 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 
 		eval.evaluateSet(rulePopulation);
 		
-		System.out.println("Evaluating on test set");
+		System.out.println("Evaluating on test set (Pcut)");
 		clStr.proportionalCutCalibration(InstanceToDoubleConverter.convert(loader.trainSet), rulePopulation);
-		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
-		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(
 				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
 				true, this);
 		accEval.evaluateSet(rulePopulation);
+		
+		for (double i = 0; i < 1; i+=.05) {
+			clStr.setThreshold(i);
+			System.out.print("Threshold set to "+i);
+			testEval = new ExactMatchEvalutor(
+					loader.testSet, true, this);
+			testEval.evaluateSet(rulePopulation);
+			hamEval = new HammingLossEvaluator(
+					loader.testSet, true, numberOfLabels, this);
+			hamEval.evaluateSet(rulePopulation);
+			accEval = new AccuracyEvaluator(loader.testSet,
+					true, this);
+			accEval.evaluateSet(rulePopulation);
+		}
 
 		System.out.println("Evaluating on test set (best)");
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());

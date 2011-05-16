@@ -345,6 +345,17 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
 
+		for (double i = 0; i < 1; i+=.05) {
+			vs.setThreshold(i);
+			System.out.print("Threshold set to "+i);
+			
+			testEval.evaluateSet(rulePopulation);
+			
+			hamEval.evaluateSet(rulePopulation);
+			
+			accEval.evaluateSet(rulePopulation);
+		}
+		
 		final BestFitnessClassificationStrategy str = rep.new BestFitnessClassificationStrategy();
 		rep.setClassificationStrategy(str);
 

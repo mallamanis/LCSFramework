@@ -236,6 +236,10 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		
 		private final float targetLC;
 		
+		public void setThreshold(double threshold) {
+			this.threshold = threshold;
+		}
+		
 		/**
 		 * Create and normalized the confidence array for a vision vector.
 		 * 
