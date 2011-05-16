@@ -148,6 +148,9 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
 			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
+	private final float targetLc = (float) SettingsLoader.getNumericSetting(
+			"datasetLabelCardinality", 1);
+	
 	/**
 	 * The number of labels used at the dmlUCS.
 	 */
@@ -188,7 +191,7 @@ public class SequentialMlUCS extends AbstractLearningClassifierSystem {
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				SettingsLoader.getNumericSetting("AttributeGeneralizationRate",
 						0.33), this);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(targetLc));
 
 		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
 				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,

@@ -19,6 +19,7 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -259,7 +260,7 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				rulePopulation);
 		// rulePopulation.print();
 		System.out.println("Post process...");
-		// rulePopulation.print();
+		 rulePopulation.print();
 		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -294,8 +295,8 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
 
-		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(7,
-				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
+		IdentityBAMEvaluator bamEval = new IdentityBAMEvaluator(7,
+				IdentityBAMEvaluator.GENERIC_REPRESENTATION, this);
 		double result = bamEval.evaluateSet(rulePopulation);
 		System.out.println("BAM %:" + result);
 

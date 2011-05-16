@@ -164,6 +164,9 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
+	
+	private final float targetLc = (float) SettingsLoader.getNumericSetting(
+			"datasetLabelCardinality", 1);
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -200,7 +203,7 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				StrictMultiLabelRepresentation.HAMMING_LOSS,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(targetLc));
 
 		final MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
 				UCS_LEARNING_RATE, UCS_ACC0, UCS_N, UCS_EXPERIENCE_THRESHOLD,

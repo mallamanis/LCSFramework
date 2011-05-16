@@ -216,9 +216,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final Classifier cl = matchSet.getClassifier(i);
 			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 					.getUpdateDataObject());
-			final int numerosity = matchSet.getClassifierNumerosity(i); // TODO:
-																		// Why
-																		// unused?
+			
 			if (data.activeLabels == 0) {
 				data.fitness = 0;
 				continue;
@@ -251,10 +249,14 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			else
 				cl.setSubsumptionAbility(false);
 
-			final double fitness = ((data.activeLabels) / (fitnessSum) + fitnessMin) / 2;
-			final double cs = ((csSum) / (data.activeLabels) + csMax) / 2;
+			final double experience = cl.experience;
+			final double meanWeight = Math.exp(-experience/800.); 
+			final double bestWeight = 1 - meanWeight;
+			final double fitness = ((data.activeLabels) / (fitnessSum) *bestWeight + fitnessMin * meanWeight) ;
+			final double cs = (csSum) / (data.activeLabels) * meanWeight + csMax * bestWeight; 
 			data.fitness += b * (fitness - data.fitness);
-			data.globalCs += b * (cs - data.globalCs);
+			if (Double.isNaN(data.fitness)) data.fitness = 0;
+			data.globalCs += b * (cs / ((double)data.activeLabels) - data.globalCs);
 
 		}
 	}
@@ -329,7 +331,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 		case COMPARISON_MODE_EXPLOITATION:
 
-			final double exploitValue = data.acc
+			final double exploitValue = data.fitness
 					* ((aClassifier.experience < deleteAge) ? 0 : 1);
 			return Double.isNaN(exploitValue) ? 0 : exploitValue;
 		default:

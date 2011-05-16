@@ -83,7 +83,7 @@ public class StrictMlRepresentationTest {
 		list[3] = rep.new Label(rep.getChromosomeSize(), "Mediocre");
 		list[4] = rep.new Label(rep.getChromosomeSize(), "Bad");
 
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(1));
 		lcs.setElements(rep, null);
 	}
 

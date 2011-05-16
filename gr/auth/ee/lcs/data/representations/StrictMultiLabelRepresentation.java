@@ -8,6 +8,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.ProportionalCut;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -147,6 +148,11 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	 */
 	public final class MeanVotingClassificationStrategy implements
 			IClassificationStrategy {
+		
+		/**
+		 * The voting threshold. Used for label bipartition.
+		 */
+		private double threshold = 0.5;
 
 		@Override
 		public int[] classify(final ClassifierSet aSet,
@@ -186,9 +192,6 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 				}
 			}
 
-			// TODO: Configurable threshold
-			final double threshold = 0.5;
-
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < voteSum.length; i++) {
 				if (voteSum[i] > threshold)
@@ -222,21 +225,38 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
-		@Override
-		public int[] classify(final ClassifierSet aSet,
+		public VotingClassificationStrategy(float lc) {
+			targetLC = lc;
+		}
+		
+		/**
+		 * The voting threshold. Used for label bipartition.
+		 */
+		private double threshold = 0;
+		
+		private final float targetLC;
+		
+		/**
+		 * Create and normalized the confidence array for a vision vector.
+		 * 
+		 * @param aSet
+		 *            the set of rules to be used for confidence output
+		 * @param visionVector
+		 *            the vision vector
+		 * @return a float array containing the normalized confidence for each
+		 *         label
+		 */
+		private float[] getConfidenceArray(final ClassifierSet aSet,
 				final double[] visionVector) {
-			final double[] votingTable = new double[numberOfLabels];
+			final float[] votingTable = new float[numberOfLabels];
 			Arrays.fill(votingTable, 0);
-
-			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
-			// Let each classifier vote
-			final int setSize = matchSet.getNumberOfMacroclassifiers();
+			final int setSize = aSet.getNumberOfMacroclassifiers();
 			for (int i = 0; i < setSize; i++) {
 				// For each classifier
 				for (int label = 0; label < numberOfLabels; label++) {
-					final Classifier currentClassifier = matchSet
+					final Classifier currentClassifier = aSet
 							.getClassifier(i);
-					final int classifierNumerosity = matchSet
+					final int classifierNumerosity = aSet
 							.getClassifierNumerosity(i);
 					final double fitness = currentClassifier
 							.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
@@ -250,11 +270,44 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 
 				}
 			}
+			return votingTable;
+		}
+		
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			final float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
 
-			// TODO: Threshold
+			final ProportionalCut pCut = new ProportionalCut();
+			this.threshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.threshold);
+
+		}
+		
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+			final float[] votingTable ;
+			
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			// Let each classifier vote
+			votingTable = getConfidenceArray(matchSet,visionVector);
+
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++) {
-				if (votingTable[i] > 0)
+				if (votingTable[i] > threshold)
 					numberOfActiveLabels++;
 			}
 
@@ -262,7 +315,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 
 			int currentIndex = 0;
 			for (int i = 0; i < votingTable.length; i++)
-				if (votingTable[i] > 0) {
+				if (votingTable[i] > threshold) {
 					result[currentIndex] = i;
 					currentIndex++;
 				}

@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -24,6 +25,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
@@ -166,6 +168,9 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
+	
+	private final float targetLc = (float) SettingsLoader.getNumericSetting(
+			"datasetLabelCardinality", 1);
 
 	/**
 	 * The number of labels used at the dmlUCS.
@@ -176,6 +181,8 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 * The problem representation.
 	 */
 	private final StrictMultiLabelRepresentation rep;
+	
+	private VotingClassificationStrategy clStr ;
 
 	/**
 	 * Constructor.
@@ -206,7 +213,8 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new MeanVotingClassificationStrategy());
+		clStr = rep.new VotingClassificationStrategy(targetLc);
+		rep.setClassificationStrategy(clStr);
 
 		final UCSUpdateAlgorithm strategy = new UCSUpdateAlgorithm(UCS_ALPHA,
 				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
@@ -256,12 +264,13 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
+		//rulePopulation.print();
 		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-
+		
 		System.out.println("Evaluating on test set");
+		clStr.proportionalCutCalibration(InstanceToDoubleConverter.convert(loader.trainSet), rulePopulation);
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				loader.testSet, true, this);
 		testEval.evaluateSet(rulePopulation);
