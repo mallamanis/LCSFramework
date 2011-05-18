@@ -216,7 +216,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final Classifier cl = matchSet.getClassifier(i);
 			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
 					.getUpdateDataObject());
-			
+
 			if (data.activeLabels == 0) {
 				data.fitness = 0;
 				continue;
@@ -250,13 +250,17 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				cl.setSubsumptionAbility(false);
 
 			final double experience = cl.experience;
-			final double meanWeight = Math.exp(-experience/800.); 
+			final double meanWeight = Math.exp(-experience / 800.);
 			final double bestWeight = 1 - meanWeight;
-			final double fitness = ((data.activeLabels) / (fitnessSum) *bestWeight + fitnessMin * meanWeight) ;
-			final double cs = (csSum) / (data.activeLabels) * meanWeight + csMax * bestWeight; 
+			final double fitness = ((data.activeLabels) / (fitnessSum)
+					* bestWeight + fitnessMin * meanWeight);
+			final double cs = (csSum) / (data.activeLabels) * meanWeight
+					+ csMax * bestWeight;
 			data.fitness += b * (fitness - data.fitness);
-			if (Double.isNaN(data.fitness)) data.fitness = 0;
-			data.globalCs += b * (cs / ((double)data.activeLabels) - data.globalCs);
+			if (Double.isNaN(data.fitness))
+				data.fitness = 0;
+			data.globalCs += b
+					* (cs / ((double) data.activeLabels) - data.globalCs);
 
 		}
 	}

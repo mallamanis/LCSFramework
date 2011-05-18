@@ -236,7 +236,7 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 		final SequentialMlUpdateAlgorithm update = new SequentialMlUpdateAlgorithm(
 				updateObj, ga, numberOfLabels);
 		this.setElements(rep, update);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -253,8 +253,6 @@ public class SequentialGMlSSLCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
-		
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

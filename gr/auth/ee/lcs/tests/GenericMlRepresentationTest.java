@@ -341,6 +341,11 @@ public class GenericMlRepresentationTest {
 			public void reset() {
 			}
 
+			@Override
+			public int[] activeIndexes() {
+				return null;
+			}
+
 		};
 
 		rep.activateLabel(selector);
@@ -394,6 +399,11 @@ public class GenericMlRepresentationTest {
 
 			@Override
 			public void reset() {
+			}
+
+			@Override
+			public int[] activeIndexes() {
+				return null;
 			}
 
 		};

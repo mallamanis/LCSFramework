@@ -28,9 +28,11 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
+import gr.auth.ee.lcs.utilities.LabelFrequencyCalculator;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
+import java.util.TreeMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -111,8 +113,8 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
-			"thetaGA", 100);
+	private final int THETA_GA_IMBALANCE_MULTIPLIER = (int) SettingsLoader
+			.getNumericSetting("thetaGAImbalanceMultiplier", 10);
 
 	/**
 	 * The frequency at which callbacks will be called for evaluation.
@@ -208,6 +210,17 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 	VotingClassificationStrategy vs;
 
 	/**
+	 * The GA to be used.
+	 */
+	final SteadyStateGeneticAlgorithm ga;
+
+	/**
+	 * The GA activation rate.
+	 */
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 300);
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param filename
@@ -231,11 +244,10 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 		this.targetLC = problemLC;
 		this.selector = transformSelector;
 
-		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(this), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
+		ga = new SteadyStateGeneticAlgorithm(new RouletteWheelSelector(
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, true),
+				new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), 0, this);
 
 		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH, 0,
@@ -249,7 +261,7 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 				THETA_GA, 1, this);
 
 		this.setElements(rep, ucsStrategy);
-		
+
 		rulePopulation = new ClassifierSet(null);
 
 	}
@@ -277,6 +289,11 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 		do {
 			System.out.println("Training Classifier Set");
 			rep.activateLabel(selector);
+			TreeMap<String, Integer> fr = LabelFrequencyCalculator
+					.createCombinationMap(selector.activeIndexes(),
+							numberOfLabels, instances);
+			final double imbalance = LabelFrequencyCalculator.ImbalanceRate(fr);
+			ga.setThetaGA((int) (imbalance * THETA_GA_IMBALANCE_MULTIPLIER));
 			ClassifierSet brpopulation = new ClassifierSet(
 					new FixedSizeSetWorstFitnessDeletion(
 							populationSize,
@@ -345,17 +362,17 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
 
-		for (double i = 0; i < 1; i+=.05) {
+		for (double i = 0; i < 1; i += .05) {
 			vs.setThreshold(i);
-			System.out.print("Threshold set to "+i);
-			
+			System.out.print("Threshold set to " + i);
+
 			testEval.evaluateSet(rulePopulation);
-			
+
 			hamEval.evaluateSet(rulePopulation);
-			
+
 			accEval.evaluateSet(rulePopulation);
 		}
-		
+
 		final BestFitnessClassificationStrategy str = rep.new BestFitnessClassificationStrategy();
 		rep.setClassificationStrategy(str);
 

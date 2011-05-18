@@ -222,7 +222,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -240,7 +240,6 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

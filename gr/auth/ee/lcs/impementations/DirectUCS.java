@@ -26,6 +26,7 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.LabelFrequencyCalculator;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
@@ -168,7 +169,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
-	
+
 	private final float targetLc = (float) SettingsLoader.getNumericSetting(
 			"datasetLabelCardinality", 1);
 
@@ -181,8 +182,8 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 * The problem representation.
 	 */
 	private final StrictMultiLabelRepresentation rep;
-	
-	private VotingClassificationStrategy clStr ;
+
+	private VotingClassificationStrategy clStr;
 
 	/**
 	 * Constructor.
@@ -221,7 +222,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -240,7 +241,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-		
+
 		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
@@ -248,6 +249,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 			e.printStackTrace();
 			return;
 		}
+
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
@@ -264,34 +266,34 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		//rulePopulation.print();
+		// rulePopulation.print();
 		ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		
+
 		System.out.println("Evaluating on test set (Pcut)");
-		clStr.proportionalCutCalibration(InstanceToDoubleConverter.convert(loader.trainSet), rulePopulation);
-		ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				loader.testSet, true, this);
-		testEval.evaluateSet(rulePopulation);
-		HammingLossEvaluator hamEval = new HammingLossEvaluator(
-				loader.testSet, true, numberOfLabels, this);
-		hamEval.evaluateSet(rulePopulation);
-		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
+		clStr.proportionalCutCalibration(
+				InstanceToDoubleConverter.convert(loader.trainSet),
+				rulePopulation);
+		ExactMatchEvalutor testEval = new ExactMatchEvalutor(loader.testSet,
 				true, this);
+		testEval.evaluateSet(rulePopulation);
+		HammingLossEvaluator hamEval = new HammingLossEvaluator(loader.testSet,
+				true, numberOfLabels, this);
+		hamEval.evaluateSet(rulePopulation);
+		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
+				this);
 		accEval.evaluateSet(rulePopulation);
-		
-		for (double i = 0; i < 1; i+=.05) {
+
+		for (double i = 0; i < 1; i += .05) {
 			clStr.setThreshold(i);
-			System.out.print("Threshold set to "+i);
-			testEval = new ExactMatchEvalutor(
-					loader.testSet, true, this);
+			System.out.print("Threshold set to " + i);
+			testEval = new ExactMatchEvalutor(loader.testSet, true, this);
 			testEval.evaluateSet(rulePopulation);
-			hamEval = new HammingLossEvaluator(
-					loader.testSet, true, numberOfLabels, this);
+			hamEval = new HammingLossEvaluator(loader.testSet, true,
+					numberOfLabels, this);
 			hamEval.evaluateSet(rulePopulation);
-			accEval = new AccuracyEvaluator(loader.testSet,
-					true, this);
+			accEval = new AccuracyEvaluator(loader.testSet, true, this);
 			accEval.evaluateSet(rulePopulation);
 		}
 

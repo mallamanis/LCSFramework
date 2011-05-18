@@ -444,7 +444,7 @@ public final class GenericMultiLabelRepresentation extends
 		public void setThreshold(double threshold) {
 			voteThreshold = threshold;
 		}
-		
+
 		/**
 		 * The threshold on which to decide for the label bipartition.
 		 */

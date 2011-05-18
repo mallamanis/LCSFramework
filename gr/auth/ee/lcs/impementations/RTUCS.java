@@ -222,7 +222,7 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 				THETA_GA, 1, numberOfLabels, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -240,8 +240,6 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
-		
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

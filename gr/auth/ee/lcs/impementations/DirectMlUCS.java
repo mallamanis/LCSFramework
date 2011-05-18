@@ -164,7 +164,7 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
-	
+
 	private final float targetLc = (float) SettingsLoader.getNumericSetting(
 			"datasetLabelCardinality", 1);
 
@@ -203,14 +203,15 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				StrictMultiLabelRepresentation.HAMMING_LOSS,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(targetLc));
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
+				targetLc));
 
 		final MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
 				UCS_LEARNING_RATE, UCS_ACC0, UCS_N, UCS_EXPERIENCE_THRESHOLD,
 				numberOfLabels, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -228,7 +229,6 @@ public class DirectMlUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {

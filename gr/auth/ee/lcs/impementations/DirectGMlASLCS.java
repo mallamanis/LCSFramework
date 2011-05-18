@@ -207,7 +207,7 @@ public class DirectGMlASLCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, numberOfLabels, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,

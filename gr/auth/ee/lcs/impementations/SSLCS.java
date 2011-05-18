@@ -193,7 +193,7 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 				this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,

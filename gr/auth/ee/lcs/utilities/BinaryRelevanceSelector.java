@@ -77,4 +77,11 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 		currentLabel = 0;
 	}
 
+	@Override
+	public int[] activeIndexes() {
+		int[] result = new int[1];
+		result[0] = currentLabel;
+		return result;
+	}
+
 }

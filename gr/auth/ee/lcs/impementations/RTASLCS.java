@@ -207,7 +207,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
 		this.setElements(rep, update);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,

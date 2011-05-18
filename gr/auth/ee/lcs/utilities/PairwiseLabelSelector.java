@@ -82,4 +82,12 @@ public class PairwiseLabelSelector implements ILabelSelector {
 		j = 1;
 	}
 
+	@Override
+	public int[] activeIndexes() {
+		int[] result = new int[2];
+		result[0] = i;
+		result[1] = j;
+		return result;
+	}
+
 }

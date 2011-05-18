@@ -148,7 +148,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	 */
 	public final class MeanVotingClassificationStrategy implements
 			IClassificationStrategy {
-		
+
 		/**
 		 * The voting threshold. Used for label bipartition.
 		 */
@@ -228,18 +228,18 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		public VotingClassificationStrategy(float lc) {
 			targetLC = lc;
 		}
-		
+
 		/**
 		 * The voting threshold. Used for label bipartition.
 		 */
 		private double threshold = 0;
-		
+
 		private final float targetLC;
-		
+
 		public void setThreshold(double threshold) {
 			this.threshold = threshold;
 		}
-		
+
 		/**
 		 * Create and normalized the confidence array for a vision vector.
 		 * 
@@ -258,8 +258,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			for (int i = 0; i < setSize; i++) {
 				// For each classifier
 				for (int label = 0; label < numberOfLabels; label++) {
-					final Classifier currentClassifier = aSet
-							.getClassifier(i);
+					final Classifier currentClassifier = aSet.getClassifier(i);
 					final int classifierNumerosity = aSet
 							.getClassifierNumerosity(i);
 					final double fitness = currentClassifier
@@ -276,7 +275,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			}
 			return votingTable;
 		}
-		
+
 		/**
 		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
 		 * threshold.
@@ -299,15 +298,15 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			System.out.println("Threshold set to " + this.threshold);
 
 		}
-		
+
 		@Override
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
-			final float[] votingTable ;
-			
+			final float[] votingTable;
+
 			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
 			// Let each classifier vote
-			votingTable = getConfidenceArray(matchSet,visionVector);
+			votingTable = getConfidenceArray(matchSet, visionVector);
 
 			int numberOfActiveLabels = 0;
 			for (int i = 0; i < votingTable.length; i++) {

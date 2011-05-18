@@ -39,7 +39,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	 * The GA activation age. The population must have an average age, greater
 	 * that this in order for the GA to run.
 	 */
-	final private int gaActivationAge;
+	private int gaActivationAge;
 
 	/**
 	 * The current timestamp. Used by the GA to count generations.
@@ -90,6 +90,16 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		this.gaActivationAge = gaActivationAge;
 		this.crossoverRate = crossoverRate;
 		this.myLcs = lcs;
+	}
+
+	/**
+	 * GA Setter.
+	 * 
+	 * @param age
+	 *            the theta_GA
+	 */
+	public void setThetaGA(int age) {
+		this.gaActivationAge = age;
 	}
 
 	/*

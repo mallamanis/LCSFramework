@@ -192,7 +192,7 @@ public class UCS extends AbstractLearningClassifierSystem {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,

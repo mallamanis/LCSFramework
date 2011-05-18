@@ -233,7 +233,7 @@ public class DirectGMlSSLCS extends AbstractLearningClassifierSystem {
 				SSLCS_EXPERIENCE_THRESHOLD, SSLCS_FITNESS_THRESHOLD, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,

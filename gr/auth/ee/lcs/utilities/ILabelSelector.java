@@ -35,6 +35,13 @@ public interface ILabelSelector {
 	boolean next();
 
 	/**
+	 * The active indexes for the current selection.
+	 * 
+	 * @return an array containing the active indices
+	 */
+	int[] activeIndexes();
+
+	/**
 	 * Reset combination counting.
 	 */
 	void reset();

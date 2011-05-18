@@ -187,7 +187,7 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,

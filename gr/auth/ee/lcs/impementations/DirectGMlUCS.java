@@ -223,7 +223,7 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				numberOfLabels, this);
 
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -242,8 +242,6 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		
-
 		final ArffLoader loader = new ArffLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
@@ -260,7 +258,7 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				rulePopulation);
 		// rulePopulation.print();
 		System.out.println("Post process...");
-		 rulePopulation.print();
+		rulePopulation.print();
 		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,

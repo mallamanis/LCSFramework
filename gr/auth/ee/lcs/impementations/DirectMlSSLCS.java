@@ -162,7 +162,7 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 
 	private final float targetLc = (float) SettingsLoader.getNumericSetting(
 			"datasetLabelCardinality", 1);
-	
+
 	/**
 	 * The number of labels used at the dmlUCS.
 	 */
@@ -200,13 +200,14 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 				inputFile, PRECISION_BITS, numberOfLabels,
 				StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(targetLc));
+		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
+				targetLc));
 
 		final MlSSLCSUpdateAlgorithm strategy = new MlSSLCSUpdateAlgorithm(
 				SSLCS_REWARD, SSLCS_PENALTY, numberOfLabels, ga,
 				SSLCS_EXPERIENCE_THRESHOLD, SSLCS_FITNESS_THRESHOLD, this);
 		this.setElements(rep, strategy);
-		
+
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
@@ -224,7 +225,6 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
-
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
@@ -255,7 +255,7 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-		
+
 		System.out.println("Evaluating on test set");
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				loader.testSet, true, this);

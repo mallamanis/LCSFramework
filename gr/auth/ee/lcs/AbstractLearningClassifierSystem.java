@@ -31,9 +31,9 @@ public abstract class AbstractLearningClassifierSystem {
 	 * The Abstract Update Algorithm Strategy of the LCS.
 	 */
 	private AbstractUpdateStrategy updateStrategy;
-	
+
 	/**
-	 * The rule population. 
+	 * The rule population.
 	 */
 	protected ClassifierSet rulePopulation;
 
