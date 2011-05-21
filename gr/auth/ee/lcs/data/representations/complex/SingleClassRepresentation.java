@@ -1,12 +1,13 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.data.representations;
+package gr.auth.ee.lcs.data.representations.complex;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
@@ -56,6 +57,11 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			selector.select(1, matchSet, results);
 
 			return results.getClassifier(0).getActionAdvocated();
+		}
+
+		@Override
+		public void setThreshold(double threshold) {
+			// No threshold for this type.
 		}
 
 	}
@@ -220,6 +226,12 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			final int[] results = new int[1];
 			results[0] = maxIndex;
 			return results;
+		}
+
+		@Override
+		public void setThreshold(double threshold) {
+			// No threshold here...
+
 		}
 
 	}

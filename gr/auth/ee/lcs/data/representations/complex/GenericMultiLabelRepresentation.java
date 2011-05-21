@@ -1,12 +1,13 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.data.representations;
+package gr.auth.ee.lcs.data.representations.complex;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.ProportionalCut;
@@ -88,6 +89,11 @@ public final class GenericMultiLabelRepresentation extends
 				}
 
 			return result;
+		}
+
+		@Override
+		public void setThreshold(double threshold) {
+			// No threshold for this method...
 		}
 
 	}
@@ -423,6 +429,12 @@ public final class GenericMultiLabelRepresentation extends
 				}
 			}
 			return votingTable;
+		}
+
+		@Override
+		public void setThreshold(double threshold) {
+			voteThreshold = threshold;
+
 		}
 
 	}

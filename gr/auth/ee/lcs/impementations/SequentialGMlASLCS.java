@@ -12,8 +12,8 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;

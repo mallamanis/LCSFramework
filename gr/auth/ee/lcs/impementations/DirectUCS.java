@@ -6,14 +6,15 @@ package gr.auth.ee.lcs.impementations;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation.VotingClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -284,6 +285,17 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet, true,
 				this);
 		accEval.evaluateSet(rulePopulation);
+
+		System.out.println("Evaluating on test set (Internal Evaluation)");
+		InternalValidation ival = new InternalValidation(rulePopulation, clStr,
+				eval);
+		ival.calibrate(15);
+		testEval = new ExactMatchEvalutor(loader.testSet, true, this);
+		testEval.evaluateSet(rulePopulation);
+		hamEval = new HammingLossEvaluator(loader.testSet, true,
+				numberOfLabels, this);
+		hamEval.evaluateSet(rulePopulation);
+		accEval = new AccuracyEvaluator(loader.testSet, true, this);
 
 		for (double i = 0; i < 1; i += .05) {
 			clStr.setThreshold(i);

@@ -7,8 +7,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
@@ -99,7 +99,7 @@ public class GenericMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#classifyAbilityAll(gr.auth.ee.lcs.classifiers.Classifier, int)}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#classifyAbilityAll(gr.auth.ee.lcs.classifiers.Classifier, int)}
 	 * .
 	 */
 	@Test
@@ -123,7 +123,7 @@ public class GenericMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#classifyAbilityLabel(gr.auth.ee.lcs.classifiers.Classifier, int, int)}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#classifyAbilityLabel(gr.auth.ee.lcs.classifiers.Classifier, int, int)}
 	 * .
 	 */
 	@Test
@@ -163,7 +163,7 @@ public class GenericMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#getClassification(gr.auth.ee.lcs.classifiers.Classifier)}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#getClassification(gr.auth.ee.lcs.classifiers.Classifier)}
 	 * .
 	 */
 	@Test
@@ -199,7 +199,7 @@ public class GenericMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#getDataInstanceLabels(double[])}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#getDataInstanceLabels(double[])}
 	 * .
 	 */
 	@Test

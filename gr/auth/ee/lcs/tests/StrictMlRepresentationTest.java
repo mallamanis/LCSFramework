@@ -6,9 +6,9 @@ package gr.auth.ee.lcs.tests;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.representations.ComplexRepresentation.AbstractAttribute;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -103,7 +103,7 @@ public class StrictMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#classifyAbilityLabel(gr.auth.ee.lcs.classifiers.Classifier, int, int)}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#classifyAbilityLabel(gr.auth.ee.lcs.classifiers.Classifier, int, int)}
 	 * .
 	 */
 	@Test
@@ -137,7 +137,7 @@ public class StrictMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#getClassification(gr.auth.ee.lcs.classifiers.Classifier)}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#getClassification(gr.auth.ee.lcs.classifiers.Classifier)}
 	 * .
 	 */
 	@Test
@@ -169,7 +169,7 @@ public class StrictMlRepresentationTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation#getDataInstanceLabels(double[])}
+	 * {@link gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation#getDataInstanceLabels(double[])}
 	 * .
 	 */
 	@Test

@@ -6,16 +6,17 @@ package gr.auth.ee.lcs.impementations;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.MeanVotingClassificationStrategy;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
-import gr.auth.ee.lcs.data.representations.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.MeanVotingClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -291,6 +292,16 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
+
+		/*
+		 * System.out.println("Evaluating on test set (Internal Evaluation)");
+		 * final AccuracyEvaluator accTrain = new
+		 * AccuracyEvaluator(loader.trainSet, true, this); InternalValidation
+		 * ival = new InternalValidation(rulePopulation, vs, accTrain);
+		 * ival.calibrate(15); testEval.evaluateSet(rulePopulation);
+		 * hamEval.evaluateSet(rulePopulation);
+		 * accEval.evaluateSet(rulePopulation);
+		 */
 
 		final MeanVotingClassificationStrategy mvs = rep.new MeanVotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(

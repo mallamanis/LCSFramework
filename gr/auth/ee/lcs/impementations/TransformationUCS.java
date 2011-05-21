@@ -6,15 +6,16 @@ package gr.auth.ee.lcs.impementations;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
-import gr.auth.ee.lcs.data.representations.GenericMultiLabelRepresentation.VotingClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.AllSingleLabelEvaluator;
@@ -364,14 +365,28 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 
 		for (double i = 0; i < 1; i += .05) {
 			vs.setThreshold(i);
-			System.out.print("Threshold set to " + i);
+			System.out.println("====Threshold set to " + i + "====");
+			System.out.println("-----Train-----");
+			trainEval.evaluateSet(rulePopulation);
+			trainhamEval.evaluateSet(rulePopulation);
+			;
+			trainaccEval.evaluateSet(rulePopulation);
 
+			System.out.println("-----Test------");
 			testEval.evaluateSet(rulePopulation);
-
 			hamEval.evaluateSet(rulePopulation);
-
 			accEval.evaluateSet(rulePopulation);
 		}
+
+		System.out.println("Evaluating on test set (Internal Evaluation)");
+		final AccuracyEvaluator accTrain = new AccuracyEvaluator(
+				loader.trainSet, false, this);
+		InternalValidation ival = new InternalValidation(rulePopulation, vs,
+				accTrain);
+		ival.calibrate(15);
+		testEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation);
 
 		final BestFitnessClassificationStrategy str = rep.new BestFitnessClassificationStrategy();
 		rep.setClassificationStrategy(str);

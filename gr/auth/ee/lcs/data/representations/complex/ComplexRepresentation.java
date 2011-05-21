@@ -1,9 +1,10 @@
-package gr.auth.ee.lcs.data.representations;
+package gr.auth.ee.lcs.data.representations.complex;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
+import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import java.io.FileReader;
@@ -290,26 +291,6 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
-	}
-
-	/**
-	 * A classification strategy interface.
-	 * 
-	 * @author Miltos Allamanis
-	 * 
-	 */
-	public interface IClassificationStrategy {
-		/**
-		 * Classify a given vision vector with a given set of classifiers.
-		 * 
-		 * @param aSet
-		 *            the set of classifiers used at the classificaiton
-		 * @param visionVector
-		 *            the vision vector of the instance to be classified
-		 * @return an integer array containing the labels/ classes that the
-		 *         instance has been classified in
-		 */
-		int[] classify(ClassifierSet aSet, double[] visionVector);
 	}
 
 	/**

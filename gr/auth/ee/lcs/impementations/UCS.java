@@ -12,7 +12,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.data.representations.SingleClassRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;

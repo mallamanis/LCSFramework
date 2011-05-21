@@ -1,12 +1,13 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.data.representations;
+package gr.auth.ee.lcs.data.representations.complex;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ProportionalCut;
 
@@ -198,6 +199,11 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			this.threshold = pCut.calibrate(targetLc, confidenceValues);
 			System.out.println("Threshold set to " + this.threshold);
 
+		}
+
+		@Override
+		public void setThreshold(double threshold) {
+			this.threshold = threshold;
 		}
 	}
 
