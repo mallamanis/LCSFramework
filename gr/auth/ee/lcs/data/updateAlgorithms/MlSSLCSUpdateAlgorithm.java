@@ -11,6 +11,7 @@ import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * A strength based multi-label update algorithm.
@@ -73,6 +74,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		 */
 		public MlSSLCSClassifierData() {
 			ns = new double[numberOfLabels];
+			Arrays.fill(ns,1);
 		}
 
 	}
@@ -183,12 +185,12 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
-			return (aClassifier.experience < 0) ? 1 : 1 / (data.fitness
+			return  1 / (data.fitness
 					* data.activeLabels / numberOfLabels);
 		case COMPARISON_MODE_EXPLOITATION:
-			return data.str; // TODO: Or maybe tp/(tp+fp)?
+			return ((double) data.tp) /((double)(data.tp + data.fp));//data.str; // TODO: Or maybe tp/(tp+fp)?
 		case COMPARISON_MODE_EXPLORATION:
-			return (aClassifier.experience < 10) ? 0 : (data.fitness);
+			return (aClassifier.experience < 10) ? 0 : (data.str);
 		default:
 			return 0;
 		}
@@ -261,25 +263,28 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 					totalCorrectRules += matchSet.getClassifierNumerosity(i);
 			}
 
-			for (int i = 0; i < matchSetSize; i++) {
-				final Classifier currentClassifier = matchSet.getClassifier(i);
-				final MlSSLCSClassifierData data = ((MlSSLCSClassifierData) currentClassifier
-						.getUpdateDataObject());
-				final float classificationAbility = currentClassifier
-						.classifyLabelCorrectly(instanceIndex, lbl);
-
-				data.ns[lbl] = (data.ns[lbl] + totalCorrectRules)
-						/ (data.msa + 1);
-				if (classificationAbility >= 0) {
-					data.str += (strengthReward) / (totalCorrectRules);
-					if (Double.isInfinite(data.str))
-						data.str = 10;
-					data.tp += 1;
-				} else if (classificationAbility == -1) {
-					data.str -= penalty * (strengthReward) / (data.ns[lbl]);
-					data.fp += 1;
+			if (totalCorrectRules > 0) {
+				for (int i = 0; i < matchSetSize; i++) {
+					final Classifier currentClassifier = matchSet.getClassifier(i);
+					final MlSSLCSClassifierData data = ((MlSSLCSClassifierData) currentClassifier
+							.getUpdateDataObject());
+					final float classificationAbility = currentClassifier
+							.classifyLabelCorrectly(instanceIndex, lbl);
+					
+					if (classificationAbility > 0) {
+						data.str += (strengthReward) / (totalCorrectRules);
+						if (Double.isInfinite(data.str))
+							data.str = 10;
+						data.tp += 1;
+						data.msa += 1;
+						data.ns[lbl] += .1 * (data.ns[lbl] - totalCorrectRules);
+					} else if (classificationAbility < 0) {
+						data.str -= penalty * (strengthReward) / (data.ns[lbl]);
+						data.fp += 1;
+						data.msa += 1;
+					}
+	
 				}
-
 			}
 
 			if ((totalCorrectRules == 0) && evolve) {
@@ -299,9 +304,9 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 					data.activeLabels += 1;
 			}
 
-			data.msa += 1;
+			
 			currentClassifier.experience++;
-			data.fitness = (data.str < 0) ? 0 : (data.str / data.msa);
+			data.fitness = (data.str < 0) ? 0 : (data.str / ((double)data.msa));
 			if ((((double) data.tp) / ((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold)
 					&& (currentClassifier.experience > subsumptionExperienceThreshold))
 				currentClassifier.setSubsumptionAbility(true);
