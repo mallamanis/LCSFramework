@@ -4,12 +4,12 @@
 package gr.auth.ee.lcs.data.representations.complex;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.calibration.ProportionalCut;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
-import gr.auth.ee.lcs.utilities.ProportionalCut;
 
 import java.io.IOException;
 import java.util.Arrays;

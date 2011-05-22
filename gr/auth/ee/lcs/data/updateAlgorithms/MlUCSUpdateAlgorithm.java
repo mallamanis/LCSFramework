@@ -225,13 +225,14 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			double fitnessSum = 0;
 			double csMax = Double.MIN_VALUE;
 			double csSum = 0;
+			boolean inactive = true;
 			for (int label = 0; label < numberOfLabels; label++) {
 				if (!data.active[label])
 					continue;
 				if (fitnessMin > data.labelFitness[label])
 					fitnessMin = data.labelFitness[label];
 				fitnessSum += 1. / data.labelFitness[label];
-
+				inactive = false;
 				if (csMax < data.cs[label])
 					csMax = data.cs[label];
 				csSum += data.cs[label];
@@ -261,6 +262,11 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				data.fitness = 0;
 			data.globalCs += b
 					* (cs / ((double) data.activeLabels) - data.globalCs);
+			if (inactive){ 
+				data.fitness = 0;
+				data.globalCs = 1000;
+			}
+			
 
 		}
 	}

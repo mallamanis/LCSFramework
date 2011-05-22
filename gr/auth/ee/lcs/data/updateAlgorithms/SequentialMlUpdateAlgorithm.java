@@ -221,6 +221,14 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 			if ((correctSet.getNumberOfMacroclassifiers() > 0) && evolve)
 				ga.evolveSet(matchSet, population);
 		}
+		
+		//Delete classifiers that are only #'s
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = (matchSetSize - 1) ; i >= 0; i--) {
+			final Classifier cl = matchSet.getClassifier(i);
+			if (cl.experience == 0)
+				population.deleteClassifier(cl);
+		}
 
 	}
 

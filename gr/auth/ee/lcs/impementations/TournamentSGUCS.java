@@ -14,30 +14,28 @@ import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
-import gr.auth.ee.lcs.data.updateAlgorithms.MlUCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
-import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
-import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
 /**
- * A Direct Generic-representation, generic-ucs LCS.
+ * A tournament based Sequential Generic Multi-label UCS.
  * 
  * @author Miltos Allamanis
  * 
  */
-public class DirectGMlUCS extends AbstractLearningClassifierSystem {
-
+public class TournamentSGUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -54,9 +52,9 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		final DirectGMlUCS dmlucs = new DirectGMlUCS(file, iterations,
-				populationSize, numOfLabels, lc);
-		dmlucs.train();
+		final TournamentSGUCS sgmlucs = new TournamentSGUCS(file,
+				iterations, populationSize, numOfLabels, lc);
+		sgmlucs.train();
 
 	}
 
@@ -64,11 +62,6 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 	 * The input file used (.arff).
 	 */
 	private final String inputFile;
-
-	/**
-	 * Target LC for the problem.
-	 */
-	private final float targetLC;
 
 	/**
 	 * The number of full iterations to train the UCS.
@@ -176,64 +169,90 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
 	/**
+	 * The matchset GA run probability.
+	 */
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
+			.getNumericSetting("GAMatchSetRunProbability", 0.01);
+
+	/**
+	 * The generalization rate used for labels.
+	 */
+	private final double labelGeneralizationRate;
+
+	/**
 	 * The number of labels used at the dmlUCS.
 	 */
 	private final int numberOfLabels;
 
 	/**
-	 * The problem representation.
+	 * The target LC for the problem.
+	 */
+	private final float targetLC;
+
+	/**
+	 * The representation used by the LCS.
 	 */
 	private final GenericMultiLabelRepresentation rep;
+
+	/**
+	 * The voting classifications strategy being used.
+	 */
+	private final VotingClassificationStrategy str;
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param filename
-	 *            the filename of the UCS
+	 *            the filename of the trainset
 	 * @param iterations
 	 *            the number of iterations to run
 	 * @param populationSize
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
+	 * @param labelGeneralizationProbability
+	 *            the probability of generalizing a label (during coverage)
 	 * @throws IOException
 	 */
-	public DirectGMlUCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels,
-			final float problemLC) throws IOException {
+	public TournamentSGUCS(final String filename, final int iterations,
+			final int populationSize, final int numOfLabels, float problemLC)
+			throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
 		this.populationSize = populationSize;
 		this.numberOfLabels = numOfLabels;
+		this.labelGeneralizationRate = LABEL_GENERALIZATION_RATE;
 		this.targetLC = problemLC;
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(this), CROSSOVER_RATE,
+				new TournamentSelector((int) 50, true,
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
+				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
 		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
-				numberOfLabels, GenericMultiLabelRepresentation.HAMMING_LOSS,
-				LABEL_GENERALIZATION_RATE, ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH,
+				labelGeneralizationRate, ATTRIBUTE_GENERALIZATION_RATE, this);
+		str = rep.new VotingClassificationStrategy(targetLC);
+		rep.setClassificationStrategy(str);
 
-		final MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
-				UCS_LEARNING_RATE, UCS_ACC0, UCS_N, UCS_EXPERIENCE_THRESHOLD,
-				numberOfLabels, this);
+		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
+				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
+		final SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
+				updateObj, ga, numberOfLabels);
 
 		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));
+						new TournamentSelector((int) 40, true,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 	}
 
 	/**
-	 * Runs the Direct-ML-UCS.
+	 * Run the SGmlUCS
 	 * 
 	 * @throws IOException
 	 */
@@ -246,19 +265,18 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS.txt",
+				eval));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
-		// rulePopulation.print();
+
 		System.out.println("Post process...");
-		rulePopulation.print();
 		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
 				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
@@ -267,10 +285,10 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-
 		rulePopulation.print();
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
+		// TODO: Calibrate on set
+		str.proportionalCutCalibration(this.instances, rulePopulation);
 		eval.evaluateSet(rulePopulation);
 
 		System.out.println("Evaluating on test set");
@@ -283,20 +301,6 @@ public class DirectGMlUCS extends AbstractLearningClassifierSystem {
 		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
 				true, this);
 		accEval.evaluateSet(rulePopulation);
-		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
-				targetLC);
-		rep.setClassificationStrategy(str);
-		// TODO: Calibrate on set
-		str.proportionalCutCalibration(this.instances, rulePopulation);
-		System.out.println("Evaluating on test set (voting)");
-		testEval.evaluateSet(rulePopulation);
-		hamEval.evaluateSet(rulePopulation);
-		accEval.evaluateSet(rulePopulation);
-
-		IdentityBAMEvaluator bamEval = new IdentityBAMEvaluator(7,
-				IdentityBAMEvaluator.GENERIC_REPRESENTATION, this);
-		double result = bamEval.evaluateSet(rulePopulation);
-		System.out.println("BAM %:" + result);
 
 	}
 

@@ -13,27 +13,28 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.updateAlgorithms.MlSSLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.MlUCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 
 /**
- * A Direct ml-SS-LCS using the mlSS-LCS.
+ * A strict representation UCS with the genericUCS update.
  * 
  * @author Miltos Allamanis
  * 
  */
-public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
+public class MlUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -48,10 +49,11 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-
-		final DirectMlSSLCS dmlsslcs = new DirectMlSSLCS(file, iterations,
-				populationSize, numOfLabels);
-		dmlsslcs.train();
+		for (int i = 0; i < 10; i++) {
+			final MlUCS dmlucs = new MlUCS(file, iterations,
+					populationSize, numOfLabels);
+			dmlucs.train();
+		}
 
 	}
 
@@ -101,28 +103,33 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 			"precisionBits", 5);
 
 	/**
-	 * The SSLCS penalty parameter.
+	 * The UCS alpha parameter.
 	 */
-	private final double SSLCS_PENALTY = SettingsLoader.getNumericSetting(
-			"SSLCSPenaltyPercent", 10);
+	private final double UCS_ALPHA = SettingsLoader.getNumericSetting(
+			"UCS_Alpha", .1);
+
+	/**
+	 * The UCS n power parameter.
+	 */
+	private final int UCS_N = (int) SettingsLoader.getNumericSetting("UCS_N",
+			10);
 
 	/**
 	 * The accuracy threshold parameter.
 	 */
-	private final double SSLCS_REWARD = SettingsLoader.getNumericSetting(
-			"SSLCS_REWARD", 1);
+	private final double UCS_ACC0 = SettingsLoader.getNumericSetting(
+			"UCS_Acc0", .99);
+	/**
+	 * The learning rate (beta) parameter.
+	 */
+	private final double UCS_LEARNING_RATE = SettingsLoader.getNumericSetting(
+			"UCS_beta", .1);
 
 	/**
-	 * The SSLCS subsumption experience threshold.
+	 * The UCS experience threshold.
 	 */
-	private final int SSLCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("SSLCSExperienceThreshold", 10);
-
-	/**
-	 * The SSLCS subsumption experience threshold.
-	 */
-	private final double SSLCS_FITNESS_THRESHOLD = SettingsLoader
-			.getNumericSetting("SSLCSFitnessThreshold", .99);
+	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
+			.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
 	 * The post-process experience threshold used.
@@ -172,18 +179,16 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 	 * Constructor.
 	 * 
 	 * @param filename
-	 *            the filename of the trainset
+	 *            the filename of the UCS
 	 * @param iterations
 	 *            the number of iterations to run
 	 * @param populationSize
 	 *            the size of the population to use
 	 * @param numOfLabels
 	 *            the number of labels in the problem
-	 * @param labelGeneralizationProbability
-	 *            the probability of generalizing a label (during coverage)
 	 * @throws IOException
 	 */
-	public DirectMlSSLCS(final String filename, final int iterations,
+	public MlUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels) throws IOException {
 		inputFile = filename;
 		this.iterations = iterations;
@@ -191,33 +196,34 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		this.numberOfLabels = numOfLabels;
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector(50, true,
-						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
-				new SinglePointCrossover(this), CROSSOVER_RATE,
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
+						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
 		final StrictMultiLabelRepresentation rep = new StrictMultiLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
-				StrictMultiLabelRepresentation.EXACT_MATCH,
+				StrictMultiLabelRepresentation.HAMMING_LOSS,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy(
 				targetLc));
 
-		final MlSSLCSUpdateAlgorithm strategy = new MlSSLCSUpdateAlgorithm(
-				SSLCS_REWARD, SSLCS_PENALTY, numberOfLabels, ga,
-				SSLCS_EXPERIENCE_THRESHOLD, SSLCS_FITNESS_THRESHOLD, this);
+		final MlUCSUpdateAlgorithm strategy = new MlUCSUpdateAlgorithm(ga,
+				UCS_LEARNING_RATE, UCS_ACC0, UCS_N, UCS_EXPERIENCE_THRESHOLD,
+				numberOfLabels, this);
+
 		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector(40, true,
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
-
+						new RouletteWheelSelector(
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+								true)));
 	}
 
 	/**
-	 * Run the SGmlUCS.
+	 * Runs the Direct-ML-UCS.
 	 * 
 	 * @throws IOException
 	 */
@@ -228,15 +234,19 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
-			loader.loadInstances(inputFile, true);
+			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
-		myExample.registerHook(new FileLogger(inputFile
-				+ "_resultDGMlSSLCS.txt", eval));
+		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
+				PositionBAMEvaluator.STRICT_REPRESENTATION, this);
+		myExample.registerHook(new FileLogger(inputFile + "_exMlUCS", eval));
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
+				false, this);
+		myExample.registerHook(new FileLogger(inputFile + "_accMlUCS", accEval));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
@@ -251,8 +261,8 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		// rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		rulePopulation.print();
+		/*// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 
@@ -265,7 +275,7 @@ public class DirectMlSSLCS extends AbstractLearningClassifierSystem {
 		hamEval.evaluateSet(rulePopulation);
 		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
 				true, this);
-		accEval.evaluateSet(rulePopulation);
-
+		accEval.evaluateSet(rulePopulation);*/
 	}
+
 }

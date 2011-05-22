@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.utilities;
+package gr.auth.ee.lcs.calibration;
 
 /**
  * A threshold calibration method.

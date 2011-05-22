@@ -5,7 +5,7 @@ package gr.auth.ee.lcs.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.utilities.ProportionalCut;
+import gr.auth.ee.lcs.calibration.ProportionalCut;
 
 import org.junit.Before;
 import org.junit.Test;

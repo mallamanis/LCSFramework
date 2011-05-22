@@ -54,9 +54,11 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1000);
-		final DirectGUCS dgucs = new DirectGUCS(file, iterations,
-				populationSize, numOfLabels);
-		dgucs.train();
+		for (int i = 0; i < 10; i++) {
+			final DirectGUCS dgucs = new DirectGUCS(file, iterations,
+					populationSize, numOfLabels);
+			dgucs.train();
+		}
 
 	}
 
@@ -244,14 +246,19 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
-			loader.loadInstances(inputFile, true);
+			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
+		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
+				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
+		myExample.registerHook(new FileLogger(inputFile + "_exDGUCS", eval));
+		final AccuracyEvaluator selfAcc = new AccuracyEvaluator(loader.trainSet,
+				false, this);
+		myExample.registerHook(new FileLogger(inputFile + "_accDGUCS", selfAcc));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
@@ -265,11 +272,11 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
+		rulePopulation.print(); 
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
-
+		/*
 		System.out.println("Evaluating on test set");
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
 				loader.testSet, true, this);
@@ -291,7 +298,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		System.out.println("Evaluating on test set(voting)");
 		testEval.evaluateSet(rulePopulation);
 		hamEval.evaluateSet(rulePopulation);
-		accEval.evaluateSet(rulePopulation);
+		accEval.evaluateSet(rulePopulation); */
 
 		/*
 		 * System.out.println("Evaluating on test set (Internal Evaluation)");
@@ -302,7 +309,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		 * hamEval.evaluateSet(rulePopulation);
 		 * accEval.evaluateSet(rulePopulation);
 		 */
-
+		/*
 		final MeanVotingClassificationStrategy mvs = rep.new MeanVotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
@@ -318,7 +325,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		IdentityBAMEvaluator bamEval = new IdentityBAMEvaluator(7,
 				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
 		double result = bamEval.evaluateSet(rulePopulation);
-		System.out.println("BAM %:" + result);
+		System.out.println("BAM %:" + result);*/
 
 	}
 }

@@ -37,7 +37,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
+public class SequentialGASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -54,7 +54,7 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		final SequentialGMlASLCS taslcs = new SequentialGMlASLCS(file,
+		final SequentialGASLCS taslcs = new SequentialGASLCS(file,
 				iterations, populationSize, numOfLabels,
 				SettingsLoader.getNumericSetting("LabelGeneralizationRate",
 						0.33), lc);
@@ -201,7 +201,7 @@ public class SequentialGMlASLCS extends AbstractLearningClassifierSystem {
 	 *            the probability of generalizing a label (during coverage)
 	 * @throws IOException
 	 */
-	public SequentialGMlASLCS(final String filename, final int iterations,
+	public SequentialGASLCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
 			final double labelGeneralizationProbability, float problemLC)
 			throws IOException {

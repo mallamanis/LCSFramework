@@ -6,6 +6,7 @@ package gr.auth.ee.lcs.impementations;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
@@ -13,6 +14,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -39,7 +41,7 @@ import java.io.IOException;
  * @author Miltos Allamanis
  * 
  */
-public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
+public class SequentialGUCS extends AbstractLearningClassifierSystem {
 
 	/**
 	 * @param args
@@ -57,10 +59,12 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		final SequentialGMlUCS sgmlucs = new SequentialGMlUCS(file, iterations,
-				populationSize, numOfLabels, SettingsLoader.getNumericSetting(
-						"LabelGeneralizationRate", 0.33), lc);
-		sgmlucs.train();
+		for (int i = 0; i < 10; i++) {
+			final SequentialGUCS sgmlucs = new SequentialGUCS(file, iterations,
+					populationSize, numOfLabels, SettingsLoader.getNumericSetting(
+							"LabelGeneralizationRate", 0.33), lc);
+			sgmlucs.train();
+		}
 
 	}
 
@@ -175,6 +179,8 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 	 * The problem representation.
 	 */
 	private final GenericMultiLabelRepresentation rep;
+	
+	//final VotingClassificationStrategy str;
 
 	/**
 	 * Constructor.
@@ -193,7 +199,7 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 	 *            the problem's target label cardinality
 	 * @throws IOException
 	 */
-	public SequentialGMlUCS(final String filename, final int iterations,
+	public SequentialGUCS(final String filename, final int iterations,
 			final int populationSize, final int numOfLabels,
 			final double labelGeneralizationProbability, final float problemLC)
 			throws IOException {
@@ -214,7 +220,11 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH,
 				labelGeneralizationRate, SettingsLoader.getNumericSetting(
 						"AttributeGeneralizationRate", 0.33), this);
+		
+		/*str = rep.new VotingClassificationStrategy(
+				targetLC);*/
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		
 
 		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
 				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
@@ -246,17 +256,42 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
-			loader.loadInstances(inputFile, true);
+			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_resultSGMlUCS",
-				eval));
-		myExample.train(iterations, rulePopulation);
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
+				false, this);
+		
+		/*IEvaluator pcut = new IEvaluator() {
 
+			@Override
+			public double evaluateSet(ClassifierSet classifiers) {
+				InternalValidation a = new InternalValidation(classifiers, str, accEval);
+				a.calibrate(15);
+				return 0;
+			}
+			
+		};
+		
+		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
+				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);*/
+		
+		myExample.registerHook(new FileLogger(inputFile + "_accSGMlUCS",
+				accEval));
+		myExample.registerHook(new FileLogger(inputFile + "_exSGMlUCS",
+				eval));
+		//myExample.registerHook(pcut);
+		myExample.train(iterations, rulePopulation);
+		rulePopulation.print();
+		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+
+		eval.evaluateSet(rulePopulation);
+		
+		/*
 		System.out.println("Post process...");
 		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
 				POSTPROCESS_EXPERIENCE_THRESHOLD,
@@ -266,10 +301,7 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
-		eval.evaluateSet(rulePopulation);
+		
 
 		System.out.println("Evaluating on test set (best)");
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
@@ -298,7 +330,7 @@ public class SequentialGMlUCS extends AbstractLearningClassifierSystem {
 		IdentityBAMEvaluator bamEval = new IdentityBAMEvaluator(7,
 				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
 		double result = bamEval.evaluateSet(rulePopulation);
-		System.out.println("BAM %:" + result);
+		System.out.println("BAM %:" + result); */
 	}
 
 }

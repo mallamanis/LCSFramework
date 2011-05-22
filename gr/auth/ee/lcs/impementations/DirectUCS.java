@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -54,9 +55,11 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1000);
-		final DirectUCS dmlucs = new DirectUCS(file, iterations,
-				populationSize, numOfLabels);
-		dmlucs.train();
+		for (int i = 0; i < 10; i++) {
+			final DirectUCS dmlucs = new DirectUCS(file, iterations,
+					populationSize, numOfLabels);
+			 dmlucs.train();
+		}
 
 	}
 
@@ -184,7 +187,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final StrictMultiLabelRepresentation rep;
 
-	private VotingClassificationStrategy clStr;
+	private BestFitnessClassificationStrategy clStr;
 
 	/**
 	 * Constructor.
@@ -215,7 +218,8 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		clStr = rep.new VotingClassificationStrategy(targetLc);
+		//clStr = rep.new VotingClassificationStrategy(targetLc);
+		clStr = rep.new BestFitnessClassificationStrategy();
 		rep.setClassificationStrategy(clStr);
 
 		final UCSUpdateAlgorithm strategy = new UCSUpdateAlgorithm(UCS_ALPHA,
@@ -245,15 +249,22 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
-			loader.loadInstances(inputFile, true);
+			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
 
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
+		/*PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
+				PositionBAMEvaluator.STRICT_REPRESENTATION, this);*/
+		myExample.registerHook(new FileLogger(inputFile + "_exDUCS", eval));
+		
+		AccuracyEvaluator selfEval = new AccuracyEvaluator(loader.trainSet, false,
+				this);
+		
+		myExample.registerHook(new FileLogger(inputFile + "_accDUCS", selfEval));
 		myExample.train(iterations, rulePopulation);
 		myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
@@ -267,8 +278,9 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		// rulePopulation.print();
-		ClassifierSet.saveClassifierSet(rulePopulation, "set");
+		rulePopulation.print();
+		
+		/*ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);
 
@@ -318,7 +330,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(7,
 				PositionBAMEvaluator.STRICT_REPRESENTATION, this);
 		double result = bamEval.evaluateSet(rulePopulation);
-		System.out.println("BAM %:" + result);
+		System.out.println("BAM %:" + result); */
 
 	}
 
