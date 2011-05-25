@@ -265,24 +265,10 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 				this);
 		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
 				false, this);
-		
-		/*IEvaluator pcut = new IEvaluator() {
-
-			@Override
-			public double evaluateSet(ClassifierSet classifiers) {
-				InternalValidation a = new InternalValidation(classifiers, str, accEval);
-				a.calibrate(15);
-				return 0;
-			}
-			
-		};
-		
-		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
-				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);*/
-		
-		myExample.registerHook(new FileLogger(inputFile + "_accSGMlUCS",
+				
+		myExample.registerHook(new FileLogger(inputFile + "_accSGUCS",
 				accEval));
-		myExample.registerHook(new FileLogger(inputFile + "_exSGMlUCS",
+		myExample.registerHook(new FileLogger(inputFile + "_exSGUCS",
 				eval));
 		//myExample.registerHook(pcut);
 		myExample.train(iterations, rulePopulation);

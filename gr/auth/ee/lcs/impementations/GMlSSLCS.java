@@ -13,6 +13,7 @@ import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlSSLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
@@ -26,6 +27,7 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
+import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
@@ -56,10 +58,11 @@ public class GMlSSLCS extends AbstractLearningClassifierSystem {
 
 		final float labelGeneralizationRate = (float) SettingsLoader
 				.getNumericSetting("LabelGeneralizationRate", 0.33);
-
-		final GMlSSLCS sgmlucs = new GMlSSLCS(file, iterations,
-				populationSize, numOfLabels, labelGeneralizationRate, lc);
-		sgmlucs.train();
+		for (int i = 0; i < 10; i++) {
+			final GMlSSLCS sgmlucs = new GMlSSLCS(file, iterations,
+					populationSize, numOfLabels, labelGeneralizationRate, lc);
+			sgmlucs.train();
+		}
 
 	}
 
@@ -239,7 +242,7 @@ public class GMlSSLCS extends AbstractLearningClassifierSystem {
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector(40, true,
+						new TournamentSelector(60, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 
 	}
@@ -256,17 +259,35 @@ public class GMlSSLCS extends AbstractLearningClassifierSystem {
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
-			loader.loadInstances(inputFile, true);
+			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_resultDGMlSSLCS",
-				eval));
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
+				false, this);
+		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
+				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
+		IEvaluator thr = new IEvaluator() {
+
+			@Override
+			public double evaluateSet(ClassifierSet classifiers) {
+				str.proportionalCutCalibration(InstanceToDoubleConverter.convert(loader.trainSet), rulePopulation);
+				return 0;
+			}
+			
+		};
+		
+		myExample.registerHook(thr);
+		myExample.registerHook(new FileLogger(inputFile + "_bamGMlSSLCS", bamEval));
+		myExample.registerHook(new FileLogger(inputFile + "_exGMlSSLCS", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_accGMlSSLCS", accEval));
+				
 		myExample.train(iterations, rulePopulation);
-		myExample.updatePopulation(
+		
+		/*myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 
@@ -302,6 +323,6 @@ public class GMlSSLCS extends AbstractLearningClassifierSystem {
 		double result = bamEval.evaluateSet(rulePopulation);
 		System.out.println("BAM %:" + result);
 
-		
+		*/
 	}
 }

@@ -253,8 +253,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 		}
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
-				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
+		
 		myExample.registerHook(new FileLogger(inputFile + "_exDGUCS", eval));
 		final AccuracyEvaluator selfAcc = new AccuracyEvaluator(loader.trainSet,
 				false, this);
@@ -272,7 +271,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print(); 
+		//rulePopulation.print(); 
 		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

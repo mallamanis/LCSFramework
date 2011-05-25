@@ -18,6 +18,7 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -239,10 +240,9 @@ public class MlUCS extends AbstractLearningClassifierSystem {
 			e.printStackTrace();
 			return;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
-				PositionBAMEvaluator.STRICT_REPRESENTATION, this);
+		
 		myExample.registerHook(new FileLogger(inputFile + "_exMlUCS", eval));
 		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
 				false, this);
@@ -261,7 +261,7 @@ public class MlUCS extends AbstractLearningClassifierSystem {
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		postProcess.controlPopulation(rulePopulation);
 		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
+		//rulePopulation.print();
 		/*// ClassifierSet.saveClassifierSet(rulePopulation, "set");
 
 		eval.evaluateSet(rulePopulation);

@@ -19,6 +19,7 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -235,8 +236,7 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 				this);
 		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
 				false, this);
-		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
-				PositionBAMEvaluator.STRICT_REPRESENTATION, this);
+		
 		myExample.registerHook(new FileLogger(inputFile + "_exSeqUCS", eval));
 		myExample.registerHook(new FileLogger(inputFile + "_accSeqUCS", accEval));
 		myExample.train(iterations, rulePopulation);

@@ -18,6 +18,8 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -47,9 +49,11 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 				"trainIterations", 1000);
 		final int populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-		final GMlASLCS dgaslcs = new GMlASLCS(file, iterations,
-				populationSize, numOfLabels);
-		dgaslcs.train();
+		for (int i = 0; i < 1; i++) {
+			final GMlASLCS dgaslcs = new GMlASLCS(file, iterations,
+					populationSize, numOfLabels);
+			dgaslcs.train();
+		}
 
 	}
 
@@ -228,16 +232,24 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 
 		final ArffLoader loader = new ArffLoader(this);
 		try {
-			loader.loadInstances(inputFile, true);
+			loader.loadInstances(inputFile, false);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
+		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.trainSet,
+				false, this);
+		PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
+				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);
+		myExample.registerHook(new FileLogger(inputFile + "_bamGMlASLCS", bamEval));
+		myExample.registerHook(new FileLogger(inputFile + "_exGMlASLCS", eval));
+		myExample.registerHook(new FileLogger(inputFile + "_accGMlASLCS", accEval));
 		myExample.train(iterations, rulePopulation);
-		myExample.updatePopulation(
+		
+		
+		/*myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 		System.out.println("Post process...");
@@ -270,7 +282,7 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 		System.out.println("Evaluating on test set(voting)");
 		testEval.evaluateSet(rulePopulation);
 		accEval.evaluateSet(rulePopulation);
-		hamEval.evaluateSet(rulePopulation);
+		hamEval.evaluateSet(rulePopulation);*/
 
 	}
 }

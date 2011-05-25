@@ -253,13 +253,19 @@ public class GMlUCS extends AbstractLearningClassifierSystem {
 		}
 		final AccuracyEvaluator selfAcc = new AccuracyEvaluator(loader.trainSet,
 				false, this);
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
+		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		/*PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
-				PositionBAMEvaluator.GENERIC_REPRESENTATION, this);*/
+		
 		myExample.registerHook(new FileLogger(inputFile + "_accGMlUCS", selfAcc));
 		myExample.registerHook(new FileLogger(inputFile + "_exGMlUCS", eval));
 		myExample.train(iterations, rulePopulation);
+		
+		final SortPopulationControl sort = new SortPopulationControl(
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+		
+
+		sort.controlPopulation(rulePopulation);
+		rulePopulation.print();
 		/*myExample.updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);

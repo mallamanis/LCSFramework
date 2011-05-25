@@ -21,6 +21,7 @@ import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -257,8 +258,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, false,
 				this);
-		/*PositionBAMEvaluator bamEval = new PositionBAMEvaluator(numberOfLabels,
-				PositionBAMEvaluator.STRICT_REPRESENTATION, this);*/
+		
 		myExample.registerHook(new FileLogger(inputFile + "_exDUCS", eval));
 		
 		AccuracyEvaluator selfEval = new AccuracyEvaluator(loader.trainSet, false,
