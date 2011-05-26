@@ -4,7 +4,7 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffLoader;
+import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -16,7 +16,7 @@ import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentati
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
+import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
@@ -52,8 +52,8 @@ public class TournamentSGUCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		final float lc = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		final TournamentSGUCS sgmlucs = new TournamentSGUCS(file,
-				iterations, populationSize, numOfLabels, lc);
+		final TournamentSGUCS sgmlucs = new TournamentSGUCS(file, iterations,
+				populationSize, numOfLabels, lc);
 		sgmlucs.train();
 
 	}
@@ -225,7 +225,7 @@ public class TournamentSGUCS extends AbstractLearningClassifierSystem {
 		this.targetLC = problemLC;
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new TournamentSelector((int) 50, true,
+				new TournamentSelector(50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
@@ -247,7 +247,7 @@ public class TournamentSGUCS extends AbstractLearningClassifierSystem {
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new TournamentSelector((int) 40, true,
+						new TournamentSelector(40, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 	}
 
@@ -261,7 +261,7 @@ public class TournamentSGUCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		final ArffLoader loader = new ArffLoader(this);
+		final ArffTrainTestLoader loader = new ArffTrainTestLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
@@ -298,8 +298,9 @@ public class TournamentSGUCS extends AbstractLearningClassifierSystem {
 		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
 				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
-				true, this);
+		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
+				loader.testSet, true, this,
+				AccuracyRecallEvaluator.TYPE_ACCURACY);
 		accEval.evaluateSet(rulePopulation);
 
 	}

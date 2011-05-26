@@ -4,7 +4,7 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffLoader;
+import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.LCSTrainTemplate;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -15,7 +15,7 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation.ThresholdClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
+import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
@@ -226,15 +226,16 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
 				this);
 
-		final ArffLoader loader = new ArffLoader(this);
+		final ArffTrainTestLoader loader = new ArffTrainTestLoader(this);
 		try {
 			loader.loadInstances(inputFile, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		final AccuracyEvaluator acc = new AccuracyEvaluator(loader.trainSet,
-				true, this);
+		final AccuracyRecallEvaluator acc = new AccuracyRecallEvaluator(
+				loader.trainSet, true, this,
+				AccuracyRecallEvaluator.TYPE_ACCURACY);
 		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
 				this);
 		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
@@ -264,8 +265,9 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
 				loader.testSet, true, numberOfLabels, this);
 		hamEval.evaluateSet(rulePopulation);
-		final AccuracyEvaluator accEval = new AccuracyEvaluator(loader.testSet,
-				true, this);
+		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
+				loader.testSet, true, this,
+				AccuracyRecallEvaluator.TYPE_ACCURACY);
 		accEval.evaluateSet(rulePopulation);
 
 		str.proportionalCutCalibration(this.instances, rulePopulation,

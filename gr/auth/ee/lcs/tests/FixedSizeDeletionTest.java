@@ -3,7 +3,8 @@
  */
 package gr.auth.ee.lcs.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
@@ -13,6 +14,7 @@ import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.tests.mocks.MockLCS;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +42,7 @@ public class FixedSizeDeletionTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		SettingsLoader.loadSettings();
 		lcs = new MockLCS();
 		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
 				.33, 2, lcs);

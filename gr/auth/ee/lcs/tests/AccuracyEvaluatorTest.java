@@ -4,10 +4,10 @@ import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.AccuracyEvaluator;
+import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -65,7 +65,8 @@ public final class AccuracyEvaluatorTest {
 		ex1.setComparisonValue(0, 1);
 		ex1.experience = 100;
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
-		final AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
+		final AccuracyRecallEvaluator a = new AccuracyRecallEvaluator(
+				instances, false, lcs, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		final double evalResult = a.evaluateSet(set);
 		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
 
@@ -89,7 +90,8 @@ public final class AccuracyEvaluatorTest {
 		final ClassifierSet set = new ClassifierSet(null);
 		ex1.setComparisonValue(0, 1);
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
-		final AccuracyEvaluator a = new AccuracyEvaluator(instances, false, lcs);
+		final AccuracyRecallEvaluator a = new AccuracyRecallEvaluator(
+				instances, false, lcs, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		assertTrue(a.evaluateSet(set) == 1);
 	}
 

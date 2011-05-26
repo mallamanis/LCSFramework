@@ -4,19 +4,13 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffLoader;
-import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
-import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
-import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.SSLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -25,6 +19,8 @@ import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector2;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
+
+import weka.core.Instances;
 
 /**
  * An SS-LCS implementation.
@@ -42,12 +38,10 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 	public static void main(String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		final int iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
-		final int populationSize = (int) SettingsLoader.getNumericSetting(
-				"populationSize", 1500);
-		final SSLCS sslcs = new SSLCS(file, iterations, populationSize);
-		sslcs.train();
+		final SSLCS sslcs = new SSLCS();
+		FoldEvaluator loader = new FoldEvaluator(10, sslcs, file);
+		loader.evaluate();
+
 	}
 
 	/**
@@ -84,12 +78,6 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 			"thetaGA", 100);
 
 	/**
-	 * The frequency at which callbacks will be called for evaluation.
-	 */
-	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
-			"callbackRate", 100);
-
-	/**
 	 * The number of bits to use for representing continuous variables.
 	 */
 	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
@@ -120,24 +108,6 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("SSLCSFitnessThreshold", .99);
 
 	/**
-	 * The post-process experience threshold used.
-	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Experience_Theshold", 0);
-
-	/**
-	 * Coverage threshold for post processing.
-	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
-
-	/**
-	 * Post-process threshold for fitness.
-	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
-			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
-
-	/**
 	 * The attribute generalization rate.
 	 */
 	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
@@ -163,19 +133,14 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The SS-LCS constructor.
 	 * 
-	 * @param filename
-	 *            the filename to open
-	 * @param iterations
-	 *            the number of iterations to run the training
-	 * @param populationSize
-	 *            the population size to use
 	 * @throws IOException
 	 */
-	public SSLCS(String filename, int iterations, int populationSize)
-			throws IOException {
-		inputFile = filename;
-		this.iterations = iterations;
-		this.populationSize = populationSize;
+	public SSLCS() throws IOException {
+		inputFile = SettingsLoader.getStringSetting("filename", "");
+		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
+				1000);
+		populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector2(40, true,
@@ -201,52 +166,41 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 	}
 
+	@Override
+	public AbstractLearningClassifierSystem createNew() {
+		try {
+			return new SSLCS();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public String[] getEvaluationNames() {
+		String[] names = { "Accuracy" };
+		return names;
+	}
+
+	@Override
+	public double[] getEvaluations(Instances testSet) {
+		double[] result = new double[1];
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
+				true, this);
+		result[0] = testEval.evaluateSet(rulePopulation);
+		return result;
+	}
+
 	/**
 	 * Run the SS-LCS.
 	 * 
-	 * @throws IOException
-	 *             if file not found
 	 */
 	@Override
 	public void train() {
-		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
-				this);
 
-		final ArffLoader trainer = new ArffLoader(this);
-		try {
-			trainer.loadInstances(inputFile, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
-				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
-		myExample.train(iterations, rulePopulation);
-		myExample.updatePopulation(
-				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+		trainSet(iterations, rulePopulation);
+		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
-		System.out.println("Post process...");
-		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				POSTPROCESS_EXPERIENCE_THRESHOLD,
-				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		final SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
-		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
-		eval.evaluateSet(rulePopulation);
-		final ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), this.instances, this);
-		conf.evaluateSet(rulePopulation);
-
-		System.out.println("Evaluating on test set");
-		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				trainer.testSet, true, this);
-		testEval.evaluateSet(rulePopulation);
 
 	}
 }
