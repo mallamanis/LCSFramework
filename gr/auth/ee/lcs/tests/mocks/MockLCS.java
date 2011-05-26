@@ -3,7 +3,10 @@
  */
 package gr.auth.ee.lcs.tests.mocks;
 
+import java.io.IOException;
+
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 import weka.core.Instances;
 
 /**
@@ -15,6 +18,11 @@ import weka.core.Instances;
 public class MockLCS extends AbstractLearningClassifierSystem {
 
 	public MockLCS() {
+		try {
+			SettingsLoader.loadSettings();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		this.setElements(new MockTransformBridge(), new MockUpdateStrategy());
 	}
 

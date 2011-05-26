@@ -222,8 +222,10 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 				false, this);
 		results[3] = testEval.evaluateSet(rulePopulation);
 
+		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
+				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		final InternalValidation ival = new InternalValidation(rulePopulation,
-				str, accEval);
+				str, selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateSet(rulePopulation);

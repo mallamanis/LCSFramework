@@ -205,7 +205,7 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)", "Accuracy(ival)",
 				"Recall(best)", "HammingLoss(best)", "ExactMatch(best)" };
 		return names;
 	}
@@ -239,8 +239,10 @@ public class DirectGUCS extends AbstractLearningClassifierSystem {
 				false, this);
 		results[3] = testEval.evaluateSet(rulePopulation);
 
+		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
+				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		final InternalValidation ival = new InternalValidation(rulePopulation,
-				str, accEval);
+				str, selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateSet(rulePopulation);

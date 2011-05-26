@@ -4,28 +4,23 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffTrainTestLoader;
-import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
-import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
-import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
+
+import weka.core.Instances;
 
 /**
  * A UCS Learning Classifier System.
@@ -44,12 +39,10 @@ public class UCS extends AbstractLearningClassifierSystem {
 	public static void main(String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		final int iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
-		final int populationSize = (int) SettingsLoader.getNumericSetting(
-				"populationSize", 1000);
-		final UCS ucs = new UCS(file, iterations, populationSize);
-		ucs.train();
+		
+		final UCS ucs = new UCS();
+		FoldEvaluator loader = new FoldEvaluator(10, ucs, file);
+		loader.evaluate();
 	}
 
 	/**
@@ -84,12 +77,6 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
 			"thetaGA", 100);
-
-	/**
-	 * The frequency at which callbacks will be called for evaluation.
-	 */
-	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
-			"callbackRate", 100);
 
 	/**
 	 * The number of bits to use for representing continuous variables.
@@ -128,24 +115,6 @@ public class UCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
-	 * The post-process experience threshold used.
-	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Experience_Theshold", 0);
-
-	/**
-	 * Coverage threshold for post processing.
-	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
-
-	/**
-	 * Post-process threshold for fitness.
-	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
-			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
-
-	/**
 	 * The attribute generalization rate.
 	 */
 	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
@@ -174,8 +143,13 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 *            the population size to use
 	 * @throws IOException
 	 */
-	public UCS(String filename, int iterations, int populationSize)
+	public UCS()
 			throws IOException {
+		inputFile = SettingsLoader.getStringSetting("filename", "");
+		iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1000);
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
@@ -183,15 +157,13 @@ public class UCS extends AbstractLearningClassifierSystem {
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
 		final SingleClassRepresentation rep = new SingleClassRepresentation(
-				filename, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE, this);
+				inputFile, PRECISION_BITS, ATTRIBUTE_GENERALIZATION_RATE, this);
 		final UCSUpdateAlgorithm ucsUpdate = new UCSUpdateAlgorithm(UCS_ALPHA,
 				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
-		this.setElements(rep, ucsUpdate);
-		inputFile = filename;
-		this.iterations = iterations;
-		this.populationSize = populationSize;
+		this.setElements(rep, ucsUpdate);		
+		
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -208,59 +180,36 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 *             if file not found
 	 */
 	@Override
-	public final void train() {
-		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
-				this);
+	public final void train() {		
+		trainSet(iterations, rulePopulation);		
+		updatePopulation(
+				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);		
 
-		final ArffTrainTestLoader trainer = new ArffTrainTestLoader(this);
+	}
+
+	@Override
+	public AbstractLearningClassifierSystem createNew() {		
 		try {
-			trainer.loadInstances(inputFile, true);
+			return new UCS();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
-				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result", eval));
-		myExample.train(iterations, rulePopulation);
+	}
 
-		System.out.println("Performing only updates...");
-		myExample.updatePopulation(
-				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);
+	@Override
+	public String[] getEvaluationNames() {
+		String[] names = { "Accuracy" };
+		return names;
+	}
 
-		System.out.println("Post process...");
-		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				POSTPROCESS_EXPERIENCE_THRESHOLD,
-				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		final SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
-		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
-		ClassifierSet.saveClassifierSet(rulePopulation, "set");
-
-		eval.evaluateSet(rulePopulation);
-		final SingleClassRepresentation rep = (SingleClassRepresentation) this
-				.getClassifierTransformBridge();
-
-		final ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(),
-				InstanceToDoubleConverter.convert(trainer.testSet), this);
-		conf.evaluateSet(rulePopulation);
-
-		System.out.println("Evaluating on test set");
-		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				trainer.testSet, true, this);
-		testEval.evaluateSet(rulePopulation);
-
-		System.out.println("Evaluating on test set (best)");
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-		final ConfusionMatrixEvaluator conf2 = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(),
-				InstanceToDoubleConverter.convert(trainer.testSet), this);
-		conf2.evaluateSet(rulePopulation);
-		testEval.evaluateSet(rulePopulation);
-
+	@Override
+	public double[] getEvaluations(Instances testSet) {
+		double[] result = new double[1];
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
+				true, this);
+		result[0] = testEval.evaluateSet(rulePopulation);
+		return result;
 	}
 }

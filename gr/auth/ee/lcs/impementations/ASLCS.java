@@ -4,28 +4,23 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffTrainTestLoader;
-import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
-import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
-import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.ConfusionMatrixEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
+
+import weka.core.Instances;
 
 /**
  * An AS-LCS implementation.
@@ -43,12 +38,10 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	public static void main(final String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		final int iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
-		final int populationSize = (int) SettingsLoader.getNumericSetting(
-				"populationSize", 1500);
-		final ASLCS aslcs = new ASLCS(file, iterations, populationSize);
-		aslcs.train();
+		
+		final ASLCS aslcs = new ASLCS();
+		FoldEvaluator loader = new FoldEvaluator(10, aslcs, file);
+		loader.evaluate();
 	}
 
 	/**
@@ -85,12 +78,6 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 			"thetaGA", 100);
 
 	/**
-	 * The frequency at which callbacks will be called for evaluation.
-	 */
-	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
-			"callbackRate", 100);
-
-	/**
 	 * The number of bits to use for representing continuous variables.
 	 */
 	private final int PRECISION_BITS = (int) SettingsLoader.getNumericSetting(
@@ -113,24 +100,6 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int ASLCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
 			.getNumericSetting("ASLCS_ExperienceTheshold", 10);
-
-	/**
-	 * The post-process experience threshold used.
-	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Experience_Theshold", 0);
-
-	/**
-	 * Coverage threshold for post processing.
-	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
-
-	/**
-	 * Post-process threshold for fitness.
-	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
-			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
 	/**
 	 * The attribute generalization rate.
@@ -166,11 +135,13 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	 *            the population size to use
 	 * @throws IOException
 	 */
-	public ASLCS(final String filename, final int iterations,
-			final int populationSize) throws IOException {
-		inputFile = filename;
-		this.iterations = iterations;
-		this.populationSize = populationSize;
+	public ASLCS() throws IOException {
+		inputFile = SettingsLoader.getStringSetting("filename", "");
+		iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
+		
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
@@ -204,49 +175,37 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
-				this);
-
-		final ArffTrainTestLoader trainer = new ArffTrainTestLoader(this);
-		try {
-			trainer.loadInstances(inputFile, true);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
-				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
-		myExample.train(iterations, rulePopulation);
-		System.out.println("Performing only updates...");
-		myExample.updatePopulation(
+		
+		trainSet(iterations, rulePopulation);
+		
+		updatePopulation(
 				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);
-		System.out.println("Post process...");
-		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				POSTPROCESS_EXPERIENCE_THRESHOLD,
-				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		final SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
-		sort.controlPopulation(rulePopulation);
-		rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+				rulePopulation);		
 
-		eval.evaluateSet(rulePopulation);
-		final ConfusionMatrixEvaluator conf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(), this.instances, this);
-		conf.evaluateSet(rulePopulation);
+	}
 
-		System.out.println("Evaluating on test set");
-		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				trainer.testSet, true, this);
-		testEval.evaluateSet(rulePopulation);
-		final ConfusionMatrixEvaluator testconf = new ConfusionMatrixEvaluator(
-				rep.getLabelNames(),
-				InstanceToDoubleConverter.convert(trainer.testSet), this);
-		testconf.evaluateSet(rulePopulation);
+	@Override
+	public AbstractLearningClassifierSystem createNew() {
+		try {
+			return new ASLCS();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
+	@Override
+	public String[] getEvaluationNames() {
+		String[] names = { "Accuracy" };
+		return names;
+	}
+
+	@Override
+	public double[] getEvaluations(Instances testSet) {
+		double[] result = new double[1];
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
+				true, this);
+		result[0] = testEval.evaluateSet(rulePopulation);
+		return result;
 	}
 }

@@ -14,6 +14,7 @@ import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import weka.core.Instances;
@@ -79,6 +80,11 @@ public abstract class AbstractLearningClassifierSystem {
 	 * 
 	 */
 	public AbstractLearningClassifierSystem() {
+		try {
+			SettingsLoader.loadSettings();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		hooks = new Vector<IEvaluator>();
 		hookCallbackRate = (int) SettingsLoader.getNumericSetting(
 				"callbackRate", 100);

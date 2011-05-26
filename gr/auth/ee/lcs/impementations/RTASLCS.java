@@ -4,30 +4,28 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffTrainTestLoader;
-import gr.auth.ee.lcs.LCSTrainTemplate;
+import gr.auth.ee.lcs.FoldEvaluator;
+import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
-import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
-import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation.ThresholdClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.FileLogger;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import weka.core.Instances;
 
 /**
  * An Rank-and-Threshold AS-LCS Update Algorithm.
@@ -43,15 +41,10 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	public static void main(String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		final int numOfLabels = (int) SettingsLoader.getNumericSetting(
-				"numberOfLabels", 1);
-		final int iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
-		final int populationSize = (int) SettingsLoader.getNumericSetting(
-				"populationSize", 1500);
-		final RTASLCS rtaslcs = new RTASLCS(file, iterations, populationSize,
-				numOfLabels);
-		rtaslcs.train();
+		
+		final RTASLCS rtaslcs = new RTASLCS();
+		FoldEvaluator loader = new FoldEvaluator(10, rtaslcs, file);
+		loader.evaluate();
 
 	}
 
@@ -68,7 +61,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The size of the population to use.
 	 */
-	private final int populationSize;
+	private final int numberOfLabels;
 
 	/**
 	 * The GA crossover rate.
@@ -88,11 +81,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
 			"thetaGA", 100);
 
-	/**
-	 * The frequency at which callbacks will be called for evaluation.
-	 */
-	private final int CALLBACK_RATE = (int) SettingsLoader.getNumericSetting(
-			"callbackRate", 100);
+
 
 	/**
 	 * The number of bits to use for representing continuous variables.
@@ -116,25 +105,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 * The UCS experience threshold.
 	 */
 	private final int ASLCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("ASLCS_ExperienceTheshold", 10);
-
-	/**
-	 * The post-process experience threshold used.
-	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Experience_Theshold", 0);
-
-	/**
-	 * Coverage threshold for post processing.
-	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
-
-	/**
-	 * Post-process threshold for fitness.
-	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
-			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
+			.getNumericSetting("ASLCS_ExperienceTheshold", 10);	
 
 	/**
 	 * The attribute generalization rate.
@@ -155,21 +126,12 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
 	/**
-	 * Problem LC.
-	 */
-	private final float LABEL_CARDINALITY = (float) SettingsLoader
-			.getNumericSetting("datasetLabelCardinality", 1);
-
-	/**
-	 * The number of labels used at the dmlUCS.
-	 */
-	private final int numberOfLabels;
-
-	/**
 	 * The threshold classification strategy used for the RT method.
 	 */
 	private final ThresholdClassificationStrategy str;
 
+	final UniLabelRepresentation rep;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -183,12 +145,15 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
-	public RTASLCS(final String filename, final int iterations,
-			final int populationSize, final int numOfLabels) throws IOException {
-		inputFile = filename;
-		this.iterations = iterations;
-		this.populationSize = populationSize;
-		this.numberOfLabels = numOfLabels;
+	public RTASLCS() throws IOException {
+		inputFile = SettingsLoader.getStringSetting("filename", "");
+		numberOfLabels = (int) SettingsLoader.getNumericSetting(
+				"numberOfLabels", 1);
+		iterations = (int) SettingsLoader.getNumericSetting(
+				"trainIterations", 1000);
+		final int populationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", 1500);
+		
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
@@ -196,7 +161,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		final UniLabelRepresentation rep = new UniLabelRepresentation(
+		rep = new UniLabelRepresentation(
 				inputFile, PRECISION_BITS, numberOfLabels,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
 		str = rep.new ThresholdClassificationStrategy();
@@ -222,78 +187,71 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 * @throws IOException
 	 */
 	@Override
-	public void train() {
-		final LCSTrainTemplate myExample = new LCSTrainTemplate(CALLBACK_RATE,
-				this);
+	public void train() {		
+		trainSet(iterations, rulePopulation);
+		updatePopulation(
+				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);		
 
-		final ArffTrainTestLoader loader = new ArffTrainTestLoader(this);
+	}
+
+	@Override
+	public AbstractLearningClassifierSystem createNew() {
+		
 		try {
-			loader.loadInstances(inputFile, true);
+			return new RTASLCS();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return;
+			return null;
 		}
-		final AccuracyRecallEvaluator acc = new AccuracyRecallEvaluator(
-				loader.trainSet, true, this,
-				AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final IEvaluator eval = new ExactMatchEvalutor(this.instances, true,
-				this);
-		myExample.registerHook(new FileLogger(inputFile + "_result.txt", eval));
-		myExample.registerHook(acc);
-		myExample.train(iterations, rulePopulation);
-		myExample.updatePopulation(
-				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);
+	}
 
-		// rulePopulation.print();
-		System.out.println("Post process...");
-		// rulePopulation.print();
-		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				POSTPROCESS_EXPERIENCE_THRESHOLD,
-				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		final SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
-		sort.controlPopulation(rulePopulation);
-		eval.evaluateSet(rulePopulation);
+	@Override
+	public String[] getEvaluationNames() {
+		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
+		return names;
+	}
 
-		System.out.println("Evaluating on test set (pre-calibration)");
-		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(
-				loader.testSet, true, this);
-		testEval.evaluateSet(rulePopulation);
-		final HammingLossEvaluator hamEval = new HammingLossEvaluator(
-				loader.testSet, true, numberOfLabels, this);
-		hamEval.evaluateSet(rulePopulation);
-		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
-				loader.testSet, true, this,
-				AccuracyRecallEvaluator.TYPE_ACCURACY);
-		accEval.evaluateSet(rulePopulation);
+	@Override
+	public double[] getEvaluations(Instances testSet) {
+		double[] results = new double[8];
+		Arrays.fill(results, 0);
+
+		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		rep.setClassificationStrategy(str);
 
 		str.proportionalCutCalibration(this.instances, rulePopulation,
-				LABEL_CARDINALITY);
-		// rulePopulation.print();
-		// ClassifierSet.saveClassifierSet(rulePopulation, "set");
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
+				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
+		results[0] = accEval.evaluateSet(rulePopulation);
 
-		eval.evaluateSet(rulePopulation);
+		final AccuracyRecallEvaluator recEval = new AccuracyRecallEvaluator(
+				testSet, false, this, AccuracyRecallEvaluator.TYPE_RECALL);
+		results[1] = recEval.evaluateSet(rulePopulation);
 
-		System.out.println("Evaluating on test set");
+		final HammingLossEvaluator hamEval = new HammingLossEvaluator(testSet,
+				false, numberOfLabels, this);
+		results[2] = hamEval.evaluateSet(rulePopulation);
 
-		testEval.evaluateSet(rulePopulation);
+		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
+				false, this);
+		results[3] = testEval.evaluateSet(rulePopulation);
 
-		hamEval.evaluateSet(rulePopulation);
-		accEval.evaluateSet(rulePopulation);
+		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
+				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
+		final InternalValidation ival = new InternalValidation(rulePopulation,
+				str, selfAcc);
+		ival.calibrate(15);
 
-		str.proportionalCutCalibration(
-				InstanceToDoubleConverter.convert(loader.testSet),
-				rulePopulation, LABEL_CARDINALITY);
+		results[4] = accEval.evaluateSet(rulePopulation);
+		results[5] = recEval.evaluateSet(rulePopulation);
+		results[6] = hamEval.evaluateSet(rulePopulation);
+		results[7] = testEval.evaluateSet(rulePopulation);
 
-		System.out.println("Evaluating on test set (Pcut on test)");
-
-		testEval.evaluateSet(rulePopulation);
-
-		hamEval.evaluateSet(rulePopulation);
-		accEval.evaluateSet(rulePopulation);
-
+		return results;
 	}
 }

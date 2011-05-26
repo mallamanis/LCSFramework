@@ -44,6 +44,12 @@ public final class SettingsLoader {
 	 */
 	public static double getNumericSetting(final String propertyName,
 			final double defaultValue) {
+		if (instance == null)
+			try {
+				loadSettings();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		final double value = instance.getNumericProperty(propertyName,
 				defaultValue);
 		final String output = "Parameter " + propertyName + " set to " + value;
@@ -63,6 +69,12 @@ public final class SettingsLoader {
 	 */
 	public static String getStringSetting(final String propertyName,
 			final String defaultValue) {
+		if (instance == null)
+			try {
+				loadSettings();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		final String value = instance.getStringProperty(propertyName,
 				defaultValue);
 		CLASS_LOGGER.config("Parameter " + propertyName + " set to " + value);
