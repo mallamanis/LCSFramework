@@ -262,11 +262,10 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				data.fitness = 0;
 			data.globalCs += b
 					* (cs / ((double) data.activeLabels) - data.globalCs);
-			if (inactive){ 
+			if (inactive) {
 				data.fitness = 0;
 				data.globalCs = 1000;
 			}
-			
 
 		}
 	}

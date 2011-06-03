@@ -187,8 +187,9 @@ public class MlSSLCS extends AbstractLearningClassifierSystem {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)", "Accuracy(ival)",
-				"Recall(best)", "HammingLoss(best)", "ExactMatch(best)" };
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
 		return names;
 	}
 

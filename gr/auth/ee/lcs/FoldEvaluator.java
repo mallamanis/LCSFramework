@@ -4,6 +4,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,6 +30,8 @@ public class FoldEvaluator {
 
 	private double[][] evals;
 
+	final int runs;
+
 	/**
 	 * Constructor.
 	 * 
@@ -47,13 +50,14 @@ public class FoldEvaluator {
 		prototype = myLcs;
 		final FileReader reader = new FileReader(filename);
 		instances = new Instances(reader);
-
+		runs = (int) SettingsLoader.getNumericSetting("foldsToRun", numOfFolds);
 		instances.randomize(new Random());
 
 	}
 
 	public void evaluate() {
-		for (int i = 0; i < numOfFolds; i++) {
+
+		for (int i = 0; i < runs; i++) {
 			AbstractLearningClassifierSystem foldLCS = prototype.createNew();
 			System.out.println("Training Fold " + i);
 			loadFold(i, foldLCS);
@@ -72,17 +76,17 @@ public class FoldEvaluator {
 		double[] means = new double[results[0].length];
 		for (int i = 0; i < means.length; i++) {
 			double sum = 0;
-			for (int j = 0; j < numOfFolds; j++) {
+			for (int j = 0; j < results.length; j++) {
 				sum += results[j][i];
 			}
-			means[i] = (sum) / (numOfFolds);
+			means[i] = (sum) / (results.length);
 		}
 		return means;
 	}
 
 	private void gatherResults(double[] results, int fold) {
 		if (evals == null) {
-			evals = new double[numOfFolds][results.length];
+			evals = new double[runs][results.length];
 		}
 
 		evals[fold] = results;

@@ -38,7 +38,7 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	public static void main(final String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		
+
 		final ASLCS aslcs = new ASLCS();
 		FoldEvaluator loader = new FoldEvaluator(10, aslcs, file);
 		loader.evaluate();
@@ -137,11 +137,10 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	 */
 	public ASLCS() throws IOException {
 		inputFile = SettingsLoader.getStringSetting("filename", "");
-		iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
+		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
+				1000);
 		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-		
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
@@ -175,12 +174,11 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		
+
 		trainSet(iterations, rulePopulation);
-		
-		updatePopulation(
-				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);		
+
+		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
 
 	}
 

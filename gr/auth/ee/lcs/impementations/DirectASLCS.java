@@ -3,14 +3,18 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation.ThresholdClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -22,18 +26,13 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import weka.core.Instances;
-
 /**
- * An Rank-and-Threshold AS-LCS Update Algorithm.
+ * The DASLCS Implementation
  * 
- * @author Miltos Allamanis
+ * @author Miltiadis Allamanis
  * 
  */
-public class RTASLCS extends AbstractLearningClassifierSystem {
+public class DirectASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * @param args
 	 * @throws IOException
@@ -41,9 +40,8 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	public static void main(String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-
-		final RTASLCS rtaslcs = new RTASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, rtaslcs, file);
+		final DirectASLCS daslcs = new DirectASLCS();
+		FoldEvaluator loader = new FoldEvaluator(10, daslcs, file);
 		loader.evaluate();
 
 	}
@@ -61,7 +59,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The size of the population to use.
 	 */
-	private final int numberOfLabels;
+	private final int populationSize;
 
 	/**
 	 * The GA crossover rate.
@@ -124,32 +122,27 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
 	/**
-	 * The threshold classification strategy used for the RT method.
+	 * The number of labels used at the dmlUCS.
 	 */
-	private final ThresholdClassificationStrategy str;
+	private final int numberOfLabels;
 
-	final UniLabelRepresentation rep;
+	/**
+	 * The problem representation.
+	 */
+	private final StrictMultiLabelRepresentation rep;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param filename
-	 *            the filename of the ASLCS
-	 * @param iterations
-	 *            the number of iterations to run
-	 * @param populationSize
-	 *            the size of the population to use
-	 * @param numOfLabels
-	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
-	public RTASLCS() throws IOException {
+	public DirectASLCS() throws IOException {
 		inputFile = SettingsLoader.getStringSetting("filename", "");
 		numberOfLabels = (int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1);
 		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
 				1000);
-		final int populationSize = (int) SettingsLoader.getNumericSetting(
+		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
@@ -158,16 +151,16 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 						true), new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new UniLabelRepresentation(inputFile, PRECISION_BITS,
-				numberOfLabels, ATTRIBUTE_GENERALIZATION_RATE, this);
-		str = rep.new ThresholdClassificationStrategy();
-		rep.setClassificationStrategy(str);
+		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
+				ATTRIBUTE_GENERALIZATION_RATE, this);
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(ASLCS_N,
+		final ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
 				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
-		this.setElements(rep, update);
+		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -177,24 +170,10 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 								true)));
 	}
 
-	/**
-	 * Runs the Direct-ML-UCS.
-	 * 
-	 * @throws IOException
-	 */
-	@Override
-	public void train() {
-		trainSet(iterations, rulePopulation);
-		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);
-
-	}
-
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
-
 		try {
-			return new RTASLCS();
+			return new DirectASLCS();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -205,21 +184,25 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
 		return names;
 	}
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[8];
+
+		double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
-		rep.setClassificationStrategy(str);
-
-		str.proportionalCutCalibration(this.instances, rulePopulation,
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+
+		str.proportionalCutCalibration(this.instances, rulePopulation);
+
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		results[0] = accEval.evaluateSet(rulePopulation);
@@ -247,6 +230,25 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateSet(rulePopulation);
 		results[7] = testEval.evaluateSet(rulePopulation);
 
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+
+		results[8] = accEval.evaluateSet(rulePopulation);
+		results[9] = recEval.evaluateSet(rulePopulation);
+		results[10] = hamEval.evaluateSet(rulePopulation);
+		results[11] = testEval.evaluateSet(rulePopulation);
+
 		return results;
+	}
+
+	/**
+	 * Runs the Direct-ML-UCS.
+	 * 
+	 */
+	@Override
+	public void train() {
+		trainSet(iterations, rulePopulation);
+		updatePopulation((int) (UPDATE_ONLY_ITERATION_PERCENTAGE * iterations),
+				rulePopulation);
+
 	}
 }

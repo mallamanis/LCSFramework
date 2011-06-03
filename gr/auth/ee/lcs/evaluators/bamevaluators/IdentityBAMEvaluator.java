@@ -69,7 +69,7 @@ public class IdentityBAMEvaluator implements IEvaluator {
 			}
 			break;
 		case STRICT_REPRESENTATION:
-			generateStrictRules("","",n);
+			generateStrictRules("", "", n);
 			break;
 		default:
 		}
@@ -91,14 +91,16 @@ public class IdentityBAMEvaluator implements IEvaluator {
 		}
 		return new ExtendedBitSet(rule);
 	}
-	
-	private void generateStrictRules(final String rule, final String consequent, final int n) {
+
+	private void generateStrictRules(final String rule,
+			final String consequent, final int n) {
 		if (n > 0) {
-			generateStrictRules("01" + rule,"0"+consequent, n -1);
-			generateStrictRules("11" + rule,"1"+consequent, n -1);
+			generateStrictRules("01" + rule, "0" + consequent, n - 1);
+			generateStrictRules("11" + rule, "1" + consequent, n - 1);
 			return;
 		} else {
-			bamChromosomes.add(lcs.getNewClassifier(new ExtendedBitSet(consequent+rule)));
+			bamChromosomes.add(lcs.getNewClassifier(new ExtendedBitSet(
+					consequent + rule)));
 		}
 	}
 

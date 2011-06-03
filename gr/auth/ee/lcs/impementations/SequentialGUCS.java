@@ -4,6 +4,7 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.BAMEvaluator;
 import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
@@ -16,6 +17,8 @@ import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
@@ -47,8 +50,15 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
 		final SequentialGUCS sgucs = new SequentialGUCS();
-		FoldEvaluator loader = new FoldEvaluator(10, sgucs, file);
-		loader.evaluate();
+		/*
+		 * FoldEvaluator loader = new FoldEvaluator(10, sgucs, file);
+		 * loader.evaluate();
+		 */
+
+		BAMEvaluator eval = new BAMEvaluator(sgucs, file,
+				BAMEvaluator.TYPE_POSITION, 7,
+				PositionBAMEvaluator.GENERIC_REPRESENTATION);
+		eval.evaluate();
 
 	}
 
@@ -206,8 +216,9 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)", "Accuracy(ival)",
-				"Recall(best)", "HammingLoss(best)", "ExactMatch(best)" };
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
 		return names;
 	}
 

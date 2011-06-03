@@ -44,7 +44,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 		SettingsLoader.loadSettings();
 
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		
+
 		final TransformASLCS traslcs = new TransformASLCS();
 		FoldEvaluator loader = new FoldEvaluator(10, traslcs, file);
 		loader.evaluate();
@@ -71,8 +71,6 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final ILabelSelector selector;
 
-
-
 	/**
 	 * The GA crossover rate.
 	 */
@@ -90,8 +88,6 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
 			"thetaGA", 100);
-
-
 
 	/**
 	 * The number of bits to use for representing continuous variables.
@@ -158,19 +154,16 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
-	public TransformASLCS()
-			throws IOException {
+	public TransformASLCS() throws IOException {
 		inputFile = SettingsLoader.getStringSetting("filename", "");
 		numberOfLabels = (int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1);
-		iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
+		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
+				1000);
 		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-		
-		
-		selector = new BinaryRelevanceSelector(
-				numberOfLabels);
+
+		selector = new BinaryRelevanceSelector(numberOfLabels);
 
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new RouletteWheelSelector(
@@ -200,7 +193,6 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		
 
 		do {
 			System.out.println("Training Classifier Set");
@@ -221,13 +213,11 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 		} while (selector.next());
 		rep.activateAllLabels();
 
-		
-
 	}
 
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
-				try {
+		try {
 			return new TransformASLCS();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -239,8 +229,9 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)", "Accuracy(ival)",
-				"Recall(best)", "HammingLoss(best)", "ExactMatch(best)" };
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
 		return names;
 	}
 

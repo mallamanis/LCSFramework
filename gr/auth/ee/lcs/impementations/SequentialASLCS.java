@@ -3,15 +3,20 @@
  */
 package gr.auth.ee.lcs.impementations;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation.ThresholdClassificationStrategy;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.StrictMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
+import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
@@ -19,31 +24,27 @@ import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import weka.core.Instances;
-
 /**
- * An Rank-and-Threshold AS-LCS Update Algorithm.
- * 
+ * The Sequential ASLCS implementation.
  * @author Miltos Allamanis
- * 
+ *
  */
-public class RTASLCS extends AbstractLearningClassifierSystem {
+public class SequentialASLCS extends AbstractLearningClassifierSystem {
+
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 		SettingsLoader.loadSettings();
+
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
-		final RTASLCS rtaslcs = new RTASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, rtaslcs, file);
+		final SequentialASLCS saslcs = new SequentialASLCS();
+		FoldEvaluator loader = new FoldEvaluator(10, saslcs, file);
 		loader.evaluate();
 
 	}
@@ -61,7 +62,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The size of the population to use.
 	 */
-	private final int numberOfLabels;
+	private final int populationSize;
 
 	/**
 	 * The GA crossover rate.
@@ -123,78 +124,76 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
-	/**
-	 * The threshold classification strategy used for the RT method.
-	 */
-	private final ThresholdClassificationStrategy str;
 
-	final UniLabelRepresentation rep;
+
+	/**
+	 * The number of labels used at the dmlUCS.
+	 */
+	private final int numberOfLabels;
+
+	/**
+	 * The target Label Cardinality of the problem.
+	 */
+	private final float targetLC;
+
+	/**
+	 * The problem representation method.
+	 */
+	private final StrictMultiLabelRepresentation rep;
+
+	/**
+	 * A voting classification strategy.
+	 */
+	private final VotingClassificationStrategy str;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param filename
-	 *            the filename of the ASLCS
-	 * @param iterations
-	 *            the number of iterations to run
-	 * @param populationSize
-	 *            the size of the population to use
-	 * @param numOfLabels
-	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
-	public RTASLCS() throws IOException {
+	public SequentialASLCS() throws IOException {
 		inputFile = SettingsLoader.getStringSetting("filename", "");
 		numberOfLabels = (int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1);
 		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
 				1000);
-		final int populationSize = (int) SettingsLoader.getNumericSetting(
+		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
-
+		targetLC = (float) SettingsLoader.getNumericSetting(
+				"datasetLabelCardinality", 1);
+		
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(this), CROSSOVER_RATE,
+				new TournamentSelector(50, true,
+						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
+				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
 
-		rep = new UniLabelRepresentation(inputFile, PRECISION_BITS,
-				numberOfLabels, ATTRIBUTE_GENERALIZATION_RATE, this);
-		str = rep.new ThresholdClassificationStrategy();
+		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
+				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
+				SettingsLoader.getNumericSetting("AttributeGeneralizationRate",
+						0.33), this);
+		str = rep.new VotingClassificationStrategy(targetLC);
 		rep.setClassificationStrategy(str);
 
-		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(ASLCS_N,
-				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
+		final ASLCSUpdateAlgorithm updateObj = new ASLCSUpdateAlgorithm(
+				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
+		final SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
+				updateObj, ga, numberOfLabels);
 
-		this.setElements(rep, update);
+		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
 						populationSize,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));
-	}
-
-	/**
-	 * Runs the Direct-ML-UCS.
-	 * 
-	 * @throws IOException
-	 */
-	@Override
-	public void train() {
-		trainSet(iterations, rulePopulation);
-		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);
-
+						new TournamentSelector(40, true,
+								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
 	}
 
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
-
 		try {
-			return new RTASLCS();
+			return new SequentialASLCS();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -205,21 +204,24 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
 		return names;
 	}
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[8];
+		double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
-		rep.setClassificationStrategy(str);
-
-		str.proportionalCutCalibration(this.instances, rulePopulation,
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+
+		str.proportionalCutCalibration(this.instances, rulePopulation);
+
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		results[0] = accEval.evaluateSet(rulePopulation);
@@ -247,6 +249,26 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateSet(rulePopulation);
 		results[7] = testEval.evaluateSet(rulePopulation);
 
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+
+		results[8] = accEval.evaluateSet(rulePopulation);
+		results[9] = recEval.evaluateSet(rulePopulation);
+		results[10] = hamEval.evaluateSet(rulePopulation);
+		results[11] = testEval.evaluateSet(rulePopulation);
+
 		return results;
 	}
+
+	/**
+	 * Run the SGmlUCS.
+	 * 
+	 */
+	@Override
+	public void train() {
+		trainSet(iterations, rulePopulation);
+		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
+	}
+
+
 }

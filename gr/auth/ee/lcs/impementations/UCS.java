@@ -39,7 +39,7 @@ public class UCS extends AbstractLearningClassifierSystem {
 	public static void main(String[] args) throws IOException {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
-		
+
 		final UCS ucs = new UCS();
 		FoldEvaluator loader = new FoldEvaluator(10, ucs, file);
 		loader.evaluate();
@@ -143,11 +143,10 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 *            the population size to use
 	 * @throws IOException
 	 */
-	public UCS()
-			throws IOException {
+	public UCS() throws IOException {
 		inputFile = SettingsLoader.getStringSetting("filename", "");
-		iterations = (int) SettingsLoader.getNumericSetting(
-				"trainIterations", 1000);
+		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
+				1000);
 		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1000);
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
@@ -162,8 +161,7 @@ public class UCS extends AbstractLearningClassifierSystem {
 				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
 				MATCHSET_GA_RUN_PROBABILITY, ga, THETA_GA, 1, this);
 		rep.setClassificationStrategy(rep.new VotingClassificationStrategy());
-		this.setElements(rep, ucsUpdate);		
-		
+		this.setElements(rep, ucsUpdate);
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(
@@ -180,16 +178,15 @@ public class UCS extends AbstractLearningClassifierSystem {
 	 *             if file not found
 	 */
 	@Override
-	public final void train() {		
-		trainSet(iterations, rulePopulation);		
-		updatePopulation(
-				(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);		
+	public final void train() {
+		trainSet(iterations, rulePopulation);
+		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
 
 	}
 
 	@Override
-	public AbstractLearningClassifierSystem createNew() {		
+	public AbstractLearningClassifierSystem createNew() {
 		try {
 			return new UCS();
 		} catch (IOException e) {
