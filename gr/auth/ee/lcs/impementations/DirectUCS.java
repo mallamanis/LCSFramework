@@ -207,7 +207,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
-				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
 				"ExactMatch(best)" };
 		return names;
 	}

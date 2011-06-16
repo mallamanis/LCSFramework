@@ -41,6 +41,16 @@ public class ArffTrainTestLoader {
 	public ArffTrainTestLoader(final AbstractLearningClassifierSystem lcs) {
 		myLcs = lcs;
 	}
+	
+	public void evaluate() {
+		myLcs.train();
+		final double[] evals = myLcs.getEvaluations(testSet);
+		final String[] names = myLcs.getEvaluationNames();
+
+		for (int i = 0; i < evals.length; i++) {
+			System.out.println(names[i] + ": " + evals[i]);
+		}
+	}
 
 	/**
 	 * Load instances into the global train store and create test set.
@@ -100,7 +110,7 @@ public class ArffTrainTestLoader {
 
 		myLcs.instances = InstanceToDoubleConverter.convert(trainSet);
 
-		final FileReader testReader = new FileReader(filename);
+		final FileReader testReader = new FileReader(testFile);
 		testSet = new Instances(testReader);
 
 	}

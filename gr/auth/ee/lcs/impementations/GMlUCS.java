@@ -4,6 +4,7 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
@@ -43,9 +44,16 @@ public class GMlUCS extends AbstractLearningClassifierSystem {
 		SettingsLoader.loadSettings();
 
 		final String file = SettingsLoader.getStringSetting("filename", "");
+		final String testFile = SettingsLoader.getStringSetting("testFile", "");
 		final GMlUCS gmlucs = new GMlUCS();
-		FoldEvaluator loader = new FoldEvaluator(10, gmlucs, file);
-		loader.evaluate();
+		if (testFile == "") {
+			FoldEvaluator loader = new FoldEvaluator(10, gmlucs, file);
+			loader.evaluate();
+		} else {
+			ArffTrainTestLoader loader = new ArffTrainTestLoader(gmlucs);
+			loader.loadInstancesWithTest(file, testFile);
+			loader.evaluate();
+		}
 
 	}
 
@@ -199,7 +207,7 @@ public class GMlUCS extends AbstractLearningClassifierSystem {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
-				"Accuracy(ival)", "Recall(best)", "HammingLoss(best)",
+				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
 				"ExactMatch(best)" };
 		return names;
 	}
