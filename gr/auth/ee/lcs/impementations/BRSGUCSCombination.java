@@ -1,64 +1,55 @@
-/**
- * 
- */
 package gr.auth.ee.lcs.impementations;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.TreeMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.BAMEvaluator;
 import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
-import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
-import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
-import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
+import gr.auth.ee.lcs.utilities.ILabelSelector;
+import gr.auth.ee.lcs.utilities.LabelFrequencyCalculator;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import weka.core.Instances;
-
-/**
- * An implementation of a multi-label UCS, using the generic Multi-label
- * representation and a per-label (sequential) update UCS.
- * 
- * @author Miltos Allamanis
- * 
- */
-public class SequentialGUCS extends AbstractLearningClassifierSystem {
+public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
 
+		SettingsLoader.loadSettings();
+		final Handler fileLogging = new FileHandler("output.log");
+
+		Logger.getLogger("").setLevel(Level.CONFIG);
+		Logger.getLogger("").addHandler(fileLogging);
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
-		final SequentialGUCS sgucs = new SequentialGUCS();
-		/*
-		 * FoldEvaluator loader = new FoldEvaluator(10, sgucs, file);
-		 * loader.evaluate();
-		 */
-
-		BAMEvaluator eval = new BAMEvaluator(sgucs, file,
-				BAMEvaluator.TYPE_POSITION, 7,
-				PositionBAMEvaluator.GENERIC_REPRESENTATION,"sgucs");
-		eval.evaluate();
+		final BRSGUCSCombination trucs = new BRSGUCSCombination();
+		FoldEvaluator loader = new FoldEvaluator(10, trucs, file);
+		loader.evaluate();
 
 	}
 
@@ -84,6 +75,16 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("crossoverRate", .8);
 
 	/**
+	 * Label Selector to be used.
+	 */
+	private final ILabelSelector selector;
+
+	/**
+	 * The target label cardinality.
+	 */
+	private final float targetLC;
+
+	/**
 	 * The GA mutation rate.
 	 */
 	private final double MUTATION_RATE = (float) SettingsLoader
@@ -92,8 +93,8 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The GA activation rate.
 	 */
-	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
-			"thetaGA", 100);
+	private final int THETA_GA_IMBALANCE_MULTIPLIER = (int) SettingsLoader
+			.getNumericSetting("thetaGAImbalanceMultiplier", 10);
 
 	/**
 	 * The number of bits to use for representing continuous variables.
@@ -118,6 +119,7 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final double UCS_ACC0 = SettingsLoader.getNumericSetting(
 			"UCS_Acc0", .99);
+
 	/**
 	 * The learning rate (beta) parameter.
 	 */
@@ -131,19 +133,16 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("UCS_Experience_Theshold", 10);
 
 	/**
-	 * The generalization rate used for labels.
+	 * The attribute generalization rate.
 	 */
-	private final double labelGeneralizationRate;
+	private final double ATTRIBUTE_GENERALIZATION_RATE = SettingsLoader
+			.getNumericSetting("AttributeGeneralizationRate", 0.33);
 
 	/**
-	 * The number of labels used at the dmlUCS.
+	 * The matchset GA run probability.
 	 */
-	private final int numberOfLabels;
-
-	/**
-	 * The problem representation.
-	 */
-	private final GenericMultiLabelRepresentation rep;
+	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
+			.getNumericSetting("GAMatchSetRunProbability", 0.01);
 
 	/**
 	 * Percentage of only updates (and no exploration).
@@ -152,11 +151,39 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
 	/**
+	 * The number of labels used at the dmlUCS.
+	 */
+	private final int numberOfLabels;
+
+	/**
+	 * The representation used.
+	 */
+	GenericMultiLabelRepresentation rep;
+
+	/**
+	 * The classification strategy.
+	 */
+	VotingClassificationStrategy vs;
+
+	/**
+	 * The GA to be used.
+	 */
+	SteadyStateGeneticAlgorithm ga;
+
+	/**
+	 * The GA activation rate.
+	 */
+	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
+			"thetaGA", 300);
+
+	/**
 	 * Constructor.
 	 * 
 	 * @throws IOException
+	 * 
 	 */
-	public SequentialGUCS() throws IOException {
+	public BRSGUCSCombination() throws IOException {
+
 		inputFile = SettingsLoader.getStringSetting("filename", "");
 		numberOfLabels = (int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1);
@@ -164,48 +191,18 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 				1000);
 		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
+		targetLC = (float) SettingsLoader.getNumericSetting(
+				"datasetLabelCardinality", 1);
+		selector = new BinaryRelevanceSelector(numberOfLabels);
 
-		labelGeneralizationRate = SettingsLoader.getNumericSetting(
-				"LabelGeneralizationRate", 0.33);
-
-		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
-				new RouletteWheelSelector(
-						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
-						true), new SinglePointCrossover(this), CROSSOVER_RATE,
-				new UniformBitMutation(MUTATION_RATE), THETA_GA, this);
-
-		rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
-				numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH,
-				labelGeneralizationRate, SettingsLoader.getNumericSetting(
-						"AttributeGeneralizationRate", 0.33), this);
-
-		/*
-		 * str = rep.new VotingClassificationStrategy( targetLC);
-		 */
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-
-		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
-				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
-				SettingsLoader.getNumericSetting("GAMatchSetRunProbability",
-						0.01), ga, THETA_GA, 1, this);
-		final SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
-				updateObj, ga, numberOfLabels);
-
-		this.setElements(rep, strategy);
-
-		rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
-						populationSize,
-						new RouletteWheelSelector(
-								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-								true)));
+		
 
 	}
 
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
 		try {
-			return new SequentialGUCS();
+			return new BRSGUCSCombination();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -224,7 +221,6 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-
 		double[] results = new double[12];
 		Arrays.fill(results, 0);
 
@@ -273,15 +269,85 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 	}
 
 	/**
-	 * Run the SGmlUCS.
+	 * Runs the Direct-ML-UCS.
 	 * 
 	 */
 	@Override
 	public void train() {
 
+		//Set BR- variables		
+		ga = new SteadyStateGeneticAlgorithm(new RouletteWheelSelector(
+				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, true),
+				new SinglePointCrossover(this), CROSSOVER_RATE,
+				new UniformBitMutation(MUTATION_RATE), 0, this);
+
+		try {
+			rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
+					numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH, 0,
+					ATTRIBUTE_GENERALIZATION_RATE, this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		vs = rep.new VotingClassificationStrategy(targetLC);
+		rep.setClassificationStrategy(vs);
+
+		final UCSUpdateAlgorithm ucsStrategy = new UCSUpdateAlgorithm(
+				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
+				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
+				THETA_GA, 1, this);
+
+		this.setElements(rep, ucsStrategy);
+
+		rulePopulation = new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
+				numberOfLabels * populationSize,
+				new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+						true)));
+		
+		//Train BR
+		do {
+			System.out.println("Training Classifier Set");
+			rep.activateLabel(selector);
+			TreeMap<String, Integer> fr = LabelFrequencyCalculator
+					.createCombinationMap(selector.activeIndexes(),
+							numberOfLabels, instances);
+			final double imbalance = LabelFrequencyCalculator.ImbalanceRate(fr);
+			ga.setThetaGA((int) (imbalance * THETA_GA_IMBALANCE_MULTIPLIER));
+			ClassifierSet brpopulation = new ClassifierSet(
+					new FixedSizeSetWorstFitnessDeletion(
+							populationSize,
+							new RouletteWheelSelector(
+									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+									true)));
+			trainSet(iterations, brpopulation);
+			updatePopulation(
+					(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+					brpopulation);
+
+			rep.reinforceDeactivatedLabels(brpopulation);
+			rulePopulation.merge(brpopulation);
+
+		} while (selector.next());
+		rep.activateAllLabels();
+		
+		//Set SGUCS
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+
+		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
+				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,
+				SettingsLoader.getNumericSetting("GAMatchSetRunProbability",
+						0.01), ga, THETA_GA, 1, this);
+		final SequentialMlUpdateAlgorithm strategy = new SequentialMlUpdateAlgorithm(
+				updateObj, ga, numberOfLabels);
+
+		this.setElements(rep, strategy);
+
 		trainSet(iterations, rulePopulation);
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
+		
+		
+
 	}
 
 }

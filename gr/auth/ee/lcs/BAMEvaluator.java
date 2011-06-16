@@ -28,7 +28,7 @@ public class BAMEvaluator {
 
 	public BAMEvaluator(final AbstractLearningClassifierSystem myLcs,
 			final String filename, final int type, final int size,
-			final int representationType) {
+			final int representationType, final String name) {
 		lcs = myLcs;
 		ArffTrainTestLoader loader = new ArffTrainTestLoader(myLcs);
 		try {
@@ -37,17 +37,17 @@ public class BAMEvaluator {
 			e.printStackTrace();
 		}
 
-		lcs.registerHook(new FileLogger("acc", new AccuracyRecallEvaluator(
+		lcs.registerHook(new FileLogger(name + "_acc", new AccuracyRecallEvaluator(
 				lcs.instances, false, lcs,
 				AccuracyRecallEvaluator.TYPE_ACCURACY)));
-		lcs.registerHook(new FileLogger("ex", new ExactMatchEvalutor(
+		lcs.registerHook(new FileLogger(name + "_ex", new ExactMatchEvalutor(
 				lcs.instances, false, lcs)));
 
 		if (type == TYPE_IDENTITY) {
-			lcs.registerHook(new FileLogger("bam", new IdentityBAMEvaluator(
+			lcs.registerHook(new FileLogger(name + "_bam", new IdentityBAMEvaluator(
 					size, representationType, lcs)));
 		} else {
-			lcs.registerHook(new FileLogger("bam", new PositionBAMEvaluator(
+			lcs.registerHook(new FileLogger(name + "_bam", new PositionBAMEvaluator(
 					size, representationType, lcs)));
 		}
 	}
