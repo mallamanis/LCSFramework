@@ -22,7 +22,7 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests.mocks;
+package gr.auth.ee.lcs.data;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;

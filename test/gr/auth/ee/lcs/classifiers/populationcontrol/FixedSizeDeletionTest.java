@@ -22,10 +22,11 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests;
+package gr.auth.ee.lcs.classifiers.populationcontrol;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
@@ -34,7 +35,6 @@ import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
-import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import org.junit.Before;

@@ -22,7 +22,7 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests;
+package gr.auth.ee.lcs.calibration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

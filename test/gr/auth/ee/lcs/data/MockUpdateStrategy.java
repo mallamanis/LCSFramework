@@ -22,7 +22,7 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests.mocks;
+package gr.auth.ee.lcs.data;
 
 import java.io.Serializable;
 

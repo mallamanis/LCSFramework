@@ -22,10 +22,11 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests;
+package gr.auth.ee.lcs.classifiers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
@@ -35,7 +36,6 @@ import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
-import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Before;

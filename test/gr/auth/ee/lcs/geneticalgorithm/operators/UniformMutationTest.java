@@ -22,22 +22,22 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests;
+package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
-import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author miltiadis
+ * @author Miltiadis Allamanis
  * 
  */
 public class UniformMutationTest {

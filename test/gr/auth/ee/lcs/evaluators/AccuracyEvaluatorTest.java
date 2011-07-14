@@ -19,9 +19,10 @@
  *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *	THE SOFTWARE.
  */
-package gr.auth.ee.lcs.tests;
+package gr.auth.ee.lcs.evaluators;
 
 import static org.junit.Assert.assertTrue;
+import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
@@ -29,7 +30,6 @@ import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.Abstrac
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
-import gr.auth.ee.lcs.tests.mocks.MockLCS;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Before;

@@ -22,12 +22,13 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.tests;
+package gr.auth.ee.lcs.geneticalgorithm.selectors;
 
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
@@ -35,7 +36,6 @@ import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
-import gr.auth.ee.lcs.tests.mocks.MockLCS;
 
 import org.junit.Before;
 import org.junit.Test;
