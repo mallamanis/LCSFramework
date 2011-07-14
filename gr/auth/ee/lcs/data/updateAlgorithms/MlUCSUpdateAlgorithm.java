@@ -255,8 +255,8 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final double bestWeight = 1 - meanWeight;
 			final double fitness = ((data.activeLabels) / (fitnessSum)
 					* bestWeight + fitnessMin * meanWeight);
-			final double cs = (csSum) / (data.activeLabels) * meanWeight
-					+ csMax * bestWeight;
+			final double cs = (csSum) / (data.activeLabels) * bestWeight
+					+ csMax * meanWeight; //TODO: LATHOS!!!!???!!!!
 			data.fitness += b * (fitness - data.fitness);
 			if (Double.isNaN(data.fitness))
 				data.fitness = 0;
