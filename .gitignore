@@ -1,0 +1,5 @@
+bin/
+.project
+*.log
+*.properties
+.codepro/
