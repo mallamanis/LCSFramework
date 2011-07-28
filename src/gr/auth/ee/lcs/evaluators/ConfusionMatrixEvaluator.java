@@ -77,12 +77,12 @@ public final class ConfusionMatrixEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(final ClassifierSet classifiers) {
+	public double evaluateLCS(final AbstractLearningClassifierSystem theLcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 
 		for (int i = 0; i < instances.length; i++) {
-			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classes = bridge.classify(theLcs.getRulePopulation(), instances[i]);
 			if (classes == null)
 				continue; // TODO: Use majority
 			final int y = classes[0];

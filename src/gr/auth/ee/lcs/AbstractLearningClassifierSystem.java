@@ -85,6 +85,14 @@ public abstract class AbstractLearningClassifierSystem {
 	 * The rule population.
 	 */
 	protected ClassifierSet rulePopulation;
+	
+	public final ClassifierSet getRulePopulation() {
+		return rulePopulation;
+	}
+	
+	public final void setRulePopulation(ClassifierSet population) {
+		rulePopulation = population;
+	}
 
 	/**
 	 * A vector of all evaluator hooks.
@@ -307,7 +315,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 */
 	private void executeCallbacks(final ClassifierSet aSet) {
 		for (int i = 0; i < hooks.size(); i++) {
-			hooks.elementAt(i).evaluateSet(aSet);
+			hooks.elementAt(i).evaluateLCS(this);
 		}
 	}
 

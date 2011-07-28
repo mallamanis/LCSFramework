@@ -74,7 +74,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 	}
 
 	@Override
-	public final double evaluateSet(final ClassifierSet classifiers) {
+	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 		int tp = 0;
@@ -83,7 +83,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 
 		for (int i = 0; i < instances.length; i++) {
 
-			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classes = bridge.classify(lcs.getRulePopulation(), instances[i]);
 			Arrays.sort(classes);
 
 			final int[] classification = bridge

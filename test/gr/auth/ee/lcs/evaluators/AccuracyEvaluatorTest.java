@@ -88,7 +88,8 @@ public final class AccuracyEvaluatorTest {
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
 		final AccuracyRecallEvaluator a = new AccuracyRecallEvaluator(
 				instances, false, lcs, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final double evalResult = a.evaluateSet(set);
+		lcs.setRulePopulation(set);
+		final double evalResult = a.evaluateLCS(lcs);
 		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
 
 		final ExtendedBitSet set2 = new ExtendedBitSet("10011101111011");
@@ -97,7 +98,8 @@ public final class AccuracyEvaluatorTest {
 		ex2.setComparisonValue(0, 1);
 		ex2.experience = 100;
 		set.addClassifier(new Macroclassifier(ex2, 1), false);
-		final double evalResult2 = a.evaluateSet(set);
+		lcs.setRulePopulation(set);
+		final double evalResult2 = a.evaluateLCS(lcs);
 		assertTrue(Math.abs(evalResult2 - 5 / 12.) < .0001);
 
 	}
@@ -113,7 +115,8 @@ public final class AccuracyEvaluatorTest {
 		set.addClassifier(new Macroclassifier(ex1, 1), false);
 		final AccuracyRecallEvaluator a = new AccuracyRecallEvaluator(
 				instances, false, lcs, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		assertTrue(a.evaluateSet(set) == 1);
+		lcs.setRulePopulation(set);
+		assertTrue(a.evaluateLCS(lcs) == 1);
 	}
 
 }

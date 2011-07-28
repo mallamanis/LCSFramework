@@ -24,7 +24,7 @@
  */
 package gr.auth.ee.lcs.data;
 
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 
 /**
  * An evaluator class interface. This interface will be used for evaluation of
@@ -41,5 +41,5 @@ public interface IEvaluator {
 	 *            the ClassifierSet that we are going to use for evaluation
 	 * @return a numeric value indicating ClassifierSet's quality
 	 */
-	double evaluateSet(ClassifierSet classifiers);
+	double evaluateLCS(AbstractLearningClassifierSystem lcs);
 }

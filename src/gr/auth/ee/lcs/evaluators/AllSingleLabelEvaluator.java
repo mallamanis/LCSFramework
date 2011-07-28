@@ -77,10 +77,10 @@ public final class AllSingleLabelEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(final ClassifierSet classifiers) {
+	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
 		double sum = 0;
 		for (int i = 0; i < evaluators.length; i++) {
-			final double result = evaluators[i].evaluateSet(classifiers);
+			final double result = evaluators[i].evaluateLCS(lcs);
 			if (print) {
 				System.out.println("Label " + i + " exact match:" + result);
 			}

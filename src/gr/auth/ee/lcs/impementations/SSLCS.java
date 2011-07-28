@@ -208,7 +208,7 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 		double[] result = new double[1];
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				true, this);
-		result[0] = testEval.evaluateSet(rulePopulation);
+		result[0] = testEval.evaluateLCS(this);
 		return result;
 	}
 

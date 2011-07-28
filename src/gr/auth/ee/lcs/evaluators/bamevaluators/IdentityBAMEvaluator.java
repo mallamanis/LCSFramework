@@ -133,9 +133,9 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
 		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
-		return eval.evaluateSet(classifiers);
+		return eval.evaluateLCS(lcs);
 	}
 
 }

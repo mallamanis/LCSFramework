@@ -24,6 +24,7 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IEvaluator;
 
@@ -76,8 +77,8 @@ public class FileLogger implements IEvaluator {
 	}
 
 	@Override
-	public final double evaluateSet(final ClassifierSet classifiers) {
-		final double evalResult = actualEvaluator.evaluateSet(classifiers);
+	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+		final double evalResult = actualEvaluator.evaluateLCS(lcs);
 		try {
 			final FileWriter fstream = new FileWriter(file, true);
 			final BufferedWriter buffer = new BufferedWriter(fstream);

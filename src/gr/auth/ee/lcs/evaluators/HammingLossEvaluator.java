@@ -138,13 +138,13 @@ public class HammingLossEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateSet(ClassifierSet classifiers) {
+	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 		int numberOfSymmetricDifferences = 0;
 		for (int i = 0; i < instances.length; i++) {
 
-			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classes = bridge.classify(lcs.getRulePopulation(), instances[i]);
 			final int[] classification = bridge
 					.getDataInstanceLabels(instances[i]);
 

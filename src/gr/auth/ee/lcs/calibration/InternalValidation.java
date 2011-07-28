@@ -24,6 +24,7 @@
  */
 package gr.auth.ee.lcs.calibration;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -49,7 +50,7 @@ public class InternalValidation {
 	/**
 	 * The rules on which to perform Internal Validation.
 	 */
-	private final ClassifierSet ruleSet;
+	private final AbstractLearningClassifierSystem myLCS;
 
 	/**
 	 * Constructor.
@@ -61,9 +62,9 @@ public class InternalValidation {
 	 * @param metric
 	 *            the metric to optimize on
 	 */
-	public InternalValidation(ClassifierSet rules,
+	public InternalValidation(AbstractLearningClassifierSystem lcs,
 			IClassificationStrategy classificationStrategy, IEvaluator metric) {
-		ruleSet = rules;
+		myLCS = lcs;
 		strategy = classificationStrategy;
 		optimizationMetric = metric;
 	}
@@ -109,7 +110,7 @@ public class InternalValidation {
 		double bestThreshold = center;
 		for (double th = downLimit; th <= upLimit; th += (step / 2)) {
 			classificationStrategy.setThreshold(th);
-			final double eval = optimizationMetric.evaluateSet(ruleSet);
+			final double eval = optimizationMetric.evaluateLCS(myLCS);
 			if (eval > bestEvaluation) {
 				bestEvaluation = eval;
 				bestThreshold = th;

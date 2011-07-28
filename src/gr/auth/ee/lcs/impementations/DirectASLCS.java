@@ -226,37 +226,37 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		results[0] = accEval.evaluateSet(rulePopulation);
+		results[0] = accEval.evaluateLCS(this);
 
 		final AccuracyRecallEvaluator recEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_RECALL);
-		results[1] = recEval.evaluateSet(rulePopulation);
+		results[1] = recEval.evaluateLCS(this);
 
 		final HammingLossEvaluator hamEval = new HammingLossEvaluator(testSet,
 				false, numberOfLabels, this);
-		results[2] = hamEval.evaluateSet(rulePopulation);
+		results[2] = hamEval.evaluateLCS(this);
 
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				false, this);
-		results[3] = testEval.evaluateSet(rulePopulation);
+		results[3] = testEval.evaluateLCS(this);
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(rulePopulation,
+		final InternalValidation ival = new InternalValidation(this,
 				str, selfAcc);
 		ival.calibrate(15);
 
-		results[4] = accEval.evaluateSet(rulePopulation);
-		results[5] = recEval.evaluateSet(rulePopulation);
-		results[6] = hamEval.evaluateSet(rulePopulation);
-		results[7] = testEval.evaluateSet(rulePopulation);
+		results[4] = accEval.evaluateLCS(this);
+		results[5] = recEval.evaluateLCS(this);
+		results[6] = hamEval.evaluateLCS(this);
+		results[7] = testEval.evaluateLCS(this);
 
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
-		results[8] = accEval.evaluateSet(rulePopulation);
-		results[9] = recEval.evaluateSet(rulePopulation);
-		results[10] = hamEval.evaluateSet(rulePopulation);
-		results[11] = testEval.evaluateSet(rulePopulation);
+		results[8] = accEval.evaluateLCS(this);
+		results[9] = recEval.evaluateLCS(this);
+		results[10] = hamEval.evaluateLCS(this);
+		results[11] = testEval.evaluateLCS(this);
 
 		return results;
 	}

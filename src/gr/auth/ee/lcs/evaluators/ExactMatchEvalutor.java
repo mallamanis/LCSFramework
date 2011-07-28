@@ -116,13 +116,13 @@ public class ExactMatchEvalutor implements IEvaluator {
 	}
 
 	@Override
-	public final double evaluateSet(final ClassifierSet classifiers) {
+	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 
 		int tp = 0, fp = 0;
 		for (int i = 0; i < instances.length; i++) {
-			final int[] classes = bridge.classify(classifiers, instances[i]);
+			final int[] classes = bridge.classify(lcs.getRulePopulation(), instances[i]);
 			final int[] classification = bridge
 					.getDataInstanceLabels(instances[i]);
 			if (Arrays.equals(classes, classification))
