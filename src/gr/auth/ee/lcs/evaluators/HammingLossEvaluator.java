@@ -144,8 +144,7 @@ public class HammingLossEvaluator implements IEvaluator {
 		int numberOfSymmetricDifferences = 0;
 		for (int i = 0; i < instances.length; i++) {
 
-			final int[] classes = bridge.classify(lcs.getRulePopulation(),
-					instances[i]);
+			final int[] classes = myLcs.classifyInstance(instances[i]);
 			final int[] classification = bridge
 					.getDataInstanceLabels(instances[i]);
 
