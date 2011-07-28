@@ -274,4 +274,9 @@ public class DirectGASLCS extends AbstractLearningClassifierSystem {
 				rulePopulation);
 
 	}
+	
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
 }

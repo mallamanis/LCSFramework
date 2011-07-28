@@ -131,6 +131,13 @@ public abstract class AbstractLearningClassifierSystem {
 	}
 
 	public abstract String[] getEvaluationNames();
+	
+	/**
+	 * Classify a single instance.
+	 * @param instance the instance to classify
+	 * @return the labels the instance is classified in
+	 */
+	public abstract int[] classifyInstance(double[] instance);
 
 	public abstract double[] getEvaluations(Instances testSet);
 

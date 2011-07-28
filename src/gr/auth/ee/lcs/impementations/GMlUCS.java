@@ -293,5 +293,10 @@ public class GMlUCS extends AbstractLearningClassifierSystem {
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 	}
+	
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
 
 }

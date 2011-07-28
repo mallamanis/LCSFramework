@@ -78,4 +78,9 @@ public class MockLCS extends AbstractLearningClassifierSystem {
 
 	}
 
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
+
 }

@@ -230,4 +230,9 @@ public class UCS extends AbstractLearningClassifierSystem {
 		result[0] = testEval.evaluateLCS(this);
 		return result;
 	}
+	
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
 }

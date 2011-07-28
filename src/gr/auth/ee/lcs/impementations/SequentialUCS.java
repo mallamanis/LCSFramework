@@ -276,4 +276,9 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 		trainSet(iterations, rulePopulation);
 
 	}
+	
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
 }

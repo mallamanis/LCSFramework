@@ -267,4 +267,9 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 		updatePopulation((int) (UPDATE_ONLY_ITERATION_PERCENTAGE * iterations),
 				rulePopulation);
 	}
+	
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
 }

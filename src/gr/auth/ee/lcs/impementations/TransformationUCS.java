@@ -347,5 +347,10 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 		rep.activateAllLabels();
 
 	}
+	
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	}
 
 }
