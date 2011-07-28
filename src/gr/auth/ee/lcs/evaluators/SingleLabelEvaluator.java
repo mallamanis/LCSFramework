@@ -83,7 +83,8 @@ public class SingleLabelEvaluator implements IEvaluator {
 
 		for (int i = 0; i < instances.length; i++) {
 
-			final int[] classes = bridge.classify(lcs.getRulePopulation(), instances[i]);
+			final int[] classes = bridge.classify(lcs.getRulePopulation(),
+					instances[i]);
 			Arrays.sort(classes);
 
 			final int[] classification = bridge

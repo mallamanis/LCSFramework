@@ -187,20 +187,10 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 								true)));
 	}
 
-	/**
-	 * Run the AS-LCS.
-	 * 
-	 * @throws IOException
-	 *             if file not found
-	 */
 	@Override
-	public void train() {
-
-		trainSet(iterations, rulePopulation);
-
-		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-				rulePopulation);
-
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
 	}
 
 	@Override
@@ -227,9 +217,20 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 		result[0] = testEval.evaluateLCS(this);
 		return result;
 	}
-	
+
+	/**
+	 * Run the AS-LCS.
+	 * 
+	 * @throws IOException
+	 *             if file not found
+	 */
 	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	public void train() {
+
+		trainSet(iterations, rulePopulation);
+
+		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+				rulePopulation);
+
 	}
 }

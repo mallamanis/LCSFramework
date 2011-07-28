@@ -62,7 +62,7 @@ public class ArffTrainTestLoader {
 	public ArffTrainTestLoader(final AbstractLearningClassifierSystem lcs) {
 		myLcs = lcs;
 	}
-	
+
 	public void evaluate() {
 		myLcs.train();
 		final double[] evals = myLcs.getEvaluations(testSet);

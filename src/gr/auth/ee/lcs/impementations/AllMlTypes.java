@@ -35,32 +35,12 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
  * Trains any of the MlTypes of LCS
  * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class AllMlTypes {
 
-	/**
-	 * @param args
-	 * @throws IOException 
-	 */
-	public static void main(String[] args) throws IOException {
-		final String lcsType = SettingsLoader.getStringSetting("lcsType", "");
-		AbstractLearningClassifierSystem lcs = getLCS(lcsType);
-		
-		final String file = SettingsLoader.getStringSetting("filename", "");
-		final String testFile = SettingsLoader.getStringSetting("testFile", "");
-		if (testFile == "") {
-			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
-			loader.evaluate();
-		} else {
-			ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
-			loader.loadInstancesWithTest(file, testFile);
-			loader.evaluate();
-		}		
-
-	}
-	
-	private static AbstractLearningClassifierSystem getLCS(String name) throws IOException {
+	private static AbstractLearningClassifierSystem getLCS(String name)
+			throws IOException {
 		if (name.equals("DirectASLCS")) {
 			return new DirectASLCS();
 		} else if (name.equals("DirectUCS")) {
@@ -95,6 +75,27 @@ public class AllMlTypes {
 			return new TransformASLCS();
 		}
 		return null;
+	}
+
+	/**
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
+		final String lcsType = SettingsLoader.getStringSetting("lcsType", "");
+		AbstractLearningClassifierSystem lcs = getLCS(lcsType);
+
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final String testFile = SettingsLoader.getStringSetting("testFile", "");
+		if (testFile == "") {
+			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
+			loader.evaluate();
+		} else {
+			ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
+			loader.loadInstancesWithTest(file, testFile);
+			loader.evaluate();
+		}
+
 	}
 
 }

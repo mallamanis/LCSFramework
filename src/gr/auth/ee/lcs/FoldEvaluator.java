@@ -76,6 +76,18 @@ public class FoldEvaluator {
 
 	}
 
+	private double[] calcMean(double[][] results) {
+		double[] means = new double[results[0].length];
+		for (int i = 0; i < means.length; i++) {
+			double sum = 0;
+			for (int j = 0; j < results.length; j++) {
+				sum += results[j][i];
+			}
+			means[i] = (sum) / (results.length);
+		}
+		return means;
+	}
+
 	public void evaluate() {
 
 		for (int i = 0; i < runs; i++) {
@@ -91,18 +103,6 @@ public class FoldEvaluator {
 		double[] means = calcMean(this.evals);
 		// print results
 		printEvals(means);
-	}
-
-	private double[] calcMean(double[][] results) {
-		double[] means = new double[results[0].length];
-		for (int i = 0; i < means.length; i++) {
-			double sum = 0;
-			for (int j = 0; j < results.length; j++) {
-				sum += results[j][i];
-			}
-			means[i] = (sum) / (results.length);
-		}
-		return means;
 	}
 
 	private void gatherResults(double[] results, int fold) {

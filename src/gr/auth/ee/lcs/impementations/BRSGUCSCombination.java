@@ -215,8 +215,12 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 				"datasetLabelCardinality", 1);
 		selector = new BinaryRelevanceSelector(numberOfLabels);
 
-		
+	}
 
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
 	}
 
 	@Override
@@ -269,8 +273,8 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this,
-				str, selfAcc);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -295,15 +299,16 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 	@Override
 	public void train() {
 
-		//Set BR- variables		
+		// Set BR- variables
 		ga = new SteadyStateGeneticAlgorithm(new RouletteWheelSelector(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION, true),
 				new SinglePointCrossover(this), CROSSOVER_RATE,
 				new UniformBitMutation(MUTATION_RATE), 0, this);
 
 		try {
-			rep = new GenericMultiLabelRepresentation(inputFile, PRECISION_BITS,
-					numberOfLabels, GenericMultiLabelRepresentation.EXACT_MATCH, 0,
+			rep = new GenericMultiLabelRepresentation(inputFile,
+					PRECISION_BITS, numberOfLabels,
+					GenericMultiLabelRepresentation.EXACT_MATCH, 0,
 					ATTRIBUTE_GENERALIZATION_RATE, this);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -318,13 +323,12 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 		this.setElements(rep, ucsStrategy);
 
-		rulePopulation = new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(
-				numberOfLabels * populationSize,
-				new RouletteWheelSelector(
-						AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-						true)));
-		
-		//Train BR
+		rulePopulation = new ClassifierSet(
+				new FixedSizeSetWorstFitnessDeletion(numberOfLabels
+						* populationSize, new RouletteWheelSelector(
+						AbstractUpdateStrategy.COMPARISON_MODE_DELETION, true)));
+
+		// Train BR
 		do {
 			System.out.println("Training Classifier Set");
 			rep.activateLabel(selector);
@@ -349,8 +353,8 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 		} while (selector.next());
 		rep.activateAllLabels();
-		
-		//Set SGUCS
+
+		// Set SGUCS
 		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 
 		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
@@ -365,14 +369,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		trainSet(iterations, rulePopulation);
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
-		
-		
 
-	}
-	
-	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
 	}
 
 }

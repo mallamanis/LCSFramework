@@ -217,6 +217,12 @@ public class SequentialGASLCS extends AbstractLearningClassifierSystem {
 	}
 
 	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
+	}
+
+	@Override
 	public AbstractLearningClassifierSystem createNew() {
 		try {
 			return new SequentialGASLCS();
@@ -266,8 +272,8 @@ public class SequentialGASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this,
-				str, selfAcc);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -294,11 +300,6 @@ public class SequentialGASLCS extends AbstractLearningClassifierSystem {
 		trainSet(iterations, rulePopulation);
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
-	}
-	
-	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
 	}
 
 }

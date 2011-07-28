@@ -36,6 +36,29 @@ import java.util.TreeMap;
  */
 public class LabelFrequencyCalculator {
 	/**
+	 * 
+	 * @param activeLabels
+	 * @param labels
+	 * @param instances
+	 */
+	public static TreeMap<String, Integer> createCombinationMap(
+			int[] activeLabels, int labels, double[][] instances) {
+		TreeMap<String, Integer> map = new TreeMap<String, Integer>();
+		for (int i = 0; i < instances.length; i++) {
+			final String combination = generateString(activeLabels, labels,
+					instances[i]);
+			if (map.containsKey(combination)) {
+				final int count = map.get(combination) + 1;
+				map.put(combination, new Integer(count));
+			} else {
+				map.put(combination, new Integer(1));
+			}
+
+		}
+		return map;
+	}
+
+	/**
 	 * A static utility for getting an all-active label index array.
 	 * 
 	 * @param labels
@@ -72,29 +95,6 @@ public class LabelFrequencyCalculator {
 		}
 
 		return result;
-	}
-
-	/**
-	 * 
-	 * @param activeLabels
-	 * @param labels
-	 * @param instances
-	 */
-	public static TreeMap<String, Integer> createCombinationMap(
-			int[] activeLabels, int labels, double[][] instances) {
-		TreeMap<String, Integer> map = new TreeMap<String, Integer>();
-		for (int i = 0; i < instances.length; i++) {
-			final String combination = generateString(activeLabels, labels,
-					instances[i]);
-			if (map.containsKey(combination)) {
-				final int count = map.get(combination) + 1;
-				map.put(combination, new Integer(count));
-			} else {
-				map.put(combination, new Integer(1));
-			}
-
-		}
-		return map;
 	}
 
 	public static double ImbalanceRate(TreeMap<String, Integer> map) {

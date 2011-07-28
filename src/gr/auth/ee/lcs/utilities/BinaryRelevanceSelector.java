@@ -52,6 +52,13 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 		numberOfLabels = labels;
 	}
 
+	@Override
+	public int[] activeIndexes() {
+		int[] result = new int[1];
+		result[0] = currentLabel;
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -96,13 +103,6 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 	@Override
 	public void reset() {
 		currentLabel = 0;
-	}
-
-	@Override
-	public int[] activeIndexes() {
-		int[] result = new int[1];
-		result[0] = currentLabel;
-		return result;
 	}
 
 }

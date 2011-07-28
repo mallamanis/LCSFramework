@@ -44,6 +44,20 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	private final AbstractLearningClassifierSystem lcs;
 
 	/**
+	 * Rules are represented with a strict ml representation.
+	 */
+	public static final int STRICT_REPRESENTATION = 0;
+
+	/**
+	 * Rules are represented with a generic ml representation.
+	 */
+	public static final int GENERIC_REPRESENTATION = 1;
+	/**
+	 * A vector containing the chromosomes of the BAM.
+	 */
+	private Vector<Classifier> bamChromosomes;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param n
@@ -59,19 +73,18 @@ public class IdentityBAMEvaluator implements IEvaluator {
 
 	}
 
-	/**
-	 * Rules are represented with a strict ml representation.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
+	 * .ClassifierSet)
 	 */
-	public static final int STRICT_REPRESENTATION = 0;
-	/**
-	 * Rules are represented with a generic ml representation.
-	 */
-	public static final int GENERIC_REPRESENTATION = 1;
-
-	/**
-	 * A vector containing the chromosomes of the BAM.
-	 */
-	private Vector<Classifier> bamChromosomes;
+	@Override
+	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
+		return eval.evaluateLCS(lcs);
+	}
 
 	/**
 	 * Generate problem BAM.
@@ -123,19 +136,6 @@ public class IdentityBAMEvaluator implements IEvaluator {
 			bamChromosomes.add(lcs.getNewClassifier(new ExtendedBitSet(
 					consequent + rule)));
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
-	 * .ClassifierSet)
-	 */
-	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
-		return eval.evaluateLCS(lcs);
 	}
 
 }

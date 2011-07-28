@@ -58,18 +58,18 @@ public class BAMEvaluator {
 			e.printStackTrace();
 		}
 
-		lcs.registerHook(new FileLogger(name + "_acc", new AccuracyRecallEvaluator(
-				lcs.instances, false, lcs,
-				AccuracyRecallEvaluator.TYPE_ACCURACY)));
+		lcs.registerHook(new FileLogger(name + "_acc",
+				new AccuracyRecallEvaluator(lcs.instances, false, lcs,
+						AccuracyRecallEvaluator.TYPE_ACCURACY)));
 		lcs.registerHook(new FileLogger(name + "_ex", new ExactMatchEvalutor(
 				lcs.instances, false, lcs)));
 
 		if (type == TYPE_IDENTITY) {
-			lcs.registerHook(new FileLogger(name + "_bam", new IdentityBAMEvaluator(
-					size, representationType, lcs)));
+			lcs.registerHook(new FileLogger(name + "_bam",
+					new IdentityBAMEvaluator(size, representationType, lcs)));
 		} else {
-			lcs.registerHook(new FileLogger(name + "_bam", new PositionBAMEvaluator(
-					size, representationType, lcs)));
+			lcs.registerHook(new FileLogger(name + "_bam",
+					new PositionBAMEvaluator(size, representationType, lcs)));
 		}
 	}
 

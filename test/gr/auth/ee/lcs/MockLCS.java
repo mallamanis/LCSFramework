@@ -50,6 +50,12 @@ public class MockLCS extends AbstractLearningClassifierSystem {
 	}
 
 	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
+	}
+
+	@Override
 	public AbstractLearningClassifierSystem createNew() {
 		// TODO Auto-generated method stub
 		return null;
@@ -76,11 +82,6 @@ public class MockLCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
 	}
 
 }

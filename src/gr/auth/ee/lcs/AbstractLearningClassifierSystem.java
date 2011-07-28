@@ -85,14 +85,6 @@ public abstract class AbstractLearningClassifierSystem {
 	 * The rule population.
 	 */
 	protected ClassifierSet rulePopulation;
-	
-	public final ClassifierSet getRulePopulation() {
-		return rulePopulation;
-	}
-	
-	public final void setRulePopulation(ClassifierSet population) {
-		rulePopulation = population;
-	}
 
 	/**
 	 * A vector of all evaluator hooks.
@@ -119,7 +111,28 @@ public abstract class AbstractLearningClassifierSystem {
 				"callbackRate", 100);
 	}
 
+	/**
+	 * Classify a single instance.
+	 * 
+	 * @param instance
+	 *            the instance to classify
+	 * @return the labels the instance is classified in
+	 */
+	public abstract int[] classifyInstance(double[] instance);
+
 	public abstract AbstractLearningClassifierSystem createNew();
+
+	/**
+	 * Execute hooks.
+	 * 
+	 * @param aSet
+	 *            the set on which to run the callbacks
+	 */
+	private void executeCallbacks(final ClassifierSet aSet) {
+		for (int i = 0; i < hooks.size(); i++) {
+			hooks.elementAt(i).evaluateLCS(this);
+		}
+	}
 
 	/**
 	 * Return the LCS's classifier transform bridge.
@@ -131,13 +144,6 @@ public abstract class AbstractLearningClassifierSystem {
 	}
 
 	public abstract String[] getEvaluationNames();
-	
-	/**
-	 * Classify a single instance.
-	 * @param instance the instance to classify
-	 * @return the labels the instance is classified in
-	 */
-	public abstract int[] classifyInstance(double[] instance);
 
 	public abstract double[] getEvaluations(Instances testSet);
 
@@ -159,6 +165,10 @@ public abstract class AbstractLearningClassifierSystem {
 	 */
 	public final Classifier getNewClassifier(final ExtendedBitSet chromosome) {
 		return Classifier.createNewClassifier(this, chromosome);
+	}
+
+	public final ClassifierSet getRulePopulation() {
+		return rulePopulation;
 	}
 
 	/**
@@ -222,10 +232,28 @@ public abstract class AbstractLearningClassifierSystem {
 		updateStrategy = update;
 	}
 
+	public final void setRulePopulation(ClassifierSet population) {
+		rulePopulation = population;
+	}
+
 	/**
 	 * Run the LCS and train it.
 	 */
 	public abstract void train();
+
+	/**
+	 * Train population with all train instances and perform evolution.
+	 * 
+	 * @param iterations
+	 *            the number of full iterations (one iteration the LCS is
+	 *            trained with all instances) to train the LCS
+	 * @param population
+	 *            the population of the classifiers to train.
+	 */
+	protected final void trainSet(final int iterations,
+			final ClassifierSet population) {
+		trainSet(iterations, population, true);
+	}
 
 	/**
 	 * Train a classifier set with all train instances.
@@ -312,31 +340,5 @@ public abstract class AbstractLearningClassifierSystem {
 	public final void updatePopulation(final int iterations,
 			final ClassifierSet population) {
 		trainSet(iterations, population, false);
-	}
-
-	/**
-	 * Execute hooks.
-	 * 
-	 * @param aSet
-	 *            the set on which to run the callbacks
-	 */
-	private void executeCallbacks(final ClassifierSet aSet) {
-		for (int i = 0; i < hooks.size(); i++) {
-			hooks.elementAt(i).evaluateLCS(this);
-		}
-	}
-
-	/**
-	 * Train population with all train instances and perform evolution.
-	 * 
-	 * @param iterations
-	 *            the number of full iterations (one iteration the LCS is
-	 *            trained with all instances) to train the LCS
-	 * @param population
-	 *            the population of the classifiers to train.
-	 */
-	protected final void trainSet(final int iterations,
-			final ClassifierSet population) {
-		trainSet(iterations, population, true);
 	}
 }

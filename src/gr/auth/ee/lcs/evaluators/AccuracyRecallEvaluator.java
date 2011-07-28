@@ -152,7 +152,8 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 			int unionOfLabels = 0;
 			int intersectionOfLabels = 0;
 
-			final int[] classes = bridge.classify(lcs.getRulePopulation(), instances[i]);
+			final int[] classes = bridge.classify(lcs.getRulePopulation(),
+					instances[i]);
 			final int[] classification = bridge
 					.getDataInstanceLabels(instances[i]);
 

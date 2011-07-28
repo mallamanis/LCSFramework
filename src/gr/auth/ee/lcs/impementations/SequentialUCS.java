@@ -198,6 +198,12 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 	}
 
 	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
+	}
+
+	@Override
 	public AbstractLearningClassifierSystem createNew() {
 		try {
 			return new SequentialUCS();
@@ -248,8 +254,8 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this,
-				str, selfAcc);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -275,10 +281,5 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 	public void train() {
 		trainSet(iterations, rulePopulation);
 
-	}
-	
-	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
 	}
 }

@@ -50,8 +50,9 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
  * The Sequential ASLCS implementation.
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class SequentialASLCS extends AbstractLearningClassifierSystem {
 
@@ -145,8 +146,6 @@ public class SequentialASLCS extends AbstractLearningClassifierSystem {
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
-
-
 	/**
 	 * The number of labels used at the dmlUCS.
 	 */
@@ -182,7 +181,7 @@ public class SequentialASLCS extends AbstractLearningClassifierSystem {
 				"populationSize", 1500);
 		targetLC = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
-		
+
 		final IGeneticAlgorithmStrategy ga = new SteadyStateGeneticAlgorithm(
 				new TournamentSelector(50, true,
 						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION),
@@ -209,6 +208,12 @@ public class SequentialASLCS extends AbstractLearningClassifierSystem {
 						populationSize,
 						new TournamentSelector(40, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));
+	}
+
+	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
 	}
 
 	@Override
@@ -261,8 +266,8 @@ public class SequentialASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this,
-				str, selfAcc);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -289,10 +294,5 @@ public class SequentialASLCS extends AbstractLearningClassifierSystem {
 		trainSet(iterations, rulePopulation);
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
-	}
-
-	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
 	}
 }

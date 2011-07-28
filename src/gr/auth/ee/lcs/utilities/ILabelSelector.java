@@ -32,6 +32,13 @@ package gr.auth.ee.lcs.utilities;
  */
 public interface ILabelSelector {
 	/**
+	 * The active indexes for the current selection.
+	 * 
+	 * @return an array containing the active indices
+	 */
+	int[] activeIndexes();
+
+	/**
 	 * Returns the 0/1 status of a label at a given index, for the current
 	 * state.
 	 * 
@@ -54,13 +61,6 @@ public interface ILabelSelector {
 	 * @return true if the is a next (and we have sucessfully transitioned)
 	 */
 	boolean next();
-
-	/**
-	 * The active indexes for the current selection.
-	 * 
-	 * @return an array containing the active indices
-	 */
-	int[] activeIndexes();
 
 	/**
 	 * Reset combination counting.

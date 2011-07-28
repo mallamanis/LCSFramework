@@ -207,33 +207,10 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 
 	}
 
-	/**
-	 * Runs the Direct-ML-UCS.
-	 * 
-	 * @throws IOException
-	 */
 	@Override
-	public void train() {
-
-		do {
-			System.out.println("Training Classifier Set");
-			rep.activateLabel(selector);
-			ClassifierSet brpopulation = new ClassifierSet(
-					new FixedSizeSetWorstFitnessDeletion(
-							populationSize,
-							new RouletteWheelSelector(
-									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
-									true)));
-			trainSet(iterations, brpopulation);
-			updatePopulation(
-					(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
-					brpopulation);
-			rep.reinforceDeactivatedLabels(brpopulation);
-			rulePopulation.merge(brpopulation);
-
-		} while (selector.next());
-		rep.activateAllLabels();
-
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
 	}
 
 	@Override
@@ -286,8 +263,8 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this,
-				str, selfAcc);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
 		ival.calibrate(15);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -305,9 +282,33 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 		return results;
 	}
 
+	/**
+	 * Runs the Direct-ML-UCS.
+	 * 
+	 * @throws IOException
+	 */
 	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
+	public void train() {
+
+		do {
+			System.out.println("Training Classifier Set");
+			rep.activateLabel(selector);
+			ClassifierSet brpopulation = new ClassifierSet(
+					new FixedSizeSetWorstFitnessDeletion(
+							populationSize,
+							new RouletteWheelSelector(
+									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
+									true)));
+			trainSet(iterations, brpopulation);
+			updatePopulation(
+					(int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
+					brpopulation);
+			rep.reinforceDeactivatedLabels(brpopulation);
+			rulePopulation.merge(brpopulation);
+
+		} while (selector.next());
+		rep.activateAllLabels();
+
 	}
-	
+
 }

@@ -52,6 +52,14 @@ public class PairwiseLabelSelector implements ILabelSelector {
 		numberOfLabels = labels;
 	}
 
+	@Override
+	public int[] activeIndexes() {
+		int[] result = new int[2];
+		result[0] = i;
+		result[1] = j;
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -101,14 +109,6 @@ public class PairwiseLabelSelector implements ILabelSelector {
 	public void reset() {
 		i = 0;
 		j = 1;
-	}
-
-	@Override
-	public int[] activeIndexes() {
-		int[] result = new int[2];
-		result[0] = i;
-		result[1] = j;
-		return result;
 	}
 
 }

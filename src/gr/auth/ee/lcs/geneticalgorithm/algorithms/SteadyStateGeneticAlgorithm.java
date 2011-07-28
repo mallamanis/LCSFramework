@@ -113,16 +113,6 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		this.myLcs = lcs;
 	}
 
-	/**
-	 * GA Setter.
-	 * 
-	 * @param age
-	 *            the theta_GA
-	 */
-	public void setThetaGA(int age) {
-		this.gaActivationAge = age;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -198,6 +188,16 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		meanAge /= ((double) set.getTotalNumerosity());
 
 		return meanAge;
+	}
+
+	/**
+	 * GA Setter.
+	 * 
+	 * @param age
+	 *            the theta_GA
+	 */
+	public void setThetaGA(int age) {
+		this.gaActivationAge = age;
 	}
 
 }

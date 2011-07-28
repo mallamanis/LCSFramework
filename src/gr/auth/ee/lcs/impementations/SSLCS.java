@@ -188,6 +188,12 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 	}
 
 	@Override
+	public int[] classifyInstance(double[] instance) {
+		return getClassifierTransformBridge().classify(
+				this.getRulePopulation(), instance);
+	}
+
+	@Override
 	public AbstractLearningClassifierSystem createNew() {
 		try {
 			return new SSLCS();
@@ -223,10 +229,5 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 
-	}
-	
-	@Override
-	public int[] classifyInstance(double[] instance) {
-		return getClassifierTransformBridge().classify(this.getRulePopulation(), instance);		
 	}
 }

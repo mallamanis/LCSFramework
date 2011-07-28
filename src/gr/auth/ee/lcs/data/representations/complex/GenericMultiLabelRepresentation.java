@@ -367,29 +367,6 @@ public final class GenericMultiLabelRepresentation extends
 		}
 
 		/**
-		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
-		 * threshold.
-		 * 
-		 * @param instances
-		 *            the instances to calibrate threshold on
-		 * @param rules
-		 *            the rules used to classify the instances and provide
-		 *            confidence values.
-		 */
-		public void proportionalCutCalibration(final double[][] instances,
-				final ClassifierSet rules) {
-			final float[][] confidenceValues = new float[instances.length][];
-			for (int i = 0; i < instances.length; i++) {
-				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
-			}
-
-			final ProportionalCut pCut = new ProportionalCut();
-			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
-			System.out.println("Threshold set to " + this.voteThreshold);
-
-		}
-
-		/**
 		 * Create and normalized the confidence array for a vision vector.
 		 * 
 		 * @param aSet
@@ -452,6 +429,29 @@ public final class GenericMultiLabelRepresentation extends
 			return votingTable;
 		}
 
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			final float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
+
+			final ProportionalCut pCut = new ProportionalCut();
+			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.voteThreshold);
+
+		}
+
 		@Override
 		public void setThreshold(double threshold) {
 			voteThreshold = threshold;
@@ -473,10 +473,6 @@ public final class GenericMultiLabelRepresentation extends
 		 * The target Label Cardinality we are trying to reach.
 		 */
 		private final float targetLC;
-
-		public void setThreshold(double threshold) {
-			voteThreshold = threshold;
-		}
 
 		/**
 		 * The threshold on which to decide for the label bipartition.
@@ -514,29 +510,6 @@ public final class GenericMultiLabelRepresentation extends
 				}
 
 			return result;
-		}
-
-		/**
-		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
-		 * threshold.
-		 * 
-		 * @param instances
-		 *            the instances to calibrate threshold on
-		 * @param rules
-		 *            the rules used to classify the instances and provide
-		 *            confidence values.
-		 */
-		public void proportionalCutCalibration(final double[][] instances,
-				final ClassifierSet rules) {
-			final float[][] confidenceValues = new float[instances.length][];
-			for (int i = 0; i < instances.length; i++) {
-				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
-			}
-
-			final ProportionalCut pCut = new ProportionalCut();
-			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
-			System.out.println("Threshold set to " + this.voteThreshold);
-
 		}
 
 		/**
@@ -600,6 +573,33 @@ public final class GenericMultiLabelRepresentation extends
 				}
 			}
 			return votingTable;
+		}
+
+		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			final float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
+
+			final ProportionalCut pCut = new ProportionalCut();
+			this.voteThreshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.voteThreshold);
+
+		}
+
+		public void setThreshold(double threshold) {
+			voteThreshold = threshold;
 		}
 
 	}
@@ -861,6 +861,19 @@ public final class GenericMultiLabelRepresentation extends
 	}
 
 	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		for (int i = 0; i < numberOfLabels; i++) {
+
+			final int labelIndex = attributeList.length - numberOfLabels + i;
+
+			final String attributeName = instances.attribute(labelIndex).name();
+
+			attributeList[labelIndex] = new GenericLabel(chromosomeSize,
+					attributeName, labelGeneralizationRate);
+		}
+	}
+
+	@Override
 	public int[] getClassification(final Classifier aClassifier) {
 		final int[] labels = new int[numberOfLabels];
 		int labelIndex = 0;
@@ -926,19 +939,6 @@ public final class GenericMultiLabelRepresentation extends
 	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
-	}
-
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		for (int i = 0; i < numberOfLabels; i++) {
-
-			final int labelIndex = attributeList.length - numberOfLabels + i;
-
-			final String attributeName = instances.attribute(labelIndex).name();
-
-			attributeList[labelIndex] = new GenericLabel(chromosomeSize,
-					attributeName, labelGeneralizationRate);
-		}
 	}
 
 }

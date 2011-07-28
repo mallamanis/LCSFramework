@@ -44,6 +44,20 @@ public class PositionBAMEvaluator implements IEvaluator {
 	private final AbstractLearningClassifierSystem lcs;
 
 	/**
+	 * Rules are represented with a strict ml representation.
+	 */
+	public static final int STRICT_REPRESENTATION = 0;
+
+	/**
+	 * Rules are represented with a generic ml representation.
+	 */
+	public static final int GENERIC_REPRESENTATION = 1;
+	/**
+	 * A vector containing the chromosomes of the BAM.
+	 */
+	private Vector<Classifier> bamChromosomes;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param n
@@ -59,19 +73,11 @@ public class PositionBAMEvaluator implements IEvaluator {
 
 	}
 
-	/**
-	 * Rules are represented with a strict ml representation.
-	 */
-	public static final int STRICT_REPRESENTATION = 0;
-	/**
-	 * Rules are represented with a generic ml representation.
-	 */
-	public static final int GENERIC_REPRESENTATION = 1;
-
-	/**
-	 * A vector containing the chromosomes of the BAM.
-	 */
-	private Vector<Classifier> bamChromosomes;
+	@Override
+	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
+		return eval.evaluateLCS(lcs);
+	}
 
 	/**
 	 * Generate problem BAM.
@@ -122,12 +128,6 @@ public class PositionBAMEvaluator implements IEvaluator {
 
 		final ExtendedBitSet result = new ExtendedBitSet(rule);
 		return result;
-	}
-
-	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
-		return eval.evaluateLCS(lcs);
 	}
 
 }

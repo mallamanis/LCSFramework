@@ -82,7 +82,8 @@ public final class ConfusionMatrixEvaluator implements IEvaluator {
 				.getClassifierTransformBridge();
 
 		for (int i = 0; i < instances.length; i++) {
-			final int[] classes = bridge.classify(theLcs.getRulePopulation(), instances[i]);
+			final int[] classes = bridge.classify(theLcs.getRulePopulation(),
+					instances[i]);
 			if (classes == null)
 				continue; // TODO: Use majority
 			final int y = classes[0];

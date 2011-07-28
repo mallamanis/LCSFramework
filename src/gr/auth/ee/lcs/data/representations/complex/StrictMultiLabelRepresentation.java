@@ -259,10 +259,6 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public final class VotingClassificationStrategy implements
 			IClassificationStrategy {
 
-		public VotingClassificationStrategy(float lc) {
-			targetLC = lc;
-		}
-
 		/**
 		 * The voting threshold. Used for label bipartition.
 		 */
@@ -270,8 +266,35 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 
 		private final float targetLC;
 
-		public void setThreshold(double threshold) {
-			this.threshold = threshold;
+		public VotingClassificationStrategy(float lc) {
+			targetLC = lc;
+		}
+
+		@Override
+		public int[] classify(final ClassifierSet aSet,
+				final double[] visionVector) {
+			final float[] votingTable;
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			// Let each classifier vote
+			votingTable = getConfidenceArray(matchSet, visionVector);
+
+			int numberOfActiveLabels = 0;
+			for (int i = 0; i < votingTable.length; i++) {
+				if (votingTable[i] > threshold)
+					numberOfActiveLabels++;
+			}
+
+			final int[] result = new int[numberOfActiveLabels];
+
+			int currentIndex = 0;
+			for (int i = 0; i < votingTable.length; i++)
+				if (votingTable[i] > threshold) {
+					result[currentIndex] = i;
+					currentIndex++;
+				}
+
+			return result;
 		}
 
 		/**
@@ -333,31 +356,8 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 
 		}
 
-		@Override
-		public int[] classify(final ClassifierSet aSet,
-				final double[] visionVector) {
-			final float[] votingTable;
-
-			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
-			// Let each classifier vote
-			votingTable = getConfidenceArray(matchSet, visionVector);
-
-			int numberOfActiveLabels = 0;
-			for (int i = 0; i < votingTable.length; i++) {
-				if (votingTable[i] > threshold)
-					numberOfActiveLabels++;
-			}
-
-			final int[] result = new int[numberOfActiveLabels];
-
-			int currentIndex = 0;
-			for (int i = 0; i < votingTable.length; i++)
-				if (votingTable[i] > threshold) {
-					result[currentIndex] = i;
-					currentIndex++;
-				}
-
-			return result;
+		public void setThreshold(double threshold) {
+			this.threshold = threshold;
 		}
 
 	}
@@ -558,6 +558,25 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
+	 * createClassRepresentation(weka.core.Instances)
+	 */
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		for (int i = 0; i < numberOfLabels; i++) {
+
+			final int labelIndex = attributeList.length - numberOfLabels + i;
+
+			final String attributeName = instances.attribute(labelIndex).name();
+
+			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see
 	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth
 	 * .ee.lcs.classifiers.Classifier)
@@ -621,25 +640,6 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
-	 * createClassRepresentation(weka.core.Instances)
-	 */
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		for (int i = 0; i < numberOfLabels; i++) {
-
-			final int labelIndex = attributeList.length - numberOfLabels + i;
-
-			final String attributeName = instances.attribute(labelIndex).name();
-
-			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
-		}
 
 	}
 
