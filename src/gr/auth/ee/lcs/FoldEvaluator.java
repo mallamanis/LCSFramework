@@ -61,7 +61,7 @@ public class FoldEvaluator {
 	 * @param myLcs
 	 *            the LCS instance to be evaluated
 	 * @param filename
-	 *            the filename containing the instances
+	 *            the filename of the .arff containing the instances
 	 * @throws IOException
 	 *             if the file is not found.
 	 */

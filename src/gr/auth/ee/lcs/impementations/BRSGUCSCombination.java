@@ -36,6 +36,7 @@ import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.SequentialMlUpdateAlgorithm;
@@ -243,17 +244,17 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		return names;
 	}
 
+	
+	
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 		double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
-				(float) SettingsLoader.getNumericSetting(
-						"datasetLabelCardinality", 1));
-		rep.setClassificationStrategy(str);
-
-		str.proportionalCutCalibration(this.instances, rulePopulation);
+		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
+				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
+		
+		VotingClassificationStrategy str = proportionalCutCalibration();
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -271,18 +272,15 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 				false, this);
 		results[3] = testEval.evaluateLCS(this);
 
-		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
-				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this, str,
-				selfAcc);
-		ival.calibrate(15);
+		
+		internalValidationCalibration(selfAcc);
 
 		results[4] = accEval.evaluateLCS(this);
 		results[5] = recEval.evaluateLCS(this);
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		useBestClassificationMode();
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);
@@ -290,6 +288,30 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		results[11] = testEval.evaluateLCS(this);
 
 		return results;
+	}
+
+	public void useBestClassificationMode() {
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+	}
+
+	public void internalValidationCalibration(IEvaluator selfAcc) {
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
+		ival.calibrate(15);
+	}
+
+	public VotingClassificationStrategy proportionalCutCalibration() {
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+
+		str.proportionalCutCalibration(this.instances, rulePopulation);
+		return str;
 	}
 
 	/**
@@ -320,7 +342,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
 				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
 				THETA_GA, 1, this);
-
+		
 		this.setElements(rep, ucsStrategy);
 
 		rulePopulation = new ClassifierSet(
@@ -354,8 +376,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		} while (selector.next());
 		rep.activateAllLabels();
 
-		// Set SGUCS
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		useBestClassificationMode();
 
 		final UCSUpdateAlgorithm updateObj = new UCSUpdateAlgorithm(UCS_ALPHA,
 				UCS_N, UCS_ACC0, UCS_LEARNING_RATE, UCS_EXPERIENCE_THRESHOLD,

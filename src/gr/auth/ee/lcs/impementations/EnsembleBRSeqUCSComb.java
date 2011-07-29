@@ -51,7 +51,7 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 		super((int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1), lcss);
 		
-		ensemble = new BRSGUCSCombination[10];
+		ensemble = new BRSGUCSCombination[3];
 		
 		for (int i = 0; i < ensemble.length; i++)
 			try {
@@ -59,6 +59,7 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		
 	}
 
 	/* (non-Javadoc)
@@ -80,6 +81,7 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 	 */
 	@Override
 	public double[] getEvaluations(Instances testSet) {
+		this.setElements(ensemble[0].getClassifierTransformBridge(), null);
 		double[] results = new double[12];
 		Arrays.fill(results, 0);
 
@@ -102,8 +104,11 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 				false, this);
 		results[3] = testEval.evaluateLCS(this);
 
-		for (int i = 0; i < ensemble.length; i++)
-			((BRSGUCSCombination) ensemble[i]).internalValidationCalibration();
+		for (int i = 0; i < ensemble.length; i++) {
+			final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
+					ensemble[i].instances, false, ensemble[i], AccuracyRecallEvaluator.TYPE_ACCURACY);
+			((BRSGUCSCombination) ensemble[i]).internalValidationCalibration(selfAcc);		
+		}
 
 		results[4] = accEval.evaluateLCS(this);
 		results[5] = recEval.evaluateLCS(this);

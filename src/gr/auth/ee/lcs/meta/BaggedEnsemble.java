@@ -1,21 +1,87 @@
+/*
+ *	Copyright (C) 2011 by Allamanis Miltiadis
+ *
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *
+ *	The above copyright notice and this permission notice shall be included in
+ *	all copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *	THE SOFTWARE.
+ */
 /**
  * 
  */
 package gr.auth.ee.lcs.meta;
 
+import java.util.Arrays;
+
 import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 
+
 /**
- * @author miltiadis
+ * A wrapper for bagged LCSs.
+ * @author Miltiadis Allamanis
  * 
  */
-public class BaggedEnsemble extends AbstractLearningClassifierSystem {
+public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
+	
+	/**
+	 * The number of labels used.
+	 */
+	protected final int numberOfLabels;
+	
+	public BaggedEnsemble(int numOfLabels, AbstractLearningClassifierSystem lcss[]) {
+		numberOfLabels = numOfLabels;
+		ensemble = lcss;
+	}
+	
+	/**
+	 * The ensemble of LCSs.
+	 * 
+	 */
+	protected AbstractLearningClassifierSystem ensemble[];
 
 	@Override
 	public int[] classifyInstance(double[] instance) {
-		// TODO Auto-generated method stub
-		return null;
+		int[] classifications = new int[numberOfLabels];
+		Arrays.fill(classifications, 0);
+		
+		for (int i = 0; i < ensemble.length; i++) {
+			int[] classification = ensemble[i].classifyInstance(instance);
+			for (int j = 0; j < classifications.length; j++)
+				classifications[j] -= 1;
+			
+			for (int j = 0; j < classification.length; j++)
+				classifications[classification[j]] += 2;
+		}
+		
+		int activeLabels = 0;
+		for (int i = 0; i < classifications.length; i++) {
+			if (classifications[i] > 0 ) //what about 0?
+				activeLabels++;
+		}
+		
+		int[] result = new int[activeLabels];
+		int currentPosition = 0;
+		for (int i = 0; i < classifications.length; i++) {
+			if (classifications[i] > 0 ) { //what about 0?
+				result[currentPosition] = i;
+				currentPosition++ ;
+			}
+		}
+		return result;
 	}
 
 	/*
@@ -24,10 +90,7 @@ public class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 * @see gr.auth.ee.lcs.AbstractLearningClassifierSystem#createNew()
 	 */
 	@Override
-	public AbstractLearningClassifierSystem createNew() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract AbstractLearningClassifierSystem createNew() ; 
 
 	/*
 	 * (non-Javadoc)
@@ -35,10 +98,8 @@ public class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 * @see gr.auth.ee.lcs.AbstractLearningClassifierSystem#getEvaluationNames()
 	 */
 	@Override
-	public String[] getEvaluationNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract String[] getEvaluationNames();
+	
 
 	/*
 	 * (non-Javadoc)
@@ -48,10 +109,7 @@ public class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 * .Instances)
 	 */
 	@Override
-	public double[] getEvaluations(Instances testSet) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract double[] getEvaluations(Instances testSet) ;
 
 	/*
 	 * (non-Javadoc)
@@ -60,8 +118,21 @@ public class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public void train() {
-		// TODO Auto-generated method stub
+		for (int i = 0; i < ensemble.length; i++) {
+			ensemble[i].instances = sampleTrainInstances();
+			ensemble[i].train();
+		}
 
+	}
+	
+	private double[][] sampleTrainInstances() {
+		double[][] sample = new double[this.instances.length][];
+		for (int i = 0; i < sample.length; i++) {
+			int pos = (int) Math.floor( Math.random() * this.instances.length );
+			
+			sample[i] = this.instances[pos];
+		}
+		return sample;
 	}
 
 }
