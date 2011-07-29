@@ -30,7 +30,9 @@ import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
+import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
@@ -225,18 +227,37 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 		return names;
 	}
 
-	@Override
-	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[12];
-		Arrays.fill(results, 0);
+	public void useBestClassificationMode() {
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+	}
 
+	public void internalValidationCalibration(IEvaluator selfAcc) {
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
+		ival.calibrate(15);
+	}
+
+	public VotingClassificationStrategy proportionalCutCalibration() {
 		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);
 
 		str.proportionalCutCalibration(this.instances, rulePopulation);
-
+		return str;
+	}
+	
+	@Override
+	public double[] getEvaluations(Instances testSet) {
+		double[] results = new double[12];
+		Arrays.fill(results, 0);
+		
+		proportionalCutCalibration();
+		
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		results[0] = accEval.evaluateLCS(this);
@@ -255,16 +276,14 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this, str,
-				selfAcc);
-		ival.calibrate(15);
+		internalValidationCalibration(selfAcc);
 
 		results[4] = accEval.evaluateLCS(this);
 		results[5] = recEval.evaluateLCS(this);
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		useBestClassificationMode();
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);

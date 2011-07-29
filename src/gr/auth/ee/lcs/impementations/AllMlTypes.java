@@ -73,6 +73,12 @@ public class AllMlTypes {
 			return new TransformationUCS();
 		} else if (name.equals("BRASLCS")) {
 			return new TransformASLCS();
+		} else if (name.equals("EGMlASLCS")) {
+			return new EnsembleGMlASLCS(null);
+		} else if (name.equals("BRSGUCS")) {
+			return new BRSGUCSCombination();
+		} else if (name.equals("EBRSGUCS")) {
+			return new EnsembleBRSeqUCSComb(null);
 		}
 		return null;
 	}
