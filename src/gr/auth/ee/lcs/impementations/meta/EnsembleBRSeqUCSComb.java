@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.impementations;
+package gr.auth.ee.lcs.impementations.meta;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,11 +20,13 @@ import gr.auth.ee.lcs.meta.BaggedEnsemble;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
+ * An Ensemble of the BRSeqUCS
  * @author Miltiadis Allamanis
  *
  */
-public class EnsembleGMlASLCS extends BaggedEnsemble{
+public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 
+	
 	/**
 	 * @param args
 	 * @throws IOException
@@ -38,23 +40,23 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 		Logger.getLogger("").addHandler(fileLogging);
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
-		final EnsembleGMlASLCS trucs = new EnsembleGMlASLCS(null);
+		final EnsembleBRSeqUCSComb trucs = new EnsembleBRSeqUCSComb(null);
 		FoldEvaluator loader = new FoldEvaluator(10, trucs, file);
 		loader.evaluate();
 
 	}
 	
 	
-	public EnsembleGMlASLCS(AbstractLearningClassifierSystem[] lcss) {
+	public EnsembleBRSeqUCSComb(AbstractLearningClassifierSystem[] lcss) {
 		super((int) SettingsLoader.getNumericSetting(
 				"numberOfLabels", 1), lcss);
 		
-		ensemble = new GMlASLCS[(int) SettingsLoader.getNumericSetting(
+		ensemble = new BRSGUCSCombination[(int) SettingsLoader.getNumericSetting(
 				"ensembleSize", 7)];
 		
 		for (int i = 0; i < ensemble.length; i++)
 			try {
-				ensemble[i] = new GMlASLCS();
+				ensemble[i] = new BRSGUCSCombination();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -85,7 +87,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 		Arrays.fill(results, 0);
 
 		for (int i = 0; i < ensemble.length; i++)
-			((GMlASLCS) ensemble[i]).proportionalCutCalibration();		
+			((BRSGUCSCombination) ensemble[i]).proportionalCutCalibration();		
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -106,7 +108,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 		for (int i = 0; i < ensemble.length; i++) {
 			final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 					ensemble[i].instances, false, ensemble[i], AccuracyRecallEvaluator.TYPE_ACCURACY);
-			((GMlASLCS) ensemble[i]).internalValidationCalibration(selfAcc);		
+			((BRSGUCSCombination) ensemble[i]).internalValidationCalibration(selfAcc);		
 		}
 
 		results[4] = accEval.evaluateLCS(this);
@@ -115,7 +117,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 		results[7] = testEval.evaluateLCS(this);
 
 		for (int i = 0; i < ensemble.length; i++)
-			((GMlASLCS) ensemble[i]).useBestClassificationMode();
+			((BRSGUCSCombination) ensemble[i]).useBestClassificationMode();
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);
@@ -124,8 +126,6 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 
 		return results;
 	}
-	
-	
 
 	@Override
 	public String[] getEvaluationNames() {
@@ -136,6 +136,5 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 				"ExactMatch(best)" };
 		return names;
 	}
-
 
 }

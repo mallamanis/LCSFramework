@@ -29,6 +29,9 @@ import java.io.IOException;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.FoldEvaluator;
+import gr.auth.ee.lcs.impementations.meta.BRSGUCSCombination;
+import gr.auth.ee.lcs.impementations.meta.EnsembleBRSeqUCSComb;
+import gr.auth.ee.lcs.impementations.meta.EnsembleGMlASLCS;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
