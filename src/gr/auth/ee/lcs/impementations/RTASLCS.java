@@ -30,6 +30,7 @@ import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.UniLabelRepresentation.ThresholdClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
@@ -228,12 +229,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		double[] results = new double[8];
 		Arrays.fill(results, 0);
 
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
-		rep.setClassificationStrategy(str);
-
-		str.proportionalCutCalibration(this.instances, rulePopulation,
-				(float) SettingsLoader.getNumericSetting(
-						"datasetLabelCardinality", 1));
+		proportionalCutCalibration();
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		results[0] = accEval.evaluateLCS(this);
@@ -252,9 +248,8 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		final InternalValidation ival = new InternalValidation(this, str,
-				selfAcc);
-		ival.calibrate(15);
+		
+		internalValidationCalibration(selfAcc);
 
 		results[4] = accEval.evaluateLCS(this);
 		results[5] = recEval.evaluateLCS(this);
@@ -262,6 +257,27 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 		results[7] = testEval.evaluateLCS(this);
 
 		return results;
+	}
+
+	/**
+	 * @param the evaluator to be used for calibration
+	 */
+	public void internalValidationCalibration(
+			final IEvaluator selfAcc) {
+		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		rep.setClassificationStrategy(str);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
+		ival.calibrate(15);
+	}
+
+	public void proportionalCutCalibration() {
+		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		rep.setClassificationStrategy(str);
+
+		str.proportionalCutCalibration(this.instances, rulePopulation,
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
 	}
 
 	/**

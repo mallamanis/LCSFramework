@@ -32,6 +32,7 @@ import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.impementations.meta.BRSGUCSCombination;
 import gr.auth.ee.lcs.impementations.meta.EnsembleBRSeqUCSComb;
 import gr.auth.ee.lcs.impementations.meta.EnsembleGMlASLCS;
+import gr.auth.ee.lcs.impementations.meta.EnsembleRTASLCS;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
@@ -82,6 +83,8 @@ public class AllMlTypes {
 			return new BRSGUCSCombination();
 		} else if (name.equals("EBRSGUCS")) {
 			return new EnsembleBRSeqUCSComb(null);
+		} else if (name.equals("ERTASLCS")) {
+			return new EnsembleRTASLCS(null);
 		}
 		return null;
 	}
