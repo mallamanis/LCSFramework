@@ -22,9 +22,9 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
  * @author Miltiadis Allamanis
- *
+ * 
  */
-public class EnsembleGMlASLCS extends BaggedEnsemble{
+public class EnsembleGMlASLCS extends BaggedEnsemble {
 
 	/**
 	 * @param args
@@ -44,40 +44,53 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 		loader.evaluate();
 
 	}
-	
-	
+
 	public EnsembleGMlASLCS(AbstractLearningClassifierSystem[] lcss) {
-		super((int) SettingsLoader.getNumericSetting(
-				"numberOfLabels", 1), lcss);
-		
+		super((int) SettingsLoader.getNumericSetting("numberOfLabels", 1), lcss);
+
 		ensemble = new GMlASLCS[(int) SettingsLoader.getNumericSetting(
 				"ensembleSize", 7)];
-		
+
 		for (int i = 0; i < ensemble.length; i++)
 			try {
 				ensemble[i] = new GMlASLCS();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.meta.BaggedEnsemble#createNew()
 	 */
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
-		
+
 		AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
 		for (int i = 0; i < ensemble.length; i++) {
 			newEnsemble[i] = ensemble[i].createNew();
 		}
 		return new EnsembleBRSeqUCSComb(newEnsemble);
-	
+
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.meta.BaggedEnsemble#getEvaluations(weka.core.Instances)
+	@Override
+	public String[] getEvaluationNames() {
+		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
+		return names;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.meta.BaggedEnsemble#getEvaluations(weka.core.Instances)
 	 */
 	@Override
 	public double[] getEvaluations(Instances testSet) {
@@ -86,7 +99,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 		Arrays.fill(results, 0);
 
 		for (int i = 0; i < ensemble.length; i++)
-			((GMlASLCS) ensemble[i]).proportionalCutCalibration();		
+			((GMlASLCS) ensemble[i]).proportionalCutCalibration();
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -106,8 +119,9 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 
 		for (int i = 0; i < ensemble.length; i++) {
 			final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
-					ensemble[i].instances, false, ensemble[i], AccuracyRecallEvaluator.TYPE_ACCURACY);
-			((GMlASLCS) ensemble[i]).internalValidationCalibration(selfAcc);		
+					ensemble[i].instances, false, ensemble[i],
+					AccuracyRecallEvaluator.TYPE_ACCURACY);
+			((GMlASLCS) ensemble[i]).internalValidationCalibration(selfAcc);
 		}
 
 		results[4] = accEval.evaluateLCS(this);
@@ -125,18 +139,5 @@ public class EnsembleGMlASLCS extends BaggedEnsemble{
 
 		return results;
 	}
-	
-	
-
-	@Override
-	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
-				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
-				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
-				"ExactMatch(best)" };
-		return names;
-	}
-
 
 }

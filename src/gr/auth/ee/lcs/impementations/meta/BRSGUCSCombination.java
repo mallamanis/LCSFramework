@@ -244,8 +244,6 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		return names;
 	}
 
-	
-	
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 		double[] results = new double[12];
@@ -253,7 +251,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		
+
 		VotingClassificationStrategy str = proportionalCutCalibration();
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
@@ -272,7 +270,6 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 				false, this);
 		results[3] = testEval.evaluateLCS(this);
 
-		
 		internalValidationCalibration(selfAcc);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -288,10 +285,6 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		results[11] = testEval.evaluateLCS(this);
 
 		return results;
-	}
-
-	public void useBestClassificationMode() {
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 	}
 
 	public void internalValidationCalibration(IEvaluator selfAcc) {
@@ -342,7 +335,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 				UCS_ALPHA, UCS_N, UCS_ACC0, UCS_LEARNING_RATE,
 				UCS_EXPERIENCE_THRESHOLD, MATCHSET_GA_RUN_PROBABILITY, ga,
 				THETA_GA, 1, this);
-		
+
 		this.setElements(rep, ucsStrategy);
 
 		rulePopulation = new ClassifierSet(
@@ -391,6 +384,10 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 
+	}
+
+	public void useBestClassificationMode() {
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 	}
 
 }

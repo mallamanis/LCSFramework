@@ -21,12 +21,12 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
  * An Ensemble of the BRSeqUCS
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 
-	
 	/**
 	 * @param args
 	 * @throws IOException
@@ -45,40 +45,53 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 		loader.evaluate();
 
 	}
-	
-	
+
 	public EnsembleBRSeqUCSComb(AbstractLearningClassifierSystem[] lcss) {
-		super((int) SettingsLoader.getNumericSetting(
-				"numberOfLabels", 1), lcss);
-		
-		ensemble = new BRSGUCSCombination[(int) SettingsLoader.getNumericSetting(
-				"ensembleSize", 7)];
-		
+		super((int) SettingsLoader.getNumericSetting("numberOfLabels", 1), lcss);
+
+		ensemble = new BRSGUCSCombination[(int) SettingsLoader
+				.getNumericSetting("ensembleSize", 7)];
+
 		for (int i = 0; i < ensemble.length; i++)
 			try {
 				ensemble[i] = new BRSGUCSCombination();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.meta.BaggedEnsemble#createNew()
 	 */
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
-		
+
 		AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
 		for (int i = 0; i < ensemble.length; i++) {
 			newEnsemble[i] = ensemble[i].createNew();
 		}
 		return new EnsembleBRSeqUCSComb(newEnsemble);
-	
+
 	}
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.meta.BaggedEnsemble#getEvaluations(weka.core.Instances)
+	@Override
+	public String[] getEvaluationNames() {
+		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
+				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
+				"ExactMatch(best)" };
+		return names;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.meta.BaggedEnsemble#getEvaluations(weka.core.Instances)
 	 */
 	@Override
 	public double[] getEvaluations(Instances testSet) {
@@ -87,7 +100,7 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 		Arrays.fill(results, 0);
 
 		for (int i = 0; i < ensemble.length; i++)
-			((BRSGUCSCombination) ensemble[i]).proportionalCutCalibration();		
+			((BRSGUCSCombination) ensemble[i]).proportionalCutCalibration();
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -107,8 +120,10 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 
 		for (int i = 0; i < ensemble.length; i++) {
 			final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
-					ensemble[i].instances, false, ensemble[i], AccuracyRecallEvaluator.TYPE_ACCURACY);
-			((BRSGUCSCombination) ensemble[i]).internalValidationCalibration(selfAcc);		
+					ensemble[i].instances, false, ensemble[i],
+					AccuracyRecallEvaluator.TYPE_ACCURACY);
+			((BRSGUCSCombination) ensemble[i])
+					.internalValidationCalibration(selfAcc);
 		}
 
 		results[4] = accEval.evaluateLCS(this);
@@ -125,16 +140,6 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 		results[11] = testEval.evaluateLCS(this);
 
 		return results;
-	}
-
-	@Override
-	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
-				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
-				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
-				"ExactMatch(best)" };
-		return names;
 	}
 
 }

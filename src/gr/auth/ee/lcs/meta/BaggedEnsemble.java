@@ -29,56 +29,57 @@ import java.util.Arrays;
 import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 
-
 /**
  * A wrapper for bagged LCSs.
+ * 
  * @author Miltiadis Allamanis
  * 
  */
 public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
-	
+
 	/**
 	 * The number of labels used.
 	 */
 	protected final int numberOfLabels;
-	
-	public BaggedEnsemble(int numOfLabels, AbstractLearningClassifierSystem lcss[]) {
-		numberOfLabels = numOfLabels;
-		ensemble = lcss;
-	}
-	
+
 	/**
 	 * The ensemble of LCSs.
 	 * 
 	 */
 	protected AbstractLearningClassifierSystem ensemble[];
 
+	public BaggedEnsemble(int numOfLabels,
+			AbstractLearningClassifierSystem lcss[]) {
+		numberOfLabels = numOfLabels;
+		ensemble = lcss;
+	}
+
 	@Override
 	public int[] classifyInstance(double[] instance) {
 		int[] classifications = new int[numberOfLabels];
 		Arrays.fill(classifications, 0);
-		
+
 		for (int i = 0; i < ensemble.length; i++) {
 			int[] classification = ensemble[i].classifyInstance(instance);
 			for (int j = 0; j < classifications.length; j++)
 				classifications[j] -= 1;
-			
+
 			for (int j = 0; j < classification.length; j++)
 				classifications[classification[j]] += 2;
 		}
-		
+
 		int activeLabels = 0;
 		for (int i = 0; i < classifications.length; i++) {
-			if (classifications[i] > 0 ) //what about 0?
+			if (classifications[i] > 0) // what about 0?
 				activeLabels++;
 		}
-		
+
 		int[] result = new int[activeLabels];
 		int currentPosition = 0;
 		for (int i = 0; i < classifications.length; i++) {
-			if (classifications[i] > 0 ) { //what about 0?
+			if (classifications[i] > 0) { // what about 0?
 				result[currentPosition] = i;
-				currentPosition++ ;
+				currentPosition++;
 			}
 		}
 		return result;
@@ -90,7 +91,7 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 * @see gr.auth.ee.lcs.AbstractLearningClassifierSystem#createNew()
 	 */
 	@Override
-	public abstract AbstractLearningClassifierSystem createNew() ; 
+	public abstract AbstractLearningClassifierSystem createNew();
 
 	/*
 	 * (non-Javadoc)
@@ -99,7 +100,6 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 */
 	@Override
 	public abstract String[] getEvaluationNames();
-	
 
 	/*
 	 * (non-Javadoc)
@@ -109,7 +109,17 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 * .Instances)
 	 */
 	@Override
-	public abstract double[] getEvaluations(Instances testSet) ;
+	public abstract double[] getEvaluations(Instances testSet);
+
+	private double[][] sampleTrainInstances() {
+		double[][] sample = new double[this.instances.length][];
+		for (int i = 0; i < sample.length; i++) {
+			int pos = (int) Math.floor(Math.random() * this.instances.length);
+
+			sample[i] = this.instances[pos];
+		}
+		return sample;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -123,16 +133,6 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 			ensemble[i].train();
 		}
 
-	}
-	
-	private double[][] sampleTrainInstances() {
-		double[][] sample = new double[this.instances.length][];
-		for (int i = 0; i < sample.length; i++) {
-			int pos = (int) Math.floor( Math.random() * this.instances.length );
-			
-			sample[i] = this.instances[pos];
-		}
-		return sample;
 	}
 
 }

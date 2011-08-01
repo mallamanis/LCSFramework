@@ -227,37 +227,13 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 		return names;
 	}
 
-	public void useBestClassificationMode() {
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
-	}
-
-	public void internalValidationCalibration(IEvaluator selfAcc) {
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
-				(float) SettingsLoader.getNumericSetting(
-						"datasetLabelCardinality", 1));
-		rep.setClassificationStrategy(str);
-		final InternalValidation ival = new InternalValidation(this, str,
-				selfAcc);
-		ival.calibrate(15);
-	}
-
-	public VotingClassificationStrategy proportionalCutCalibration() {
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
-				(float) SettingsLoader.getNumericSetting(
-						"datasetLabelCardinality", 1));
-		rep.setClassificationStrategy(str);
-
-		str.proportionalCutCalibration(this.instances, rulePopulation);
-		return str;
-	}
-	
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 		double[] results = new double[12];
 		Arrays.fill(results, 0);
-		
+
 		proportionalCutCalibration();
-		
+
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		results[0] = accEval.evaluateLCS(this);
@@ -293,6 +269,26 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 		return results;
 	}
 
+	public void internalValidationCalibration(IEvaluator selfAcc) {
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+		final InternalValidation ival = new InternalValidation(this, str,
+				selfAcc);
+		ival.calibrate(15);
+	}
+
+	public VotingClassificationStrategy proportionalCutCalibration() {
+		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+				(float) SettingsLoader.getNumericSetting(
+						"datasetLabelCardinality", 1));
+		rep.setClassificationStrategy(str);
+
+		str.proportionalCutCalibration(this.instances, rulePopulation);
+		return str;
+	}
+
 	/**
 	 * Runs the Direct-ML-UCS.
 	 * 
@@ -303,5 +299,9 @@ public class GMlASLCS extends AbstractLearningClassifierSystem {
 		updatePopulation((int) (iterations * UPDATE_ONLY_ITERATION_PERCENTAGE),
 				rulePopulation);
 
+	}
+
+	public void useBestClassificationMode() {
+		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
 	}
 }
