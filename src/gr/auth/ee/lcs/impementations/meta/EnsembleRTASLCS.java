@@ -49,7 +49,7 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 		for (int i = 0; i < ensemble.length; i++) {
 			newEnsemble[i] = ensemble[i].createNew();
 		}
-		return new EnsembleBRSeqUCSComb(newEnsemble);
+		return new EnsembleRTASLCS(newEnsemble);
 
 	}
 
