@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
@@ -148,6 +147,9 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 
 		double sumOfAccuracies = 0;
 		double sumOfRecall = 0;
+
+		int emptySamples = 0;
+
 		for (int i = 0; i < instances.length; i++) {
 			int unionOfLabels = 0;
 			int intersectionOfLabels = 0;
@@ -179,9 +181,13 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 			final double instanceRecall = ((double) intersectionOfLabels)
 					/ ((double) classification.length);
 			sumOfRecall += Double.isNaN(instanceRecall) ? 0 : instanceRecall;
+
+			if (unionOfLabels == 0)
+				emptySamples++;
 		}
-		final double accuracy = sumOfAccuracies / (instances.length);
-		final double recall = sumOfRecall / (instances.length);
+		final double accuracy = sumOfAccuracies
+				/ (instances.length - emptySamples);
+		final double recall = sumOfRecall / (instances.length - emptySamples);
 
 		if (printResults) {
 			System.out.println("Accuracy: " + accuracy);
