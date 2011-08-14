@@ -76,6 +76,24 @@ public class FoldEvaluator {
 
 	}
 
+	public void evaluate() {
+
+		for (int i = 0; i < runs; i++) {
+			AbstractLearningClassifierSystem foldLCS = prototype.createNew();
+			System.out.println("Training Fold " + i);
+			loadFold(i, foldLCS);
+			foldLCS.train();
+
+			// Gather results...
+			double[] results = foldLCS.getEvaluations(testSet);
+			gatherResults(results, i);
+		}
+
+		double[] means = calcMean(this.evals);
+		// print results
+		printEvals(means);
+	}
+
 	private double[] calcMean(double[][] results) {
 		double[] means = new double[results[0].length];
 		for (int i = 0; i < means.length; i++) {
@@ -86,23 +104,6 @@ public class FoldEvaluator {
 			means[i] = (sum) / (results.length);
 		}
 		return means;
-	}
-
-	public void evaluate() {
-
-		for (int i = 0; i < runs; i++) {
-			AbstractLearningClassifierSystem foldLCS = prototype.createNew();
-			System.out.println("Training Fold " + i);
-			loadFold(i, foldLCS);
-			foldLCS.train();
-			// Gather results...
-			double[] results = foldLCS.getEvaluations(testSet);
-			gatherResults(results, i);
-		}
-
-		double[] means = calcMean(this.evals);
-		// print results
-		printEvals(means);
 	}
 
 	private void gatherResults(double[] results, int fold) {

@@ -83,7 +83,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		/**
 		 * Strength.
 		 */
-		public double str = 0;
+		public double str = 1;
 
 		/**
 		 * Number of active labels.
@@ -95,7 +95,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		 */
 		public MlSSLCSClassifierData() {
 			ns = new double[numberOfLabels];
-			Arrays.fill(ns, 1);
+			Arrays.fill(ns, 5);
 		}
 
 	}
@@ -298,7 +298,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				final float classificationAbility = currentClassifier
 						.classifyLabelCorrectly(instanceIndex, lbl);
 
-				if (classificationAbility > 0 && totalCorrectRules > 0) {
+				if ((classificationAbility > 0) && (totalCorrectRules > 0)) {
 					data.str += (strengthReward) / (totalCorrectRules);
 					if (Double.isInfinite(data.str))
 						data.str = 10;
@@ -333,8 +333,8 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				currentClassifier.experience++;
 			}
 
-			data.fitness = (data.str < 0 || data.activeLabels == 0) ? 0
-					: (data.str / ((double) data.msa));
+			data.fitness = ((data.str < 0) || (data.activeLabels == 0)) ? 0
+					: (data.str / (data.msa));
 			if ((((double) data.tp) / ((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold)
 					&& (currentClassifier.experience > subsumptionExperienceThreshold))
 				currentClassifier.setSubsumptionAbility(true);

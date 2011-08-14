@@ -24,8 +24,6 @@
  */
 package gr.auth.ee.lcs.impementations;
 
-import java.io.IOException;
-
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.FoldEvaluator;
@@ -35,6 +33,8 @@ import gr.auth.ee.lcs.impementations.meta.EnsembleGMlASLCS;
 import gr.auth.ee.lcs.impementations.meta.EnsembleRTASLCS;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
+import java.io.IOException;
+
 /**
  * Trains any of the MlTypes of LCS
  * 
@@ -42,6 +42,27 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
  * 
  */
 public class AllMlTypes {
+
+	/**
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
+		final String lcsType = SettingsLoader.getStringSetting("lcsType", "");
+		AbstractLearningClassifierSystem lcs = getLCS(lcsType);
+
+		final String file = SettingsLoader.getStringSetting("filename", "");
+		final String testFile = SettingsLoader.getStringSetting("testFile", "");
+		if (testFile == "") {
+			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
+			loader.evaluate();
+		} else {
+			ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
+			loader.loadInstancesWithTest(file, testFile);
+			loader.evaluate();
+		}
+
+	}
 
 	private static AbstractLearningClassifierSystem getLCS(String name)
 			throws IOException {
@@ -59,6 +80,8 @@ public class AllMlTypes {
 			return new RTASLCS();
 		} else if (name.equals("MlUCS")) {
 			return new MlUCS();
+		} else if (name.equals("GMlSSLCS")) {
+			return new GMlSSLCS();
 		} else if (name.equals("GMlUCS")) {
 			return new GMlUCS();
 		} else if (name.equals("MlASLCS")) {
@@ -87,27 +110,6 @@ public class AllMlTypes {
 			return new EnsembleRTASLCS(null);
 		}
 		return null;
-	}
-
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		final String lcsType = SettingsLoader.getStringSetting("lcsType", "");
-		AbstractLearningClassifierSystem lcs = getLCS(lcsType);
-
-		final String file = SettingsLoader.getStringSetting("filename", "");
-		final String testFile = SettingsLoader.getStringSetting("testFile", "");
-		if (testFile == "") {
-			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
-			loader.evaluate();
-		} else {
-			ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
-			loader.loadInstancesWithTest(file, testFile);
-			loader.evaluate();
-		}
-
 	}
 
 }
