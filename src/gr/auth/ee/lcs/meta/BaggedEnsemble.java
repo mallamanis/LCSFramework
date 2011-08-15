@@ -24,10 +24,11 @@
  */
 package gr.auth.ee.lcs.meta;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+
 import java.util.Arrays;
 
 import weka.core.Instances;
-import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 
 /**
  * A wrapper for bagged LCSs.

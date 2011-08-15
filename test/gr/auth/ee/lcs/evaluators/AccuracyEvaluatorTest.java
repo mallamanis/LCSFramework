@@ -29,7 +29,6 @@ import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 import org.junit.Before;
@@ -51,7 +50,7 @@ public final class AccuracyEvaluatorTest {
 	MockLCS lcs;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		lcs = new MockLCS();
 
 		// Create instances

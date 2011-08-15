@@ -26,7 +26,6 @@ package gr.auth.ee.lcs.data;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
 /**

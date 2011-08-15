@@ -24,12 +24,10 @@
  */
 package gr.auth.ee.lcs.data.representations.complex;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
@@ -96,7 +94,7 @@ public class GenericMlRepresentationTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		lcs = new MockLCS();
 
 		final GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];

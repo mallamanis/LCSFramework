@@ -3,6 +3,14 @@
  */
 package gr.auth.ee.lcs.impementations.meta;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.FoldEvaluator;
+import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
+import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
+import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.meta.BaggedEnsemble;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
@@ -11,13 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import weka.core.Instances;
-import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.FoldEvaluator;
-import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
-import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
-import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
-import gr.auth.ee.lcs.meta.BaggedEnsemble;
-import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
  * An Ensemble of the BRSeqUCS
@@ -53,11 +54,7 @@ public class EnsembleBRSeqUCSComb extends BaggedEnsemble {
 				.getNumericSetting("ensembleSize", 7)];
 
 		for (int i = 0; i < ensemble.length; i++)
-			try {
-				ensemble[i] = new BRSGUCSCombination();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			ensemble[i] = new BRSGUCSCombination();
 
 	}
 

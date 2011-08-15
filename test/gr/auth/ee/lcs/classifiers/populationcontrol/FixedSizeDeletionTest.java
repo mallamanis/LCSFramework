@@ -30,12 +30,13 @@ import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
+
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,10 +60,11 @@ public class FixedSizeDeletionTest {
 	ClassifierSet population;
 
 	/**
+	 * @throws IOException
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws IOException {
 		SettingsLoader.loadSettings();
 		lcs = new MockLCS();
 		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(

@@ -24,11 +24,11 @@
  */
 package gr.auth.ee.lcs.data;
 
-import java.io.Serializable;
-
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
+
+import java.io.Serializable;
+
 
 /**
  * Simple Mock Update Strategy.

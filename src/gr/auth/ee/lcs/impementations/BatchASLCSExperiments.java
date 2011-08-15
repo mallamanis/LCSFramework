@@ -24,11 +24,11 @@
  */
 package gr.auth.ee.lcs.impementations;
 
-import java.io.IOException;
-
 import gr.auth.ee.lcs.BAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
+
+import java.io.IOException;
 
 /**
  * @author Miltiadis Allamanis

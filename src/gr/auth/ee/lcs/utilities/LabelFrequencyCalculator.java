@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.utilities;
 
 import java.util.Iterator;
-
 import java.util.TreeMap;
 
 /**
@@ -74,6 +73,33 @@ public class LabelFrequencyCalculator {
 	}
 
 	/**
+	 * Calculate the imbalance rate.
+	 * 
+	 * @param map
+	 *            a map for all possible classes/labels and their respective
+	 *            frequencies
+	 * @return the imbalance rate
+	 */
+	public static double ImbalanceRate(TreeMap<String, Integer> map) {
+		int minCount = Integer.MAX_VALUE;
+		int maxCount = Integer.MIN_VALUE;
+
+		Iterator<String> keys = map.keySet().iterator();
+
+		while (keys.hasNext()) {
+			String currentKey = keys.next();
+			final int currentCount = map.get(currentKey);
+			if (currentCount > maxCount)
+				maxCount = currentCount;
+			if (currentCount < minCount)
+				minCount = currentCount;
+		}
+
+		return ((double) maxCount) / ((double) minCount);
+
+	}
+
+	/**
 	 * Generate a unique identifier for a specific instance, given some label
 	 * activations.
 	 * 
@@ -95,25 +121,6 @@ public class LabelFrequencyCalculator {
 		}
 
 		return result;
-	}
-
-	public static double ImbalanceRate(TreeMap<String, Integer> map) {
-		int minCount = Integer.MAX_VALUE;
-		int maxCount = Integer.MIN_VALUE;
-
-		Iterator<String> keys = map.keySet().iterator();
-
-		while (keys.hasNext()) {
-			String currentKey = keys.next();
-			final int currentCount = map.get(currentKey);
-			if (currentCount > maxCount)
-				maxCount = currentCount;
-			if (currentCount < minCount)
-				minCount = currentCount;
-		}
-
-		return ((double) maxCount) / ((double) minCount);
-
 	}
 
 }

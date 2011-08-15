@@ -3,10 +3,6 @@
  */
 package gr.auth.ee.lcs.impementations.meta;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
@@ -14,6 +10,11 @@ import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
 import gr.auth.ee.lcs.impementations.RTASLCS;
 import gr.auth.ee.lcs.meta.BaggedEnsemble;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import weka.core.Instances;
 
 /**
  * An ensemble of RTASLCSs

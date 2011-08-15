@@ -24,14 +24,13 @@
  */
 package gr.auth.ee.lcs.geneticalgorithm.operators;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class UniformMutationTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 	}
 
 	/**

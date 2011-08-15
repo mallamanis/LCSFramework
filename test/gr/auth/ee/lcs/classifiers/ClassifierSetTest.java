@@ -27,9 +27,6 @@ package gr.auth.ee.lcs.classifiers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.MockLCS;
-import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 

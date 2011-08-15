@@ -30,7 +30,6 @@ import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +58,7 @@ public final class BestFitnessTournamentSelectorTest {
 	MockLCS lcs;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		lcs = new MockLCS();
 		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
 				.33, 2, lcs);

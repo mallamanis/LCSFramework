@@ -26,7 +26,6 @@ package gr.auth.ee.lcs.calibration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.calibration.ProportionalCut;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +63,7 @@ public class ProportionalCutTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 	}
 
 	/**

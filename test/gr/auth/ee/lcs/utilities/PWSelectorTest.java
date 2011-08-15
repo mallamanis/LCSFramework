@@ -26,7 +26,6 @@ package gr.auth.ee.lcs.utilities;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.utilities.PairwiseLabelSelector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +42,7 @@ public class PWSelectorTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 	}
 
 	/**

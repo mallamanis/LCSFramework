@@ -24,10 +24,8 @@
  */
 package gr.auth.ee.lcs.geneticalgorithm.selectors;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
@@ -35,7 +33,8 @@ import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.ASLCSUpdateAlgorithm;
-import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +61,7 @@ public class RouletteSelectorTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		lcs = new MockLCS();
 		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
 				.33, 2, lcs);

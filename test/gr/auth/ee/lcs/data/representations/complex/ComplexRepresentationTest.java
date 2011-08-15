@@ -28,7 +28,6 @@ import gr.auth.ee.lcs.MockLCS;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.representations.complex.SingleClassRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
@@ -195,7 +194,7 @@ public final class ComplexRepresentationTest {
 	}
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		lcs = new MockLCS();
 		final SingleClassRepresentation.AbstractAttribute list[] = new AbstractAttribute[4];
 		final String[] names = { "Good", "Mediocre", "Bad" };

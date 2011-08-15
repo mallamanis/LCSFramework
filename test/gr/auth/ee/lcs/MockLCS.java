@@ -24,12 +24,12 @@
  */
 package gr.auth.ee.lcs;
 
-import java.io.IOException;
-
-import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.MockTransformBridge;
 import gr.auth.ee.lcs.data.MockUpdateStrategy;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
+
+import java.io.IOException;
+
 import weka.core.Instances;
 
 /**

@@ -26,15 +26,13 @@ package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gr.auth.ee.lcs.MockLCS;
+import gr.auth.ee.lcs.classifiers.Classifier;
+import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 import java.util.Arrays;
-
-import gr.auth.ee.lcs.MockLCS;
-import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.geneticalgorithm.operators.SinglePointCrossover;
-import gr.auth.ee.lcs.utilities.ExtendedBitSet;
-import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import org.junit.Test;
 

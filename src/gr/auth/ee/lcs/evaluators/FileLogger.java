@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-
 import gr.auth.ee.lcs.data.IEvaluator;
 
 import java.io.BufferedWriter;

@@ -21,15 +21,6 @@
  */
 package gr.auth.ee.lcs.impementations.meta;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.TreeMap;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
@@ -52,6 +43,16 @@ import gr.auth.ee.lcs.utilities.BinaryRelevanceSelector;
 import gr.auth.ee.lcs.utilities.ILabelSelector;
 import gr.auth.ee.lcs.utilities.LabelFrequencyCalculator;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.TreeMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import weka.core.Instances;
 
 public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
@@ -203,7 +204,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 	 * @throws IOException
 	 * 
 	 */
-	public BRSGUCSCombination() throws IOException {
+	public BRSGUCSCombination() {
 
 		inputFile = SettingsLoader.getStringSetting("filename", "");
 		numberOfLabels = (int) SettingsLoader.getNumericSetting(
@@ -226,12 +227,9 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
-		try {
-			return new BRSGUCSCombination();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+
+		return new BRSGUCSCombination();
+
 	}
 
 	@Override

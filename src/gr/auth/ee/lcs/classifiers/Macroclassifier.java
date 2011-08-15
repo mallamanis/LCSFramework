@@ -96,4 +96,9 @@ public class Macroclassifier implements Serializable {
 		return this.myClassifier.equals(macroClassifier.myClassifier);
 	}
 
+	@Override
+	public final String toString() {
+		return this.myClassifier.toString() + "numerosity: " + this.numerosity;
+	}
+
 }

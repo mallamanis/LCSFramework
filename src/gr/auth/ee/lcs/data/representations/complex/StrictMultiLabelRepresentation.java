@@ -264,8 +264,17 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		 */
 		private double threshold = 0;
 
+		/**
+		 * The target label cardinality to be achieved when voting.
+		 */
 		private final float targetLC;
 
+		/**
+		 * Constructor.
+		 * 
+		 * @param lc
+		 *            the label cardinality of the problem.
+		 */
 		public VotingClassificationStrategy(float lc) {
 			targetLC = lc;
 		}
