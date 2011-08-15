@@ -89,54 +89,6 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 		return strategy.createStateClassifierObject();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @param labelIndex
-	 *            the label index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex, final int labelIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) > 0)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
-	/**
-	 * Generates the set of classifier that advocate clearly against or for the
-	 * label at the given index.
-	 * 
-	 * @param matchSet
-	 *            the matchSet
-	 * @param instanceIndex
-	 *            the instance we are trying to match
-	 * @param labelIndex
-	 *            the label index we are trying to match
-	 * @return
-	 */
-	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
-			final int instanceIndex, final int labelIndex) {
-		final ClassifierSet labelMatchSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
-					labelIndex) != 0)
-				labelMatchSet.addClassifier(cl, false);
-		}
-		return labelMatchSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -255,6 +207,55 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 				population.deleteClassifier(cl);
 		}
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @param labelIndex
+	 *            the label index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex, final int labelIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
+					labelIndex) > 0)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/**
+	 * Generates the set of classifier that advocate clearly against or for the
+	 * label at the given index.
+	 * 
+	 * @param matchSet
+	 *            the matchSet
+	 * @param instanceIndex
+	 *            the instance we are trying to match
+	 * @param labelIndex
+	 *            the label index we are trying to match
+	 * @return
+	 */
+	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
+			final int instanceIndex, final int labelIndex) {
+		final ClassifierSet labelMatchSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
+					labelIndex) != 0)
+				labelMatchSet.addClassifier(cl, false);
+		}
+		return labelMatchSet;
 	}
 
 }
