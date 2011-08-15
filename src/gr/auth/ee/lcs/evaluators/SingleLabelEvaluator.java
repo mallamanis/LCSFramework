@@ -25,7 +25,7 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
+
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;

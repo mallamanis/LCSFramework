@@ -37,8 +37,8 @@ public interface IEvaluator {
 	/**
 	 * Evaluate a set of classifiers.
 	 * 
-	 * @param classifiers
-	 *            the ClassifierSet that we are going to use for evaluation
+	 * @param lcs
+	 *            the LCS that we are going to use for evaluation
 	 * @return a numeric value indicating ClassifierSet's quality
 	 */
 	double evaluateLCS(AbstractLearningClassifierSystem lcs);

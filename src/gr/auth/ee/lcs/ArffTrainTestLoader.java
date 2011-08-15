@@ -63,6 +63,9 @@ public class ArffTrainTestLoader {
 		myLcs = lcs;
 	}
 
+	/**
+	 * Perform evaluation.
+	 */
 	public void evaluate() {
 		myLcs.train();
 		final double[] evals = myLcs.getEvaluations(testSet);

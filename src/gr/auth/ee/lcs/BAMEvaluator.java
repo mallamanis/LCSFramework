@@ -42,11 +42,36 @@ import java.io.IOException;
  */
 public class BAMEvaluator {
 
+	/**
+	 * Constant indicating the mlIdentity testbed problem.
+	 */
 	public final static int TYPE_IDENTITY = 1;
+
+	/**
+	 * Constant indicating the mlPosition testbed problem.
+	 */
 	public final static int TYPE_POSITION = 2;
 
+	/**
+	 * The learning classifier system that the BAM will be evaluated on.
+	 */
 	final AbstractLearningClassifierSystem lcs;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param myLcs
+	 *            the LCS that the evaluation will be performed on.
+	 * @param filename
+	 *            the filename of the testbed problem.
+	 * @param type
+	 *            the type of the testbed problem TYPE_IDENTITY, TYPE_POSITION
+	 * @param size
+	 *            the size of the testbed problem (N parameter)
+	 * @param representationType
+	 *            the type of the representation to be used
+	 * @param name
+	 */
 	public BAMEvaluator(final AbstractLearningClassifierSystem myLcs,
 			final String filename, final int type, final int size,
 			final int representationType, final String name) {
@@ -73,6 +98,9 @@ public class BAMEvaluator {
 		}
 	}
 
+	/**
+	 * Perform evaluation
+	 */
 	public void evaluate() {
 		lcs.train();
 		SortPopulationControl srt = new SortPopulationControl(

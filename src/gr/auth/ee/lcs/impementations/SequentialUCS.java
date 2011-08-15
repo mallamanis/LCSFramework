@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -56,22 +55,6 @@ import weka.core.Instances;
  * 
  */
 public class SequentialUCS extends AbstractLearningClassifierSystem {
-	/**
-	 * Main for running the SMl-UCS.
-	 * 
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
-
-		final String file = SettingsLoader.getStringSetting("filename", "");
-
-		final SequentialUCS sucs = new SequentialUCS();
-		FoldEvaluator loader = new FoldEvaluator(10, sucs, file);
-		loader.evaluate();
-
-	}
 
 	/**
 	 * The input file used (.arff).
@@ -140,6 +123,9 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 	private final int UCS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
 			.getNumericSetting("UCS_Experience_Theshold", 10);
 
+	/**
+	 * The problem target label cardinality.
+	 */
 	private final float targetLc = (float) SettingsLoader.getNumericSetting(
 			"datasetLabelCardinality", 1);
 

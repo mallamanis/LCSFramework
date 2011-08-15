@@ -25,14 +25,12 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
-import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.BestFitnessClassificationStrategy;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlASLCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
@@ -57,19 +55,6 @@ import weka.core.Instances;
  * 
  */
 public class GMlASLCS extends AbstractLearningClassifierSystem {
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
-		final String file = SettingsLoader.getStringSetting("filename", "");
-
-		final GMlASLCS gmlaslcs = new GMlASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, gmlaslcs, file);
-		loader.evaluate();
-
-	}
 
 	/**
 	 * The input file used (.arff).

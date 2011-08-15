@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -56,19 +55,6 @@ import weka.core.Instances;
  * 
  */
 public class RTASLCS extends AbstractLearningClassifierSystem {
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
-		final String file = SettingsLoader.getStringSetting("filename", "");
-
-		final RTASLCS rtaslcs = new RTASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, rtaslcs, file);
-		loader.evaluate();
-
-	}
 
 	/**
 	 * The input file used (.arff).
@@ -150,6 +136,9 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final ThresholdClassificationStrategy str;
 
+	/**
+	 * The rule representation used.
+	 */
 	final UniLabelRepresentation rep;
 
 	/**
@@ -248,7 +237,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		
+
 		internalValidationCalibration(selfAcc);
 
 		results[4] = accEval.evaluateLCS(this);
@@ -260,10 +249,10 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	}
 
 	/**
-	 * @param the evaluator to be used for calibration
+	 * @param the
+	 *            evaluator to be used for calibration
 	 */
-	public void internalValidationCalibration(
-			final IEvaluator selfAcc) {
+	public void internalValidationCalibration(final IEvaluator selfAcc) {
 		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 		final InternalValidation ival = new InternalValidation(this, str,

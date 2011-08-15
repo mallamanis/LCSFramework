@@ -53,6 +53,9 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 	 */
 	public final static int TYPE_RECALL = 1;
 
+	/**
+	 * The current type of evaluation.
+	 */
 	private final int currentType;
 
 	/**

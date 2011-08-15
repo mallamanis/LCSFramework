@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.calibration;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.data.IEvaluator;
 
@@ -55,8 +54,8 @@ public class InternalValidation {
 	/**
 	 * Constructor.
 	 * 
-	 * @param rules
-	 *            the rules to perform validation on.
+	 * @param lcs
+	 *            the LCS to perform evaluation on.
 	 * @param classificationStrategy
 	 *            the classification strategy used.
 	 * @param metric

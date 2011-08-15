@@ -24,6 +24,12 @@ import java.util.Arrays;
 
 import weka.core.Instances;
 
+/**
+ * An alternative GMlASLCS implementation
+ * 
+ * @author Miltiadis Allamanis
+ * 
+ */
 public class GMlASLCS2 extends AbstractLearningClassifierSystem {
 
 	/**

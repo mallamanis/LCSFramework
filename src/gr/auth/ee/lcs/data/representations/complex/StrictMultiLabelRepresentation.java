@@ -139,8 +139,8 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		@Override
 		public boolean isMatch(final float attributeVision,
 				final ExtendedBitSet testedChromosome) {
-			return (testedChromosome.get(positionInChromosome) == ((attributeVision == 1.) ? true
-					: false));
+			return (testedChromosome.get(positionInChromosome) == ((Float
+					.compare(attributeVision, 1) == 0) ? true : false));
 
 		}
 
@@ -298,6 +298,34 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		}
 
 		/**
+		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
+		 * threshold.
+		 * 
+		 * @param instances
+		 *            the instances to calibrate threshold on
+		 * @param rules
+		 *            the rules used to classify the instances and provide
+		 *            confidence values.
+		 */
+		public void proportionalCutCalibration(final double[][] instances,
+				final ClassifierSet rules) {
+			final float[][] confidenceValues = new float[instances.length][];
+			for (int i = 0; i < instances.length; i++) {
+				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
+			}
+
+			final ProportionalCut pCut = new ProportionalCut();
+			this.threshold = pCut.calibrate(targetLC, confidenceValues);
+			System.out.println("Threshold set to " + this.threshold);
+
+		}
+
+		@Override
+		public void setThreshold(double threshold) {
+			this.threshold = threshold;
+		}
+
+		/**
 		 * Create and normalized the confidence array for a vision vector.
 		 * 
 		 * @param aSet
@@ -331,33 +359,6 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 				}
 			}
 			return votingTable;
-		}
-
-		/**
-		 * Perform a proportional Cut (Pcut) on a set of instances to calibrate
-		 * threshold.
-		 * 
-		 * @param instances
-		 *            the instances to calibrate threshold on
-		 * @param rules
-		 *            the rules used to classify the instances and provide
-		 *            confidence values.
-		 */
-		public void proportionalCutCalibration(final double[][] instances,
-				final ClassifierSet rules) {
-			final float[][] confidenceValues = new float[instances.length][];
-			for (int i = 0; i < instances.length; i++) {
-				confidenceValues[i] = getConfidenceArray(rules, instances[i]);
-			}
-
-			final ProportionalCut pCut = new ProportionalCut();
-			this.threshold = pCut.calibrate(targetLC, confidenceValues);
-			System.out.println("Threshold set to " + this.threshold);
-
-		}
-
-		public void setThreshold(double threshold) {
-			this.threshold = threshold;
 		}
 
 	}
@@ -558,25 +559,6 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
-	 * createClassRepresentation(weka.core.Instances)
-	 */
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		for (int i = 0; i < numberOfLabels; i++) {
-
-			final int labelIndex = attributeList.length - numberOfLabels + i;
-
-			final String attributeName = instances.attribute(labelIndex).name();
-
-			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth
 	 * .ee.lcs.classifiers.Classifier)
@@ -640,6 +622,25 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public void setClassification(final Classifier aClassifier, final int action) {
 		final int labelIndex = attributeList.length - numberOfLabels + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.representations.ComplexRepresentation#
+	 * createClassRepresentation(weka.core.Instances)
+	 */
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		for (int i = 0; i < numberOfLabels; i++) {
+
+			final int labelIndex = attributeList.length - numberOfLabels + i;
+
+			final String attributeName = instances.attribute(labelIndex).name();
+
+			attributeList[labelIndex] = new Label(chromosomeSize, attributeName);
+		}
 
 	}
 

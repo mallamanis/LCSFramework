@@ -53,7 +53,7 @@ public class AllMlTypes {
 
 		final String file = SettingsLoader.getStringSetting("filename", "");
 		final String testFile = SettingsLoader.getStringSetting("testFile", "");
-		if (testFile == "") {
+		if (testFile.equals("")) {
 			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
 			loader.evaluate();
 		} else {

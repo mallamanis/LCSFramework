@@ -169,6 +169,9 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	 */
 	private final StrictMultiLabelRepresentation rep;
 
+	/**
+	 * A best fitness classification strategy.
+	 */
 	private final BestFitnessClassificationStrategy clStr;
 
 	/**

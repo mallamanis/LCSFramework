@@ -41,16 +41,39 @@ import weka.core.Instances;
  */
 public class FoldEvaluator {
 
+	/**
+	 * The number of folds to separate the dataset.
+	 */
 	private final int numOfFolds;
 
+	/**
+	 * The LCS prototype to be evaluated.
+	 */
 	private final AbstractLearningClassifierSystem prototype;
 
+	/**
+	 * The instances that the LCS will be evaluated on.
+	 */
 	private final Instances instances;
+
+	/**
+	 * The train set.
+	 */
 	private Instances trainSet;
+
+	/**
+	 * The test set.
+	 */
 	private Instances testSet;
 
+	/**
+	 * The evaluations.
+	 */
 	private double[][] evals;
 
+	/**
+	 * The runs to run.
+	 */
 	final int runs;
 
 	/**
@@ -76,6 +99,9 @@ public class FoldEvaluator {
 
 	}
 
+	/**
+	 * Perform evaluation.
+	 */
 	public void evaluate() {
 
 		for (int i = 0; i < runs; i++) {

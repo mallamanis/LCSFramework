@@ -145,6 +145,9 @@ public class MlSSLCS extends AbstractLearningClassifierSystem {
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
 			.getNumericSetting("UpdateOnlyPercentage", .1);
 
+	/**
+	 * The target label cardinality.
+	 */
 	private final float targetLc = (float) SettingsLoader.getNumericSetting(
 			"datasetLabelCardinality", 1);
 
@@ -153,6 +156,9 @@ public class MlSSLCS extends AbstractLearningClassifierSystem {
 	 */
 	private final int numberOfLabels;
 
+	/**
+	 * The strict ml representation used.
+	 */
 	final StrictMultiLabelRepresentation rep;
 
 	/**

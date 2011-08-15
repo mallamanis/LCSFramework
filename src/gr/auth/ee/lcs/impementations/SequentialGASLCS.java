@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -56,20 +55,6 @@ import weka.core.Instances;
  * 
  */
 public class SequentialGASLCS extends AbstractLearningClassifierSystem {
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
-
-		final String file = SettingsLoader.getStringSetting("filename", "");
-
-		final SequentialGASLCS sgaslcs = new SequentialGASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, sgaslcs, file);
-		loader.evaluate();
-
-	}
 
 	/**
 	 * The input file used (.arff).

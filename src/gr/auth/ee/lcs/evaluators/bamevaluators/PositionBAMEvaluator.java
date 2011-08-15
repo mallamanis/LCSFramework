@@ -24,14 +24,13 @@
  */
 package gr.auth.ee.lcs.evaluators.bamevaluators;
 
-import java.util.Vector;
-
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IEvaluator;
 import gr.auth.ee.lcs.evaluators.BAMPercentageEvaluator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+
+import java.util.Vector;
 
 /**
  * A mlPosition evaluator
@@ -41,6 +40,9 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
  */
 public class PositionBAMEvaluator implements IEvaluator {
 
+	/**
+	 * The LCS being evaluated.
+	 */
 	private final AbstractLearningClassifierSystem lcs;
 
 	/**
@@ -55,7 +57,7 @@ public class PositionBAMEvaluator implements IEvaluator {
 	/**
 	 * A vector containing the chromosomes of the BAM.
 	 */
-	private Vector<Classifier> bamChromosomes;
+	private final Vector<Classifier> bamChromosomes;
 
 	/**
 	 * Constructor.

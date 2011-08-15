@@ -24,14 +24,13 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
-import java.util.Arrays;
-import java.util.Vector;
-
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+
+import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * Evaluates a ClassifierSet for the exact percentage of the BAM that it
@@ -42,8 +41,17 @@ import gr.auth.ee.lcs.utilities.ExtendedBitSet;
  */
 public class BAMPercentageEvaluator implements IEvaluator {
 
+	/**
+	 * The best action map rules.
+	 */
 	private final Vector<Classifier> bestActionMap;
 
+	/**
+	 * The constructor.
+	 * 
+	 * @param bamChromosomes
+	 *            a vector containing the chromosomes of the BAM
+	 */
 	public BAMPercentageEvaluator(final Vector<Classifier> bamChromosomes) {
 		bestActionMap = bamChromosomes;
 	}

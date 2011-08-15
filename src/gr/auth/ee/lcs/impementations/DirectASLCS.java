@@ -24,12 +24,7 @@
  */
 package gr.auth.ee.lcs.impementations;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import weka.core.Instances;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -47,6 +42,11 @@ import gr.auth.ee.lcs.geneticalgorithm.operators.UniformBitMutation;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import weka.core.Instances;
+
 /**
  * The DASLCS Implementation
  * 
@@ -54,18 +54,6 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
  * 
  */
 public class DirectASLCS extends AbstractLearningClassifierSystem {
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
-		final String file = SettingsLoader.getStringSetting("filename", "");
-		final DirectASLCS daslcs = new DirectASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, daslcs, file);
-		loader.evaluate();
-
-	}
 
 	/**
 	 * The input file used (.arff).

@@ -17,8 +17,9 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 /**
  * An ensemble of RTASLCSs
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class EnsembleRTASLCS extends BaggedEnsemble {
 
@@ -42,7 +43,7 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 	 * 
 	 * @see gr.auth.ee.lcs.meta.BaggedEnsemble#createNew()
 	 */
-	@Override	
+	@Override
 	public AbstractLearningClassifierSystem createNew() {
 
 		AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
@@ -57,8 +58,7 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 	public String[] getEvaluationNames() {
 		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
-				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)"
-				};
+				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
 		return names;
 	}
 
@@ -104,7 +104,6 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 		results[5] = recEval.evaluateLCS(this);
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
-		
 
 		return results;
 	}

@@ -25,8 +25,6 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.ArffTrainTestLoader;
-import gr.auth.ee.lcs.FoldEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -56,27 +54,6 @@ import weka.core.Instances;
  * 
  */
 public class GMlUCS extends AbstractLearningClassifierSystem {
-
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		SettingsLoader.loadSettings();
-
-		final String file = SettingsLoader.getStringSetting("filename", "");
-		final String testFile = SettingsLoader.getStringSetting("testFile", "");
-		final GMlUCS gmlucs = new GMlUCS();
-		if (testFile == "") {
-			FoldEvaluator loader = new FoldEvaluator(10, gmlucs, file);
-			loader.evaluate();
-		} else {
-			ArffTrainTestLoader loader = new ArffTrainTestLoader(gmlucs);
-			loader.loadInstancesWithTest(file, testFile);
-			loader.evaluate();
-		}
-
-	}
 
 	/**
 	 * The input file used (.arff).
