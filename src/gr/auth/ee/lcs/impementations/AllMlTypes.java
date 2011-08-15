@@ -88,6 +88,8 @@ public class AllMlTypes {
 			return new MlASLCS();
 		} else if (name.equals("GMlASLCS")) {
 			return new GMlASLCS();
+		} else if (name.equals("GMlASLCS2")) {
+			return new GMlASLCS2();
 		} else if (name.equals("SequentialUCS")) {
 			return new SequentialUCS();
 		} else if (name.equals("SequentialASLCS")) {
@@ -111,5 +113,4 @@ public class AllMlTypes {
 		}
 		return null;
 	}
-
 }
