@@ -66,6 +66,8 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	 *            the size of the mlPosition_N
 	 * @param type
 	 *            the type of representation to be used.
+	 * @param aLcs
+	 *            the LCS to be evaluated on.
 	 */
 	public IdentityBAMEvaluator(final int n, final int type,
 			final AbstractLearningClassifierSystem aLcs) {

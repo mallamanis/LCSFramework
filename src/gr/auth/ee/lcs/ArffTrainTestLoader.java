@@ -70,7 +70,7 @@ public class ArffTrainTestLoader {
 		myLcs.train();
 		final double[] evals = myLcs.getEvaluations(testSet);
 		final String[] names = myLcs.getEvaluationNames();
-
+		System.out.println(myLcs.rulePopulation);
 		for (int i = 0; i < evals.length; i++) {
 			System.out.println(names[i] + ": " + evals[i]);
 		}

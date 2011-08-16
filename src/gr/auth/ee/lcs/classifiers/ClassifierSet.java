@@ -357,18 +357,7 @@ public class ClassifierSet implements Serializable {
 	 * Print all classifiers in the set.
 	 */
 	public final void print() {
-		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
-			System.out
-					.println(this.getClassifier(i).toString()
-							+ " fit:"
-							+ this.getClassifier(i)
-									.getComparisonValue(
-											AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
-							+ " exp:" + this.getClassifier(i).experience
-							+ " num:" + this.getClassifierNumerosity(i)
-							+ "cov:" + this.getClassifier(i).getCoverage());
-			System.out.println(this.getClassifier(i).getUpdateSpecificData());
-		}
+		System.out.println(toString());
 	}
 
 	/**
@@ -390,6 +379,23 @@ public class ClassifierSet implements Serializable {
 			this.totalNumerosity -= numerosity;
 			this.addClassifier(cl, true);
 		}
+	}
+
+	@Override
+	public String toString() {
+		String response = "";
+		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
+			response += this.getClassifier(i).toString()
+					+ " fit:"
+					+ this.getClassifier(i)
+							.getComparisonValue(
+									AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
+					+ " exp:" + this.getClassifier(i).experience + " num:"
+					+ this.getClassifierNumerosity(i) + "cov:"
+					+ this.getClassifier(i).getCoverage() + "\n";
+			response += this.getClassifier(i).getUpdateSpecificData() + "\n";
+		}
+		return response;
 	}
 
 }
