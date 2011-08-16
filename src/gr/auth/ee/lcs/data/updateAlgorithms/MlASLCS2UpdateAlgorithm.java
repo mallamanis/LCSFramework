@@ -42,7 +42,7 @@ import java.io.Serializable;
 public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
-	 * A data object for the *SLCS update algorithms.
+	 * A data object for the MlASLCS2 update algorithms.
 	 * 
 	 * @author Miltos Allamanis
 	 * 
@@ -62,7 +62,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 		/**
 		 * niche set size estimation.
 		 */
-		public double ns = 100;
+		public double ns = 20;
 
 		/**
 		 * Match Set Appearances.
@@ -266,7 +266,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 				if (classificationAbility > 0) {
 					data.tp += 1;
 					final int labelNs = labelCorrectSets[l]
-							.getNumberOfMacroclassifiers();
+							.getTotalNumerosity();
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}
