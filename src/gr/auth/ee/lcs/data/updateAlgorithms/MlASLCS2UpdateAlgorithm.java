@@ -197,7 +197,8 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 	public String getData(Classifier aClassifier) {
 		final MlASLCSClassifierData data = ((MlASLCSClassifierData) aClassifier
 				.getUpdateDataObject());
-		return "tp:" + data.tp + "msa:" + data.msa + "ns:" + data.ns;
+		return "internalFitness:" + data.fitness + "tp:" + data.tp + "msa:"
+				+ data.msa + "ns:" + data.ns;
 	}
 
 	/*
@@ -256,7 +257,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 					.getUpdateDataObject();
 
 			for (int l = 0; l < numberOfLabels; l++) {
-				// Get classification ability for number of label
+				// Get classification ability for label l
 				float classificationAbility = cl.myClassifier
 						.classifyLabelCorrectly(instanceIndex, l);
 
@@ -267,16 +268,23 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 					data.tp += 1;
 					final int labelNs = labelCorrectSets[l]
 							.getTotalNumerosity();
+					assert (labelNs > 0);
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}
+				} else {
+					data.msa += 3; // Penalize 4x fp's
 				}
 				data.msa += 1;
 
 			}
 
 			cl.myClassifier.experience++;
-			data.ns = (data.ns * (data.msa - 1) + minCurrentNs) / (data.msa);
+			if (minCurrentNs != Integer.MAX_VALUE)
+				// data.ns = (data.ns * (cl.myClassifier.experience - 1) +
+				// minCurrentNs)
+				// / (cl.myClassifier.experience);
+				data.ns += .1 * (minCurrentNs - data.ns);
 			data.fitness = Math.pow(((double) (data.tp)) / (double) (data.msa),
 					n);
 			updateSubsumption(cl.myClassifier);
