@@ -42,7 +42,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	class SLCSClassifierData implements Serializable {
+	static class SLCSClassifierData implements Serializable {
 
 		/**
 		 * serial for versions.
@@ -184,7 +184,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 			Classifier cl = matchSet.getClassifier(i);
 			SLCSClassifierData data = ((SLCSClassifierData) cl
 					.getUpdateDataObject());
-			data.ns = (data.msa * data.ns + correctSetNumerosity)
+			data.ns = ((data.msa * data.ns) + correctSetNumerosity)
 					/ (data.msa + 1);
 			data.msa++;
 

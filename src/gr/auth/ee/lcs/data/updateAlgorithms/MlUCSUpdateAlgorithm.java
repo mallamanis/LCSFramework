@@ -50,7 +50,7 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	final class MlUCSClassifierData implements Serializable {
+	final static class MlUCSClassifierData implements Serializable {
 		/**
 		 * The serial used for serialization.
 		 */
@@ -182,28 +182,6 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	/**
-	 * Build active label array.
-	 * 
-	 * @param cl
-	 *            the classifier to build active labels array on
-	 */
-	private void buildActive(final Classifier cl) {
-		int active = 0;
-		final MlUCSClassifierData data = ((MlUCSClassifierData) cl
-				.getUpdateDataObject());
-		for (int i = 0; i < numberOfLabels; i++) {
-			if (cl.classifyLabelCorrectly(0, i) != 0) {
-				active++;
-				data.active[i] = true;
-			} else {
-				data.active[i] = false;
-			}
-		}
-
-		data.activeLabels = active;
-	}
-
-	/**
 	 * Calls covering operator.
 	 * 
 	 * @param population
@@ -223,120 +201,6 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public Serializable createStateClassifierObject() {
 		return new MlUCSClassifierData(numberOfLabels);
-	}
-
-	/**
-	 * Gather results from single-label updates.
-	 * 
-	 * @param matchSet
-	 *            the set of the classifiers that have been updated
-	 */
-	private void gatherResults(final ClassifierSet matchSet) {
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			final Classifier cl = matchSet.getClassifier(i);
-			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
-					.getUpdateDataObject());
-
-			if (data.activeLabels == 0) {
-				data.fitness = 0;
-				continue;
-			}
-			double fitnessMin = Double.MAX_VALUE;
-			double fitnessSum = 0;
-			double csMax = Double.MIN_VALUE;
-			double csSum = 0;
-			boolean inactive = true;
-			for (int label = 0; label < numberOfLabels; label++) {
-				if (!data.active[label])
-					continue;
-				if (fitnessMin > data.labelFitness[label])
-					fitnessMin = data.labelFitness[label];
-				fitnessSum += 1. / data.labelFitness[label];
-				inactive = false;
-				if (csMax < data.cs[label])
-					csMax = data.cs[label];
-				csSum += data.cs[label];
-			}
-
-			int totalTp = 0;
-			int msa = 0;
-			for (int j = 0; j < numberOfLabels; j++) {
-				totalTp += data.tp[j];
-				msa += data.fp[j] + data.tp[j];
-			}
-			data.acc = (((double) totalTp) / ((double) msa));
-			if (data.acc > acc0)
-				cl.setSubsumptionAbility(true);
-			else
-				cl.setSubsumptionAbility(false);
-
-			final double experience = cl.experience;
-			final double meanWeight = Math.exp(-experience / 800.);
-			final double bestWeight = 1 - meanWeight;
-			final double fitness = ((data.activeLabels) / (fitnessSum)
-					* bestWeight + fitnessMin * meanWeight);
-			final double cs = (csSum) / (data.activeLabels) * bestWeight
-					+ csMax * meanWeight; // TODO: LATHOS!!!!???!!!!
-			data.fitness += b * (fitness - data.fitness);
-			if (Double.isNaN(data.fitness))
-				data.fitness = 0;
-			data.globalCs += b
-					* (cs / ((double) data.activeLabels) - data.globalCs);
-			if (inactive) {
-				data.fitness = 0;
-				data.globalCs = 1000;
-			}
-
-		}
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @param labelIndex
-	 *            the label index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex, final int labelIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) > 0)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
-	/**
-	 * Generates the set of classifier that advocate clearly against or for the
-	 * label at the given index.
-	 * 
-	 * @param matchSet
-	 *            the matchSet
-	 * @param instanceIndex
-	 *            the instance we are trying to match
-	 * @param labelIndex
-	 *            the label index we are trying to match
-	 * @return
-	 */
-	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
-			final int instanceIndex, final int labelIndex) {
-		final ClassifierSet labelMatchSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
-					labelIndex) != 0)
-				labelMatchSet.addClassifier(cl, false);
-		}
-		return labelMatchSet;
 	}
 
 	@Override
@@ -398,6 +262,166 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			final int mode, final double comparisonValue) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+
+		for (int i = 0; i < matchSetSize; i++) {
+			final Classifier cl = matchSet.getClassifier(i);
+			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
+					.getUpdateDataObject());
+			cl.experience++;
+
+			if (data.activeLabels < 0)
+				buildActive(cl);
+
+		}
+
+		updatePerLabel(population, matchSet, instanceIndex, evolve);
+
+		gatherResults(matchSet);
+
+		if ((matchSetSize > 0) && evolve)
+			ga.evolveSet(matchSet, population);
+
+	}
+
+	/**
+	 * Build active label array.
+	 * 
+	 * @param cl
+	 *            the classifier to build active labels array on
+	 */
+	private void buildActive(final Classifier cl) {
+		int active = 0;
+		final MlUCSClassifierData data = ((MlUCSClassifierData) cl
+				.getUpdateDataObject());
+		for (int i = 0; i < numberOfLabels; i++) {
+			if (cl.classifyLabelCorrectly(0, i) != 0) {
+				active++;
+				data.active[i] = true;
+			} else {
+				data.active[i] = false;
+			}
+		}
+
+		data.activeLabels = active;
+	}
+
+	/**
+	 * Gather results from single-label updates.
+	 * 
+	 * @param matchSet
+	 *            the set of the classifiers that have been updated
+	 */
+	private void gatherResults(final ClassifierSet matchSet) {
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			final Classifier cl = matchSet.getClassifier(i);
+			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
+					.getUpdateDataObject());
+
+			if (data.activeLabels == 0) {
+				data.fitness = 0;
+				continue;
+			}
+			double fitnessMin = Double.MAX_VALUE;
+			double fitnessSum = 0;
+			double csMax = Double.MIN_VALUE;
+			double csSum = 0;
+			boolean inactive = true;
+			for (int label = 0; label < numberOfLabels; label++) {
+				if (!data.active[label])
+					continue;
+				if (fitnessMin > data.labelFitness[label])
+					fitnessMin = data.labelFitness[label];
+				fitnessSum += 1. / data.labelFitness[label];
+				inactive = false;
+				if (csMax < data.cs[label])
+					csMax = data.cs[label];
+				csSum += data.cs[label];
+			}
+
+			int totalTp = 0;
+			int msa = 0;
+			for (int j = 0; j < numberOfLabels; j++) {
+				totalTp += data.tp[j];
+				msa += data.fp[j] + data.tp[j];
+			}
+			data.acc = (((double) totalTp) / ((double) msa));
+			if (data.acc > acc0)
+				cl.setSubsumptionAbility(true);
+			else
+				cl.setSubsumptionAbility(false);
+
+			final double experience = cl.experience;
+			final double meanWeight = Math.exp(-experience / 800.);
+			final double bestWeight = 1 - meanWeight;
+			final double fitness = ((((data.activeLabels) / (fitnessSum)) * bestWeight) + (fitnessMin * meanWeight));
+			final double cs = (((csSum) / (data.activeLabels)) * bestWeight)
+					+ (csMax * meanWeight); // TODO: LATHOS!!!!???!!!!
+			data.fitness += b * (fitness - data.fitness);
+			if (Double.isNaN(data.fitness))
+				data.fitness = 0;
+			data.globalCs += b * ((cs / data.activeLabels) - data.globalCs);
+			if (inactive) {
+				data.fitness = 0;
+				data.globalCs = 1000;
+			}
+
+		}
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @param labelIndex
+	 *            the label index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex, final int labelIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) > 0)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/**
+	 * Generates the set of classifier that advocate clearly against or for the
+	 * label at the given index.
+	 * 
+	 * @param matchSet
+	 *            the matchSet
+	 * @param instanceIndex
+	 *            the instance we are trying to match
+	 * @param labelIndex
+	 *            the label index we are trying to match
+	 * @return
+	 */
+	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
+			final int instanceIndex, final int labelIndex) {
+		final ClassifierSet labelMatchSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
+					labelIndex) != 0)
+				labelMatchSet.addClassifier(cl, false);
+		}
+		return labelMatchSet;
 	}
 
 	/**
@@ -480,35 +504,9 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 						.getUpdateDataObject());
 
 				data.labelFitness[label] += b
-						* (data.fitness0[label] / fitnessSum - data.labelFitness[label]);
+						* ((data.fitness0[label] / fitnessSum) - data.labelFitness[label]);
 			}
 		}
-	}
-
-	@Override
-	public void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex,
-			final boolean evolve) {
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-
-		for (int i = 0; i < matchSetSize; i++) {
-			final Classifier cl = matchSet.getClassifier(i);
-			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
-					.getUpdateDataObject());
-			cl.experience++;
-
-			if (data.activeLabels < 0)
-				buildActive(cl);
-
-		}
-
-		updatePerLabel(population, matchSet, instanceIndex, evolve);
-
-		gatherResults(matchSet);
-
-		if ((matchSetSize > 0) && evolve)
-			ga.evolveSet(matchSet, population);
-
 	}
 
 }

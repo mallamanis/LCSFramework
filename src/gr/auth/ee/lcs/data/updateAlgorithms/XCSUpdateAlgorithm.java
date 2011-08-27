@@ -42,7 +42,7 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public final class XCSClassifierData implements Serializable {
+	public final static class XCSClassifierData implements Serializable {
 
 		/**
 		 * Serialization Id.
@@ -196,27 +196,6 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return new XCSClassifierData();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -288,14 +267,14 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				payOff = 0;
 
 			// Update Predicted Payoff
-			if (cl.experience < 1 / beta)
+			if (cl.experience < (1 / beta))
 				data.predictedPayOff += (payOff - data.predictedPayOff)
 						/ cl.experience;
 			else
 				data.predictedPayOff += beta * (payOff - data.predictedPayOff);
 
 			// Update Prediction Error
-			if (cl.experience < 1 / beta)
+			if (cl.experience < (1 / beta))
 				data.predictionError += (Math
 						.abs(payOff - data.predictedPayOff) - data.predictionError)
 						/ cl.experience;
@@ -304,7 +283,7 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 						* (Math.abs(payOff - data.predictedPayOff) - data.predictionError);
 
 			// Update Action Set Estimate
-			if (cl.experience < 1 / beta)
+			if (cl.experience < (1 / beta))
 				data.actionSet += (actionSet.getTotalNumerosity() - data.actionSet)
 						/ cl.experience;
 			else
@@ -328,7 +307,7 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 					.getUpdateDataObject());
 
 			// per micro-classifier
-			data.fitness += beta * (data.k / accuracySum - data.fitness);
+			data.fitness += beta * ((data.k / accuracySum) - data.fitness);
 		}
 
 	}
@@ -391,6 +370,27 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				ga.evolveSet(correctSet, population);
 		}
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/**

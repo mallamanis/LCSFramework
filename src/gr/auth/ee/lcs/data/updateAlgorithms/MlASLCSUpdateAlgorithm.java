@@ -49,7 +49,7 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	final class SLCSClassifierData implements Serializable {
+	final static class SLCSClassifierData implements Serializable {
 
 		/**
 		 * serial for versions.
@@ -261,7 +261,7 @@ public final class MlASLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
 				data.tp += 1; // aClassifier at the correctSet
-				data.ns = (data.msa * data.ns + getClassifierNicheSize(cl,
+				data.ns = ((data.msa * data.ns) + getClassifierNicheSize(cl,
 						instanceIndex, niches)) / (data.msa + 1); // TODO:
 																	// Correct?
 			} else {

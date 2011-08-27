@@ -48,7 +48,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public final class MlSSLCSClassifierData implements Serializable {
+	public static final class MlSSLCSClassifierData implements Serializable {
 
 		/**
 		 * The serial for serialization.
@@ -92,8 +92,10 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 		/**
 		 * Constructor.
+		 * 
+		 * @param numberOfLabels
 		 */
-		public MlSSLCSClassifierData() {
+		public MlSSLCSClassifierData(final int numberOfLabels) {
 			ns = new double[numberOfLabels];
 			Arrays.fill(ns, 5);
 		}
@@ -187,7 +189,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 */
 	@Override
 	public Serializable createStateClassifierObject() {
-		return new MlSSLCSClassifierData();
+		return new MlSSLCSClassifierData(numberOfLabels);
 	}
 
 	/*
@@ -206,7 +208,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		switch (mode) {
 		case COMPARISON_MODE_DELETION:
 			// TODO: Something else?
-			final double prob = 1 / (data.fitness * data.activeLabels / numberOfLabels);
+			final double prob = 1 / ((data.fitness * data.activeLabels) / numberOfLabels);
 			if (data.activeLabels == 0)
 				return 1000;
 			return prob;
@@ -306,7 +308,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 					data.msa += 1;
 					data.ns[lbl] += .1 * (data.ns[lbl] - totalCorrectRules);
 				} else if (classificationAbility < 0) {
-					data.str -= penalty * (strengthReward) / (data.ns[lbl]);
+					data.str -= (penalty * (strengthReward)) / (data.ns[lbl]);
 					data.fp += 1;
 					data.msa += 1;
 				}
@@ -335,7 +337,7 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 			data.fitness = ((data.str < 0) || (data.activeLabels == 0)) ? 0
 					: (data.str / (data.msa));
-			if ((((double) data.tp) / ((double) (data.tp + data.fp)) > subsumptionAccuracyThreshold)
+			if (((((double) data.tp) / ((double) (data.tp + data.fp))) > subsumptionAccuracyThreshold)
 					&& (currentClassifier.experience > subsumptionExperienceThreshold))
 				currentClassifier.setSubsumptionAbility(true);
 			else

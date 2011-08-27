@@ -41,8 +41,7 @@ import java.io.Serializable;
  * @navassoc - - - UCSClassifierData
  * @author Miltos Allamanis
  */
-public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
-		Serializable {
+public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy {
 
 	/**
 	 * A data object for the UCS update algorithm.
@@ -51,7 +50,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	final class UCSClassifierData implements Serializable {
+	final static class UCSClassifierData implements Serializable {
 
 		/**
 		 * Serial code for serialization.
@@ -98,45 +97,45 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 	/**
 	 * Genetic Algorithm.
 	 */
-	private final transient IGeneticAlgorithmStrategy ga;
+	private final IGeneticAlgorithmStrategy ga;
 
 	/**
 	 * The \theta_{DEL} parameter of UCS.
 	 */
-	private final transient int deleteAge;
+	private final int deleteAge;
 
 	/**
 	 * Private variables: the UCS parameter sharing. accuracy0 is considered the
 	 * subsumption fitness threshold
 	 */
-	private final transient double a, accuracy0, n, b;
+	private final double a, accuracy0, n, b;
 
 	/**
 	 * A double indicating the probability that the GA will run on the matchSet
 	 * (and not on the correct set).
 	 */
-	private final transient double matchSetRunProbability;
+	private final double matchSetRunProbability;
 
 	/**
 	 * The experience threshold for subsumption.
 	 */
-	private final transient int subsumptionExperienceThreshold;
+	private final int subsumptionExperienceThreshold;
 
 	/**
 	 * A threshold of the classification ability of a classifier in order to be
 	 * classified as correct (and added to the correct set).
 	 */
-	private final transient double correctSetThreshold;
+	private final double correctSetThreshold;
 
 	/**
 	 * The LCS instance being used.
 	 */
-	private final transient AbstractLearningClassifierSystem myLcs;
+	private final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The mean population fitness of the population being updated.
 	 */
-	private transient double meanPopulationFitness = 0;
+	private double meanPopulationFitness = 0;
 
 	/**
 	 * Default constructor.
@@ -210,27 +209,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		return new UCSClassifierData();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -255,7 +233,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		case COMPARISON_MODE_DELETION:
 
 			if (aClassifier.experience < deleteAge) {
-				final double result = data.cs * meanPopulationFitness
+				final double result = (data.cs * meanPopulationFitness)
 						/ data.fitness;
 				return Double.isNaN(result) ? 1 : result;
 			}
@@ -304,7 +282,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 			data.msa += 1;
 
 			if (correctSet.getClassifierNumerosity(cl) > 0) {
-				data.cs = data.cs + b * (correctSetSize - data.cs);
+				data.cs = data.cs + (b * (correctSetSize - data.cs));
 				data.tp += 1;
 				final double accuracy = ((double) data.tp)
 						/ ((double) data.msa);
@@ -339,7 +317,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 			Classifier cl = matchSet.getClassifier(i);
 			UCSClassifierData data = ((UCSClassifierData) cl
 					.getUpdateDataObject());
-			data.fitness += b * (data.fitness0 / strengthSum - data.fitness);// TODO:
+			data.fitness += b * ((data.fitness0 / strengthSum) - data.fitness);// TODO:
 																				// Something
 																				// else?
 			// fitnessSum += data.fitness * matchSet.getClassifierNumerosity(i);
@@ -353,26 +331,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
-	}
-
-	/**
-	 * Update the mean fitness variable.
-	 * 
-	 * @param population
-	 *            a set representing the population.
-	 */
-	private void updateMeanPopulationFitness(final ClassifierSet population) {
-		meanPopulationFitness = 0;
-		final int populationSize = population.getNumberOfMacroclassifiers();
-		for (int i = 0; i < populationSize; i++) {
-			final int clNumerosity = population.getClassifierNumerosity(i);
-			final Classifier cl = population.getClassifier(i);
-			final double fitness = ((UCSClassifierData) cl
-					.getUpdateDataObject()).fitness;
-			meanPopulationFitness += fitness * clNumerosity;
-		}
-
-		meanPopulationFitness /= (double) population.getTotalNumerosity();
 	}
 
 	/*
@@ -409,8 +367,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 		 * Update
 		 */
 		// Number of active labels? (no don't cares)
-		final int numberOfLabels = myLcs.getClassifierTransformBridge()
-				.getDataInstanceLabels(myLcs.instances[instanceIndex]).length;
 		performUpdate(matchSet, correctSet);
 
 		/*
@@ -424,6 +380,47 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy implements
 			}
 		}
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/**
+	 * Update the mean fitness variable.
+	 * 
+	 * @param population
+	 *            a set representing the population.
+	 */
+	private void updateMeanPopulationFitness(final ClassifierSet population) {
+		meanPopulationFitness = 0;
+		final int populationSize = population.getNumberOfMacroclassifiers();
+		for (int i = 0; i < populationSize; i++) {
+			final int clNumerosity = population.getClassifierNumerosity(i);
+			final Classifier cl = population.getClassifier(i);
+			final double fitness = ((UCSClassifierData) cl
+					.getUpdateDataObject()).fitness;
+			meanPopulationFitness += fitness * clNumerosity;
+		}
+
+		meanPopulationFitness /= population.getTotalNumerosity();
 	}
 
 }

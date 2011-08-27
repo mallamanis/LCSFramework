@@ -47,7 +47,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	final class MlASLCSClassifierData implements Serializable {
+	final static class MlASLCSClassifierData implements Serializable {
 
 		/**
 		 * 
