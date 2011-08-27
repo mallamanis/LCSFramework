@@ -80,7 +80,7 @@ public class LabelFrequencyCalculator {
 	 *            frequencies
 	 * @return the imbalance rate
 	 */
-	public static double ImbalanceRate(TreeMap<String, Integer> map) {
+	public static double imbalanceRate(TreeMap<String, Integer> map) {
 		int minCount = Integer.MAX_VALUE;
 		int maxCount = Integer.MIN_VALUE;
 

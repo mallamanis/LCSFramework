@@ -24,6 +24,9 @@
  */
 package gr.auth.ee.lcs.utilities;
 
+import java.io.FileReader;
+import java.io.IOException;
+
 import weka.core.Instances;
 
 /**
@@ -32,7 +35,7 @@ import weka.core.Instances;
  * @author Miltiadis Allamanis
  * 
  */
-public final class InstanceToDoubleConverter {
+public final class InstancesUtility {
 
 	/**
 	 * Perform the conversion.
@@ -42,7 +45,7 @@ public final class InstanceToDoubleConverter {
 	 * @return a double[][] containing the instances and their respective
 	 *         attributes
 	 */
-	public static double[][] convert(final Instances set) {
+	public static double[][] convertIntancesToDouble(final Instances set) {
 		final double[][] result = new double[set.numInstances()][set
 				.numAttributes()];
 		for (int i = 0; i < set.numInstances(); i++) {
@@ -54,11 +57,24 @@ public final class InstanceToDoubleConverter {
 
 		return result;
 
+	}
+
+	/**
+	 * Opens an file and creates an instance
+	 * 
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 */
+	public static Instances openInstance(final String filename)
+			throws IOException {
+		final FileReader reader = new FileReader(filename);
+		return new Instances(reader);
 	};
 
 	/**
-	 * Private Constructor to avoid instanciation.
+	 * Private Constructor to avoid instantiation.
 	 */
-	private InstanceToDoubleConverter() {
+	private InstancesUtility() {
 	}
 }

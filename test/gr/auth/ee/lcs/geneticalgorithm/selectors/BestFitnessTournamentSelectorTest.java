@@ -113,7 +113,6 @@ public final class BestFitnessTournamentSelectorTest {
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
-		System.out.println(mySelector.tournament(population, participants));
 		assertTrue(mySelector.tournament(population, participants) == 2);
 	}
 

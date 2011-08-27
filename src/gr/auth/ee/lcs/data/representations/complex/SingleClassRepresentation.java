@@ -32,6 +32,7 @@ import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -294,6 +295,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			final int precision, final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, 1, generalizationRate, lcs);
+		buildRepresentationFromInstance(InstancesUtility
+				.openInstance(inputArff));
 	}
 
 	/**
@@ -317,6 +320,8 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, attributeToIgnore, generalizationRate, lcs);
+		buildRepresentationFromInstance(InstancesUtility
+				.openInstance(inputArff));
 	}
 
 	@Override
@@ -331,31 +336,6 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	public float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
 		return classifyAbilityAll(aClassifier, instanceIndex);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ComplexRepresentation#createClassRepresentation()
-	 */
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-
-		if (instances.classIndex() < 0)
-			instances.setClassIndex(instances.numAttributes() - 1);
-
-		// Rule Consequents
-		final Enumeration<?> classNames = instances.classAttribute()
-				.enumerateValues();
-		final String[] ruleConsequents = new String[instances.numClasses()];
-		this.ruleConsequents = ruleConsequents;
-		for (int i = 0; i < instances.numClasses(); i++)
-			ruleConsequents[i] = (String) classNames.nextElement();
-
-		attributeList[attributeList.length - 1] = new UniLabel(chromosomeSize,
-				"class", ruleConsequents);
-
 	}
 
 	/*
@@ -391,6 +371,31 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	public void setClassification(final Classifier aClassifier, final int action) {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
 				aClassifier, action);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.ComplexRepresentation#createClassRepresentation()
+	 */
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+
+		if (instances.classIndex() < 0)
+			instances.setClassIndex(instances.numAttributes() - 1);
+
+		// Rule Consequents
+		final Enumeration<?> classNames = instances.classAttribute()
+				.enumerateValues();
+		final String[] ruleConsequents = new String[instances.numClasses()];
+		this.ruleConsequents = ruleConsequents;
+		for (int i = 0; i < instances.numClasses(); i++)
+			ruleConsequents[i] = (String) classNames.nextElement();
+
+		attributeList[attributeList.length - 1] = new UniLabel(chromosomeSize,
+				"class", ruleConsequents);
 
 	}
 

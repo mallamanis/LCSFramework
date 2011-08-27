@@ -57,7 +57,6 @@ public class GenericMlRepresentationTest {
 		final double[][] instances = { { 1, 1, 0, 0, 1 } };
 		lcs.instances = instances;
 		final int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
-		System.out.print(Arrays.toString(instanceLabels1));
 		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
 		Classifier ex = lcs.getNewClassifier(set);
 

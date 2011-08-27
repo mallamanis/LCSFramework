@@ -348,7 +348,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 			TreeMap<String, Integer> fr = LabelFrequencyCalculator
 					.createCombinationMap(selector.activeIndexes(),
 							numberOfLabels, instances);
-			final double imbalance = LabelFrequencyCalculator.ImbalanceRate(fr);
+			final double imbalance = LabelFrequencyCalculator.imbalanceRate(fr);
 			ga.setThetaGA((int) (imbalance * THETA_GA_IMBALANCE_MULTIPLIER));
 			ClassifierSet brpopulation = new ClassifierSet(
 					new FixedSizeSetWorstFitnessDeletion(

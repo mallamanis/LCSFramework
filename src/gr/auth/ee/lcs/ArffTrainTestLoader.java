@@ -21,10 +21,9 @@
  */
 package gr.auth.ee.lcs;
 
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
@@ -89,8 +88,7 @@ public class ArffTrainTestLoader {
 	public final void loadInstances(final String filename,
 			final boolean generateTestSet) throws IOException {
 		// Open .arff
-		final FileReader reader = new FileReader(filename);
-		final Instances set = new Instances(reader);
+		final Instances set = InstancesUtility.openInstance(filename);
 		if (set.classIndex() < 0) {
 			set.setClassIndex(set.numAttributes() - 1);
 		}
@@ -107,7 +105,7 @@ public class ArffTrainTestLoader {
 			trainSet = set;
 		}
 
-		myLcs.instances = InstanceToDoubleConverter.convert(trainSet);
+		myLcs.instances = InstancesUtility.convertIntancesToDouble(trainSet);
 
 	}
 
@@ -124,18 +122,17 @@ public class ArffTrainTestLoader {
 	public final void loadInstancesWithTest(final String filename,
 			final String testFile) throws IOException {
 		// Open .arff
-		final FileReader reader = new FileReader(filename);
-		final Instances set = new Instances(reader);
+		final Instances set = InstancesUtility.openInstance(filename);
+
 		if (set.classIndex() < 0)
 			set.setClassIndex(set.numAttributes() - 1);
 		set.randomize(new Random());
 		// set.stratify(10);
 		trainSet = set;
 
-		myLcs.instances = InstanceToDoubleConverter.convert(trainSet);
+		myLcs.instances = InstancesUtility.convertIntancesToDouble(trainSet);
 
-		final FileReader testReader = new FileReader(testFile);
-		testSet = new Instances(testReader);
+		testSet = InstancesUtility.openInstance(testFile);
 
 	}
 }

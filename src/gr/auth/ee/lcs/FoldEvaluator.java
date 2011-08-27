@@ -24,10 +24,9 @@
  */
 package gr.auth.ee.lcs;
 
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
@@ -92,8 +91,8 @@ public class FoldEvaluator {
 			final String filename) throws IOException {
 		numOfFolds = folds;
 		prototype = myLcs;
-		final FileReader reader = new FileReader(filename);
-		instances = new Instances(reader);
+
+		instances = InstancesUtility.openInstance(filename);
 		runs = (int) SettingsLoader.getNumericSetting("foldsToRun", numOfFolds);
 		instances.randomize(new Random());
 
@@ -198,7 +197,7 @@ public class FoldEvaluator {
 	private void loadFold(int foldNumber, AbstractLearningClassifierSystem lcs) {
 
 		trainSet = instances.trainCV(numOfFolds, foldNumber);
-		lcs.instances = InstanceToDoubleConverter.convert(trainSet);
+		lcs.instances = InstancesUtility.convertIntancesToDouble(trainSet);
 		testSet = instances.testCV(numOfFolds, foldNumber);
 	}
 }

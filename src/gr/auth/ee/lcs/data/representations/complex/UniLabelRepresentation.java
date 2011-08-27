@@ -31,6 +31,7 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -132,47 +133,6 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			pCut = new ProportionalCut();
 		}
 
-		/**
-		 * Build the normalized confidence vector for a given instance.
-		 * 
-		 * @param aSet
-		 *            the set of classifier (rules)
-		 * @param visionVector
-		 *            the instance that the set will produce the confidence
-		 *            levels on
-		 * @return a float array that contains |L| the confidence (of the
-		 *         classifier set) for each label
-		 */
-		private float[] buildConfidence(final ClassifierSet aSet,
-				final double[] visionVector) {
-			final float[] lblProbs = new float[numberOfLabels];
-			Arrays.fill(lblProbs, 0);
-
-			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
-			final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-
-			for (int i = 0; i < matchSetSize; i++) {
-				final Classifier cl = matchSet.getClassifier(i);
-				final int numerosity = matchSet.getClassifierNumerosity(i);
-
-				final int classification = getClassification(cl)[0];
-
-				lblProbs[classification] += numerosity
-						* cl.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-
-			}
-
-			// Normalize
-			float sum = 0;
-			for (int i = 0; i < lblProbs.length; i++)
-				sum += lblProbs[i];
-
-			for (int i = 0; i < lblProbs.length; i++)
-				lblProbs[i] /= sum;
-
-			return lblProbs;
-		}
-
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -225,6 +185,47 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 		@Override
 		public void setThreshold(double threshold) {
 			this.threshold = threshold;
+		}
+
+		/**
+		 * Build the normalized confidence vector for a given instance.
+		 * 
+		 * @param aSet
+		 *            the set of classifier (rules)
+		 * @param visionVector
+		 *            the instance that the set will produce the confidence
+		 *            levels on
+		 * @return a float array that contains |L| the confidence (of the
+		 *         classifier set) for each label
+		 */
+		private float[] buildConfidence(final ClassifierSet aSet,
+				final double[] visionVector) {
+			final float[] lblProbs = new float[numberOfLabels];
+			Arrays.fill(lblProbs, 0);
+
+			final ClassifierSet matchSet = aSet.generateMatchSet(visionVector);
+			final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+
+			for (int i = 0; i < matchSetSize; i++) {
+				final Classifier cl = matchSet.getClassifier(i);
+				final int numerosity = matchSet.getClassifierNumerosity(i);
+
+				final int classification = getClassification(cl)[0];
+
+				lblProbs[classification] += numerosity
+						* cl.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
+
+			}
+
+			// Normalize
+			float sum = 0;
+			for (int i = 0; i < lblProbs.length; i++)
+				sum += lblProbs[i];
+
+			for (int i = 0; i < lblProbs.length; i++)
+				lblProbs[i] /= sum;
+
+			return lblProbs;
 		}
 	}
 
@@ -356,7 +357,8 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			final int labels, final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, labels, generalizationRate, lcs);
-
+		buildRepresentationFromInstance(InstancesUtility
+				.openInstance(inputArff));
 	}
 
 	/*
@@ -395,23 +397,6 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			return -1;
 	}
 
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-		final String[] ruleConsequents = new String[numberOfLabels];
-		this.ruleConsequents = ruleConsequents;
-
-		for (int i = 0; i < numberOfLabels; i++)
-			ruleConsequents[i] = "" + i;
-
-		attributeList[attributeList.length - numberOfLabels] = new UniLabel(
-				chromosomeSize, "label", ruleConsequents);
-
-		for (int i = attributeList.length - numberOfLabels + 1; i < attributeList.length; i++) {
-			attributeList[i] = new DummyLabel(chromosomeSize, "", 0);
-		}
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -438,7 +423,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 	public int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = dataInstance.length - numberOfLabels
+			final int currentLabelIndex = (dataInstance.length - numberOfLabels)
 					+ i;
 			if (dataInstance[currentLabelIndex] == 1)
 				numOfLabels++;
@@ -446,7 +431,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 		final int[] result = new int[numOfLabels];
 		int resultIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = dataInstance.length - numberOfLabels
+			final int currentLabelIndex = (dataInstance.length - numberOfLabels)
 					+ i;
 			if (dataInstance[currentLabelIndex] == 1) {
 				result[resultIndex] = i;
@@ -467,6 +452,23 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 	public void setClassification(final Classifier aClassifier, final int action) {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
 				aClassifier, action);
+	}
+
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+		final String[] ruleConsequents = new String[numberOfLabels];
+		this.ruleConsequents = ruleConsequents;
+
+		for (int i = 0; i < numberOfLabels; i++)
+			ruleConsequents[i] = "" + i;
+
+		attributeList[attributeList.length - numberOfLabels] = new UniLabel(
+				chromosomeSize, "label", ruleConsequents);
+
+		for (int i = (attributeList.length - numberOfLabels) + 1; i < attributeList.length; i++) {
+			attributeList[i] = new DummyLabel(chromosomeSize, "", 0);
+		}
+
 	}
 
 }
