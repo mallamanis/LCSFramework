@@ -34,7 +34,7 @@ import java.util.Random;
 import weka.core.Instances;
 
 /**
- * n-fold evaluator
+ * n-fold evaluator.
  * 
  * @author Miltiadis Allamanis
  * 
@@ -100,6 +100,45 @@ public class FoldEvaluator {
 	}
 
 	/**
+	 * Constructor.
+	 * 
+	 * @param folds
+	 *            the number of folds used at evaluation
+	 * @param numberOfRuns
+	 *            the number of runs
+	 * @param myLcs
+	 *            the LCS under evaluation
+	 * @param inputInstances
+	 *            the instances to evaluate the LCS on
+	 */
+	public FoldEvaluator(int folds, int numberOfRuns,
+			AbstractLearningClassifierSystem myLcs, Instances inputInstances) {
+		numOfFolds = folds;
+		prototype = myLcs;
+		instances = inputInstances;
+		runs = numberOfRuns;
+	}
+
+	/**
+	 * Calculate the mean of all fold metrics.
+	 * 
+	 * @param results
+	 *            the results double array
+	 * @return the mean for each row
+	 */
+	public double[] calcMean(double[][] results) {
+		double[] means = new double[results[0].length];
+		for (int i = 0; i < means.length; i++) {
+			double sum = 0;
+			for (int j = 0; j < results.length; j++) {
+				sum += results[j][i];
+			}
+			means[i] = (sum) / (results.length);
+		}
+		return means;
+	}
+
+	/**
 	 * Perform evaluation.
 	 */
 	public void evaluate() {
@@ -117,28 +156,43 @@ public class FoldEvaluator {
 
 		double[] means = calcMean(this.evals);
 		// print results
-		printEvals(means);
+		printEvaluations(means);
 	}
 
-	private double[] calcMean(double[][] results) {
-		double[] means = new double[results[0].length];
-		for (int i = 0; i < means.length; i++) {
-			double sum = 0;
-			for (int j = 0; j < results.length; j++) {
-				sum += results[j][i];
-			}
-			means[i] = (sum) / (results.length);
-		}
-		return means;
-	}
-
-	private void gatherResults(double[] results, int fold) {
+	/**
+	 * Gather the results from a specific fold.
+	 * 
+	 * @param results
+	 *            the results array
+	 * @param fold
+	 *            the fold the function is currently gathering
+	 * 
+	 * @return the double containing all evaluations (up to the point being
+	 *         added)
+	 */
+	public double[][] gatherResults(double[] results, int fold) {
 		if (evals == null) {
 			evals = new double[runs][results.length];
 		}
 
 		evals[fold] = results;
 
+		return evals;
+
+	}
+
+	/**
+	 * Print the evaluations.
+	 * 
+	 * @param means
+	 *            the array containing the evaluation means
+	 */
+	public void printEvaluations(double[] means) {
+		final String[] names = prototype.getEvaluationNames();
+
+		for (int i = 0; i < means.length; i++) {
+			System.out.println(names[i] + ": " + means[i]);
+		}
 	}
 
 	private void loadFold(int foldNumber, AbstractLearningClassifierSystem lcs) {
@@ -146,13 +200,5 @@ public class FoldEvaluator {
 		trainSet = instances.trainCV(numOfFolds, foldNumber);
 		lcs.instances = InstanceToDoubleConverter.convert(trainSet);
 		testSet = instances.testCV(numOfFolds, foldNumber);
-	}
-
-	private void printEvals(double[] means) {
-		final String[] names = prototype.getEvaluationNames();
-
-		for (int i = 0; i < means.length; i++) {
-			System.out.println(names[i] + ": " + means[i]);
-		}
 	}
 }
