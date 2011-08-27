@@ -54,7 +54,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public final class BestFitnessClassificationStrategy implements
+	public final static class BestFitnessClassificationStrategy implements
 			IClassificationStrategy {
 
 		/*
