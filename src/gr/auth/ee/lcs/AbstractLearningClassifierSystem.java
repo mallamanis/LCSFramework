@@ -307,7 +307,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 * single instance.
 	 * 
 	 * @param population
-	 *            the classifier's popoulation
+	 *            the classifier's population
 	 * @param dataInstanceIndex
 	 *            the index of the training data instance
 	 */
