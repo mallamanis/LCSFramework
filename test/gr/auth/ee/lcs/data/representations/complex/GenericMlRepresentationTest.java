@@ -24,6 +24,7 @@
  */
 package gr.auth.ee.lcs.data.representations.complex;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.MockLCS;
@@ -57,6 +58,10 @@ public class GenericMlRepresentationTest {
 		final double[][] instances = { { 1, 1, 0, 0, 1 } };
 		lcs.instances = instances;
 		final int[] instanceLabels1 = rep.getDataInstanceLabels(instances[0]);
+
+		assertEquals(instanceLabels1.length, 1);
+		assertEquals(instanceLabels1[0], 2);
+
 		ExtendedBitSet set = new ExtendedBitSet("11010101010101");
 		Classifier ex = lcs.getNewClassifier(set);
 

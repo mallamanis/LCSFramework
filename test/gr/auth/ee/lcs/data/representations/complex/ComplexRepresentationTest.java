@@ -76,16 +76,6 @@ public final class ComplexRepresentationTest {
 	}
 
 	@Test
-	public void checkStringOutput() {
-		final ExtendedBitSet set = new ExtendedBitSet(
-				"11101111111111000000000011011");
-		final Classifier ex = lcs.getNewClassifier(set);
-
-		// TODO: Fix and test
-
-	}
-
-	@Test
 	public void coverageMatches() {
 		final double visionVector[] = { 0, 1.1256, 2, 0 };
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
