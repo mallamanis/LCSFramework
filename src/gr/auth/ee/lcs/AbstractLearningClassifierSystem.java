@@ -26,9 +26,6 @@ package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.classifiers.populationcontrol.InadequeteClassifierDeletionStrategy;
-import gr.auth.ee.lcs.classifiers.populationcontrol.PostProcessPopulationControl;
-import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
@@ -62,24 +59,6 @@ public abstract class AbstractLearningClassifierSystem {
 	 * The Abstract Update Algorithm Strategy of the LCS.
 	 */
 	private AbstractUpdateStrategy updateStrategy;
-
-	/**
-	 * The post-process experience threshold used.
-	 */
-	private final int POSTPROCESS_EXPERIENCE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Experience_Theshold", 0);
-
-	/**
-	 * Coverage threshold for post processing.
-	 */
-	private final int POSTPROCESS_COVERAGE_THRESHOLD = (int) SettingsLoader
-			.getNumericSetting("PostProcess_Coverage_Theshold", 0);
-
-	/**
-	 * Post-process threshold for fitness.
-	 */
-	private final double POSTPROCESS_FITNESS_THRESHOLD = SettingsLoader
-			.getNumericSetting("PostProcess_Fitness_Theshold", 0);
 
 	/**
 	 * The rule population.
@@ -191,20 +170,6 @@ public abstract class AbstractLearningClassifierSystem {
 	}
 
 	/**
-	 * Post-process results.
-	 */
-	public final void postProcess() {
-		final PostProcessPopulationControl postProcess = new PostProcessPopulationControl(
-				POSTPROCESS_EXPERIENCE_THRESHOLD,
-				POSTPROCESS_COVERAGE_THRESHOLD, POSTPROCESS_FITNESS_THRESHOLD,
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		final SortPopulationControl sort = new SortPopulationControl(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		postProcess.controlPopulation(rulePopulation);
-		sort.controlPopulation(rulePopulation);
-	}
-
-	/**
 	 * Prints the population classifiers of the LCS.
 	 */
 	public final void printSet() {
@@ -275,8 +240,6 @@ public abstract class AbstractLearningClassifierSystem {
 			final ClassifierSet population, final boolean evolve) {
 
 		final int numInstances = instances.length;
-		final InadequeteClassifierDeletionStrategy del = new InadequeteClassifierDeletionStrategy(
-				0);
 
 		int repetition = 0;
 		int trainsBeforeHook = 0;
@@ -289,7 +252,7 @@ public abstract class AbstractLearningClassifierSystem {
 				for (int i = 0; i < numInstances; i++) {
 					trainWithInstance(population, i);
 					if (Math.random() < instanceProb)
-						del.controlPopulation(population);
+						cleanUpZeroCoverageClassifiers(population);
 				}
 				repetition++;
 				trainsBeforeHook++;
@@ -345,6 +308,20 @@ public abstract class AbstractLearningClassifierSystem {
 	public final void updatePopulation(final int iterations,
 			final ClassifierSet population) {
 		trainSet(iterations, population, false);
+	}
+
+	private void cleanUpZeroCoverageClassifiers(final ClassifierSet aSet) {
+
+		final int setSize = aSet.getNumberOfMacroclassifiers();
+
+		for (int i = setSize - 1; i >= 0; i--) {
+			final Classifier aClassifier = aSet.getClassifier(i);
+			final boolean zeroCoverage = (aClassifier.getCheckedInstances() >= instances.length)
+					&& (aClassifier.getCoverage() == 0);
+			if (zeroCoverage)
+				aSet.deleteClassifier(i);
+		}
+
 	}
 
 	/**
