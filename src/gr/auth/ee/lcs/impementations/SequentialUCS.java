@@ -249,7 +249,7 @@ public class SequentialUCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);

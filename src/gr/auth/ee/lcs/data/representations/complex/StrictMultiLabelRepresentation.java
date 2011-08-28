@@ -53,8 +53,13 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public final class BestFitnessClassificationStrategy implements
+	public static final class BestFitnessClassificationStrategy implements
 			IClassificationStrategy {
+
+		/**
+		 * An immutable static value containing no labels.
+		 */
+		public static int[] NO_LABELS = new int[0];
 
 		@Override
 		public int[] classify(final ClassifierSet aSet,
@@ -80,7 +85,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 						.getClassifier(bestClassifierIndex);
 				return bestClassifier.getActionAdvocated();
 			}
-			return new int[0];
+			return NO_LABELS;
 		}
 
 		@Override

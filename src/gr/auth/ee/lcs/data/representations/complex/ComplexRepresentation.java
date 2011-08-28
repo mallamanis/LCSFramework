@@ -49,7 +49,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public abstract class AbstractAttribute {
+	public static abstract class AbstractAttribute {
 		/**
 		 * The length in bits of the attribute in the chromosome.
 		 */

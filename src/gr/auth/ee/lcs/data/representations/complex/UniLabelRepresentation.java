@@ -53,7 +53,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 	 * @author Miltiadis Allamanis
 	 * 
 	 */
-	public class DummyLabel extends AbstractAttribute {
+	public static class DummyLabel extends AbstractAttribute {
 
 		/**
 		 * Constructor.

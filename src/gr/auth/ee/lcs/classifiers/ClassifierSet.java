@@ -55,6 +55,8 @@ public class ClassifierSet implements Serializable {
 	 *            the path of the ClassifierSet to be opened
 	 * @param sizeControlStrategy
 	 *            the ClassifierSet's
+	 * @param lcs
+	 *            the lcs which the new set will belong to
 	 * @return the opened classifier set
 	 */
 	public static ClassifierSet openClassifierSet(final String path,

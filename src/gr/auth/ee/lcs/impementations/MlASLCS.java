@@ -155,7 +155,7 @@ public class MlASLCS extends AbstractLearningClassifierSystem {
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				SettingsLoader.getNumericSetting("AttributeGeneralizationRate",
 						0.33), this);
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		final MlASLCSUpdateAlgorithm strategy = new MlASLCSUpdateAlgorithm(
 				ASLCS_N, ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
@@ -236,7 +236,7 @@ public class MlASLCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);

@@ -163,7 +163,7 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		final ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
 				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
@@ -245,7 +245,7 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);
