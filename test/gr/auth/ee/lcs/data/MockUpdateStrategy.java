@@ -29,7 +29,6 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 
 import java.io.Serializable;
 
-
 /**
  * Simple Mock Update Strategy.
  * 

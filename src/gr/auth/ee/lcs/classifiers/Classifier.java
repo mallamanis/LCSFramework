@@ -381,18 +381,6 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Sets the classifier's LCS
-	 * 
-	 * @param lcs
-	 *            the LCS
-	 */
-	public final void setLCS(AbstractLearningClassifierSystem lcs) {
-		myLcs = lcs;
-		updateStrategy = myLcs.getUpdateStrategy();
-		transformBridge = myLcs.getClassifierTransformBridge();
-	}
-
-	/**
 	 * Call the update strategy for setting value.
 	 * 
 	 * @param mode
@@ -402,6 +390,18 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	 */
 	public void setComparisonValue(final int mode, final double comparisonValue) {
 		updateStrategy.setComparisonValue(this, mode, comparisonValue);
+	}
+
+	/**
+	 * Sets the classifier's LCS
+	 * 
+	 * @param lcs
+	 *            the LCS
+	 */
+	public final void setLCS(AbstractLearningClassifierSystem lcs) {
+		myLcs = lcs;
+		updateStrategy = myLcs.getUpdateStrategy();
+		transformBridge = myLcs.getClassifierTransformBridge();
 	}
 
 	/**
@@ -443,7 +443,8 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 		if (transformBridge != null)
 			transformBridge.setRepresentationSpecificClassifierData(this);
 
-		this.serial = currentSerial++;
+		this.serial = currentSerial;
+		currentSerial++;
 	}
 
 }
