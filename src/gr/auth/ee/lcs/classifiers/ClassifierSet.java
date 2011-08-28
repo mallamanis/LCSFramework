@@ -399,7 +399,7 @@ public class ClassifierSet implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuffer response = new StringBuffer();
+		final StringBuffer response = new StringBuffer();
 		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
 			response.append(this.getClassifier(i).toString()
 					+ " fit:"

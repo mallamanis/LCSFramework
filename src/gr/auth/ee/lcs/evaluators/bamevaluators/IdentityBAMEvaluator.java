@@ -86,7 +86,8 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	 */
 	@Override
 	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
+		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
+				bamChromosomes);
 		return eval.evaluateLCS(lcs);
 	}
 
@@ -101,7 +102,7 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	private void generateBAM(final int n, final int type) {
 		switch (type) {
 		case GENERIC_REPRESENTATION:
-			for (int i = 0; i < 2 * n; i++) {
+			for (int i = 0; i < (2 * n); i++) {
 				bamChromosomes.add(lcs.getNewClassifier(generateGenericRule(i,
 						n)));
 			}
@@ -117,7 +118,7 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	private ExtendedBitSet generateGenericRule(final int i, final int n) {
 		String rule = "";
 		final int activatedBit = i / 2;
-		final String bit = (i % 2 == 0) ? "1" : "0";
+		final String bit = ((i % 2) == 0) ? "1" : "0";
 		for (int j = 0; j < 2; j++) {
 			for (int position = 0; position < n; position++) {
 				if (activatedBit == position) {

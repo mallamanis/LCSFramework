@@ -77,7 +77,8 @@ public class PositionBAMEvaluator implements IEvaluator {
 
 	@Override
 	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
+		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
+				bamChromosomes);
 		return eval.evaluateLCS(lcs);
 	}
 
@@ -90,7 +91,7 @@ public class PositionBAMEvaluator implements IEvaluator {
 	 *            the type of representation to be used
 	 */
 	private void generateBAM(final int n, final int type) {
-		for (int i = 0; i < n + 1; i++) {
+		for (int i = 0; i < (n + 1); i++) {
 			bamChromosomes.add(lcs.getNewClassifier(generateRule(i, type, n)));
 		}
 	}
@@ -111,9 +112,9 @@ public class PositionBAMEvaluator implements IEvaluator {
 		for (int position = i; position < n; position++) {
 			rule = "01" + rule;
 		}
-		if (i - 1 >= 0)
+		if ((i - 1) >= 0)
 			rule = "11" + rule;
-		for (int position = 0; position < i - 1; position++) {
+		for (int position = 0; position < (i - 1); position++) {
 			rule = "00" + rule;
 		}
 
@@ -121,7 +122,7 @@ public class PositionBAMEvaluator implements IEvaluator {
 		for (int position = n - 1; position >= 0; position--) {
 			if (type == GENERIC_REPRESENTATION)
 				rule = "1" + rule;
-			if (position == i - 1) {
+			if (position == (i - 1)) {
 				rule = "1" + rule;
 			} else {
 				rule = "0" + rule;

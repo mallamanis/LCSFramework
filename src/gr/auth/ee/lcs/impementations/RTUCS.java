@@ -205,7 +205,7 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
 		return names;
@@ -213,10 +213,10 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[8];
+		final double[] results = new double[8];
 		Arrays.fill(results, 0);
 
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		final ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 
 		str.proportionalCutCalibration(this.instances, rulePopulation,

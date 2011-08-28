@@ -70,7 +70,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
 		final BRSGUCSCombination trucs = new BRSGUCSCombination();
-		FoldEvaluator loader = new FoldEvaluator(10, trucs, file);
+		final FoldEvaluator loader = new FoldEvaluator(10, trucs, file);
 		loader.evaluate();
 
 	}
@@ -234,7 +234,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
 				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
@@ -244,13 +244,13 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[12];
+		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 
-		VotingClassificationStrategy str = proportionalCutCalibration();
+		final VotingClassificationStrategy str = proportionalCutCalibration();
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -286,7 +286,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 	}
 
 	public void internalValidationCalibration(IEvaluator selfAcc) {
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);
@@ -296,7 +296,7 @@ public class BRSGUCSCombination extends AbstractLearningClassifierSystem {
 	}
 
 	public VotingClassificationStrategy proportionalCutCalibration() {
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);

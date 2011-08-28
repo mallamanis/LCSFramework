@@ -1023,8 +1023,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	public final ExtendedBitSet set(final int offset) {
 		extendIfNeeded(offset + 1);
 
-		int thisLong = offset / BITSINLONG;
-		long thisBit = offset % BITSINLONG;
+		final int thisLong = offset / BITSINLONG;
+		final long thisBit = offset % BITSINLONG;
 
 		bitUnits[thisLong] |= (1L << thisBit);
 
@@ -1225,9 +1225,9 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 			length = BITSINLONG;
 
 		}
-		int block = offset / BITSINLONG;
-		int shift = offset % BITSINLONG;
-		long mask = -1L >>> (BITSINLONG - length);
+		final int block = offset / BITSINLONG;
+		final int shift = offset % BITSINLONG;
+		final long mask = -1L >>> (BITSINLONG - length);
 
 		extendIfNeeded(offset + length);
 
@@ -1481,7 +1481,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer(lenBits);
+		final StringBuffer buf = new StringBuffer(lenBits);
 
 		if (bitUnits != null) {
 			long mask = 1L << (lenBits - 1);

@@ -34,9 +34,10 @@ public class FoldEvaluatorTest {
 	 */
 	@Test
 	public void testCalcMean() {
-		double[][] results = new double[3][4];
+		final double[][] results = new double[3][4];
 
-		FoldEvaluator tested = new FoldEvaluator(3, 3, new MockLCS(), null);
+		final FoldEvaluator tested = new FoldEvaluator(3, 3, new MockLCS(),
+				null);
 
 		Arrays.fill(results[0], 0);
 		Arrays.fill(results[1], 1);
@@ -60,12 +61,13 @@ public class FoldEvaluatorTest {
 	 */
 	@Test
 	public void testGatherResults() {
-		FoldEvaluator tested = new FoldEvaluator(3, 2, new MockLCS(), null);
+		final FoldEvaluator tested = new FoldEvaluator(3, 2, new MockLCS(),
+				null);
 
 		double[] inputResult = new double[3];
 
 		Arrays.fill(inputResult, 0);
-		double[][] results = tested.gatherResults(inputResult, 0);
+		final double[][] results = tested.gatherResults(inputResult, 0);
 		assertTrue(Arrays.equals(results[0], inputResult));
 		assertEquals(results.length, 2);
 

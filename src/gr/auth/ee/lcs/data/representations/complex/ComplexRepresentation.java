@@ -812,7 +812,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			final AbstractLearningClassifierSystem lcs) throws IOException {
 
 		this.myLcs = lcs;
-		Instances instances = InstancesUtility.openInstance(inputArff);
+		final Instances instances = InstancesUtility.openInstance(inputArff);
 
 		this.numberOfLabels = labels;
 		attributeList = new AbstractAttribute[instances.numAttributes()];
@@ -1009,7 +1009,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public final String toNaturalLanguageString(final Classifier aClassifier) {
-		StringBuffer nlRule = new StringBuffer();
+		final StringBuffer nlRule = new StringBuffer();
 		for (int i = 0; i < (attributeList.length - numberOfLabels); i++)
 			nlRule.append(attributeList[i].toString(aClassifier) + " AND ");
 

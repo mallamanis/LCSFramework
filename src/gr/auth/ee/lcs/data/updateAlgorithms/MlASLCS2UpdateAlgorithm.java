@@ -241,7 +241,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 			int instanceIndex, boolean evolve) {
 
 		// Create all label correct sets
-		ClassifierSet[] labelCorrectSets = new ClassifierSet[numberOfLabels];
+		final ClassifierSet[] labelCorrectSets = new ClassifierSet[numberOfLabels];
 
 		for (int i = 0; i < numberOfLabels; i++)
 			labelCorrectSets[i] = generateLabelCorrectSet(matchSet,

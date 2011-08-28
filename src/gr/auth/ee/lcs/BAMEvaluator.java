@@ -76,7 +76,7 @@ public class BAMEvaluator {
 			final String filename, final int type, final int size,
 			final int representationType, final String name) {
 		lcs = myLcs;
-		ArffTrainTestLoader loader = new ArffTrainTestLoader(myLcs);
+		final ArffTrainTestLoader loader = new ArffTrainTestLoader(myLcs);
 		try {
 			loader.loadInstances(filename, false);
 		} catch (IOException e) {
@@ -103,7 +103,7 @@ public class BAMEvaluator {
 	 */
 	public void evaluate() {
 		lcs.train();
-		SortPopulationControl srt = new SortPopulationControl(
+		final SortPopulationControl srt = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 		srt.controlPopulation(lcs.rulePopulation);
 		lcs.rulePopulation.print();

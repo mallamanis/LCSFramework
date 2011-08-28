@@ -193,7 +193,7 @@ public class StrictMlRepresentationTest {
 	 */
 	@Test
 	public void testGetDataInstanceLabels() {
-		double[][] instances = { { 2, 0, 1, 0, 1 } };
+		final double[][] instances = { { 2, 0, 1, 0, 1 } };
 		final int[] instanceLabels = rep.getDataInstanceLabels(instances[0]);
 		final int[] expected = { 0, 2 };
 		assertTrue(Arrays.equals(instanceLabels, expected));
@@ -208,7 +208,7 @@ public class StrictMlRepresentationTest {
 		final int[] expected3 = {};
 		assertTrue(Arrays.equals(instanceLabels3, expected3));
 
-		double[][] instances4 = { { 1, 1, 1, 1, 1 } };
+		final double[][] instances4 = { { 1, 1, 1, 1, 1 } };
 		final int[] instanceLabels4 = rep.getDataInstanceLabels(instances4[0]);
 		final int[] expected4 = { 0, 1, 2 };
 		assertTrue(Arrays.equals(instanceLabels4, expected4));

@@ -62,7 +62,7 @@ public class UCS extends AbstractLearningClassifierSystem {
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
 		final UCS ucs = new UCS();
-		FoldEvaluator loader = new FoldEvaluator(10, ucs, file);
+		final FoldEvaluator loader = new FoldEvaluator(10, ucs, file);
 		loader.evaluate();
 	}
 
@@ -210,13 +210,13 @@ public class UCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy" };
+		final String[] names = { "Accuracy" };
 		return names;
 	}
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] result = new double[1];
+		final double[] result = new double[1];
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				true, this);
 		result[0] = testEval.evaluateLCS(this);

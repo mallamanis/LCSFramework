@@ -47,7 +47,7 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
 
-		AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
+		final AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
 		for (int i = 0; i < ensemble.length; i++) {
 			newEnsemble[i] = ensemble[i].createNew();
 		}
@@ -57,7 +57,7 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
 		return names;
@@ -72,7 +72,7 @@ public class EnsembleRTASLCS extends BaggedEnsemble {
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 		this.setElements(ensemble[0].getClassifierTransformBridge(), null);
-		double[] results = new double[8];
+		final double[] results = new double[8];
 		Arrays.fill(results, 0);
 
 		for (int i = 0; i < ensemble.length; i++)

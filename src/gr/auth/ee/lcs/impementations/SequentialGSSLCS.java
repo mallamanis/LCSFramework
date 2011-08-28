@@ -226,7 +226,7 @@ public class SequentialGSSLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
 				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
@@ -236,10 +236,10 @@ public class SequentialGSSLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[12];
+		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);
@@ -284,7 +284,7 @@ public class SequentialGSSLCS extends AbstractLearningClassifierSystem {
 	}
 
 	/**
-	 * Run the SGmlUCS.
+	 * Run the SGSSLCS.
 	 * 
 	 */
 	@Override

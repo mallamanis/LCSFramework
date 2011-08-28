@@ -61,7 +61,7 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
 		final ASLCS aslcs = new ASLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, aslcs, file);
+		final FoldEvaluator loader = new FoldEvaluator(10, aslcs, file);
 		loader.evaluate();
 	}
 
@@ -205,13 +205,13 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy" };
+		final String[] names = { "Accuracy" };
 		return names;
 	}
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] result = new double[1];
+		final double[] result = new double[1];
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				true, this);
 		result[0] = testEval.evaluateLCS(this);

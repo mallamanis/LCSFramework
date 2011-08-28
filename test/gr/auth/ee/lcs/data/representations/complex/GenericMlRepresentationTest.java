@@ -124,7 +124,7 @@ public class GenericMlRepresentationTest {
 	public void testActivations() {
 
 		// Activate only label 0
-		ILabelSelector selector = new ILabelSelector() {
+		final ILabelSelector selector = new ILabelSelector() {
 
 			@Override
 			public int[] activeIndexes() {
@@ -184,7 +184,7 @@ public class GenericMlRepresentationTest {
 		assertFalse(ex1.equals(ex2));
 
 		// Activate only label 1
-		ILabelSelector selector2 = new ILabelSelector() {
+		final ILabelSelector selector2 = new ILabelSelector() {
 
 			@Override
 			public int[] activeIndexes() {
@@ -223,7 +223,7 @@ public class GenericMlRepresentationTest {
 		assertTrue(ex2.isMoreGeneral(ex1));
 		assertFalse(ex1.isMoreGeneral(ex2));
 
-		double[] vision = { 2, 0, 1, 0, 1 };
+		final double[] vision = { 2, 0, 1, 0, 1 };
 		assertTrue(ex2.isMatch(vision));
 		assertTrue(ex1.isMatch(vision));
 
@@ -232,12 +232,12 @@ public class GenericMlRepresentationTest {
 		assertTrue(ex1.isMatch(vision));
 
 		rep.activateLabel(selector2);
-		double[][] sample1 = { { 2, 0, 1, 0, 1 } };
+		final double[][] sample1 = { { 2, 0, 1, 0, 1 } };
 		lcs.instances = sample1;
 		assertTrue(rep.classifyAbilityLabel(ex2, 0, 0) == 0);
 		assertTrue(rep.classifyAbilityLabel(ex2, 0, 2) == 0);
 		assertTrue(rep.classifyAbilityLabel(ex2, 0, 1) == 1);
-		double[][] sample2 = { { 2, 0, 1, 1, 1 } };
+		final double[][] sample2 = { { 2, 0, 1, 1, 1 } };
 		lcs.instances = sample2;
 		assertTrue(rep.classifyAbilityLabel(ex2, 0, 0) == 0);
 		assertTrue(rep.classifyAbilityLabel(ex2, 0, 2) == 0);
@@ -338,8 +338,8 @@ public class GenericMlRepresentationTest {
 
 	@Test
 	public void testEquals2() {
-		ExtendedBitSet set1 = new ExtendedBitSet("11001100111011");
-		Classifier ex1 = lcs.getNewClassifier(set1);
+		final ExtendedBitSet set1 = new ExtendedBitSet("11001100111011");
+		final Classifier ex1 = lcs.getNewClassifier(set1);
 
 		ExtendedBitSet set2 = new ExtendedBitSet("11001100111011");
 		Classifier ex2 = lcs.getNewClassifier(set2);

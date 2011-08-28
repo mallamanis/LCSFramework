@@ -42,7 +42,7 @@ public class LabelFrequencyCalculator {
 	 */
 	public static TreeMap<String, Integer> createCombinationMap(
 			int[] activeLabels, int labels, double[][] instances) {
-		TreeMap<String, Integer> map = new TreeMap<String, Integer>();
+		final TreeMap<String, Integer> map = new TreeMap<String, Integer>();
 		for (int i = 0; i < instances.length; i++) {
 			final String combination = generateString(activeLabels, labels,
 					instances[i]);
@@ -65,7 +65,7 @@ public class LabelFrequencyCalculator {
 	 * @return an array containing 0,1,2,...,labels-1
 	 */
 	public static int[] generateAllActiveIndexes(int labels) {
-		int[] result = new int[labels];
+		final int[] result = new int[labels];
 		for (int i = 0; i < labels; i++) {
 			result[i] = i;
 		}
@@ -84,7 +84,7 @@ public class LabelFrequencyCalculator {
 		int minCount = Integer.MAX_VALUE;
 		int maxCount = Integer.MIN_VALUE;
 
-		Iterator<String> keys = map.keySet().iterator();
+		final Iterator<String> keys = map.keySet().iterator();
 
 		while (keys.hasNext()) {
 			String currentKey = keys.next();

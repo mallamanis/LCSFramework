@@ -126,7 +126,7 @@ public class FoldEvaluator {
 	 * @return the mean for each row
 	 */
 	public double[] calcMean(double[][] results) {
-		double[] means = new double[results[0].length];
+		final double[] means = new double[results[0].length];
 		for (int i = 0; i < means.length; i++) {
 			double sum = 0;
 			for (int j = 0; j < results.length; j++) {
@@ -153,7 +153,7 @@ public class FoldEvaluator {
 			gatherResults(results, i);
 		}
 
-		double[] means = calcMean(this.evals);
+		final double[] means = calcMean(this.evals);
 		// print results
 		printEvaluations(means);
 	}

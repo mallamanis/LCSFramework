@@ -49,16 +49,16 @@ public class AllMlTypes {
 	 */
 	public static void main(String[] args) throws IOException {
 		final String lcsType = SettingsLoader.getStringSetting("lcsType", "");
-		AbstractLearningClassifierSystem lcs = getLCS(lcsType);
+		final AbstractLearningClassifierSystem lcs = getLCS(lcsType);
 
 		final String file = SettingsLoader.getStringSetting("filename", "");
 		final String testFile = SettingsLoader.getStringSetting("testFile", "");
 
 		if (testFile.equals("")) {
-			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
+			final FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
 			loader.evaluate();
 		} else {
-			ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
+			final ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
 			loader.loadInstancesWithTest(file, testFile);
 			loader.evaluate();
 

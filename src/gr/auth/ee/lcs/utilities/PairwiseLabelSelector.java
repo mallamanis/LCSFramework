@@ -54,7 +54,7 @@ public class PairwiseLabelSelector implements ILabelSelector {
 
 	@Override
 	public int[] activeIndexes() {
-		int[] result = new int[2];
+		final int[] result = new int[2];
 		result[0] = i;
 		result[1] = j;
 		return result;
@@ -67,7 +67,7 @@ public class PairwiseLabelSelector implements ILabelSelector {
 	 */
 	@Override
 	public boolean getStatus(int labelIndex) {
-		return (labelIndex == i || labelIndex == j);
+		return ((labelIndex == i) || (labelIndex == j));
 
 	}
 
@@ -78,7 +78,7 @@ public class PairwiseLabelSelector implements ILabelSelector {
 	 */
 	@Override
 	public boolean hasNext() {
-		if (i == numberOfLabels - 2 && j == numberOfLabels - 1)
+		if ((i == (numberOfLabels - 2)) && (j == (numberOfLabels - 1)))
 			return false;
 		return true;
 	}

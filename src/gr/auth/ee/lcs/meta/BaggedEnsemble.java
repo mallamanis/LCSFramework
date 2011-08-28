@@ -57,7 +57,7 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 
 	@Override
 	public int[] classifyInstance(double[] instance) {
-		int[] classifications = new int[numberOfLabels];
+		final int[] classifications = new int[numberOfLabels];
 		Arrays.fill(classifications, 0);
 
 		for (int i = 0; i < ensemble.length; i++) {
@@ -75,7 +75,7 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 				activeLabels++;
 		}
 
-		int[] result = new int[activeLabels];
+		final int[] result = new int[activeLabels];
 		int currentPosition = 0;
 		for (int i = 0; i < classifications.length; i++) {
 			if (classifications[i] > 0) { // what about 0?
@@ -112,16 +112,6 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	@Override
 	public abstract double[] getEvaluations(Instances testSet);
 
-	private double[][] sampleTrainInstances() {
-		double[][] sample = new double[this.instances.length][];
-		for (int i = 0; i < sample.length; i++) {
-			int pos = (int) Math.floor(Math.random() * this.instances.length);
-
-			sample[i] = this.instances[pos];
-		}
-		return sample;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -134,6 +124,16 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 			ensemble[i].train();
 		}
 
+	}
+
+	private double[][] sampleTrainInstances() {
+		double[][] sample = new double[this.instances.length][];
+		for (int i = 0; i < sample.length; i++) {
+			int pos = (int) Math.floor(Math.random() * this.instances.length);
+
+			sample[i] = this.instances[pos];
+		}
+		return sample;
 	}
 
 }
