@@ -49,7 +49,7 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	 */
 	protected AbstractLearningClassifierSystem ensemble[];
 
-	public BaggedEnsemble(int numOfLabels,
+	protected BaggedEnsemble(int numOfLabels,
 			AbstractLearningClassifierSystem lcss[]) {
 		numberOfLabels = numOfLabels;
 		ensemble = lcss;
@@ -127,7 +127,7 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	}
 
 	private double[][] sampleTrainInstances() {
-		double[][] sample = new double[this.instances.length][];
+		final double[][] sample = new double[this.instances.length][];
 		for (int i = 0; i < sample.length; i++) {
 			int pos = (int) Math.floor(Math.random() * this.instances.length);
 

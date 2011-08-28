@@ -408,9 +408,10 @@ public class ClassifierSet implements Serializable {
 									AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
 					+ " exp:" + this.getClassifier(i).experience + " num:"
 					+ this.getClassifierNumerosity(i) + "cov:"
-					+ this.getClassifier(i).getCoverage() + "\n");
+					+ this.getClassifier(i).getCoverage()
+					+ System.getProperty("line.separator"));
 			response.append(this.getClassifier(i).getUpdateSpecificData()
-					+ "\n");
+					+ System.getProperty("line.separator"));
 		}
 		return response.toString();
 	}

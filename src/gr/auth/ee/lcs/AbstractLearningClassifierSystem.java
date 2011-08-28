@@ -100,7 +100,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 * Constructor.
 	 * 
 	 */
-	public AbstractLearningClassifierSystem() {
+	protected AbstractLearningClassifierSystem() {
 		try {
 			SettingsLoader.loadSettings();
 		} catch (IOException e) {

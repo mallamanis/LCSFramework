@@ -50,12 +50,12 @@ public class RouletteSelectorTest {
 	/**
 	 * The mock lcs.
 	 */
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	/**
 	 * A population.
 	 */
-	ClassifierSet population;
+	private ClassifierSet population;
 
 	/**
 	 * @throws java.lang.Exception

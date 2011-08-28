@@ -74,7 +74,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	protected static final int BITSININT = Integer.SIZE;
 	protected static final int BITSINLONG = Long.SIZE;
 
-	protected static Random random = new Random();
+	private static Random random = new Random();
 
 	private static final boolean compileTest = false;
 

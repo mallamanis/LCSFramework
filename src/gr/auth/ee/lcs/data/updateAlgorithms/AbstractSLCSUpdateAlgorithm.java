@@ -119,7 +119,7 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 	 * @param lcs
 	 *            the LCS instance used
 	 */
-	public AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
+	protected AbstractSLCSUpdateAlgorithm(final double subsumptionFitness,
 			final int subsumptionExperience,
 			final double gaMatchSetRunProbability,
 			final IGeneticAlgorithmStrategy geneticAlgorithm,

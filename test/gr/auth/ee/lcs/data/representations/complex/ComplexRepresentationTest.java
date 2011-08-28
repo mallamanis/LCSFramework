@@ -47,9 +47,9 @@ public final class ComplexRepresentationTest {
 	/**
 	 * A single class representation instance.
 	 */
-	SingleClassRepresentation rep;
+	private SingleClassRepresentation rep;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Test
 	public void advocatedActionTest() {

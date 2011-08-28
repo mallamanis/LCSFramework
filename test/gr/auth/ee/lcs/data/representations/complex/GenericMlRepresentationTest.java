@@ -49,9 +49,9 @@ public class GenericMlRepresentationTest {
 	/**
 	 * The reperesentation.
 	 */
-	GenericMultiLabelRepresentation rep;
+	private GenericMultiLabelRepresentation rep;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Test
 	public void classificationMethods() {

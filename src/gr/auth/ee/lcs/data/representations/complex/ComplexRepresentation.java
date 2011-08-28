@@ -81,7 +81,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * @param generalizationProbability
 		 *            the generalization rate used
 		 */
-		public AbstractAttribute(final int startPosition,
+		protected AbstractAttribute(final int startPosition,
 				final String attributeName,
 				final double generalizationProbability) {
 			nameOfAttribute = attributeName;
@@ -778,7 +778,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * @param lcs
 	 *            the LCS instance
 	 */
-	public ComplexRepresentation(final AbstractAttribute[] attributes,
+	protected ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) {
@@ -806,7 +806,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * @throws IOException
 	 *             when .arff not found
 	 */
-	public ComplexRepresentation(final String inputArff,
+	protected ComplexRepresentation(final String inputArff,
 			final int precisionBits, final int labels,
 			final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) throws IOException {

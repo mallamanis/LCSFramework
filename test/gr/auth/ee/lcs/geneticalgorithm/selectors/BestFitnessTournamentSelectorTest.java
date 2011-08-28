@@ -45,17 +45,17 @@ public final class BestFitnessTournamentSelectorTest {
 	/**
 	 * A selector.
 	 */
-	TournamentSelector mySelector;
+	private TournamentSelector mySelector;
 
 	/**
 	 * A population.
 	 */
-	ClassifierSet population;
+	private ClassifierSet population;
 
 	/**
 	 * The mock lcs.
 	 */
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Before
 	public void setUp() {

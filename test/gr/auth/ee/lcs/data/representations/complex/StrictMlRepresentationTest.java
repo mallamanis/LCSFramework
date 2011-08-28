@@ -47,9 +47,9 @@ public class StrictMlRepresentationTest {
 	/**
 	 * A global test representation instance.
 	 */
-	StrictMultiLabelRepresentation rep;
+	private StrictMultiLabelRepresentation rep;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Test
 	public void classificationMethods() {

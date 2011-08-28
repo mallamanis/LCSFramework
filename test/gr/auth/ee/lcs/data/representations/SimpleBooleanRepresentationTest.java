@@ -42,7 +42,7 @@ import org.junit.Test;
  */
 public class SimpleBooleanRepresentationTest {
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Before
 	public void setUp() {
