@@ -165,14 +165,6 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * Constructor.
 	 * 
-	 * @param filename
-	 *            the filename of the AS-LCS
-	 * @param iterations
-	 *            the number of iterations to run
-	 * @param populationSize
-	 *            the size of the population to use
-	 * @param numOfLabels
-	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
 	public TransformASLCS() throws IOException {

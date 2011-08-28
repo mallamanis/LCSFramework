@@ -115,6 +115,13 @@ public class IdentityBAMEvaluator implements IEvaluator {
 
 	}
 
+	/**
+	 * Create an identity problem rule for the generalized rule representation.
+	 * 
+	 * @param i
+	 * @param n
+	 * @return an ExtendedBitSet containing the rule.
+	 */
 	private ExtendedBitSet generateGenericRule(final int i, final int n) {
 		String rule = "";
 		final int activatedBit = i / 2;
@@ -131,6 +138,13 @@ public class IdentityBAMEvaluator implements IEvaluator {
 		return new ExtendedBitSet(rule);
 	}
 
+	/**
+	 * Generate Identity problem rules using the strict representation.
+	 * 
+	 * @param rule
+	 * @param consequent
+	 * @param n
+	 */
 	private void generateStrictRules(final String rule,
 			final String consequent, final int n) {
 		if (n > 0) {

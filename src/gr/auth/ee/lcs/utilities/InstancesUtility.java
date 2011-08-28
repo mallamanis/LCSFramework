@@ -63,7 +63,7 @@ public final class InstancesUtility {
 	 * Opens an file and creates an instance
 	 * 
 	 * @param filename
-	 * @return
+	 * @return the Weka Instances opened by the file
 	 * @throws IOException
 	 */
 	public static Instances openInstance(final String filename)

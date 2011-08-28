@@ -148,12 +148,6 @@ public final class ASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * The AS-LCS constructor.
 	 * 
-	 * @param filename
-	 *            the filename to open
-	 * @param iterations
-	 *            the number of iterations to run the training
-	 * @param populationSize
-	 *            the population size to use
 	 * @throws IOException
 	 */
 	public ASLCS() throws IOException {

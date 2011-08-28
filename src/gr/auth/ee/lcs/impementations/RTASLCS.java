@@ -144,14 +144,6 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * Constructor.
 	 * 
-	 * @param filename
-	 *            the filename of the ASLCS
-	 * @param iterations
-	 *            the number of iterations to run
-	 * @param populationSize
-	 *            the size of the population to use
-	 * @param numOfLabels
-	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
 	public RTASLCS() throws IOException {

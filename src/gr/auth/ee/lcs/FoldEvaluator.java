@@ -194,6 +194,14 @@ public class FoldEvaluator {
 		}
 	}
 
+	/**
+	 * Load a fold into the evaluator.
+	 * 
+	 * @param foldNumber
+	 *            the fold's index
+	 * @param lcs
+	 *            the LCS that will be used to evaluate this fold
+	 */
 	private void loadFold(int foldNumber, AbstractLearningClassifierSystem lcs) {
 
 		trainSet = instances.trainCV(numOfFolds, foldNumber);

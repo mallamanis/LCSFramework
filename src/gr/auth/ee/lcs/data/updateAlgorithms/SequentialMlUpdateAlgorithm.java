@@ -75,6 +75,8 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 	/**
 	 * Calls covering operator.
 	 * 
+	 * @param population
+	 *            the population where the new classifier will be added to.
 	 * @param instanceIndex
 	 *            the index of the current sample
 	 */
@@ -243,7 +245,8 @@ public class SequentialMlUpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the instance we are trying to match
 	 * @param labelIndex
 	 *            the label index we are trying to match
-	 * @return
+	 * @return a classifier set containing the LabelMatchSet of the given
+	 *         matchset
 	 */
 	private ClassifierSet generateLabelMatchSet(final ClassifierSet matchSet,
 			final int instanceIndex, final int labelIndex) {

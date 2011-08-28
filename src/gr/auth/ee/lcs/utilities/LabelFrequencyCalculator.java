@@ -35,10 +35,15 @@ import java.util.TreeMap;
  */
 public class LabelFrequencyCalculator {
 	/**
+	 * Create a map containing combinations-frequencies of each label
+	 * combination.
 	 * 
 	 * @param activeLabels
 	 * @param labels
+	 *            the number of labels
 	 * @param instances
+	 *            the instances list
+	 * @retrun a map containing the frequency of each combination
 	 */
 	public static TreeMap<String, Integer> createCombinationMap(
 			int[] activeLabels, int labels, double[][] instances) {

@@ -66,6 +66,8 @@ public class PositionBAMEvaluator implements IEvaluator {
 	 *            the size of the mlPosition_N
 	 * @param type
 	 *            the type of representation to be used.
+	 * @param aLcs
+	 *            the LCS that will be evaluated.
 	 */
 	public PositionBAMEvaluator(final int n, final int type,
 			final AbstractLearningClassifierSystem aLcs) {
