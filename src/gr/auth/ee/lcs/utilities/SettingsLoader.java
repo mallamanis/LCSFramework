@@ -199,6 +199,7 @@ public final class SettingsLoader {
 				"defaultLcs.properties");
 		lcsProperties.load(input);
 		CLASS_LOGGER.fine("Loaded properties file " + filename);
+		input.close();
 	}
 
 }

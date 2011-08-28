@@ -116,7 +116,7 @@ public class LabelFrequencyCalculator {
 			double[] instance) {
 		String result = "";
 		for (int i = 0; i < activeLabels.length; i++) {
-			final int labelIndex = instance.length - labels + activeLabels[i];
+			final int labelIndex = (instance.length - labels) + activeLabels[i];
 			result += (int) instance[labelIndex];
 		}
 

@@ -383,19 +383,20 @@ public class ClassifierSet implements Serializable {
 
 	@Override
 	public String toString() {
-		String response = "";
+		StringBuffer response = new StringBuffer();
 		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
-			response += this.getClassifier(i).toString()
+			response.append(this.getClassifier(i).toString()
 					+ " fit:"
 					+ this.getClassifier(i)
 							.getComparisonValue(
 									AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
 					+ " exp:" + this.getClassifier(i).experience + " num:"
 					+ this.getClassifierNumerosity(i) + "cov:"
-					+ this.getClassifier(i).getCoverage() + "\n";
-			response += this.getClassifier(i).getUpdateSpecificData() + "\n";
+					+ this.getClassifier(i).getCoverage() + "\n");
+			response.append(this.getClassifier(i).getUpdateSpecificData()
+					+ "\n");
 		}
-		return response;
+		return response.toString();
 	}
 
 }
