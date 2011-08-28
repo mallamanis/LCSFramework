@@ -150,6 +150,7 @@ public class HammingLossEvaluator implements IEvaluator {
 			// Find symmetric differences
 			Arrays.sort(classes);
 			Arrays.sort(classification);
+
 			for (int j = 0; j < classes.length; j++) {
 				if (Arrays.binarySearch(classification, classes[j]) < 0)
 					numberOfSymmetricDifferences++;

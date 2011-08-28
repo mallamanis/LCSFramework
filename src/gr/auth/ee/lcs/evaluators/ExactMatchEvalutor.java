@@ -124,6 +124,9 @@ public class ExactMatchEvalutor implements IEvaluator {
 			final int[] classes = myLcs.classifyInstance(instances[i]);
 			final int[] classification = bridge
 					.getDataInstanceLabels(instances[i]);
+			Arrays.sort(classes);
+			Arrays.sort(classification);
+
 			if (Arrays.equals(classes, classification))
 				tp++;
 			else
