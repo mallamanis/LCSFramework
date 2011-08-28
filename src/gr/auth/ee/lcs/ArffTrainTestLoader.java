@@ -21,6 +21,7 @@
  */
 package gr.auth.ee.lcs;
 
+import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
@@ -66,10 +67,25 @@ public class ArffTrainTestLoader {
 	 * Perform evaluation.
 	 */
 	public void evaluate() {
+		final String rulesLoadFile = SettingsLoader.getStringSetting(
+				"loadRulesFile", "");
+		if (!rulesLoadFile.isEmpty())
+			myLcs.rulePopulation = ClassifierSet.openClassifierSet(
+					rulesLoadFile,
+					myLcs.rulePopulation.getPopulationControlStrategy(), myLcs);
+
 		myLcs.train();
 		final double[] evals = myLcs.getEvaluations(testSet);
 		final String[] names = myLcs.getEvaluationNames();
 		System.out.println(myLcs.rulePopulation);
+
+		final String rulesSaveFile = SettingsLoader.getStringSetting(
+				"saveRulesFile", "");
+
+		if (!rulesSaveFile.isEmpty())
+			ClassifierSet
+					.saveClassifierSet(myLcs.rulePopulation, rulesSaveFile);
+
 		for (int i = 0; i < evals.length; i++) {
 			System.out.println(names[i] + ": " + evals[i]);
 		}

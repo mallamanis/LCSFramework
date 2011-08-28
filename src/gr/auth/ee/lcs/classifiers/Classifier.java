@@ -67,17 +67,17 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * The transform bridge.
 	 */
-	private transient final ClassifierTransformBridge transformBridge;
+	private transient ClassifierTransformBridge transformBridge;
 
 	/**
 	 * Update Strategy.
 	 */
-	private transient final AbstractUpdateStrategy updateStrategy;
+	private transient AbstractUpdateStrategy updateStrategy;
 
 	/**
 	 * The LCS instance.
 	 */
-	private transient final AbstractLearningClassifierSystem myLcs;
+	private transient AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The initial Fitness of a classifier.
@@ -140,6 +140,7 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	 * A boolean representing the classifier's ability to subsume.
 	 */
 	private boolean subsumes = false;
+
 	/**
 	 * An object for saving the transformation specific data.
 	 */
@@ -377,6 +378,18 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	public void setActionAdvocated(final int action) {
 		transformBridge.setClassification(this, action);
 		actionCache = null;
+	}
+
+	/**
+	 * Sets the classifier's LCS
+	 * 
+	 * @param lcs
+	 *            the LCS
+	 */
+	public final void setLCS(AbstractLearningClassifierSystem lcs) {
+		myLcs = lcs;
+		updateStrategy = myLcs.getUpdateStrategy();
+		transformBridge = myLcs.getClassifierTransformBridge();
 	}
 
 	/**

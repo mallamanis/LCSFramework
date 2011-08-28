@@ -21,6 +21,7 @@
  */
 package gr.auth.ee.lcs.classifiers;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 
 import java.io.FileInputStream;
@@ -57,7 +58,8 @@ public class ClassifierSet implements Serializable {
 	 * @return the opened classifier set
 	 */
 	public static ClassifierSet openClassifierSet(final String path,
-			final IPopulationControlStrategy sizeControlStrategy) {
+			final IPopulationControlStrategy sizeControlStrategy,
+			final AbstractLearningClassifierSystem lcs) {
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
 		ClassifierSet opened = null;
@@ -68,6 +70,11 @@ public class ClassifierSet implements Serializable {
 
 			opened = (ClassifierSet) in.readObject();
 			opened.myISizeControlStrategy = sizeControlStrategy;
+
+			for (int i = 0; i < opened.getNumberOfMacroclassifiers(); i++) {
+				final Classifier cl = opened.getClassifier(i);
+				cl.setLCS(lcs);
+			}
 
 			in.close();
 		} catch (IOException ex) {
@@ -320,6 +327,15 @@ public class ClassifierSet implements Serializable {
 	 */
 	public final int getNumberOfMacroclassifiers() {
 		return this.myMacroclassifiers.size();
+	}
+
+	/**
+	 * Get the set's population control strategy
+	 * 
+	 * @return the set's population control strategy
+	 */
+	public final IPopulationControlStrategy getPopulationControlStrategy() {
+		return myISizeControlStrategy;
 	}
 
 	/**
