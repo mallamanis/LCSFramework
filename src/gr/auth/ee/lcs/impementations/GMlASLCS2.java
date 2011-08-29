@@ -96,12 +96,6 @@ public class GMlASLCS2 extends AbstractLearningClassifierSystem {
 			.getNumericSetting("AttributeGeneralizationRate", 0.33);
 
 	/**
-	 * The matchset GA run probability.
-	 */
-	private final double MATCHSET_GA_RUN_PROBABILITY = SettingsLoader
-			.getNumericSetting("GAMatchSetRunProbability", 0.01);
-
-	/**
 	 * Percentage of only updates (and no exploration).
 	 */
 	private final double UPDATE_ONLY_ITERATION_PERCENTAGE = SettingsLoader
