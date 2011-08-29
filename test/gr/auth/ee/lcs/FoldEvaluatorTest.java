@@ -13,6 +13,8 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.easymock.EasyMock.*;
+
 /**
  * A test case for FoldEvaluator.
  * 
@@ -36,7 +38,7 @@ public class FoldEvaluatorTest {
 	public void testCalcMean() {
 		final double[][] results = new double[3][4];
 
-		final FoldEvaluator tested = new FoldEvaluator(3, 3, new MockLCS(),
+		final FoldEvaluator tested = new FoldEvaluator(3, 3, createMock(AbstractLearningClassifierSystem.class),
 				null);
 
 		Arrays.fill(results[0], 0);
@@ -61,7 +63,7 @@ public class FoldEvaluatorTest {
 	 */
 	@Test
 	public void testGatherResults() {
-		final FoldEvaluator tested = new FoldEvaluator(3, 2, new MockLCS(),
+		final FoldEvaluator tested = new FoldEvaluator(3, 2, createMock(AbstractLearningClassifierSystem.class),
 				null);
 
 		double[] inputResult = new double[3];

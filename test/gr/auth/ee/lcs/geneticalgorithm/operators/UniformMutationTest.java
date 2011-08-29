@@ -26,7 +26,8 @@ package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.MockLCS;
+import static org.easymock.EasyMock.*;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -41,7 +42,7 @@ import org.junit.Test;
  */
 public class UniformMutationTest {
 
-	private static final MockLCS lcs = new MockLCS();
+	private static final AbstractLearningClassifierSystem lcs = createMock(AbstractLearningClassifierSystem.class);
 
 	/**
 	 * @throws java.lang.Exception

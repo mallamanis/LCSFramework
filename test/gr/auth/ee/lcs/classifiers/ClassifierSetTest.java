@@ -26,9 +26,10 @@ package gr.auth.ee.lcs.classifiers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.MockLCS;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import static org.easymock.EasyMock.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,14 +44,14 @@ public final class ClassifierSetTest {
 
 	private SimpleBooleanRepresentation test;
 
-	private MockLCS lcs;
+	private AbstractLearningClassifierSystem lcs;
 
 	/**
 	 * Setup test.
 	 */
 	@Before
 	public void setup() {
-		lcs = new MockLCS();
+		lcs = createMock(AbstractLearningClassifierSystem.class);
 		test = new SimpleBooleanRepresentation(0.5, 4, lcs);
 		lcs.setElements(test, null);
 
@@ -63,6 +64,7 @@ public final class ClassifierSetTest {
 	 */
 	@Test
 	public void testAddClassifier() {
+
 		final ClassifierSet testSet = new ClassifierSet(null);
 		final Classifier testClassifier = lcs
 				.getNewClassifier(new ExtendedBitSet("10010111"));

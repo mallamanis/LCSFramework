@@ -27,7 +27,8 @@ package gr.auth.ee.lcs.data.representations.complex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.MockLCS;
+import static org.easymock.EasyMock.*;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.data.representations.complex.ComplexRepresentation.AbstractAttribute;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
@@ -47,11 +48,11 @@ import org.junit.Test;
 public class GenericMlRepresentationTest {
 
 	/**
-	 * The reperesentation.
+	 * The representation.
 	 */
 	private GenericMultiLabelRepresentation rep;
 
-	private MockLCS lcs;
+	private AbstractLearningClassifierSystem lcs;
 
 	@Test
 	public void classificationMethods() {
@@ -99,7 +100,7 @@ public class GenericMlRepresentationTest {
 	 */
 	@Before
 	public void setUp() {
-		lcs = new MockLCS();
+		lcs = createMock(AbstractLearningClassifierSystem.class);
 
 		final GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
 		final String[] names = { "Good", "Mediocre", "Bad" };

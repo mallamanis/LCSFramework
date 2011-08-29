@@ -22,7 +22,8 @@
 package gr.auth.ee.lcs.evaluators;
 
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.MockLCS;
+import static org.easymock.EasyMock.*;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
@@ -47,11 +48,11 @@ public final class AccuracyEvaluatorTest {
 	 */
 	private GenericMultiLabelRepresentation rep;
 
-	private MockLCS lcs;
+	private AbstractLearningClassifierSystem lcs;
 
 	@Before
 	public void setUp() {
-		lcs = new MockLCS();
+		lcs = createMock(AbstractLearningClassifierSystem.class);
 
 		// Create instances
 		final GenericMultiLabelRepresentation.AbstractAttribute list[] = new AbstractAttribute[5];
@@ -88,6 +89,7 @@ public final class AccuracyEvaluatorTest {
 		final AccuracyRecallEvaluator a = new AccuracyRecallEvaluator(
 				instances, false, lcs, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		lcs.setRulePopulation(set);
+
 		final double evalResult = a.evaluateLCS(lcs);
 		assertTrue(Math.abs(evalResult - (5 / 6.)) < .0001);
 

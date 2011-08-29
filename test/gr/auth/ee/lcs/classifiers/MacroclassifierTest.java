@@ -26,7 +26,8 @@ package gr.auth.ee.lcs.classifiers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.MockLCS;
+import static org.easymock.EasyMock.*;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.representations.SimpleBooleanRepresentation;
 import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
@@ -52,14 +53,14 @@ public class MacroclassifierTest {
 	 */
 	private SimpleBooleanRepresentation test;
 
-	private MockLCS lcs;
+	private AbstractLearningClassifierSystem lcs;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() {
-		lcs = new MockLCS();
+		lcs = createMock(AbstractLearningClassifierSystem.class);
 		test = new SimpleBooleanRepresentation(0.5, 4, lcs);
 
 		final UCSUpdateAlgorithm update = new UCSUpdateAlgorithm(.1, 10, .99,

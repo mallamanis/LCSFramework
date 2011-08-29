@@ -26,7 +26,9 @@ package gr.auth.ee.lcs.classifiers.populationcontrol;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import gr.auth.ee.lcs.MockLCS;
+import static org.easymock.EasyMock.*;
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
@@ -52,7 +54,7 @@ public class FixedSizeDeletionTest {
 	/**
 	 * The mock lcs.
 	 */
-	private MockLCS lcs;
+	private AbstractLearningClassifierSystem lcs;
 
 	/**
 	 * A population.
@@ -66,7 +68,8 @@ public class FixedSizeDeletionTest {
 	@Before
 	public void setUp() throws IOException {
 		SettingsLoader.loadSettings();
-		lcs = new MockLCS();
+		lcs = createMock(AbstractLearningClassifierSystem.class);
+		;
 		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
 				.33, 2, lcs);
 		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99,
