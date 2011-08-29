@@ -28,6 +28,7 @@ import java.io.Serializable;
  * numerosity.
  * 
  * @has 1 - 1 Classifier
+ * @author Miltos Allamanis
  */
 public class Macroclassifier implements Serializable {
 

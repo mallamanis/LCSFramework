@@ -41,7 +41,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble {
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
 		final EnsembleGMlASLCS trucs = new EnsembleGMlASLCS(null);
-		FoldEvaluator loader = new FoldEvaluator(10, trucs, file);
+		final FoldEvaluator loader = new FoldEvaluator(10, trucs, file);
 		loader.evaluate();
 
 	}
@@ -69,7 +69,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble {
 	@Override
 	public AbstractLearningClassifierSystem createNew() {
 
-		AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
+		final AbstractLearningClassifierSystem[] newEnsemble = new AbstractLearningClassifierSystem[ensemble.length];
 		for (int i = 0; i < ensemble.length; i++) {
 			newEnsemble[i] = ensemble[i].createNew();
 		}
@@ -79,7 +79,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
 				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
@@ -96,7 +96,7 @@ public class EnsembleGMlASLCS extends BaggedEnsemble {
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 		this.setElements(ensemble[0].getClassifierTransformBridge(), null);
-		double[] results = new double[12];
+		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
 		for (int i = 0; i < ensemble.length; i++)

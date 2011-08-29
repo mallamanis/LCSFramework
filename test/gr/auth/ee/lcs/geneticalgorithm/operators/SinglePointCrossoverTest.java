@@ -44,7 +44,7 @@ import org.junit.Test;
  */
 public class SinglePointCrossoverTest extends SinglePointCrossover {
 
-	private static MockLCS lcs = new MockLCS();
+	private static final MockLCS lcs = new MockLCS();
 
 	public SinglePointCrossoverTest() throws IOException {
 		super(lcs);

@@ -27,7 +27,7 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.util.Arrays;
 
@@ -77,8 +77,8 @@ public class SingleLabelEvaluator implements IEvaluator {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 		int tp = 0;
-		final double[][] instances = InstanceToDoubleConverter
-				.convert(instanceSet);
+		final double[][] instances = InstancesUtility
+				.convertIntancesToDouble(instanceSet);
 
 		for (int i = 0; i < instances.length; i++) {
 

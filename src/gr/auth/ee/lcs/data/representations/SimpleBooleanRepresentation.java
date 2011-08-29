@@ -257,7 +257,7 @@ public final class SimpleBooleanRepresentation extends
 		for (int i = 0; i < chromosomeSize; i += 2) {
 			if (chromosome.get(i)) {
 				double test = chromosome.get(i + 1) ? 1 : 0;
-				if (visionVector[i / 2] != test)
+				if (Double.compare(visionVector[i / 2], test) != 0)
 					return false;
 			}
 		}

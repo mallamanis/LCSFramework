@@ -50,9 +50,9 @@ public class MacroclassifierTest {
 	/**
 	 * Set up a simple representation.
 	 */
-	SimpleBooleanRepresentation test;
+	private SimpleBooleanRepresentation test;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	/**
 	 * @throws java.lang.Exception

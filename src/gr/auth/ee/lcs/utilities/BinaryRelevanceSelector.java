@@ -54,7 +54,7 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 
 	@Override
 	public int[] activeIndexes() {
-		int[] result = new int[1];
+		final int[] result = new int[1];
 		result[0] = currentLabel;
 		return result;
 	}
@@ -76,7 +76,7 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 	 */
 	@Override
 	public boolean hasNext() {
-		if (currentLabel < numberOfLabels - 1)
+		if (currentLabel < (numberOfLabels - 1))
 			return true;
 		return false;
 	}
@@ -88,7 +88,7 @@ public final class BinaryRelevanceSelector implements ILabelSelector {
 	 */
 	@Override
 	public boolean next() {
-		if (currentLabel < numberOfLabels - 1) {
+		if (currentLabel < (numberOfLabels - 1)) {
 			currentLabel++;
 			return true;
 		}

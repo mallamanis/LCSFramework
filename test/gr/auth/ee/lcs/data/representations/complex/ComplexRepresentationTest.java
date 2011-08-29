@@ -47,9 +47,9 @@ public final class ComplexRepresentationTest {
 	/**
 	 * A single class representation instance.
 	 */
-	SingleClassRepresentation rep;
+	private SingleClassRepresentation rep;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Test
 	public void advocatedActionTest() {
@@ -76,16 +76,6 @@ public final class ComplexRepresentationTest {
 	}
 
 	@Test
-	public void checkStringOutput() {
-		final ExtendedBitSet set = new ExtendedBitSet(
-				"11101111111111000000000011011");
-		final Classifier ex = lcs.getNewClassifier(set);
-
-		// TODO: Fix and test
-
-	}
-
-	@Test
 	public void coverageMatches() {
 		final double visionVector[] = { 0, 1.1256, 2, 0 };
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
@@ -98,7 +88,7 @@ public final class ComplexRepresentationTest {
 	public void coverageRandom() {
 		final double visionVector[] = { 0, 1.1256, 2, 0 };
 		for (int i = 0; i < 1000; i++) { // Random check 1000 of these instances
-			visionVector[1] = (float) (Math.random() * (5.785 + 2.3) - 2.3);
+			visionVector[1] = (float) ((Math.random() * (5.785 + 2.3)) - 2.3);
 			visionVector[0] = (int) Math.floor(Math.random() * 3);
 			visionVector[2] = (int) Math.floor(Math.random() * 3);
 			Classifier cover = rep.createRandomCoveringClassifier(visionVector);
@@ -233,7 +223,6 @@ public final class ComplexRepresentationTest {
 
 		final double[] visionVector = { 1, .1, 2 };
 		assertEquals(rep.classify(set, visionVector).length, 1);
-		System.out.println(ex1.getComparisonValue(0));
 		assertTrue(ex1.getComparisonValue(0) == 1);
 		assertEquals(rep.classify(set, visionVector)[0], 2);
 

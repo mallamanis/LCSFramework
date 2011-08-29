@@ -41,9 +41,9 @@ import org.junit.Test;
  */
 public final class ClassifierSetTest {
 
-	SimpleBooleanRepresentation test;
+	private SimpleBooleanRepresentation test;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	/**
 	 * Setup test.

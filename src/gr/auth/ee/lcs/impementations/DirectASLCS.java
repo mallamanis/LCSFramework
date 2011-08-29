@@ -163,7 +163,7 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 		rep = new StrictMultiLabelRepresentation(inputFile, PRECISION_BITS,
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		final ASLCSUpdateAlgorithm strategy = new ASLCSUpdateAlgorithm(ASLCS_N,
 				ASLCS_ACC0, ASLCS_EXPERIENCE_THRESHOLD,
@@ -197,7 +197,7 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
 				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
@@ -208,10 +208,10 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 
-		double[] results = new double[12];
+		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);
@@ -245,7 +245,7 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);

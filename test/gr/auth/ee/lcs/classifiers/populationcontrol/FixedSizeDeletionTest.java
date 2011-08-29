@@ -52,12 +52,12 @@ public class FixedSizeDeletionTest {
 	/**
 	 * The mock lcs.
 	 */
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	/**
 	 * A population.
 	 */
-	ClassifierSet population;
+	private ClassifierSet population;
 
 	/**
 	 * @throws IOException

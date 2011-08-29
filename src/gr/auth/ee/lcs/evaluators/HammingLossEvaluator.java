@@ -27,9 +27,8 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -98,7 +97,7 @@ public class HammingLossEvaluator implements IEvaluator {
 	 */
 	public HammingLossEvaluator(final Instances instances, final boolean print,
 			final int numOfLabels, final AbstractLearningClassifierSystem lcs) {
-		this.instances = InstanceToDoubleConverter.convert(instances);
+		this.instances = InstancesUtility.convertIntancesToDouble(instances);
 		printResults = print;
 		numberOfLabels = numOfLabels;
 		myLcs = lcs;
@@ -122,9 +121,10 @@ public class HammingLossEvaluator implements IEvaluator {
 			final int numOfLabels, AbstractLearningClassifierSystem lcs)
 			throws IOException {
 		printResults = print;
-		final FileReader reader = new FileReader(arffFileName);
-		this.instances = InstanceToDoubleConverter
-				.convert(new Instances(reader));
+
+		this.instances = InstancesUtility
+				.convertIntancesToDouble(InstancesUtility
+						.openInstance(arffFileName));
 		numberOfLabels = numOfLabels;
 		myLcs = lcs;
 	}
@@ -150,6 +150,7 @@ public class HammingLossEvaluator implements IEvaluator {
 			// Find symmetric differences
 			Arrays.sort(classes);
 			Arrays.sort(classification);
+
 			for (int j = 0; j < classes.length; j++) {
 				if (Arrays.binarySearch(classification, classes[j]) < 0)
 					numberOfSymmetricDifferences++;

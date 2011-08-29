@@ -25,7 +25,6 @@
 package gr.auth.ee.lcs.impementations;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.BAMEvaluator;
 import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
@@ -37,6 +36,7 @@ import gr.auth.ee.lcs.data.updateAlgorithms.UCSUpdateAlgorithm;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.HammingLossEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.BAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.algorithms.SteadyStateGeneticAlgorithm;
@@ -74,7 +74,7 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 		 * loader.evaluate();
 		 */
 
-		BAMEvaluator eval = new BAMEvaluator(sgucs, file,
+		final BAMEvaluator eval = new BAMEvaluator(sgucs, file,
 				BAMEvaluator.TYPE_POSITION, 7,
 				PositionBAMEvaluator.GENERIC_REPRESENTATION, "sgucs");
 		eval.evaluate();
@@ -239,7 +239,7 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
 				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
@@ -250,10 +250,10 @@ public class SequentialGUCS extends AbstractLearningClassifierSystem {
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 
-		double[] results = new double[12];
+		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);

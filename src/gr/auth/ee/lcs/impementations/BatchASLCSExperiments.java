@@ -24,7 +24,7 @@
  */
 package gr.auth.ee.lcs.impementations;
 
-import gr.auth.ee.lcs.BAMEvaluator;
+import gr.auth.ee.lcs.evaluators.bamevaluators.BAMEvaluator;
 import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 

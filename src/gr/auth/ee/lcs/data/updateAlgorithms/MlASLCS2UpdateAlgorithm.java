@@ -47,7 +47,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	final class MlASLCSClassifierData implements Serializable {
+	final static class MlASLCSClassifierData implements Serializable {
 
 		/**
 		 * 
@@ -115,8 +115,12 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 	 *            the number of labels
 	 * @param geneticAlgorithm
 	 *            the GA used
-	 * @param n
+	 * @param nParameter
 	 *            the ASLCS dubbing factor
+	 * @param fitnessThreshold
+	 *            the subsumption fitness threshold to be used.
+	 * @param experienceThreshold
+	 *            the subsumption experience threshold to be used
 	 */
 	public MlASLCS2UpdateAlgorithm(final double nParameter,
 			final double fitnessThreshold, final int experienceThreshold,
@@ -241,7 +245,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 			int instanceIndex, boolean evolve) {
 
 		// Create all label correct sets
-		ClassifierSet[] labelCorrectSets = new ClassifierSet[numberOfLabels];
+		final ClassifierSet[] labelCorrectSets = new ClassifierSet[numberOfLabels];
 
 		for (int i = 0; i < numberOfLabels; i++)
 			labelCorrectSets[i] = generateLabelCorrectSet(matchSet,

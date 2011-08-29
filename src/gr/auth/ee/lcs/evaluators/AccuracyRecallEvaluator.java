@@ -27,9 +27,8 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IEvaluator;
-import gr.auth.ee.lcs.utilities.InstanceToDoubleConverter;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -44,12 +43,12 @@ import weka.core.Instances;
 public class AccuracyRecallEvaluator implements IEvaluator {
 
 	/**
-	 * Accuracy.
+	 * Accuracy Evaluation Type.
 	 */
 	public final static int TYPE_ACCURACY = 0;
 
 	/**
-	 * Recall.
+	 * Recall Evaluation Type.
 	 */
 	public final static int TYPE_RECALL = 1;
 
@@ -82,6 +81,8 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 	 *            true to print results to stdout
 	 * @param lcs
 	 *            the LCS instance used
+	 * @param type
+	 *            the type of evaluation to be performed
 	 */
 	public AccuracyRecallEvaluator(final double[][] instances,
 			final boolean print, final AbstractLearningClassifierSystem lcs,
@@ -101,11 +102,13 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 	 *            true to print results to stdout
 	 * @param lcs
 	 *            the LCS instance used
+	 * @param type
+	 *            evaluation type to be performed
 	 */
 	public AccuracyRecallEvaluator(final Instances instances,
 			final boolean print, final AbstractLearningClassifierSystem lcs,
 			final int type) {
-		this.instances = InstanceToDoubleConverter.convert(instances);
+		this.instances = InstancesUtility.convertIntancesToDouble(instances);
 		printResults = print;
 		myLcs = lcs;
 		currentType = type;
@@ -129,9 +132,9 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 			final boolean print, final AbstractLearningClassifierSystem lcs,
 			final int type) throws IOException {
 		printResults = print;
-		final FileReader reader = new FileReader(arffFileName);
-		this.instances = InstanceToDoubleConverter
-				.convert(new Instances(reader));
+		this.instances = InstancesUtility
+				.convertIntancesToDouble(InstancesUtility
+						.openInstance(arffFileName));
 		myLcs = lcs;
 		currentType = type;
 	}

@@ -45,17 +45,17 @@ public final class BestFitnessTournamentSelectorTest {
 	/**
 	 * A selector.
 	 */
-	TournamentSelector mySelector;
+	private TournamentSelector mySelector;
 
 	/**
 	 * A population.
 	 */
-	ClassifierSet population;
+	private ClassifierSet population;
 
 	/**
 	 * The mock lcs.
 	 */
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Before
 	public void setUp() {
@@ -113,7 +113,6 @@ public final class BestFitnessTournamentSelectorTest {
 		mySelector = new TournamentSelector(3, true,
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION);
 
-		System.out.println(mySelector.tournament(population, participants));
 		assertTrue(mySelector.tournament(population, participants) == 2);
 	}
 

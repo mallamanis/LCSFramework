@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2011 by Allamanis Miltiadis
+ *	Copyright (C) 2011 by AUTH
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	protected static final int BITSININT = Integer.SIZE;
 	protected static final int BITSINLONG = Long.SIZE;
 
-	protected static Random random = new Random();
+	private static Random random = new Random();
 
 	private static final boolean compileTest = false;
 
@@ -123,7 +123,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	public ExtendedBitSet(final ExtendedBitSet bitSet) {
 		lenBits = bitSet.lenBits;
-		if (bitUnits == null || bitUnits.length < bitSet.bitUnits.length) {
+		if ((bitUnits == null) || (bitUnits.length < bitSet.bitUnits.length)) {
 			bitUnits = new long[bitSet.bitUnits.length];
 		}
 		System.arraycopy(bitSet.bitUnits, 0, bitUnits, 0,
@@ -141,7 +141,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 			length = 1;
 		}
 		lenBits = length;
-		bitUnits = new long[(lenBits - 1) / BITSINLONG + 1];
+		bitUnits = new long[((lenBits - 1) / BITSINLONG) + 1];
 	}
 
 	/**
@@ -156,11 +156,11 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 *            initial bits values
 	 */
 	public ExtendedBitSet(int length, final byte[] bitPattern) {
-		bitUnits = new long[(length - 1) / BITSINLONG + 1];
+		bitUnits = new long[((length - 1) / BITSINLONG) + 1];
 		lenBits = length;
 		for (int index = 0; length > 0; length -= BITSINLONG, ++index) {
-			for (int j = 0; j < 8 && (index * 8 + j) < bitPattern.length; ++j) {
-				bitUnits[index] |= (bitPattern[index * 8 + j] & 0xFFL) << (8 * j);
+			for (int j = 0; (j < 8) && (((index * 8) + j) < bitPattern.length); ++j) {
+				bitUnits[index] |= (bitPattern[(index * 8) + j] & 0xFFL) << (8 * j);
 			}
 		}
 	}
@@ -221,13 +221,13 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 		int index = 0;
 
 		lenBits = bitPattern.length();
-		bitUnits = new long[(lenBits - 1) / BITSINLONG + 1];
+		bitUnits = new long[((lenBits - 1) / BITSINLONG) + 1];
 
 		for (int i = lenBits; i > 0; i -= BITSINLONG) {
 			long mask = 1;
 			long val = 0;
 
-			for (int j = 0; j < BITSINLONG && lenBits - j > 0; ++j) {
+			for (int j = 0; (j < BITSINLONG) && ((lenBits - j) > 0); ++j) {
 				if (bitPattern.charAt(i - j - 1) != '0') {
 					val |= mask;
 				}
@@ -364,7 +364,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	public final ExtendedBitSet copy(final ExtendedBitSet bitSet) {
 		if (bitSet != this) {
 			lenBits = bitSet.lenBits;
-			if (bitUnits == null || bitUnits.length < bitSet.bitUnits.length) {
+			if ((bitUnits == null)
+					|| (bitUnits.length < bitSet.bitUnits.length)) {
 				bitUnits = new long[bitSet.bitUnits.length];
 			}
 			System.arraycopy(bitSet.bitUnits, 0, bitUnits, 0,
@@ -411,7 +412,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 		if (shift > 0) {
 			// Shift the bits
 
-			int destOffset = offset + length - BITSINLONG;
+			int destOffset = (offset + length) - BITSINLONG;
 			int sourceOffset = destOffset - shift;
 			if (sourceOffset < 0) {
 				destOffset = offset + shift;
@@ -537,29 +538,6 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 		}
 
 		return retValue;
-	}
-
-	/**
-	 * Ensures that the bit set is large enough to hold <code>length</code> bits
-	 * and extends it if it isn't.
-	 * 
-	 * @param length
-	 *            number of bits set is required to hold
-	 */
-	protected final void extendIfNeeded(final int length) {
-		if (length > lenBits) {
-			final int chunks = (length - 1) / BITSINLONG + 1;
-
-			if (bitUnits == null || chunks > bitUnits.length) {
-				final long[] newBits = new long[chunks];
-
-				if (bitUnits != null) {
-					System.arraycopy(bitUnits, 0, newBits, 0, bitUnits.length);
-				}
-				bitUnits = newBits;
-			}
-			lenBits = length;
-		}
 	}
 
 	/**
@@ -740,7 +718,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 			retValue = bitUnits[block];
 		} else {
 			retValue = bitUnits[block] >>> shift;
-			if (BITSINLONG - shift < length) {
+			if ((BITSINLONG - shift) < length) {
 				retValue |= bitUnits[block + 1] << (BITSINLONG - shift);
 			}
 		}
@@ -790,7 +768,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	public final ExtendedBitSet getSubSet(int offset, int length) {
 		extendIfNeeded(offset + length);
 
-		final int chunks = (length - 1) / BITSINLONG + 1;
+		final int chunks = ((length - 1) / BITSINLONG) + 1;
 		final long[] newBits = new long[chunks];
 		final ExtendedBitSet retValue = new ExtendedBitSet();
 
@@ -836,9 +814,9 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 * @return this
 	 */
 	public final ExtendedBitSet initAll(final int length, final long[] inBits) {
-		int longsNeeded = (length - 1) / BITSINLONG + 1;
+		int longsNeeded = ((length - 1) / BITSINLONG) + 1;
 
-		if (bitUnits == null || (longsNeeded > bitUnits.length)) {
+		if ((bitUnits == null) || (longsNeeded > bitUnits.length)) {
 			bitUnits = new long[longsNeeded];
 		}
 		if (inBits.length < longsNeeded) {
@@ -865,7 +843,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 		if (offset < 0) {
 			offset = lenBits;
 		} else {
-			final int bitsToShift = lenBits - offset + bitSet.bitUnits.length;
+			final int bitsToShift = (lenBits - offset) + bitSet.bitUnits.length;
 
 			shiftLeft(offset, bitsToShift, bitSet.bitUnits.length);
 		}
@@ -994,8 +972,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	public final ExtendedBitSet rotateLeft(final int offset, final int length,
 			final int shift) {
-		if (shift % length != 0) {
-			final ExtendedBitSet save = getSubSet(offset + length - shift,
+		if ((shift % length) != 0) {
+			final ExtendedBitSet save = getSubSet((offset + length) - shift,
 					shift);
 
 			creepLeft(offset, length, shift);
@@ -1025,11 +1003,11 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	public final ExtendedBitSet rotateRight(final int offset, final int length,
 			final int shift) {
-		if (shift % length != 0) {
+		if ((shift % length) != 0) {
 			final ExtendedBitSet save = getSubSet(offset, shift);
 
 			creepRight(offset, length, shift);
-			setSubSet(offset + length - shift, save);
+			setSubSet((offset + length) - shift, save);
 		}
 
 		return this;
@@ -1045,8 +1023,8 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	public final ExtendedBitSet set(final int offset) {
 		extendIfNeeded(offset + 1);
 
-		int thisLong = offset / BITSINLONG;
-		long thisBit = offset % BITSINLONG;
+		final int thisLong = offset / BITSINLONG;
+		final long thisBit = offset % BITSINLONG;
 
 		bitUnits[thisLong] |= (1L << thisBit);
 
@@ -1247,9 +1225,9 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 			length = BITSINLONG;
 
 		}
-		int block = offset / BITSINLONG;
-		int shift = offset % BITSINLONG;
-		long mask = -1L >>> (BITSINLONG - length);
+		final int block = offset / BITSINLONG;
+		final int shift = offset % BITSINLONG;
+		final long mask = -1L >>> (BITSINLONG - length);
 
 		extendIfNeeded(offset + length);
 
@@ -1260,7 +1238,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 		} else {
 			bitUnits[block] = (bitUnits[block] & ~(mask << shift))
 					| (value << shift);
-			if (BITSINLONG - shift < length) {
+			if ((BITSINLONG - shift) < length) {
 				bitUnits[block + 1] = (bitUnits[block + 1] & ~(mask >>> (BITSINLONG - shift)))
 						| (value >>> (BITSINLONG - shift));
 			}
@@ -1380,7 +1358,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	public final ExtendedBitSet shiftLeft(final int offset, final int length,
 			final int shift) {
-		if (shift % length != 0) {
+		if ((shift % length) != 0) {
 			// Shift the bits and zero what's left over
 			creepLeft(offset, length, shift);
 			clear(offset, shift);
@@ -1409,14 +1387,14 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	public final ExtendedBitSet shiftRightSigned(final int offset,
 			final int length, final int shift) {
-		if (shift % length != 0) {
+		if ((shift % length) != 0) {
 			// Shift the bits and sign extend what's left over
 
 			creepRight(offset, length, shift);
-			if (get(offset + length - 1)) {
-				set(offset + length - shift, shift - 1);
+			if (get((offset + length) - 1)) {
+				set((offset + length) - shift, shift - 1);
 			} else {
-				clear(offset + length - shift, shift - 1);
+				clear((offset + length) - shift, shift - 1);
 			}
 		}
 
@@ -1443,10 +1421,10 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	public final ExtendedBitSet shiftRightUnsigned(final int offset,
 			final int length, final int shift) {
-		if (shift % length != 0) {
+		if ((shift % length) != 0) {
 			// Shift the bits and zero what's left over
 			creepRight(offset, length, shift);
-			clear(offset + length - shift, shift);
+			clear((offset + length) - shift, shift);
 		}
 
 		return this;
@@ -1503,7 +1481,7 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer(lenBits);
+		final StringBuffer buf = new StringBuffer(lenBits);
 
 		if (bitUnits != null) {
 			long mask = 1L << (lenBits - 1);
@@ -1562,5 +1540,28 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 			length -= BITSINLONG;
 		}
 		return this;
+	}
+
+	/**
+	 * Ensures that the bit set is large enough to hold <code>length</code> bits
+	 * and extends it if it isn't.
+	 * 
+	 * @param length
+	 *            number of bits set is required to hold
+	 */
+	protected final void extendIfNeeded(final int length) {
+		if (length > lenBits) {
+			final int chunks = ((length - 1) / BITSINLONG) + 1;
+
+			if ((bitUnits == null) || (chunks > bitUnits.length)) {
+				final long[] newBits = new long[chunks];
+
+				if (bitUnits != null) {
+					System.arraycopy(bitUnits, 0, newBits, 0, bitUnits.length);
+				}
+				bitUnits = newBits;
+			}
+			lenBits = length;
+		}
 	}
 }

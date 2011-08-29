@@ -67,17 +67,17 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	/**
 	 * The transform bridge.
 	 */
-	private final ClassifierTransformBridge transformBridge;
+	private transient ClassifierTransformBridge transformBridge;
 
 	/**
 	 * Update Strategy.
 	 */
-	private final AbstractUpdateStrategy updateStrategy;
+	private transient AbstractUpdateStrategy updateStrategy;
 
 	/**
 	 * The LCS instance.
 	 */
-	private final AbstractLearningClassifierSystem myLcs;
+	private transient AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The initial Fitness of a classifier.
@@ -140,6 +140,7 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	 * A boolean representing the classifier's ability to subsume.
 	 */
 	private boolean subsumes = false;
+
 	/**
 	 * An object for saving the transformation specific data.
 	 */
@@ -392,16 +393,15 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Sets the update-specific and transform-specific data needed.
+	 * Sets the classifier's LCS
+	 * 
+	 * @param lcs
+	 *            the LCS
 	 */
-	private void setConstructionData() {
-		if (updateStrategy != null)
-			updateData = updateStrategy.createStateClassifierObject();
-
-		if (transformBridge != null)
-			transformBridge.setRepresentationSpecificClassifierData(this);
-
-		this.serial = currentSerial++;
+	public final void setLCS(AbstractLearningClassifierSystem lcs) {
+		myLcs = lcs;
+		updateStrategy = myLcs.getUpdateStrategy();
+		transformBridge = myLcs.getClassifierTransformBridge();
 	}
 
 	/**
@@ -431,6 +431,20 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	@Override
 	public String toString() {
 		return transformBridge.toNaturalLanguageString(this);
+	}
+
+	/**
+	 * Sets the update-specific and transform-specific data needed.
+	 */
+	private void setConstructionData() {
+		if (updateStrategy != null)
+			updateData = updateStrategy.createStateClassifierObject();
+
+		if (transformBridge != null)
+			transformBridge.setRepresentationSpecificClassifierData(this);
+
+		this.serial = currentSerial;
+		currentSerial++;
 	}
 
 }

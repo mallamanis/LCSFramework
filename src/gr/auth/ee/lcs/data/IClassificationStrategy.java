@@ -42,5 +42,11 @@ public interface IClassificationStrategy {
 	 */
 	int[] classify(ClassifierSet aSet, double[] visionVector);
 
+	/**
+	 * Set the classification threshold, if applicable.
+	 * 
+	 * @param threshold
+	 *            the threshold being set
+	 */
 	void setThreshold(double threshold);
 }

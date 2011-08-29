@@ -67,7 +67,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		final String file = SettingsLoader.getStringSetting("filename", "");
 
 		final DirectUCS ducs = new DirectUCS();
-		FoldEvaluator loader = new FoldEvaluator(10, ducs, file);
+		final FoldEvaluator loader = new FoldEvaluator(10, ducs, file);
 		loader.evaluate();
 
 	}
@@ -198,7 +198,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 				numberOfLabels, StrictMultiLabelRepresentation.EXACT_MATCH,
 				ATTRIBUTE_GENERALIZATION_RATE, this);
 		// clStr = rep.new VotingClassificationStrategy(targetLc);
-		clStr = rep.new BestFitnessClassificationStrategy();
+		clStr = new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy();
 		rep.setClassificationStrategy(clStr);
 
 		final UCSUpdateAlgorithm strategy = new UCSUpdateAlgorithm(UCS_ALPHA,
@@ -234,7 +234,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)",
 				"Accuracy(best)", "Recall(best)", "HammingLoss(best)",
@@ -245,10 +245,10 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 	@Override
 	public double[] getEvaluations(Instances testSet) {
 
-		double[] results = new double[12];
+		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
+		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));
 		rep.setClassificationStrategy(str);
@@ -282,7 +282,7 @@ public class DirectUCS extends AbstractLearningClassifierSystem {
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		rep.setClassificationStrategy(rep.new BestFitnessClassificationStrategy());
+		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);

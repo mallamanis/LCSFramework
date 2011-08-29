@@ -45,9 +45,9 @@ public final class AccuracyEvaluatorTest {
 	/**
 	 * A generic ml representation.
 	 */
-	GenericMultiLabelRepresentation rep;
+	private GenericMultiLabelRepresentation rep;
 
-	MockLCS lcs;
+	private MockLCS lcs;
 
 	@Before
 	public void setUp() {
@@ -89,7 +89,7 @@ public final class AccuracyEvaluatorTest {
 				instances, false, lcs, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		lcs.setRulePopulation(set);
 		final double evalResult = a.evaluateLCS(lcs);
-		assertTrue(Math.abs(evalResult - 5 / 6.) < .0001);
+		assertTrue(Math.abs(evalResult - (5 / 6.)) < .0001);
 
 		final ExtendedBitSet set2 = new ExtendedBitSet("10011101111011");
 		final Classifier ex2 = lcs.getNewClassifier(set2);
@@ -99,7 +99,7 @@ public final class AccuracyEvaluatorTest {
 		set.addClassifier(new Macroclassifier(ex2, 1), false);
 		lcs.setRulePopulation(set);
 		final double evalResult2 = a.evaluateLCS(lcs);
-		assertTrue(Math.abs(evalResult2 - 5 / 12.) < .0001);
+		assertTrue(Math.abs(evalResult2 - (5 / 12.)) < .0001);
 
 	}
 

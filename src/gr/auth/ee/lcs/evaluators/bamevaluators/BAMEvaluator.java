@@ -22,15 +22,15 @@
 /**
  * 
  */
-package gr.auth.ee.lcs;
+package gr.auth.ee.lcs.evaluators.bamevaluators;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.classifiers.populationcontrol.SortPopulationControl;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.evaluators.AccuracyRecallEvaluator;
 import gr.auth.ee.lcs.evaluators.ExactMatchEvalutor;
 import gr.auth.ee.lcs.evaluators.FileLogger;
-import gr.auth.ee.lcs.evaluators.bamevaluators.IdentityBAMEvaluator;
-import gr.auth.ee.lcs.evaluators.bamevaluators.PositionBAMEvaluator;
 
 import java.io.IOException;
 
@@ -76,7 +76,7 @@ public class BAMEvaluator {
 			final String filename, final int type, final int size,
 			final int representationType, final String name) {
 		lcs = myLcs;
-		ArffTrainTestLoader loader = new ArffTrainTestLoader(myLcs);
+		final ArffTrainTestLoader loader = new ArffTrainTestLoader(myLcs);
 		try {
 			loader.loadInstances(filename, false);
 		} catch (IOException e) {
@@ -103,9 +103,9 @@ public class BAMEvaluator {
 	 */
 	public void evaluate() {
 		lcs.train();
-		SortPopulationControl srt = new SortPopulationControl(
+		final SortPopulationControl srt = new SortPopulationControl(
 				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		srt.controlPopulation(lcs.rulePopulation);
-		lcs.rulePopulation.print();
+		srt.controlPopulation(lcs.getRulePopulation());
+		lcs.getRulePopulation().print();
 	}
 }

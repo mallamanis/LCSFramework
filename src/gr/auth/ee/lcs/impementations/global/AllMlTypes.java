@@ -22,11 +22,29 @@
 /**
  * 
  */
-package gr.auth.ee.lcs.impementations;
+package gr.auth.ee.lcs.impementations.global;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.ArffTrainTestLoader;
 import gr.auth.ee.lcs.FoldEvaluator;
+import gr.auth.ee.lcs.impementations.DirectASLCS;
+import gr.auth.ee.lcs.impementations.DirectGASLCS;
+import gr.auth.ee.lcs.impementations.DirectGUCS;
+import gr.auth.ee.lcs.impementations.DirectUCS;
+import gr.auth.ee.lcs.impementations.GMlASLCS;
+import gr.auth.ee.lcs.impementations.GMlASLCS2;
+import gr.auth.ee.lcs.impementations.GMlSSLCS;
+import gr.auth.ee.lcs.impementations.GMlUCS;
+import gr.auth.ee.lcs.impementations.MlASLCS;
+import gr.auth.ee.lcs.impementations.MlUCS;
+import gr.auth.ee.lcs.impementations.RTASLCS;
+import gr.auth.ee.lcs.impementations.RTUCS;
+import gr.auth.ee.lcs.impementations.SequentialASLCS;
+import gr.auth.ee.lcs.impementations.SequentialGASLCS;
+import gr.auth.ee.lcs.impementations.SequentialGUCS;
+import gr.auth.ee.lcs.impementations.SequentialUCS;
+import gr.auth.ee.lcs.impementations.TransformASLCS;
+import gr.auth.ee.lcs.impementations.TransformationUCS;
 import gr.auth.ee.lcs.impementations.meta.BRSGUCSCombination;
 import gr.auth.ee.lcs.impementations.meta.EnsembleBRSeqUCSComb;
 import gr.auth.ee.lcs.impementations.meta.EnsembleGMlASLCS;
@@ -49,17 +67,19 @@ public class AllMlTypes {
 	 */
 	public static void main(String[] args) throws IOException {
 		final String lcsType = SettingsLoader.getStringSetting("lcsType", "");
-		AbstractLearningClassifierSystem lcs = getLCS(lcsType);
+		final AbstractLearningClassifierSystem lcs = getLCS(lcsType);
 
 		final String file = SettingsLoader.getStringSetting("filename", "");
 		final String testFile = SettingsLoader.getStringSetting("testFile", "");
+
 		if (testFile.equals("")) {
-			FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
+			final FoldEvaluator loader = new FoldEvaluator(10, lcs, file);
 			loader.evaluate();
 		} else {
-			ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
+			final ArffTrainTestLoader loader = new ArffTrainTestLoader(lcs);
 			loader.loadInstancesWithTest(file, testFile);
 			loader.evaluate();
+
 		}
 
 	}

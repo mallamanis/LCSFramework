@@ -31,6 +31,7 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,8 +53,13 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	 * @author Miltos Allamanis
 	 * 
 	 */
-	public final class BestFitnessClassificationStrategy implements
+	public static final class BestFitnessClassificationStrategy implements
 			IClassificationStrategy {
+
+		/**
+		 * An immutable static value containing no labels.
+		 */
+		public static int[] NO_LABELS = new int[0];
 
 		@Override
 		public int[] classify(final ClassifierSet aSet,
@@ -79,7 +85,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 						.getClassifier(bestClassifierIndex);
 				return bestClassifier.getActionAdvocated();
 			}
-			return new int[0];
+			return NO_LABELS;
 		}
 
 		@Override
@@ -202,9 +208,8 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 							.getClassifierNumerosity(i);
 					final double fitness = currentClassifier
 							.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-					final boolean labelActivated = ((Label) attributeList[attributeList.length
-							- numberOfLabels + label])
-							.getValue(currentClassifier);
+					final boolean labelActivated = ((Label) attributeList[(attributeList.length - numberOfLabels)
+							+ label]).getValue(currentClassifier);
 					fitnessSum[label] += classifierNumerosity * fitness;
 					if (labelActivated)
 						voteSum[label] += classifierNumerosity * fitness;
@@ -357,9 +362,8 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 							.getClassifierNumerosity(i);
 					final double fitness = currentClassifier
 							.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-					final boolean labelActivated = ((Label) attributeList[attributeList.length
-							- numberOfLabels + label])
-							.getValue(currentClassifier);
+					final boolean labelActivated = ((Label) attributeList[(attributeList.length - numberOfLabels)
+							+ label]).getValue(currentClassifier);
 					if (labelActivated)
 						votingTable[label] += classifierNumerosity * fitness;
 					else
@@ -447,6 +451,8 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			final AbstractLearningClassifierSystem lcs) throws IOException {
 		super(inputArff, precision, labels, generalizationRate, lcs);
 		metricType = type;
+		buildRepresentationFromInstance(InstancesUtility
+				.openInstance(inputArff));
 	}
 
 	/*
@@ -475,7 +481,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	@Override
 	public float classifyAbilityLabel(final Classifier aClassifier,
 			final int instanceIndex, final int label) {
-		final int currentLabelIndex = attributeList.length - numberOfLabels
+		final int currentLabelIndex = (attributeList.length - numberOfLabels)
 				+ label;
 		if (attributeList[currentLabelIndex].isMatch(
 				(float) myLcs.instances[instanceIndex][currentLabelIndex],
@@ -499,7 +505,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		float correct = 0;
 		float wrong = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
+			final int currentLabelIndex = (attributeList.length - numberOfLabels)
 					+ i;
 			final String actualLabel = (myLcs.instances[instanceIndex][currentLabelIndex] == 1) ? "1"
 					: "0";
@@ -511,7 +517,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 				correct++;
 		}
 
-		if (wrong + correct > 0)
+		if ((wrong + correct) > 0)
 			return (correct) / ((wrong + correct));
 		else
 			return 0;
@@ -530,7 +536,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public float classifyExact(final Classifier aClassifier,
 			final int instanceIndex) {
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
+			final int currentLabelIndex = (attributeList.length - numberOfLabels)
 					+ i;
 			if (!attributeList[currentLabelIndex].isMatch(
 					(float) myLcs.instances[instanceIndex][currentLabelIndex],
@@ -555,7 +561,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			final int instanceIndex) {
 		float result = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
+			final int currentLabelIndex = (attributeList.length - numberOfLabels)
 					+ i;
 			if (attributeList[currentLabelIndex].isMatch(
 					(float) myLcs.instances[instanceIndex][currentLabelIndex],
@@ -577,7 +583,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		final int[] labels = new int[numberOfLabels];
 		int labelIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
+			final int currentLabelIndex = (attributeList.length - numberOfLabels)
 					+ i;
 			if (attributeList[currentLabelIndex].isMatch(1, aClassifier)) {
 				labels[labelIndex] = i;
@@ -602,7 +608,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	public int[] getDataInstanceLabels(final double[] dataInstance) {
 		int numOfLabels = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
+			final int currentLabelIndex = (attributeList.length - numberOfLabels)
 					+ i;
 			if (dataInstance[currentLabelIndex] == 1)
 				numOfLabels++;
@@ -610,7 +616,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 		final int[] result = new int[numOfLabels];
 		int resultIndex = 0;
 		for (int i = 0; i < numberOfLabels; i++) {
-			final int currentLabelIndex = attributeList.length - numberOfLabels
+			final int currentLabelIndex = (attributeList.length - numberOfLabels)
 					+ i;
 			if (dataInstance[currentLabelIndex] == 1) {
 				result[resultIndex] = i;
@@ -629,7 +635,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	 */
 	@Override
 	public void setClassification(final Classifier aClassifier, final int action) {
-		final int labelIndex = attributeList.length - numberOfLabels + action;
+		final int labelIndex = (attributeList.length - numberOfLabels) + action;
 		attributeList[labelIndex].randomCoveringValue(1, aClassifier);
 
 	}
@@ -644,7 +650,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 	protected void createClassRepresentation(final Instances instances) {
 		for (int i = 0; i < numberOfLabels; i++) {
 
-			final int labelIndex = attributeList.length - numberOfLabels + i;
+			final int labelIndex = (attributeList.length - numberOfLabels) + i;
 
 			final String attributeName = instances.attribute(labelIndex).name();
 

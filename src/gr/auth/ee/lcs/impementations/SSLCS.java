@@ -60,7 +60,7 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 		SettingsLoader.loadSettings();
 		final String file = SettingsLoader.getStringSetting("filename", "");
 		final SSLCS sslcs = new SSLCS();
-		FoldEvaluator loader = new FoldEvaluator(10, sslcs, file);
+		final FoldEvaluator loader = new FoldEvaluator(10, sslcs, file);
 		loader.evaluate();
 
 	}
@@ -205,13 +205,13 @@ public class SSLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy" };
+		final String[] names = { "Accuracy" };
 		return names;
 	}
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] result = new double[1];
+		final double[] result = new double[1];
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				true, this);
 		result[0] = testEval.evaluateLCS(this);

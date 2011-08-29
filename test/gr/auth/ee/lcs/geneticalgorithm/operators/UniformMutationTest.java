@@ -41,7 +41,7 @@ import org.junit.Test;
  */
 public class UniformMutationTest {
 
-	private static MockLCS lcs = new MockLCS();
+	private static final MockLCS lcs = new MockLCS();
 
 	/**
 	 * @throws java.lang.Exception

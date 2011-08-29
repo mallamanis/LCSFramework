@@ -86,7 +86,8 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	 */
 	@Override
 	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		BAMPercentageEvaluator eval = new BAMPercentageEvaluator(bamChromosomes);
+		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
+				bamChromosomes);
 		return eval.evaluateLCS(lcs);
 	}
 
@@ -101,7 +102,7 @@ public class IdentityBAMEvaluator implements IEvaluator {
 	private void generateBAM(final int n, final int type) {
 		switch (type) {
 		case GENERIC_REPRESENTATION:
-			for (int i = 0; i < 2 * n; i++) {
+			for (int i = 0; i < (2 * n); i++) {
 				bamChromosomes.add(lcs.getNewClassifier(generateGenericRule(i,
 						n)));
 			}
@@ -114,10 +115,17 @@ public class IdentityBAMEvaluator implements IEvaluator {
 
 	}
 
+	/**
+	 * Create an identity problem rule for the generalized rule representation.
+	 * 
+	 * @param i
+	 * @param n
+	 * @return an ExtendedBitSet containing the rule.
+	 */
 	private ExtendedBitSet generateGenericRule(final int i, final int n) {
 		String rule = "";
 		final int activatedBit = i / 2;
-		final String bit = (i % 2 == 0) ? "1" : "0";
+		final String bit = ((i % 2) == 0) ? "1" : "0";
 		for (int j = 0; j < 2; j++) {
 			for (int position = 0; position < n; position++) {
 				if (activatedBit == position) {
@@ -130,6 +138,13 @@ public class IdentityBAMEvaluator implements IEvaluator {
 		return new ExtendedBitSet(rule);
 	}
 
+	/**
+	 * Generate Identity problem rules using the strict representation.
+	 * 
+	 * @param rule
+	 * @param consequent
+	 * @param n
+	 */
 	private void generateStrictRules(final String rule,
 			final String consequent, final int n) {
 		if (n > 0) {

@@ -59,9 +59,9 @@ public class BAMPercentageEvaluator implements IEvaluator {
 	@Override
 	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
 		final int bamSize = bestActionMap.size();
-		boolean[] covered = new boolean[bamSize];
+		final boolean[] covered = new boolean[bamSize];
 		Arrays.fill(covered, false);
-		ClassifierSet classifiers = lcs.getRulePopulation();
+		final ClassifierSet classifiers = lcs.getRulePopulation();
 		final int setSize = classifiers.getNumberOfMacroclassifiers();
 		for (int i = 0; i < setSize; i++) {
 			final Classifier actual = classifiers.getClassifier(i);

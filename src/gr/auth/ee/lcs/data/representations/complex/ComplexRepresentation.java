@@ -27,8 +27,8 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
+import gr.auth.ee.lcs.utilities.InstancesUtility;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -49,7 +49,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @author Miltos Allamanis
 	 */
-	public abstract class AbstractAttribute {
+	public static abstract class AbstractAttribute {
 		/**
 		 * The length in bits of the attribute in the chromosome.
 		 */
@@ -81,7 +81,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 * @param generalizationProbability
 		 *            the generalization rate used
 		 */
-		public AbstractAttribute(final int startPosition,
+		protected AbstractAttribute(final int startPosition,
 				final String attributeName,
 				final double generalizationProbability) {
 			nameOfAttribute = attributeName;
@@ -362,7 +362,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			this.maxValue = maxValue;
 			this.precisionBits = precisionBits;
 			// 2 values of bits + 1 activation bit
-			lengthInBits = 2 * precisionBits + 1;
+			lengthInBits = (2 * precisionBits) + 1;
 			for (int i = 0; i < precisionBits; i++)
 				totalParts |= 1 << i;
 			chromosomeSize += lengthInBits;
@@ -472,12 +472,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			// First find a random value that is smaller than the attribute
 			// value & convert it to fraction
 			final int newLowBound = (int) Math
-					.floor(((attributeValue - minValue) * Math.random())
-							/ (maxValue - minValue) * totalParts);
+					.floor((((attributeValue - minValue) * Math.random()) / (maxValue - minValue))
+							* totalParts);
 			final int newMaxBound = (int) Math
-					.ceil(((maxValue - minValue - (maxValue - attributeValue)
-							* Math.random())
-							/ (maxValue - minValue) * totalParts));
+					.ceil((((maxValue - minValue - ((maxValue - attributeValue) * Math
+							.random())) / (maxValue - minValue)) * totalParts));
 
 			// Then set at chromosome
 			if (Math.random() < (1 - generalizationRate))
@@ -525,8 +524,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			final int part = chromosome.getIntAt(positionInChromosome + 1
 					+ precisionBits, precisionBits);
 
-			return ((float) part) / ((float) totalParts)
-					* (maxValue - minValue) + minValue;
+			return ((((float) part) / ((float) totalParts)) * (maxValue - minValue))
+					+ minValue;
 		}
 
 		/**
@@ -540,8 +539,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			final int part = chromosome.getIntAt(positionInChromosome + 1,
 					precisionBits);
 
-			return ((float) part) / ((float) totalParts)
-					* (maxValue - minValue) + minValue;
+			return ((((float) part) / ((float) totalParts)) * (maxValue - minValue))
+					+ minValue;
 		}
 
 	}
@@ -600,7 +599,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 						ones++;
 
 			// Fix (we have none or all set)
-			if ((ones == 0) || (ones == lengthInBits - 1))
+			if ((ones == 0) || (ones == (lengthInBits - 1)))
 				chromosome.clear(positionInChromosome);
 		}
 
@@ -746,6 +745,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	protected int numberOfLabels;
 
 	/**
+	 * The number of bits to be used for numerical values.
+	 */
+	protected int precision;
+
+	/**
 	 * The rule consequents for all classes.
 	 */
 	protected String[] ruleConsequents;
@@ -774,7 +778,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * @param lcs
 	 *            the LCS instance
 	 */
-	public ComplexRepresentation(final AbstractAttribute[] attributes,
+	protected ComplexRepresentation(final AbstractAttribute[] attributes,
 			final String[] ruleConsequentsNames, final int labels,
 			final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) {
@@ -791,7 +795,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * 
 	 * @param inputArff
 	 *            the input .arff
-	 * @param precision
+	 * @param precisionBits
 	 *            bits used for precision
 	 * @param labels
 	 *            the number of labels (classes) in the set
@@ -802,64 +806,18 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 * @throws IOException
 	 *             when .arff not found
 	 */
-	public ComplexRepresentation(final String inputArff, final int precision,
-			final int labels, final double generalizationRate,
+	protected ComplexRepresentation(final String inputArff,
+			final int precisionBits, final int labels,
+			final double generalizationRate,
 			final AbstractLearningClassifierSystem lcs) throws IOException {
-		super();
+
 		this.myLcs = lcs;
-		final FileReader reader = new FileReader(inputArff);
-		final Instances instances = new Instances(reader);
+		final Instances instances = InstancesUtility.openInstance(inputArff);
 
 		this.numberOfLabels = labels;
 		attributeList = new AbstractAttribute[instances.numAttributes()];
 		this.attributeGeneralizationRate = generalizationRate;
-
-		for (int i = 0; i < instances.numAttributes() - labels; i++) {
-
-			final String attributeName = instances.attribute(i).name();
-
-			if (instances.attribute(i).isNominal()) {
-
-				String[] attributeNames = new String[instances.attribute(i)
-						.numValues()];
-				final Enumeration<?> values = instances.attribute(i)
-						.enumerateValues();
-				for (int j = 0; j < attributeNames.length; j++) {
-					attributeNames[j] = (String) values.nextElement();
-				}
-				// Create boolean or generic nominal
-				if (attributeNames.length > 2)
-					attributeList[i] = new ComplexRepresentation.NominalAttribute(
-							this.chromosomeSize, attributeName, attributeNames,
-							generalizationRate);
-				else
-					attributeList[i] = new ComplexRepresentation.BooleanAttribute(
-							chromosomeSize, attributeName, generalizationRate);
-
-			} else if (instances.attribute(i).isNumeric()) {
-				// Find min-max values
-				float minValue, maxValue;
-				minValue = (float) instances.instance(0).toDoubleArray()[i];
-				maxValue = minValue;
-				for (int sample = 0; sample < instances.numInstances(); sample++) {
-					final float currentVal = (float) instances.instance(sample)
-							.toDoubleArray()[i];
-					if (currentVal > maxValue)
-						maxValue = currentVal;
-					if (currentVal < minValue)
-						minValue = currentVal;
-				}
-
-				attributeList[i] = new ComplexRepresentation.IntervalAttribute(
-						this.chromosomeSize, attributeName, minValue, maxValue,
-						precision, generalizationRate);
-			}
-
-		}
-
-		// Build class into gene
-		createClassRepresentation(instances);
-
+		this.precision = precisionBits;
 	}
 
 	/*
@@ -980,7 +938,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final boolean isMatch(final double[] visionVector,
 			final ExtendedBitSet chromosome) {
-		for (int i = 0; i < attributeList.length - numberOfLabels; i++) {
+		for (int i = 0; i < (attributeList.length - numberOfLabels); i++) {
 			if (!attributeList[i].isMatch((float) visionVector[i], chromosome))
 				return false;
 		}
@@ -1051,16 +1009,71 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	 */
 	@Override
 	public final String toNaturalLanguageString(final Classifier aClassifier) {
-		String nlRule = "";
-		for (int i = 0; i < attributeList.length - numberOfLabels; i++)
-			nlRule += attributeList[i].toString(aClassifier) + " AND ";
+		final StringBuffer nlRule = new StringBuffer();
+		for (int i = 0; i < (attributeList.length - numberOfLabels); i++)
+			nlRule.append(attributeList[i].toString(aClassifier) + " AND ");
 
 		// Add consequence
-		nlRule += "=>";
+		nlRule.append("=>");
 		for (int i = attributeList.length - numberOfLabels; i < attributeList.length; i++) {
-			nlRule += attributeList[i].toString(aClassifier);
+			nlRule.append(attributeList[i].toString(aClassifier));
 		}
-		return nlRule;
+		return nlRule.toString();
+	}
+
+	/**
+	 * Build the representation for some instances.
+	 * 
+	 * @param instances
+	 *            the instances
+	 */
+	protected void buildRepresentationFromInstance(final Instances instances) {
+		for (int i = 0; i < (instances.numAttributes() - numberOfLabels); i++) {
+
+			final String attributeName = instances.attribute(i).name();
+
+			if (instances.attribute(i).isNominal()) {
+
+				String[] attributeNames = new String[instances.attribute(i)
+						.numValues()];
+				final Enumeration<?> values = instances.attribute(i)
+						.enumerateValues();
+				for (int j = 0; j < attributeNames.length; j++) {
+					attributeNames[j] = (String) values.nextElement();
+				}
+				// Create boolean or generic nominal
+				if (attributeNames.length > 2)
+					attributeList[i] = new ComplexRepresentation.NominalAttribute(
+							this.chromosomeSize, attributeName, attributeNames,
+							attributeGeneralizationRate);
+				else
+					attributeList[i] = new ComplexRepresentation.BooleanAttribute(
+							chromosomeSize, attributeName,
+							attributeGeneralizationRate);
+
+			} else if (instances.attribute(i).isNumeric()) {
+				// Find min-max values
+				float minValue, maxValue;
+				minValue = (float) instances.instance(0).toDoubleArray()[i];
+				maxValue = minValue;
+				for (int sample = 0; sample < instances.numInstances(); sample++) {
+					final float currentVal = (float) instances.instance(sample)
+							.toDoubleArray()[i];
+					if (currentVal > maxValue)
+						maxValue = currentVal;
+					if (currentVal < minValue)
+						minValue = currentVal;
+				}
+
+				attributeList[i] = new ComplexRepresentation.IntervalAttribute(
+						this.chromosomeSize, attributeName, minValue, maxValue,
+						precision, attributeGeneralizationRate);
+			}
+
+		}
+
+		// Build class into gene
+		createClassRepresentation(instances);
 	}
 
 	/**

@@ -144,14 +144,6 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	/**
 	 * Constructor.
 	 * 
-	 * @param filename
-	 *            the filename of the ASLCS
-	 * @param iterations
-	 *            the number of iterations to run
-	 * @param populationSize
-	 *            the size of the population to use
-	 * @param numOfLabels
-	 *            the number of labels in the problem
 	 * @throws IOException
 	 */
 	public RTASLCS() throws IOException {
@@ -207,7 +199,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public String[] getEvaluationNames() {
-		String[] names = { "Accuracy(pcut)", "Recall(pcut)",
+		final String[] names = { "Accuracy(pcut)", "Recall(pcut)",
 				"HammingLoss(pcut)", "ExactMatch(pcut)", "Accuracy(ival)",
 				"Recall(ival)", "HammingLoss(ival)", "ExactMatch(ival)" };
 		return names;
@@ -215,7 +207,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
-		double[] results = new double[8];
+		final double[] results = new double[8];
 		Arrays.fill(results, 0);
 
 		proportionalCutCalibration();
@@ -253,7 +245,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	 *            evaluator to be used for calibration
 	 */
 	public void internalValidationCalibration(final IEvaluator selfAcc) {
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		final ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 		final InternalValidation ival = new InternalValidation(this, str,
 				selfAcc);
@@ -261,7 +253,7 @@ public class RTASLCS extends AbstractLearningClassifierSystem {
 	}
 
 	public void proportionalCutCalibration() {
-		ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
+		final ThresholdClassificationStrategy str = rep.new ThresholdClassificationStrategy();
 		rep.setClassificationStrategy(str);
 
 		str.proportionalCutCalibration(this.instances, rulePopulation,

@@ -81,7 +81,8 @@ public class FileLogger implements IEvaluator {
 		try {
 			final FileWriter fstream = new FileWriter(file, true);
 			final BufferedWriter buffer = new BufferedWriter(fstream);
-			buffer.write(String.valueOf(evalResult) + "\n");
+			buffer.write(String.valueOf(evalResult)
+					+ System.getProperty("line.separator"));
 			buffer.flush();
 			buffer.close();
 		} catch (Exception e) {

@@ -21,6 +21,7 @@
  */
 package gr.auth.ee.lcs.classifiers;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 
 import java.io.FileInputStream;
@@ -54,10 +55,13 @@ public class ClassifierSet implements Serializable {
 	 *            the path of the ClassifierSet to be opened
 	 * @param sizeControlStrategy
 	 *            the ClassifierSet's
+	 * @param lcs
+	 *            the lcs which the new set will belong to
 	 * @return the opened classifier set
 	 */
 	public static ClassifierSet openClassifierSet(final String path,
-			final IPopulationControlStrategy sizeControlStrategy) {
+			final IPopulationControlStrategy sizeControlStrategy,
+			final AbstractLearningClassifierSystem lcs) {
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
 		ClassifierSet opened = null;
@@ -68,6 +72,11 @@ public class ClassifierSet implements Serializable {
 
 			opened = (ClassifierSet) in.readObject();
 			opened.myISizeControlStrategy = sizeControlStrategy;
+
+			for (int i = 0; i < opened.getNumberOfMacroclassifiers(); i++) {
+				final Classifier cl = opened.getClassifier(i);
+				cl.setLCS(lcs);
+			}
 
 			in.close();
 		} catch (IOException ex) {
@@ -323,6 +332,15 @@ public class ClassifierSet implements Serializable {
 	}
 
 	/**
+	 * Get the set's population control strategy
+	 * 
+	 * @return the set's population control strategy
+	 */
+	public final IPopulationControlStrategy getPopulationControlStrategy() {
+		return myISizeControlStrategy;
+	}
+
+	/**
 	 * Returns the set's total numerosity (the total number of
 	 * microclassifiers).
 	 * 
@@ -383,19 +401,21 @@ public class ClassifierSet implements Serializable {
 
 	@Override
 	public String toString() {
-		String response = "";
+		final StringBuffer response = new StringBuffer();
 		for (int i = 0; i < this.getNumberOfMacroclassifiers(); i++) {
-			response += this.getClassifier(i).toString()
+			response.append(this.getClassifier(i).toString()
 					+ " fit:"
 					+ this.getClassifier(i)
 							.getComparisonValue(
 									AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
 					+ " exp:" + this.getClassifier(i).experience + " num:"
 					+ this.getClassifierNumerosity(i) + "cov:"
-					+ this.getClassifier(i).getCoverage() + "\n";
-			response += this.getClassifier(i).getUpdateSpecificData() + "\n";
+					+ this.getClassifier(i).getCoverage()
+					+ System.getProperty("line.separator"));
+			response.append(this.getClassifier(i).getUpdateSpecificData()
+					+ System.getProperty("line.separator"));
 		}
-		return response;
+		return response.toString();
 	}
 
 }
