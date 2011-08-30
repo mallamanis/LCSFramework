@@ -46,6 +46,8 @@ public final class InstancesUtility {
 	 *         attributes
 	 */
 	public static double[][] convertIntancesToDouble(final Instances set) {
+		if (set == null) return null;
+		
 		final double[][] result = new double[set.numInstances()][set
 				.numAttributes()];
 		for (int i = 0; i < set.numInstances(); i++) {
