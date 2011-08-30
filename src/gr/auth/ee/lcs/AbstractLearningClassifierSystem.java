@@ -73,7 +73,7 @@ public abstract class AbstractLearningClassifierSystem {
 	/**
 	 * Frequency of the hook callback execution.
 	 */
-	private final int hookCallbackRate;
+	private int hookCallbackRate;
 
 	/**
 	 * Constructor.
@@ -90,6 +90,10 @@ public abstract class AbstractLearningClassifierSystem {
 				"callbackRate", 100);
 	}
 
+	public void setHookCallbackRate(int rate) {
+		hookCallbackRate = rate;
+	}
+	
 	/**
 	 * Classify a single instance.
 	 * 
@@ -250,7 +254,7 @@ public abstract class AbstractLearningClassifierSystem {
 				System.out.print('.');
 
 				for (int i = 0; i < numInstances; i++) {
-					trainWithInstance(population, i);
+					trainWithInstance(population, i,evolve);
 					if (Math.random() < instanceProb)
 						cleanUpZeroCoverageClassifiers(population);
 				}
@@ -273,15 +277,16 @@ public abstract class AbstractLearningClassifierSystem {
 	 *            the classifier's population
 	 * @param dataInstanceIndex
 	 *            the index of the training data instance
+	 * @param evolve whether to evolve the set or just train by updating it
 	 */
 	public final void trainWithInstance(final ClassifierSet population,
-			final int dataInstanceIndex) {
+			final int dataInstanceIndex, final boolean evolve) {
 
 		final ClassifierSet matchSet = population
 				.generateMatchSet(dataInstanceIndex);
 
 		getUpdateStrategy().updateSet(population, matchSet, dataInstanceIndex,
-				true);
+				evolve);
 
 	}
 
