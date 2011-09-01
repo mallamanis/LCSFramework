@@ -1,1 +1,3 @@
-An implementation of Learning Classifier Systems for data mining
+An implementation of Learning Classifier Systems for data mining.
+
+To compile the project you need Java (obviously), Weka (www.cs.waikato.ac.nz/ml/weka). To run the tests you need JUnit, EasyMock (easymock.org) and it's dependecies (objenesis and cglib)
