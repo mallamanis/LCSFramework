@@ -255,6 +255,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 		// For each classifier in the matchset
 		for (int i = 0; i < matchSetSize; i++) {
 			final Macroclassifier cl = matchSet.getMacroclassifier(i);
+
 			int minCurrentNs = Integer.MAX_VALUE;
 
 			final MlASLCSClassifierData data = (MlASLCSClassifierData) cl.myClassifier
@@ -276,8 +277,6 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}
-				} else {
-					data.msa += 3; // Penalize 4x fp's
 				}
 				data.msa += 1;
 
