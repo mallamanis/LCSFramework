@@ -24,6 +24,7 @@
  */
 package gr.auth.ee.lcs.classifiers.populationcontrol;
 
+import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
@@ -39,11 +40,7 @@ import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
 public class InadequeteClassifierDeletionStrategy implements
 		IPopulationControlStrategy {
 
-	/**
-	 * The minimum number of instances that should have been checked before a
-	 * classifier can be considered inadequate.
-	 */
-	private final int instanceSize;
+	final AbstractLearningClassifierSystem myLcs;
 
 	/**
 	 * The strategy constructor.
@@ -52,8 +49,8 @@ public class InadequeteClassifierDeletionStrategy implements
 	 *            the minimum number of instances to be checked before deleting
 	 *            a zero-coverage classifier.
 	 */
-	public InadequeteClassifierDeletionStrategy(final int instanceSize) {
-		this.instanceSize = instanceSize;
+	public InadequeteClassifierDeletionStrategy(final AbstractLearningClassifierSystem lcs) {
+		this.myLcs = lcs;
 	}
 
 	/*
@@ -70,7 +67,7 @@ public class InadequeteClassifierDeletionStrategy implements
 
 		for (int i = setSize - 1; i >= 0; i--) {
 			final Classifier aClassifier = aSet.getClassifier(i);
-			final boolean zeroCoverage = (aClassifier.getCheckedInstances() >= instanceSize)
+			final boolean zeroCoverage = (aClassifier.getCheckedInstances() >= myLcs.instances.length)
 					&& (aClassifier.getCoverage() == 0);
 			if (zeroCoverage)
 				aSet.deleteClassifier(i);

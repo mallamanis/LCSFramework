@@ -192,7 +192,7 @@ public class GMlSSLCS extends AbstractLearningClassifierSystem {
 		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
+				new FixedSizeSetWorstFitnessDeletion(this,
 						populationSize,
 						new TournamentSelector(60, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));

@@ -69,14 +69,14 @@ public class FixedSizeDeletionTest {
 	public void setUp() throws IOException {
 		SettingsLoader.loadSettings();
 		lcs = createMock(AbstractLearningClassifierSystem.class);
-		;
+		
 		final SimpleBooleanRepresentation rep = new SimpleBooleanRepresentation(
 				.33, 2, lcs);
 		final ASLCSUpdateAlgorithm update = new ASLCSUpdateAlgorithm(5, .99,
 				50, 0.01, null, lcs);
 		lcs.setElements(rep, update);
-
-		population = new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(3,
+		lcs.instances = new double[100][];
+		population = new ClassifierSet(new FixedSizeSetWorstFitnessDeletion(lcs, 3,
 				new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_DELETION, true)));
 	}

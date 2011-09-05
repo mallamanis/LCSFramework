@@ -170,9 +170,9 @@ public class DirectASLCS extends AbstractLearningClassifierSystem {
 				MATCHSET_GA_RUN_PROBABILITY, ga, this);
 
 		this.setElements(rep, strategy);
-
+		
 		rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(
+				new FixedSizeSetWorstFitnessDeletion(this,
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,

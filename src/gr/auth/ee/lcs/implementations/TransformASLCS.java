@@ -286,7 +286,7 @@ public class TransformASLCS extends AbstractLearningClassifierSystem {
 			System.out.println("Training Classifier Set");
 			rep.activateLabel(selector);
 			ClassifierSet brpopulation = new ClassifierSet(
-					new FixedSizeSetWorstFitnessDeletion(
+					new FixedSizeSetWorstFitnessDeletion(this,
 							populationSize,
 							new RouletteWheelSelector(
 									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
