@@ -48,6 +48,11 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	private final int populationSize;
 
 	/**
+	 * Removes all zero coverage rules
+	 */
+	private InadequeteClassifierDeletionStrategy zeroCoverageRemoval;
+
+	/**
 	 * Constructor of deletion strategy.
 	 * 
 	 * @param maxPopulationSize
@@ -69,6 +74,8 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	@Override
 	public final void controlPopulation(final ClassifierSet aSet) {
 		final ClassifierSet toBeDeleted = new ClassifierSet(null);
+		if (aSet.getTotalNumerosity() > populationSize)
+			zeroCoverageRemoval.controlPopulation(aSet);
 		while (aSet.getTotalNumerosity() > populationSize) {
 			mySelector.select(1, aSet, toBeDeleted);
 			aSet.deleteClassifier(toBeDeleted.getClassifier(0));
