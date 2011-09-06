@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * An exact-match test
  * @author Miltiadis Allamanis
  *
  */

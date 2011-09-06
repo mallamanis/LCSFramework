@@ -109,7 +109,7 @@ public class RouletteSelectorTest {
 		}
 
 		for (int i = 0; i < atLeastOnce.length; i++) {
-			assertTrue("Might fail with probability 1 -(13/14)^500",
+			assertTrue("Might fail with probability (13/14)^500",
 					atLeastOnce[i]);
 		}
 
