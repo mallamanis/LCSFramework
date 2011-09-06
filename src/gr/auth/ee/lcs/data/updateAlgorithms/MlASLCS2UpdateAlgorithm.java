@@ -174,14 +174,12 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 				.getUpdateDataObject();
 		switch (mode) {
 		case COMPARISON_MODE_EXPLORATION:
-			return ((aClassifier.experience < 5) ? 0 : data.fitness);
+			return ((aClassifier.experience < 10) ? 0 : data.fitness);
 		case COMPARISON_MODE_DELETION:
 			return 1 / (data.fitness
 					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1)) * ((((aClassifier
-					.getCoverage() == 0) || (aClassifier.getCoverage() == 1)) && (aClassifier.experience == 1)) ? 0.
-					: 1));
-			// TODO: Something else?
+							.isNaN(data.ns) ? 1 : data.ns) + 1)));
+			
 		case COMPARISON_MODE_EXPLOITATION:
 			final double exploitationFitness = (((double) (data.tp)) / (double) (data.msa));
 			return Double.isNaN(exploitationFitness) ? 0 : exploitationFitness;
