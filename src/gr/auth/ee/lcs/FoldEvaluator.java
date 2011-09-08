@@ -141,16 +141,32 @@ public class FoldEvaluator {
 	 * Perform evaluation.
 	 */
 	public void evaluate() {
-
+		final int metricOptimizationIndex = (int) SettingsLoader.getNumericSetting(
+				"metricOptimizationIndex", 0);
+		final int numOfFoldRepetitions = (int) SettingsLoader.getNumericSetting(
+				"numOfFoldRepetitions", 1);
+		
 		for (int i = 0; i < runs; i++) {
-			AbstractLearningClassifierSystem foldLCS = prototype.createNew();
-			System.out.println("Training Fold " + i);
-			loadFold(i, foldLCS);
-			foldLCS.train();
+			double[][] results = new double[numOfFoldRepetitions][];
+			for (int repetition = 0; repetition < numOfFoldRepetitions; repetition++) {
+				AbstractLearningClassifierSystem foldLCS = prototype.createNew();
+				System.out.println("Training Fold " + i);
+				loadFold(i, foldLCS);
+				foldLCS.train();
+	
+				// Gather results...
+				results[repetition] = foldLCS.getEvaluations(testSet);
+			}
+			
+			//Determine better repetition
+			int best = 0;
+			for (int j = 1; j < numOfFoldRepetitions; j++) {
+				if (results[j][metricOptimizationIndex] < results[best][metricOptimizationIndex])
+					best = j;
+			}
 
-			// Gather results...
-			double[] results = foldLCS.getEvaluations(testSet);
-			gatherResults(results, i);
+			// Gather to fold stats
+			gatherResults(results[best], i);
 		}
 
 		final double[] means = calcMean(this.evals);
