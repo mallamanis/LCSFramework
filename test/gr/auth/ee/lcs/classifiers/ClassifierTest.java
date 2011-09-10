@@ -77,18 +77,23 @@ public class ClassifierTest extends EasyMockSupport {
 
 		assertTrue(cl.isMatch(0));
 		assertEquals(cl.getCheckedInstances(), 1);
+		assertEquals(Double.compare(cl.getCoverage(), 1), 0);
 
 		assertTrue(cl.isMatch(3));
 		assertEquals(cl.getCheckedInstances(), 2);
+		assertEquals(Double.compare(cl.getCoverage(), 1), 0);
 
 		assertTrue(cl.isMatch(4));
 		assertEquals(cl.getCheckedInstances(), 3);
+		assertEquals(Double.compare(cl.getCoverage(), 1), 0);
 
 		assertFalse(cl.isMatch(1));
 		assertEquals(cl.getCheckedInstances(), 4);
+		assertEquals(Double.compare(cl.getCoverage(), 3. / 4.), 0);
 
 		assertFalse(cl.isMatch(2));
 		assertEquals(cl.getCheckedInstances(), 5);
+		assertEquals(Double.compare(cl.getCoverage(), 3. / 5.), 0);
 
 		for (int i = 0; i < 100; i++) {
 			assertTrue(cl.isMatch(0));
@@ -98,6 +103,7 @@ public class ClassifierTest extends EasyMockSupport {
 			assertFalse(cl.isMatch(1));
 			assertFalse(cl.isMatch(2));
 			assertEquals(cl.getCheckedInstances(), 5);
+			assertEquals(Double.compare(cl.getCoverage(), 3. / 5.), 0);
 		}
 		verifyAll();
 	}
