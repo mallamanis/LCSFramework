@@ -1010,8 +1010,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final String toNaturalLanguageString(final Classifier aClassifier) {
 		final StringBuffer nlRule = new StringBuffer();
-		for (int i = 0; i < (attributeList.length - numberOfLabels); i++)
-			nlRule.append(attributeList[i].toString(aClassifier) + " AND ");
+		for (int i = 0; i < (attributeList.length - numberOfLabels); i++) {
+			final String attributeString = attributeList[i].toString(aClassifier);
+			if (!attributeString.contains("#"))
+				nlRule.append( attributeString+ " AND ");
+		}
 
 		// Add consequence
 		nlRule.append("=>");
