@@ -117,7 +117,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			lengthInBits = 1;
 			chromosomeSize += lengthInBits;
 		}
-		
+
 		@Override
 		public void fixAttributeRepresentation(
 				final ExtendedBitSet generatedClassifier) {

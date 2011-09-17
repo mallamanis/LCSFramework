@@ -336,7 +336,8 @@ public class TransformationUCS extends AbstractLearningClassifierSystem {
 			final double imbalance = LabelFrequencyCalculator.imbalanceRate(fr);
 			ga.setThetaGA((int) (imbalance * THETA_GA_IMBALANCE_MULTIPLIER));
 			ClassifierSet brpopulation = new ClassifierSet(
-					new FixedSizeSetWorstFitnessDeletion(this,
+					new FixedSizeSetWorstFitnessDeletion(
+							this,
 							populationSize,
 							new RouletteWheelSelector(
 									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,

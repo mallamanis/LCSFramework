@@ -41,8 +41,8 @@ public class FoldEvaluatorTest {
 	public void testCalcMean() {
 		final double[][] results = new double[3][4];
 
-		final FoldEvaluator tested = new FoldEvaluator(3, 3, createMock(AbstractLearningClassifierSystem.class),
-				null);
+		final FoldEvaluator tested = new FoldEvaluator(3, 3,
+				createMock(AbstractLearningClassifierSystem.class), null);
 
 		Arrays.fill(results[0], 0);
 		Arrays.fill(results[1], 1);
@@ -61,8 +61,7 @@ public class FoldEvaluatorTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link gr.auth.ee.lcs.FoldEvaluator#evaluate()}.
+	 * Test method for {@link gr.auth.ee.lcs.FoldEvaluator#evaluate()}.
 	 */
 	@Test
 	public void testEvaluate() {
@@ -70,36 +69,38 @@ public class FoldEvaluatorTest {
 		final Instances sampleDataSet = createMock(Instances.class);
 		final FoldEvaluator tested = new FoldEvaluator(10, 10, mockLcs,
 				sampleDataSet);
-		
-		expect(sampleDataSet.trainCV(anyInt(), anyInt())).andReturn(null).anyTimes();
-		expect(sampleDataSet.testCV(anyInt(), anyInt())).andReturn(null).anyTimes();
-		
+
+		expect(sampleDataSet.trainCV(anyInt(), anyInt())).andReturn(null)
+				.anyTimes();
+		expect(sampleDataSet.testCV(anyInt(), anyInt())).andReturn(null)
+				.anyTimes();
+
 		expect(mockLcs.createNew()).andReturn(mockLcs).anyTimes();
-		double[] results = {.5,.22,.0,1.,.95};
-		expect(mockLcs.getEvaluations(anyObject(Instances.class))).andReturn(Arrays.copyOf(results,5)).times(10);
-		String[] names = {"","","","",""};
+		double[] results = { .5, .22, .0, 1., .95 };
+		expect(mockLcs.getEvaluations(anyObject(Instances.class))).andReturn(
+				Arrays.copyOf(results, 5)).times(10);
+		String[] names = { "", "", "", "", "" };
 		expect(mockLcs.getEvaluationNames()).andReturn(names).once();
-		
+
 		mockLcs.train();
 		expectLastCall().times(10);
-		
+
 		replay(mockLcs);
 		replay(sampleDataSet);
 		tested.evaluate();
 		verify(mockLcs);
 		verify(sampleDataSet);
-		
-		
+
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link gr.auth.ee.lcs.FoldEvaluator#gatherResults(double[], int)}.
 	 */
 	@Test
 	public void testGatherResults() {
-		final FoldEvaluator tested = new FoldEvaluator(3, 2, createMock(AbstractLearningClassifierSystem.class),
-				null);
+		final FoldEvaluator tested = new FoldEvaluator(3, 2,
+				createMock(AbstractLearningClassifierSystem.class), null);
 
 		double[] inputResult = new double[3];
 

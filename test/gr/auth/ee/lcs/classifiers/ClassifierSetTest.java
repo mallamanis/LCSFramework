@@ -42,12 +42,12 @@ import org.junit.Test;
  * @author Miltos Allamanis
  * 
  */
-public final class ClassifierSetTest extends EasyMockSupport{
+public final class ClassifierSetTest extends EasyMockSupport {
 
 	private SimpleBooleanRepresentation test;
 
 	private AbstractLearningClassifierSystem lcs;
-	
+
 	private ClassifierTransformBridge mockBridge;
 
 	/**
@@ -71,50 +71,71 @@ public final class ClassifierSetTest extends EasyMockSupport{
 	public void testAddClassifier() {
 		resetAll();
 		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
-				
+
 		final ClassifierSet testSet = new ClassifierSet(mockControlStrategy);
 		final Classifier testClassifier = lcs
 				.getNewClassifier(new ExtendedBitSet("10010111"));
 		testClassifier.setSubsumptionAbility(false);
 		final Classifier testClassifier2 = lcs
-			.getNewClassifier(new ExtendedBitSet("10100111"));
+				.getNewClassifier(new ExtendedBitSet("10100111"));
 		testClassifier2.setSubsumptionAbility(false);
 		final Classifier testClassifier3 = lcs
-			.getNewClassifier(new ExtendedBitSet("10001100"));
+				.getNewClassifier(new ExtendedBitSet("10001100"));
 		testClassifier3.setSubsumptionAbility(true);
-		
-		expect(mockBridge.isMoreGeneral(testClassifier, testClassifier)).andReturn(true).anyTimes();
-		expect(mockBridge.areEqual(testClassifier, testClassifier)).andReturn(true).anyTimes();
-				
-		expect(mockBridge.isMoreGeneral(testClassifier2, testClassifier2)).andReturn(true).anyTimes();
-		expect(mockBridge.areEqual(testClassifier2, testClassifier2)).andReturn(true).anyTimes();
-		
-		expect(mockBridge.isMoreGeneral(testClassifier3, testClassifier3)).andReturn(true).anyTimes();
-		expect(mockBridge.areEqual(testClassifier3, testClassifier3)).andReturn(true).anyTimes();
-		
+
+		expect(mockBridge.isMoreGeneral(testClassifier, testClassifier))
+				.andReturn(true).anyTimes();
+		expect(mockBridge.areEqual(testClassifier, testClassifier)).andReturn(
+				true).anyTimes();
+
+		expect(mockBridge.isMoreGeneral(testClassifier2, testClassifier2))
+				.andReturn(true).anyTimes();
+		expect(mockBridge.areEqual(testClassifier2, testClassifier2))
+				.andReturn(true).anyTimes();
+
+		expect(mockBridge.isMoreGeneral(testClassifier3, testClassifier3))
+				.andReturn(true).anyTimes();
+		expect(mockBridge.areEqual(testClassifier3, testClassifier3))
+				.andReturn(true).anyTimes();
+
 		/*
-		expect(mockBridge.areEqual(testClassifier, testClassifier2)).andReturn(false).anyTimes();
-		expect(mockBridge.areEqual(testClassifier2, testClassifier)).andReturn(false).anyTimes();
-		expect(mockBridge.areEqual(testClassifier, testClassifier3)).andReturn(false).anyTimes();
-		expect(mockBridge.areEqual(testClassifier3, testClassifier)).andReturn(false).anyTimes();
-		expect(mockBridge.areEqual(testClassifier3, testClassifier2)).andReturn(false).anyTimes();
-		expect(mockBridge.areEqual(testClassifier2, testClassifier3)).andReturn(false).anyTimes();
-		
-		expect(mockBridge.isMoreGeneral(testClassifier, testClassifier2)).andReturn(false).anyTimes();
-		expect(mockBridge.isMoreGeneral(testClassifier2, testClassifier)).andReturn(false).anyTimes();
-		expect(mockBridge.isMoreGeneral(testClassifier, testClassifier3)).andReturn(false).anyTimes();
-		expect(mockBridge.isMoreGeneral(testClassifier3, testClassifier)).andReturn(false).anyTimes();
-		expect(mockBridge.isMoreGeneral(testClassifier3, testClassifier2)).andReturn(false).anyTimes();
-		expect(mockBridge.isMoreGeneral(testClassifier2, testClassifier3)).andReturn(false).anyTimes();
-		*/
-		
-		expect(mockBridge.areEqual(anyObject(Classifier.class),anyObject(Classifier.class))).andReturn(false).anyTimes();
-		
+		 * expect(mockBridge.areEqual(testClassifier,
+		 * testClassifier2)).andReturn(false).anyTimes();
+		 * expect(mockBridge.areEqual(testClassifier2,
+		 * testClassifier)).andReturn(false).anyTimes();
+		 * expect(mockBridge.areEqual(testClassifier,
+		 * testClassifier3)).andReturn(false).anyTimes();
+		 * expect(mockBridge.areEqual(testClassifier3,
+		 * testClassifier)).andReturn(false).anyTimes();
+		 * expect(mockBridge.areEqual(testClassifier3,
+		 * testClassifier2)).andReturn(false).anyTimes();
+		 * expect(mockBridge.areEqual(testClassifier2,
+		 * testClassifier3)).andReturn(false).anyTimes();
+		 * 
+		 * expect(mockBridge.isMoreGeneral(testClassifier,
+		 * testClassifier2)).andReturn(false).anyTimes();
+		 * expect(mockBridge.isMoreGeneral(testClassifier2,
+		 * testClassifier)).andReturn(false).anyTimes();
+		 * expect(mockBridge.isMoreGeneral(testClassifier,
+		 * testClassifier3)).andReturn(false).anyTimes();
+		 * expect(mockBridge.isMoreGeneral(testClassifier3,
+		 * testClassifier)).andReturn(false).anyTimes();
+		 * expect(mockBridge.isMoreGeneral(testClassifier3,
+		 * testClassifier2)).andReturn(false).anyTimes();
+		 * expect(mockBridge.isMoreGeneral(testClassifier2,
+		 * testClassifier3)).andReturn(false).anyTimes();
+		 */
+
+		expect(
+				mockBridge.areEqual(anyObject(Classifier.class),
+						anyObject(Classifier.class))).andReturn(false)
+				.anyTimes();
+
 		mockControlStrategy.controlPopulation(testSet);
 		expectLastCall().times(6);
-		
+
 		replayAll();
-		
+
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 0);
 		testSet.addClassifier(new Macroclassifier(testClassifier, 3), true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
@@ -126,7 +147,7 @@ public final class ClassifierSetTest extends EasyMockSupport{
 		assertEquals(testSet.getTotalNumerosity(), 5);
 		// Create a classifier with the same chromosome but different advocated
 		// action
-		
+
 		testSet.addClassifier(new Macroclassifier(testClassifier2, 3), true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 2);
 		testSet.addClassifier(new Macroclassifier(testClassifier2, 10), true);
@@ -134,9 +155,6 @@ public final class ClassifierSetTest extends EasyMockSupport{
 		assertEquals(testSet.getClassifier(1), testClassifier2);
 		assertEquals(testSet.getClassifierNumerosity(testClassifier2), 13);
 		assertEquals(testSet.getTotalNumerosity(), 13 + 5);
-
-		
-		
 
 		testSet.addClassifier(new Macroclassifier(testClassifier3, 1), true);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 3);
@@ -156,22 +174,21 @@ public final class ClassifierSetTest extends EasyMockSupport{
 	@Test
 	public void testDeleteClassifier() {
 		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
-		
+
 		final ClassifierSet testSet = new ClassifierSet(mockControlStrategy);
 		final Classifier testClassifier = lcs
 				.getNewClassifier(new ExtendedBitSet("10010111"));
 		testClassifier.setActionAdvocated(1);
-		
+
 		mockControlStrategy.controlPopulation(testSet);
-		
+
 		replay(mockControlStrategy);
-		
+
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 0);
 		testSet.addClassifier(new Macroclassifier(testClassifier, 3), false);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
 		assertEquals(testSet.getTotalNumerosity(), 3);
-		
-		
+
 		testSet.deleteClassifier(testClassifier);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
 		assertEquals(testSet.getClassifierNumerosity(testClassifier), 2);
@@ -194,54 +211,60 @@ public final class ClassifierSetTest extends EasyMockSupport{
 	public void testGenerateMatchSet() {
 		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
 		ClassifierSet population = new ClassifierSet(mockControlStrategy);
-		double instance[] = {0,1,2,3,4};
-		
-		mockBridge.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
+		double instance[] = { 0, 1, 2, 3, 4 };
+
+		mockBridge
+				.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
 		expectLastCall().anyTimes();
-		
+
 		replayAll();
 		final Classifier mockClassifier1 = lcs
-			.getNewClassifier(new ExtendedBitSet("10010110"));
+				.getNewClassifier(new ExtendedBitSet("10010110"));
 		final Classifier mockClassifier2 = lcs
-			.getNewClassifier(new ExtendedBitSet("11010111"));
-		
+				.getNewClassifier(new ExtendedBitSet("11010111"));
+
 		verifyAll();
 		resetAll();
-		
+
 		mockControlStrategy.controlPopulation(population);
 		expectLastCall().times(2);
 
-		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class))).andReturn("").anyTimes();
-		expect(mockBridge.areEqual(anyObject(Classifier.class),anyObject(Classifier.class))).andReturn(false);
+		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class)))
+				.andReturn("").anyTimes();
+		expect(
+				mockBridge.areEqual(anyObject(Classifier.class),
+						anyObject(Classifier.class))).andReturn(false);
 		expect(mockClassifier1.isMatch(instance)).andReturn(false);
 		expect(mockClassifier2.isMatch(instance)).andReturn(true);
-		
+
 		replayAll();
-		
-		population.addClassifier(new Macroclassifier(mockClassifier1,10), true);
-		population.addClassifier(new Macroclassifier(mockClassifier2,8), true);
-				
+
+		population
+				.addClassifier(new Macroclassifier(mockClassifier1, 10), true);
+		population.addClassifier(new Macroclassifier(mockClassifier2, 8), true);
+
 		ClassifierSet matchSet = population.generateMatchSet(instance);
-		
-		assertEquals(matchSet.getTotalNumerosity(),8);
-		assertEquals(matchSet.getNumberOfMacroclassifiers(),1);
-		assertEquals(matchSet.getClassifier(0),mockClassifier2);
-		
+
+		assertEquals(matchSet.getTotalNumerosity(), 8);
+		assertEquals(matchSet.getNumberOfMacroclassifiers(), 1);
+		assertEquals(matchSet.getClassifier(0), mockClassifier2);
+
 		verifyAll();
-		
+
 	}
 
 	@Test
 	public void testRemoveAll() {
 		resetAll();
-		
-		mockBridge.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
+
+		mockBridge
+				.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
 		expectLastCall().anyTimes();
-		
+
 		replayAll();
 		final Classifier testClassifier = lcs
-			.getNewClassifier(new ExtendedBitSet("10010111"));
-		
+				.getNewClassifier(new ExtendedBitSet("10010111"));
+
 		verifyAll();
 		resetAll();
 		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
@@ -249,14 +272,16 @@ public final class ClassifierSetTest extends EasyMockSupport{
 
 		mockControlStrategy.controlPopulation(testSet);
 		expectLastCall().times(10);
-		
-		expect(mockBridge.areEqual(testClassifier, testClassifier)).andReturn(true).anyTimes();
-		expect(mockBridge.isMoreGeneral(testClassifier, testClassifier)).andReturn(true).anyTimes();
-		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class))).andReturn("").anyTimes();
-		
-		
+
+		expect(mockBridge.areEqual(testClassifier, testClassifier)).andReturn(
+				true).anyTimes();
+		expect(mockBridge.isMoreGeneral(testClassifier, testClassifier))
+				.andReturn(true).anyTimes();
+		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class)))
+				.andReturn("").anyTimes();
+
 		replayAll();
-		
+
 		for (int i = 0; i < 10; i++)
 			testSet.addClassifier(new Macroclassifier(testClassifier, 1), true);
 		assertEquals(testSet.getClassifierNumerosity(testClassifier), 10);
@@ -280,43 +305,45 @@ public final class ClassifierSetTest extends EasyMockSupport{
 	@Test
 	public void testSubsumptionClassifierSet() {
 		resetAll();
-		
+
 		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
-		
-		mockBridge.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
+
+		mockBridge
+				.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
 		expectLastCall().anyTimes();
-		
+
 		replayAll();
 		final Classifier subsumableClassifier = lcs
-			.getNewClassifier(new ExtendedBitSet("10010110"));
+				.getNewClassifier(new ExtendedBitSet("10010110"));
 		final Classifier testClassifier = lcs
-			.getNewClassifier(new ExtendedBitSet("10010111"));
-		
+				.getNewClassifier(new ExtendedBitSet("10010111"));
+
 		verifyAll();
 		resetAll();
 
 		final ClassifierSet testSet = new ClassifierSet(mockControlStrategy);
 		mockControlStrategy.controlPopulation(testSet);
 		expectLastCall().times(2);
-		
-		expect (mockBridge.isMoreGeneral(subsumableClassifier, testClassifier)).andReturn(true).atLeastOnce();
-		expect (mockBridge.isMoreGeneral(testClassifier, subsumableClassifier)).andReturn(false).anyTimes();
-		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class))).andReturn("").anyTimes();
-		
+
+		expect(mockBridge.isMoreGeneral(subsumableClassifier, testClassifier))
+				.andReturn(true).atLeastOnce();
+		expect(mockBridge.isMoreGeneral(testClassifier, subsumableClassifier))
+				.andReturn(false).anyTimes();
+		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class)))
+				.andReturn("").anyTimes();
+
 		replayAll();
-		
+
 		subsumableClassifier.setSubsumptionAbility(true);
-		
+
 		testSet.addClassifier(new Macroclassifier(subsumableClassifier, 1),
 				false);
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
 		assertEquals(testSet.getTotalNumerosity(), 1);
 		assertEquals(testSet.getClassifierNumerosity(subsumableClassifier), 1);
 
-		
 		assertTrue(subsumableClassifier.isMoreGeneral(testClassifier));
-		
-		
+
 		testSet.addClassifier(new Macroclassifier(testClassifier, 1), true);
 
 		assertEquals(testSet.getNumberOfMacroclassifiers(), 1);
@@ -324,8 +351,8 @@ public final class ClassifierSetTest extends EasyMockSupport{
 
 		assertEquals(testSet.getClassifierNumerosity(testClassifier), 0);
 		assertEquals(testSet.getClassifierNumerosity(subsumableClassifier), 2);
-		
+
 		verifyAll();
 	}
-	
+
 }

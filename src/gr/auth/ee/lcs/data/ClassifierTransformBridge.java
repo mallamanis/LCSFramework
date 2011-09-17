@@ -47,7 +47,7 @@ public abstract class ClassifierTransformBridge {
 	 * @return true if classifiers are equal, else false
 	 */
 	public abstract boolean areEqual(Classifier cl1, Classifier cl2);
-	
+
 	/**
 	 * @deprecated Unknown if useful
 	 */
@@ -125,7 +125,7 @@ public abstract class ClassifierTransformBridge {
 	 * @return the class
 	 */
 	public abstract int[] getClassification(Classifier aClassifier);
-	
+
 	/**
 	 * Returns all the labels of the specific data instance.
 	 * 
@@ -144,16 +144,21 @@ public abstract class ClassifierTransformBridge {
 
 	/**
 	 * Return the number of attributes contained in the problem.
+	 * 
 	 * @return
 	 */
 	public abstract int getNumberOfAttributes();
 
 	/**
-	 * Returns if attribute with the given index is specific. Labels are also considered attributes and are indexed after the attributes.
-	 * @param attributeIndex the index
+	 * Returns if attribute with the given index is specific. Labels are also
+	 * considered attributes and are indexed after the attributes.
+	 * 
+	 * @param attributeIndex
+	 *            the index
 	 * @return true if the attribute is specific
 	 */
-	public abstract boolean isAttributeSpecific(final Classifier aClassifier, final int attributeIndex);
+	public abstract boolean isAttributeSpecific(final Classifier aClassifier,
+			final int attributeIndex);
 
 	/**
 	 * Checks if the visionVector matches the condition of the given chromosome.

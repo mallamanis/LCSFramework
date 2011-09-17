@@ -66,15 +66,20 @@ public class SinglePointCrossoverTest extends SinglePointCrossover {
 		final ExtendedBitSet chromosome1 = new ExtendedBitSet("0000000");
 		final ExtendedBitSet chromosome2 = new ExtendedBitSet("1111111");
 
-		expect(lcs.getUpdateStrategy().createStateClassifierObject()).andReturn(null).anyTimes();
-		expect(lcs.getUpdateStrategy().getComparisonValue(anyObject(Classifier.class), anyInt())).andReturn(0.).anyTimes();
-		lcs.getUpdateStrategy().setComparisonValue(anyObject(Classifier.class), anyInt(), anyDouble());
+		expect(lcs.getUpdateStrategy().createStateClassifierObject())
+				.andReturn(null).anyTimes();
+		expect(
+				lcs.getUpdateStrategy().getComparisonValue(
+						anyObject(Classifier.class), anyInt())).andReturn(0.)
+				.anyTimes();
+		lcs.getUpdateStrategy().setComparisonValue(anyObject(Classifier.class),
+				anyInt(), anyDouble());
 		expectLastCall().anyTimes();
-		
+
 		replay(lcs.getUpdateStrategy());
 		final Classifier cl1 = Classifier.createNewClassifier(lcs, chromosome1);
 		final Classifier cl2 = Classifier.createNewClassifier(lcs, chromosome2);
-		
+
 		final boolean atLeastOnce[] = new boolean[8];
 		Arrays.fill(atLeastOnce, false);
 

@@ -180,7 +180,8 @@ public class RTUCS extends AbstractLearningClassifierSystem {
 		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(this,
+				new FixedSizeSetWorstFitnessDeletion(
+						this,
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,

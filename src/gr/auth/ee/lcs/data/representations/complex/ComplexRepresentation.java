@@ -97,7 +97,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 */
 		public abstract void fixAttributeRepresentation(
 				ExtendedBitSet generatedClassifier);
-		
+
 		/**
 		 * @return the length in bits of the chromosome.
 		 */
@@ -144,6 +144,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		/**
 		 * Returns true if the specific attribute is specific (not generic).
+		 * 
 		 * @return true when attribute is specific
 		 */
 		public abstract boolean isSpecific(final ExtendedBitSet testedChromosome);
@@ -254,7 +255,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				return true;
 			}
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -477,7 +478,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return ((attributeVision >= getLowBoundValue(testedChromosome)) && (attributeVision <= getHighBoundValue(testedChromosome)));
 
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -662,7 +663,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return testedChromosome.get(genePosition);
 
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -807,7 +808,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		this.attributeGeneralizationRate = generalizationRate;
 		this.myLcs = lcs;
 	}
-	
+
 	/**
 	 * Arff Loader.
 	 * 
@@ -1015,7 +1016,8 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	}
 
 	@Override
-	public boolean isAttributeSpecific(final Classifier aClassifier, final int attributeIndex){
+	public boolean isAttributeSpecific(final Classifier aClassifier,
+			final int attributeIndex) {
 		return attributeList[attributeIndex].isSpecific(aClassifier);
 	}
 
@@ -1089,7 +1091,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1101,9 +1103,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	public final String toNaturalLanguageString(final Classifier aClassifier) {
 		final StringBuffer nlRule = new StringBuffer();
 		for (int i = 0; i < (attributeList.length - numberOfLabels); i++) {
-			final String attributeString = attributeList[i].toString(aClassifier);
+			final String attributeString = attributeList[i]
+					.toString(aClassifier);
 			if (!attributeString.contains("#"))
-				nlRule.append( attributeString+ " AND ");
+				nlRule.append(attributeString + " AND ");
 		}
 
 		// Add consequence

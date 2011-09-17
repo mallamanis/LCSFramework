@@ -49,7 +49,8 @@ public class InadequeteClassifierDeletionStrategy implements
 	 *            the minimum number of instances to be checked before deleting
 	 *            a zero-coverage classifier.
 	 */
-	public InadequeteClassifierDeletionStrategy(final AbstractLearningClassifierSystem lcs) {
+	public InadequeteClassifierDeletionStrategy(
+			final AbstractLearningClassifierSystem lcs) {
 		this.myLcs = lcs;
 	}
 

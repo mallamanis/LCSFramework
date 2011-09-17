@@ -29,10 +29,11 @@ public class GenericEnsemble extends BaggedEnsemble {
 	/**
 	 * @param args
 	 * @throws IOException
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws IOException,
+			InstantiationException, IllegalAccessException {
 
 		SettingsLoader.loadSettings();
 		final Handler fileLogging = new FileHandler("output.log");
@@ -47,15 +48,16 @@ public class GenericEnsemble extends BaggedEnsemble {
 
 	}
 
-	public GenericEnsemble(Class lcsType) throws InstantiationException, IllegalAccessException {
+	public GenericEnsemble(Class lcsType) throws InstantiationException,
+			IllegalAccessException {
 		super((int) SettingsLoader.getNumericSetting("numberOfLabels", 1), null);
 
-		ensemble = new AbstractLearningClassifierSystem[(int) SettingsLoader.getNumericSetting(
-				"ensembleSize", 7)];
+		ensemble = new AbstractLearningClassifierSystem[(int) SettingsLoader
+				.getNumericSetting("ensembleSize", 7)];
 
 		for (int i = 0; i < ensemble.length; i++)
-			ensemble[i] = (AbstractLearningClassifierSystem) lcsType.newInstance();
-			
+			ensemble[i] = (AbstractLearningClassifierSystem) lcsType
+					.newInstance();
 
 	}
 
@@ -97,8 +99,10 @@ public class GenericEnsemble extends BaggedEnsemble {
 		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 
-		/*for (int i = 0; i < ensemble.length; i++)
-			(() ensemble[i]).proportionalCutCalibration();*/
+		/*
+		 * for (int i = 0; i < ensemble.length; i++) (()
+		 * ensemble[i]).proportionalCutCalibration();
+		 */
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -120,7 +124,7 @@ public class GenericEnsemble extends BaggedEnsemble {
 			final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 					ensemble[i].instances, false, ensemble[i],
 					AccuracyRecallEvaluator.TYPE_ACCURACY);
-			//((GMlASLCS) ensemble[i]).internalValidationCalibration(selfAcc);
+			// ((GMlASLCS) ensemble[i]).internalValidationCalibration(selfAcc);
 		}
 
 		results[4] = accEval.evaluateLCS(this);
@@ -128,8 +132,9 @@ public class GenericEnsemble extends BaggedEnsemble {
 		results[6] = hamEval.evaluateLCS(this);
 		results[7] = testEval.evaluateLCS(this);
 
-		/*for (int i = 0; i < ensemble.length; i++)
-			((GMlASLCS) ensemble[i]).useBestClassificationMode();
+		/*
+		 * for (int i = 0; i < ensemble.length; i++) ((GMlASLCS)
+		 * ensemble[i]).useBestClassificationMode();
 		 */
 		results[8] = accEval.evaluateLCS(this);
 		results[9] = recEval.evaluateLCS(this);

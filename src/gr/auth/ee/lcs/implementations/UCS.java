@@ -179,7 +179,8 @@ public class UCS extends AbstractLearningClassifierSystem {
 		this.setElements(rep, ucsUpdate);
 
 		rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(this,
+				new FixedSizeSetWorstFitnessDeletion(
+						this,
 						populationSize,
 						new RouletteWheelSelector(
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION,

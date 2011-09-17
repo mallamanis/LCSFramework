@@ -52,7 +52,7 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	 * Removes all zero coverage rules
 	 */
 	private InadequeteClassifierDeletionStrategy zeroCoverageRemoval;
-	
+
 	/**
 	 * Constructor of deletion strategy.
 	 * 
@@ -61,11 +61,12 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	 * @param selector
 	 *            the selector used for deleting
 	 */
-	public FixedSizeSetWorstFitnessDeletion(final AbstractLearningClassifierSystem lcs,final int maxPopulationSize,
-			final INaturalSelector selector) {
+	public FixedSizeSetWorstFitnessDeletion(
+			final AbstractLearningClassifierSystem lcs,
+			final int maxPopulationSize, final INaturalSelector selector) {
 		this.populationSize = maxPopulationSize;
 		mySelector = selector;
-		
+
 		zeroCoverageRemoval = new InadequeteClassifierDeletionStrategy(lcs);
 	}
 
@@ -76,7 +77,7 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	 */
 	@Override
 	public final void controlPopulation(final ClassifierSet aSet) {
-		
+
 		final ClassifierSet toBeDeleted = new ClassifierSet(null);
 		if (aSet.getTotalNumerosity() > populationSize)
 			zeroCoverageRemoval.controlPopulation(aSet);

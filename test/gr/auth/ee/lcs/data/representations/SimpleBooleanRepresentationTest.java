@@ -235,7 +235,7 @@ public class SimpleBooleanRepresentationTest {
 		assertFalse(testRep.isMoreGeneral(base, test));
 
 	}
-	
+
 	@Test
 	public void testIsSpecific() {
 		final SimpleBooleanRepresentation testRep = new SimpleBooleanRepresentation(
@@ -243,12 +243,12 @@ public class SimpleBooleanRepresentationTest {
 		lcs.setElements(testRep, null);
 
 		Classifier test1 = lcs.getNewClassifier(new ExtendedBitSet("10110010"));
-		
+
 		assertFalse(testRep.isAttributeSpecific(test1, 3));
 		assertTrue(testRep.isAttributeSpecific(test1, 2));
 		assertFalse(testRep.isAttributeSpecific(test1, 1));
 		assertFalse(testRep.isAttributeSpecific(test1, 0));
-		
+
 		Classifier test2 = lcs.getNewClassifier(new ExtendedBitSet("11110110"));
 		assertFalse(testRep.isAttributeSpecific(test2, 0));
 		assertTrue(testRep.isAttributeSpecific(test2, 1));

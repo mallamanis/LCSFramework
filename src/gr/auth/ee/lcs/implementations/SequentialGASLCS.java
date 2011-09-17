@@ -195,7 +195,8 @@ public class SequentialGASLCS extends AbstractLearningClassifierSystem {
 		this.setElements(rep, strategy);
 
 		rulePopulation = new ClassifierSet(
-				new FixedSizeSetWorstFitnessDeletion(this,
+				new FixedSizeSetWorstFitnessDeletion(
+						this,
 						populationSize,
 						new TournamentSelector(40, true,
 								AbstractUpdateStrategy.COMPARISON_MODE_DELETION)));

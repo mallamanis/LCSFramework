@@ -200,10 +200,9 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 		case COMPARISON_MODE_EXPLORATION:
 			return ((aClassifier.experience < 10) ? 0 : data.fitness);
 		case COMPARISON_MODE_DELETION:
-			return 1 / (data.fitness
-					* ((aClassifier.experience < 20) ? 100. : Math.exp(-(Double
-							.isNaN(data.ns) ? 1 : data.ns) + 1)));
-			
+			return 1 / (data.fitness * ((aClassifier.experience < 20) ? 100.
+					: Math.exp(-(Double.isNaN(data.ns) ? 1 : data.ns) + 1)));
+
 		case COMPARISON_MODE_EXPLOITATION:
 			final double exploitationFitness = ((data.tp) / (data.msa));
 			return Double.isNaN(exploitationFitness) ? 0 : exploitationFitness;

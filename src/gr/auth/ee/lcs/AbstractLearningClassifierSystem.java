@@ -98,7 +98,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 * @return the labels the instance is classified in
 	 */
 	public abstract int[] classifyInstance(double[] instance);
-	
+
 	private void cleanUpZeroCoverageClassifiers(final ClassifierSet aSet) {
 
 		final int setSize = aSet.getNumberOfMacroclassifiers();
@@ -294,7 +294,7 @@ public abstract class AbstractLearningClassifierSystem {
 				System.out.print('.');
 
 				for (int i = 0; i < numInstances; i++) {
-					trainWithInstance(population, i,evolve);
+					trainWithInstance(population, i, evolve);
 					if (Math.random() < instanceProb)
 						cleanUpZeroCoverageClassifiers(population);
 				}
@@ -317,7 +317,8 @@ public abstract class AbstractLearningClassifierSystem {
 	 *            the classifier's population
 	 * @param dataInstanceIndex
 	 *            the index of the training data instance
-	 * @param evolve whether to evolve the set or just train by updating it
+	 * @param evolve
+	 *            whether to evolve the set or just train by updating it
 	 */
 	public final void trainWithInstance(final ClassifierSet population,
 			final int dataInstanceIndex, final boolean evolve) {

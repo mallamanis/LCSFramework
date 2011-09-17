@@ -95,7 +95,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 		}
 
 		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
-			return true; //Not actually true...
+			return true; // Not actually true...
 		}
 
 		@Override
@@ -103,7 +103,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 				final Classifier generatedClassifier) {
 			return;
 		}
-		
+
 		@Override
 		public final String toString(final ExtendedBitSet convertingClassifier) {
 			return "";
@@ -303,7 +303,7 @@ public final class UniLabelRepresentation extends ComplexRepresentation {
 			return testedChromosome
 					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
 		}
-		
+
 		@Override
 		public boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
