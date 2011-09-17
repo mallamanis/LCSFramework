@@ -9,13 +9,17 @@ import gr.auth.ee.lcs.data.ILCSMetric;
 
 /**
  * Retrieve the mean coverage statistic.
+ * 
  * @author Miltos Allamanis
- *
+ * 
  */
 public class MeanCoverageStatistic implements ILCSMetric {
 
-	/* (non-Javadoc)
-	 * @see gr.auth.ee.lcs.data.ILCSMetric#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.data.ILCSMetric#getMetric(gr.auth.ee.lcs.
+	 * AbstractLearningClassifierSystem)
 	 */
 	@Override
 	public double getMetric(AbstractLearningClassifierSystem lcs) {
@@ -30,7 +34,9 @@ public class MeanCoverageStatistic implements ILCSMetric {
 		return coverageSum / ((double) set.getTotalNumerosity());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.data.ILCSMetric#getMetricName()
 	 */
 	@Override
