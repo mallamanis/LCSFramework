@@ -125,7 +125,7 @@ public abstract class ClassifierTransformBridge {
 	 * @return the class
 	 */
 	public abstract int[] getClassification(Classifier aClassifier);
-
+	
 	/**
 	 * Returns all the labels of the specific data instance.
 	 * 
@@ -147,6 +147,13 @@ public abstract class ClassifierTransformBridge {
 	 * @return
 	 */
 	public abstract int getNumberOfAttributes();
+
+	/**
+	 * Returns if attribute with the given index is specific. Labels are also considered attributes and are indexed after the attributes.
+	 * @param attributeIndex the index
+	 * @return true if the attribute is specific
+	 */
+	public abstract boolean isAttributeSpecific(final Classifier aClassifier, final int attributeIndex);
 
 	/**
 	 * Checks if the visionVector matches the condition of the given chromosome.

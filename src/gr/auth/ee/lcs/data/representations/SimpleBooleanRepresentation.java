@@ -250,6 +250,11 @@ public final class SimpleBooleanRepresentation extends
 		return chromosomeSize / 2 ;
 	}
 
+	@Override
+	public boolean isAttributeSpecific(final Classifier aClassifier, final int attributeIndex){
+		return aClassifier.get(2*attributeIndex);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

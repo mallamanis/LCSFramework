@@ -183,7 +183,7 @@ public final class ComplexRepresentationTest {
 		ex1 = lcs.getNewClassifier(set1);
 		assertTrue(rep.isMatch(st, ex1));
 	}
-
+	
 	@Before
 	public void setUp() {
 		lcs = createMock(AbstractLearningClassifierSystem.class);
@@ -202,6 +202,24 @@ public final class ComplexRepresentationTest {
 				0, null, 0, 0, lcs);
 		lcs.setElements(rep, update);
 
+	}
+
+	@Test
+	public void testIsSpecific() {
+		ExtendedBitSet set1 = new ExtendedBitSet(
+		"11101111111111000000000011010");
+		Classifier ex1 = lcs.getNewClassifier(set1);
+		
+		assertFalse(rep.isAttributeSpecific(ex1, 0));
+		assertTrue(rep.isAttributeSpecific(ex1, 1));
+		assertFalse(rep.isAttributeSpecific(ex1, 2));
+		
+		ExtendedBitSet set2 = new ExtendedBitSet(
+		"11111111111111000000000001011");
+		Classifier ex2 = lcs.getNewClassifier(set2);
+		assertTrue(rep.isAttributeSpecific(ex2, 0));
+		assertFalse(rep.isAttributeSpecific(ex2, 1));
+		assertTrue(rep.isAttributeSpecific(ex2, 2));
 	}
 
 	@Test

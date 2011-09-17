@@ -1014,6 +1014,11 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return attributeList.length - numberOfLabels;
 	}
 
+	@Override
+	public boolean isAttributeSpecific(final Classifier aClassifier, final int attributeIndex){
+		return attributeList[attributeIndex].isSpecific(aClassifier);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1084,7 +1089,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		return null;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
