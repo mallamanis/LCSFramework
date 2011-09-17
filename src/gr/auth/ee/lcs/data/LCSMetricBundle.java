@@ -17,12 +17,12 @@ public class LCSMetricBundle {
 	/**
 	 * A vector containing the metrics.
 	 */
-	final Vector<ILCSMetric> metrics; 
+	private final Vector<ILCSMetric> metrics; 
 	
 	/**
 	 * The lcs to be used for the metrics.
 	 */
-	final AbstractLearningClassifierSystem myLcs;
+	private final AbstractLearningClassifierSystem myLcs;
 	
 	public LCSMetricBundle(AbstractLearningClassifierSystem lcs, final Vector<ILCSMetric> initialMetrics) {
 		metrics = initialMetrics;
