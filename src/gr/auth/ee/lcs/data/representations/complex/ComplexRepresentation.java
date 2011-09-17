@@ -789,6 +789,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		this.attributeGeneralizationRate = generalizationRate;
 		this.myLcs = lcs;
 	}
+	
+	public final int getNumberOfAttributes() {
+		return attributeList.length - numberOfLabels;
+	}
 
 	/**
 	 * Arff Loader.

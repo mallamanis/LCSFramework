@@ -364,4 +364,9 @@ public final class SimpleBooleanRepresentation extends
 		return output;
 	}
 
+	@Override
+	public int getNumberOfAttributes() {
+		return chromosomeSize / 2 ;
+	}
+
 }

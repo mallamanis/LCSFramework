@@ -47,6 +47,12 @@ public abstract class ClassifierTransformBridge {
 	 * @return true if classifiers are equal, else false
 	 */
 	public abstract boolean areEqual(Classifier cl1, Classifier cl2);
+	
+	/**
+	 * Return the number of attributes contained in the problem.
+	 * @return
+	 */
+	public abstract int getNumberOfAttributes();
 
 	/**
 	 * @deprecated Unknown if useful
