@@ -42,7 +42,7 @@ public class MeanAttributeSpecificityStatistic implements ILCSMetric {
 			}
 		}
 
-		return ((double)specificAttibutes)
+		return ((double) specificAttibutes)
 				/ ((double) (numberOfMacroclassifiers * numberOfAttributes));
 	}
 

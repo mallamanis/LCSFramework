@@ -3,13 +3,19 @@
  */
 package gr.auth.ee.lcs.classifiers.statistics.bundles;
 
-import java.util.Vector;
-
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.classifiers.statistics.*;
+import gr.auth.ee.lcs.classifiers.statistics.MeanAttributeSpecificityStatistic;
+import gr.auth.ee.lcs.classifiers.statistics.MeanCoverageStatistic;
+import gr.auth.ee.lcs.classifiers.statistics.MeanFitnessStatistic;
+import gr.auth.ee.lcs.classifiers.statistics.MeanLabelSpecificity;
+import gr.auth.ee.lcs.classifiers.statistics.WeightedMeanAttributeSpecificityStatistic;
+import gr.auth.ee.lcs.classifiers.statistics.WeightedMeanCoverageStatistic;
+import gr.auth.ee.lcs.classifiers.statistics.WeightedMeanLabelSpecificity;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.data.LCSMetricBundle;
+
+import java.util.Vector;
 
 /**
  * A bundle containing major classifier statistics.

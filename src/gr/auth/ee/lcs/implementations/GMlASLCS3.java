@@ -206,6 +206,7 @@ public class GMlASLCS3 extends AbstractLearningClassifierSystem {
 
 	@Override
 	public double[] getEvaluations(Instances testSet) {
+
 		final double[] results = new double[12];
 		Arrays.fill(results, 0);
 

@@ -1,15 +1,16 @@
 package gr.auth.ee.lcs.calibration;
 
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.junit.Assert.assertTrue;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
 import gr.auth.ee.lcs.data.ILCSMetric;
-import static org.easymock.EasyMock.*;
 
 import org.easymock.Capture;
 import org.easymock.EasyMockSupport;
 import org.easymock.IAnswer;
-
 import org.junit.Before;
 import org.junit.Test;
 

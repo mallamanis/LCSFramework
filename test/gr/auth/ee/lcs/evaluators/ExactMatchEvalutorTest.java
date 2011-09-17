@@ -3,10 +3,10 @@
  */
 package gr.auth.ee.lcs.evaluators;
 
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import static org.easymock.EasyMock.*;
 
 import org.easymock.EasyMockSupport;
 import org.junit.After;

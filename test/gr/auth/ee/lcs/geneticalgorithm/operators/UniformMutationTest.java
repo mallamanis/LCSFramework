@@ -24,9 +24,9 @@
  */
 package gr.auth.ee.lcs.geneticalgorithm.operators;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.easymock.EasyMock.*;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;

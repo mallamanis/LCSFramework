@@ -22,6 +22,7 @@
 package gr.auth.ee.lcs;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.statistics.bundles.SetStatisticsBundle;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
@@ -89,6 +90,10 @@ public class ArffTrainTestLoader {
 		for (int i = 0; i < evals.length; i++) {
 			System.out.println(names[i] + ": " + evals[i]);
 		}
+
+		SetStatisticsBundle bundle = new SetStatisticsBundle(myLcs,
+				(int) SettingsLoader.getNumericSetting("numberOfLabels", 1));
+		System.out.println(bundle);
 	}
 
 	/**

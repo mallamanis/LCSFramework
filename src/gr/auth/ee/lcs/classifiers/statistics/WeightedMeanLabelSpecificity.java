@@ -75,7 +75,7 @@ public class WeightedMeanLabelSpecificity implements ILCSMetric {
 	 */
 	@Override
 	public String getMetricName() {
-		return "Mean Label Specificity";
+		return "Weighted Mean Label Specificity";
 	}
 
 }
