@@ -40,7 +40,7 @@ public class HammingLossEvaluatorTest extends EasyMockSupport {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -73,14 +73,14 @@ public class HammingLossEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), 0), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), 0), 0);
 		verifyAll();
 
 	}
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -114,14 +114,14 @@ public class HammingLossEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), 2. / 12.), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), 2. / 12.), 0);
 		verifyAll();
 
 	}
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -158,7 +158,7 @@ public class HammingLossEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), 0.5), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), 0.5), 0);
 		verifyAll();
 
 	}

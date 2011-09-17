@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.evaluators.bamevaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.evaluators.BAMPercentageEvaluator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -38,7 +38,7 @@ import java.util.Vector;
  * @author Miltiadis Allamanis
  * 
  */
-public class IdentityBAMEvaluator implements IEvaluator {
+public class IdentityBAMEvaluator implements ILCSMetric {
 
 	/**
 	 * The LCS being evaluated.
@@ -75,20 +75,6 @@ public class IdentityBAMEvaluator implements IEvaluator {
 		lcs = aLcs;
 		generateBAM(n, type);
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
-	 * .ClassifierSet)
-	 */
-	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
-				bamChromosomes);
-		return eval.evaluateLCS(lcs);
 	}
 
 	/**
@@ -155,6 +141,24 @@ public class IdentityBAMEvaluator implements IEvaluator {
 			bamChromosomes.add(lcs.getNewClassifier(new ExtendedBitSet(
 					consequent + rule)));
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.IEvaluator#evaluateSet(gr.auth.ee.lcs.classifiers
+	 * .ClassifierSet)
+	 */
+	@Override
+	public double getMetric(final AbstractLearningClassifierSystem lcs) {
+		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
+				bamChromosomes);
+		return eval.getMetric(lcs);
+	}
+
+	public String getMetricName() {
+		return "mlIdentity BAM coverage";
 	}
 
 }

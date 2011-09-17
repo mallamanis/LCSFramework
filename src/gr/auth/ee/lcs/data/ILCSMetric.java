@@ -27,13 +27,13 @@ package gr.auth.ee.lcs.data;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 
 /**
- * An evaluator class interface. This interface will be used for evaluation of
- * all LCSs
+ * An metrics class interface. This interface will be used for calculating
+ * metrics of LCSs
  * 
  * @author Miltos Allamanis
  * 
  */
-public interface IEvaluator {
+public interface ILCSMetric {
 	/**
 	 * Evaluate a set of classifiers.
 	 * 
@@ -41,5 +41,13 @@ public interface IEvaluator {
 	 *            the LCS that we are going to use for evaluation
 	 * @return a numeric value indicating ClassifierSet's quality
 	 */
-	double evaluateLCS(AbstractLearningClassifierSystem lcs);
+	public double getMetric(AbstractLearningClassifierSystem lcs);
+
+	/**
+	 * Return the metric's name.
+	 * 
+	 * @return a string containing the name
+	 */
+	public String getMetricName();
+
 }

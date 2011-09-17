@@ -27,7 +27,7 @@ package gr.auth.ee.lcs.evaluators;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 
 import java.util.Arrays;
 import java.util.Vector;
@@ -39,7 +39,7 @@ import java.util.Vector;
  * @author Miltiadis Allamanis
  * 
  */
-public class BAMPercentageEvaluator implements IEvaluator {
+public class BAMPercentageEvaluator implements ILCSMetric {
 
 	/**
 	 * The best action map rules.
@@ -57,7 +57,7 @@ public class BAMPercentageEvaluator implements IEvaluator {
 	}
 
 	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+	public double getMetric(final AbstractLearningClassifierSystem lcs) {
 		final int bamSize = bestActionMap.size();
 		final boolean[] covered = new boolean[bamSize];
 		Arrays.fill(covered, false);
@@ -84,6 +84,11 @@ public class BAMPercentageEvaluator implements IEvaluator {
 		final double bamPercentage = ((double) coveredInstances)
 				/ ((double) bamSize);
 		return bamPercentage;
+	}
+
+	@Override
+	public String getMetricName() {
+		return "BAM Percentage";
 	}
 
 }

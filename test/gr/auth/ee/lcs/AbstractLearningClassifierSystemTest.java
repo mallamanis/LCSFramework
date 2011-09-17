@@ -9,7 +9,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 
 import org.junit.After;
 import org.junit.Before;
@@ -116,18 +116,18 @@ public class AbstractLearningClassifierSystemTest {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.AbstractLearningClassifierSystem#registerHook(gr.auth.ee.lcs.data.IEvaluator)}
+	 * {@link gr.auth.ee.lcs.AbstractLearningClassifierSystem#registerHook(gr.auth.ee.lcs.data.ILCSMetric)}
 	 * .
 	 */
 	@Test
 	public void testRegisterHook() {
 		reset(mockUpdate);
-		IEvaluator mockEvaluator = createMock(IEvaluator.class);
+		ILCSMetric mockEvaluator = createMock(ILCSMetric.class);
 		lcs.instances = new double[1][10];
 
 		lcs.registerHook(mockEvaluator);
 		lcs.setHookCallbackRate(10);
-		expect(mockEvaluator.evaluateLCS(lcs)).andReturn(0.).times(3);
+		expect(mockEvaluator.getMetric(lcs)).andReturn(0.).times(3);
 		mockUpdate.updateSet(eq(population), anyObject(ClassifierSet.class),
 				eq(0), eq(true));
 		expectLastCall().times(60);

@@ -49,7 +49,7 @@ public class RecallEvaluatorTest extends EasyMockSupport {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -82,14 +82,14 @@ public class RecallEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), 1), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), 1), 0);
 		verifyAll();
 
 	}
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -123,14 +123,14 @@ public class RecallEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), .75), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), .75), 0);
 		verifyAll();
 
 	}
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -167,7 +167,7 @@ public class RecallEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertTrue(Math.abs(test.evaluateLCS(mockLcs) - (5. / 12.)) < 0.0001);
+		assertTrue(Math.abs(test.getMetric(mockLcs) - (5. / 12.)) < 0.0001);
 		verifyAll();
 
 	}

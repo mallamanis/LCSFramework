@@ -26,14 +26,14 @@ package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import weka.classifiers.evaluation.ConfusionMatrix;
 
 /**
  * @author Miltos Allamanis
  * 
  */
-public final class ConfusionMatrixEvaluator implements IEvaluator {
+public final class ConfusionMatrixEvaluator implements ILCSMetric {
 
 	/**
 	 * A Weka confusion matrix.
@@ -76,7 +76,7 @@ public final class ConfusionMatrixEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem theLcs) {
+	public double getMetric(final AbstractLearningClassifierSystem theLcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 
@@ -94,6 +94,10 @@ public final class ConfusionMatrixEvaluator implements IEvaluator {
 		System.out.println("Error rate: " + conf.errorRate());
 
 		return conf.errorRate();
+	}
+
+	public String getMetricName() {
+		return "Confusion Matrix";
 	}
 
 }

@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import weka.core.Instances;
  * @author Miltiadis Allamanis
  * 
  */
-public class SingleLabelEvaluator implements IEvaluator {
+public class SingleLabelEvaluator implements ILCSMetric {
 	/**
 	 * The set of instances to evaluate on.
 	 */
@@ -73,7 +73,7 @@ public class SingleLabelEvaluator implements IEvaluator {
 	}
 
 	@Override
-	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+	public final double getMetric(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 		int tp = 0;
@@ -98,6 +98,10 @@ public class SingleLabelEvaluator implements IEvaluator {
 
 		}
 		return ((double) tp) / ((double) instances.length);
+	}
+
+	public String getMetricName() {
+		return "Single label evaluator";
 	}
 
 }

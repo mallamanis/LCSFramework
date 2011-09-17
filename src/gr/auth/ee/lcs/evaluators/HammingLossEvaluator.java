@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class HammingLossEvaluator implements IEvaluator {
+public class HammingLossEvaluator implements ILCSMetric {
 
 	/**
 	 * The set of instances to evaluate on.
@@ -137,7 +137,7 @@ public class HammingLossEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+	public double getMetric(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 		int numberOfSymmetricDifferences = 0;
@@ -165,6 +165,11 @@ public class HammingLossEvaluator implements IEvaluator {
 		if (printResults)
 			System.out.println("Hamming Loss: " + hammingLoss);
 		return hammingLoss;
+	}
+
+	@Override
+	public String getMetricName() {
+		return "Hamming Loss";
 	}
 
 }

@@ -25,7 +25,7 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -38,7 +38,7 @@ import java.util.Calendar;
  * @author Miltos Allamanis
  * 
  */
-public class FileLogger implements IEvaluator {
+public class FileLogger implements ILCSMetric {
 
 	/**
 	 * The filename where output is logged.
@@ -48,7 +48,7 @@ public class FileLogger implements IEvaluator {
 	/**
 	 * The evaluator from which we log the output.
 	 */
-	private final IEvaluator actualEvaluator;
+	private final ILCSMetric actualEvaluator;
 
 	/**
 	 * FileLogger constructor.
@@ -58,7 +58,7 @@ public class FileLogger implements IEvaluator {
 	 * @param evaluator
 	 *            the evaluator which we are going to output.
 	 */
-	public FileLogger(final String filename, final IEvaluator evaluator) {
+	public FileLogger(final String filename, final ILCSMetric evaluator) {
 		final Calendar cal = Calendar.getInstance();
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 		file = filename + sdf.format(cal.getTime()) + ".txt";
@@ -76,8 +76,8 @@ public class FileLogger implements IEvaluator {
 	}
 
 	@Override
-	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		final double evalResult = actualEvaluator.evaluateLCS(lcs);
+	public final double getMetric(final AbstractLearningClassifierSystem lcs) {
+		final double evalResult = actualEvaluator.getMetric(lcs);
 		try {
 			final FileWriter fstream = new FileWriter(file, true);
 			final BufferedWriter buffer = new BufferedWriter(fstream);
@@ -89,6 +89,10 @@ public class FileLogger implements IEvaluator {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	public String getMetricName() {
+		return actualEvaluator.getMetricName();
 	}
 
 }

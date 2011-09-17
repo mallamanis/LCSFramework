@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class ExactMatchEvalutor implements IEvaluator {
+public class ExactMatchEvalutor implements ILCSMetric {
 
 	/**
 	 * The set of instances to evaluate on.
@@ -115,7 +115,7 @@ public class ExactMatchEvalutor implements IEvaluator {
 	}
 
 	@Override
-	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+	public final double getMetric(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 
@@ -141,6 +141,10 @@ public class ExactMatchEvalutor implements IEvaluator {
 					+ correctRate + " total instances:" + instances.length);
 		}
 		return correctRate;
+	}
+
+	public String getMetricName() {
+		return "Exact Match";
 	}
 
 }

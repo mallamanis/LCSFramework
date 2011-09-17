@@ -68,7 +68,7 @@ public final class AccuracyEvaluatorTest extends EasyMockSupport {
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -101,14 +101,14 @@ public final class AccuracyEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), 1), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), 1), 0);
 		verifyAll();
 
 	}
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -142,14 +142,14 @@ public final class AccuracyEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), .75), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), .75), 0);
 		verifyAll();
 
 	}
 
 	/**
 	 * Test method for
-	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#evaluateLCS(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
+	 * {@link gr.auth.ee.lcs.evaluators.ExactMatchEvalutor#getMetric(gr.auth.ee.lcs.AbstractLearningClassifierSystem)}
 	 * .
 	 */
 	@Test
@@ -186,7 +186,7 @@ public final class AccuracyEvaluatorTest extends EasyMockSupport {
 				.anyTimes();
 
 		replayAll();
-		assertEquals(Double.compare(test.evaluateLCS(mockLcs), 1. / 6.), 0);
+		assertEquals(Double.compare(test.getMetric(mockLcs), 1. / 6.), 0);
 		verifyAll();
 
 	}

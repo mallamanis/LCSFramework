@@ -25,7 +25,7 @@
 package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import weka.core.Instances;
 
 /**
@@ -35,7 +35,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public final class AllSingleLabelEvaluator implements IEvaluator {
+public final class AllSingleLabelEvaluator implements ILCSMetric {
 
 	/**
 	 * Single label evaluators.
@@ -76,16 +76,20 @@ public final class AllSingleLabelEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+	public double getMetric(final AbstractLearningClassifierSystem lcs) {
 		double sum = 0;
 		for (int i = 0; i < evaluators.length; i++) {
-			final double result = evaluators[i].evaluateLCS(lcs);
+			final double result = evaluators[i].getMetric(lcs);
 			if (print) {
 				System.out.println("Label " + i + " exact match:" + result);
 			}
 			sum += result;
 		}
 		return sum / (evaluators.length);
+	}
+
+	public String getMetricName() {
+		return "Single Label Evaluator";
 	}
 
 }

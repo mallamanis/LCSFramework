@@ -28,7 +28,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 
@@ -68,7 +68,7 @@ public abstract class AbstractLearningClassifierSystem {
 	/**
 	 * A vector of all evaluator hooks.
 	 */
-	private final Vector<IEvaluator> hooks;
+	private final Vector<ILCSMetric> hooks;
 
 	/**
 	 * Frequency of the hook callback execution.
@@ -85,7 +85,7 @@ public abstract class AbstractLearningClassifierSystem {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		hooks = new Vector<IEvaluator>();
+		hooks = new Vector<ILCSMetric>();
 		hookCallbackRate = (int) SettingsLoader.getNumericSetting(
 				"callbackRate", 100);
 	}
@@ -128,7 +128,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 */
 	private void executeCallbacks(final ClassifierSet aSet) {
 		for (int i = 0; i < hooks.size(); i++) {
-			hooks.elementAt(i).evaluateLCS(this);
+			hooks.elementAt(i).getMetric(this);
 		}
 	}
 
@@ -209,7 +209,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 *            the evaluator to register
 	 * @return true if the evaluator has been registered successfully
 	 */
-	public final boolean registerHook(final IEvaluator evaluator) {
+	public final boolean registerHook(final ILCSMetric evaluator) {
 		return hooks.add(evaluator);
 	}
 
@@ -338,7 +338,7 @@ public abstract class AbstractLearningClassifierSystem {
 	 *            the evaluator to register
 	 * @return true if the evaluator has been unregisterd successfully
 	 */
-	public final boolean unregisterEvaluator(final IEvaluator evaluator) {
+	public final boolean unregisterEvaluator(final ILCSMetric evaluator) {
 		return hooks.remove(evaluator);
 	}
 

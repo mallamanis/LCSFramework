@@ -26,7 +26,7 @@ import gr.auth.ee.lcs.calibration.InternalValidation;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.populationcontrol.FixedSizeSetWorstFitnessDeletion;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation;
 import gr.auth.ee.lcs.data.representations.complex.GenericMultiLabelRepresentation.VotingClassificationStrategy;
 import gr.auth.ee.lcs.data.updateAlgorithms.MlASLCS3UpdateAlgorithm;
@@ -213,40 +213,40 @@ public class GMlASLCS3 extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		results[0] = accEval.evaluateLCS(this);
+		results[0] = accEval.getMetric(this);
 
 		final AccuracyRecallEvaluator recEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_RECALL);
-		results[1] = recEval.evaluateLCS(this);
+		results[1] = recEval.getMetric(this);
 
 		final HammingLossEvaluator hamEval = new HammingLossEvaluator(testSet,
 				false, numberOfLabels, this);
-		results[2] = hamEval.evaluateLCS(this);
+		results[2] = hamEval.getMetric(this);
 
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				false, this);
-		results[3] = testEval.evaluateLCS(this);
+		results[3] = testEval.getMetric(this);
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
 		internalValidationCalibration(selfAcc);
 
-		results[4] = accEval.evaluateLCS(this);
-		results[5] = recEval.evaluateLCS(this);
-		results[6] = hamEval.evaluateLCS(this);
-		results[7] = testEval.evaluateLCS(this);
+		results[4] = accEval.getMetric(this);
+		results[5] = recEval.getMetric(this);
+		results[6] = hamEval.getMetric(this);
+		results[7] = testEval.getMetric(this);
 
 		useBestClassificationMode();
 
-		results[8] = accEval.evaluateLCS(this);
-		results[9] = recEval.evaluateLCS(this);
-		results[10] = hamEval.evaluateLCS(this);
-		results[11] = testEval.evaluateLCS(this);
+		results[8] = accEval.getMetric(this);
+		results[9] = recEval.getMetric(this);
+		results[10] = hamEval.getMetric(this);
+		results[11] = testEval.getMetric(this);
 
 		return results;
 	}
 
-	public void internalValidationCalibration(IEvaluator selfAcc) {
+	public void internalValidationCalibration(ILCSMetric selfAcc) {
 		final VotingClassificationStrategy str = rep.new VotingClassificationStrategy(
 				(float) SettingsLoader.getNumericSetting(
 						"datasetLabelCardinality", 1));

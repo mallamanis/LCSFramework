@@ -233,19 +233,19 @@ public class MlUCS extends AbstractLearningClassifierSystem {
 
 		final AccuracyRecallEvaluator accEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
-		results[0] = accEval.evaluateLCS(this);
+		results[0] = accEval.getMetric(this);
 
 		final AccuracyRecallEvaluator recEval = new AccuracyRecallEvaluator(
 				testSet, false, this, AccuracyRecallEvaluator.TYPE_RECALL);
-		results[1] = recEval.evaluateLCS(this);
+		results[1] = recEval.getMetric(this);
 
 		final HammingLossEvaluator hamEval = new HammingLossEvaluator(testSet,
 				false, numberOfLabels, this);
-		results[2] = hamEval.evaluateLCS(this);
+		results[2] = hamEval.getMetric(this);
 
 		final ExactMatchEvalutor testEval = new ExactMatchEvalutor(testSet,
 				false, this);
-		results[3] = testEval.evaluateLCS(this);
+		results[3] = testEval.getMetric(this);
 
 		final AccuracyRecallEvaluator selfAcc = new AccuracyRecallEvaluator(
 				instances, false, this, AccuracyRecallEvaluator.TYPE_ACCURACY);
@@ -253,17 +253,17 @@ public class MlUCS extends AbstractLearningClassifierSystem {
 				selfAcc);
 		ival.calibrate(15);
 
-		results[4] = accEval.evaluateLCS(this);
-		results[5] = recEval.evaluateLCS(this);
-		results[6] = hamEval.evaluateLCS(this);
-		results[7] = testEval.evaluateLCS(this);
+		results[4] = accEval.getMetric(this);
+		results[5] = recEval.getMetric(this);
+		results[6] = hamEval.getMetric(this);
+		results[7] = testEval.getMetric(this);
 
 		rep.setClassificationStrategy(new StrictMultiLabelRepresentation.BestFitnessClassificationStrategy());
 
-		results[8] = accEval.evaluateLCS(this);
-		results[9] = recEval.evaluateLCS(this);
-		results[10] = hamEval.evaluateLCS(this);
-		results[11] = testEval.evaluateLCS(this);
+		results[8] = accEval.getMetric(this);
+		results[9] = recEval.getMetric(this);
+		results[10] = hamEval.getMetric(this);
+		results[11] = testEval.getMetric(this);
 
 		return results;
 	}

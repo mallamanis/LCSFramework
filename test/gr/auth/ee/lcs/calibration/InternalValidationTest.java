@@ -3,7 +3,7 @@ package gr.auth.ee.lcs.calibration;
 import static org.junit.Assert.*;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import static org.easymock.EasyMock.*;
 
 import org.easymock.Capture;
@@ -18,13 +18,13 @@ public class InternalValidationTest extends EasyMockSupport {
 	InternalValidation ival;
 	AbstractLearningClassifierSystem mockLcs;
 	IClassificationStrategy mockClassificationStrategy;
-	IEvaluator mockMetric;
+	ILCSMetric mockMetric;
 
 	@Before
 	public void setUp() throws Exception {
 		mockLcs = createMock(AbstractLearningClassifierSystem.class);
 		mockClassificationStrategy = createMock(IClassificationStrategy.class);
-		mockMetric = createMock(IEvaluator.class);
+		mockMetric = createMock(ILCSMetric.class);
 
 		ival = new InternalValidation(mockLcs, mockClassificationStrategy,
 				mockMetric);
@@ -50,13 +50,12 @@ public class InternalValidationTest extends EasyMockSupport {
 		final Capture<Double> threshold = new Capture<Double>();
 		mockClassificationStrategy.setThreshold(capture(threshold));
 		expectLastCall().anyTimes();
-		expect(mockMetric.evaluateLCS(mockLcs)).andAnswer(
-				new IAnswer<Double>() {
-					public Double answer() {
-						final double thr = threshold.getValue();
-						return Math.exp(-Math.abs(thr - peakValue));
-					}
-				}).anyTimes();
+		expect(mockMetric.getMetric(mockLcs)).andAnswer(new IAnswer<Double>() {
+			public Double answer() {
+				final double thr = threshold.getValue();
+				return Math.exp(-Math.abs(thr - peakValue));
+			}
+		}).anyTimes();
 
 		replayAll();
 		ival.calibrate(numOfIterations);

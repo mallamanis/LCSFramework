@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.evaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.data.ClassifierTransformBridge;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ import weka.core.Instances;
  * @author Miltos Allamanis
  * 
  */
-public class AccuracyRecallEvaluator implements IEvaluator {
+public class AccuracyRecallEvaluator implements ILCSMetric {
 
 	/**
 	 * Accuracy Evaluation Type.
@@ -147,7 +147,7 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 	 * .ClassifierSet)
 	 */
 	@Override
-	public final double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
+	public final double getMetric(final AbstractLearningClassifierSystem lcs) {
 		final ClassifierTransformBridge bridge = myLcs
 				.getClassifierTransformBridge();
 
@@ -203,6 +203,14 @@ public class AccuracyRecallEvaluator implements IEvaluator {
 			return accuracy;
 		else
 			return recall;
+	}
+
+	public String getMetricName() {
+		if (currentType == TYPE_ACCURACY) {
+			return "Accuracy";
+		} else {
+			return "Recall";
+		}
 	}
 
 }

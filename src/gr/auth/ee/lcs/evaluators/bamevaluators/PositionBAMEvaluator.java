@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.evaluators.bamevaluators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.IEvaluator;
+import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.evaluators.BAMPercentageEvaluator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -38,7 +38,7 @@ import java.util.Vector;
  * @author Miltiadis Allamanis
  * 
  */
-public class PositionBAMEvaluator implements IEvaluator {
+public class PositionBAMEvaluator implements ILCSMetric {
 
 	/**
 	 * The LCS being evaluated.
@@ -75,13 +75,6 @@ public class PositionBAMEvaluator implements IEvaluator {
 		lcs = aLcs;
 		generateBAM(n, type);
 
-	}
-
-	@Override
-	public double evaluateLCS(final AbstractLearningClassifierSystem lcs) {
-		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
-				bamChromosomes);
-		return eval.evaluateLCS(lcs);
 	}
 
 	/**
@@ -133,6 +126,17 @@ public class PositionBAMEvaluator implements IEvaluator {
 
 		final ExtendedBitSet result = new ExtendedBitSet(rule);
 		return result;
+	}
+
+	@Override
+	public double getMetric(final AbstractLearningClassifierSystem lcs) {
+		final BAMPercentageEvaluator eval = new BAMPercentageEvaluator(
+				bamChromosomes);
+		return eval.getMetric(lcs);
+	}
+
+	public String getMetricName() {
+		return "mlPosition BAM coverage";
 	}
 
 }
