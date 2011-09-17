@@ -40,7 +40,7 @@ public class WeightedMeanAttributeSpecificityStatistic implements ILCSMetric {
 		final ClassifierSet set = lcs.getRulePopulation();
 		final int numberOfMacroclassifiers = set.getNumberOfMacroclassifiers();
 
-		int specificAttibutes = 0;
+		double specificAttibutes = 0;
 		double fitnessSum = 0;
 		for (int i = 0; i < numberOfMacroclassifiers; i++) {
 			final Classifier cl = set.getClassifier(i);
