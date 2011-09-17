@@ -198,20 +198,6 @@ public class FoldEvaluator {
 	}
 
 	/**
-	 * Print the evaluations.
-	 * 
-	 * @param means
-	 *            the array containing the evaluation means
-	 */
-	public void printEvaluations(double[] means) {
-		final String[] names = prototype.getEvaluationNames();
-
-		for (int i = 0; i < means.length; i++) {
-			System.out.println(names[i] + ": " + means[i]);
-		}
-	}
-
-	/**
 	 * Load a fold into the evaluator.
 	 * 
 	 * @param foldNumber
@@ -224,5 +210,19 @@ public class FoldEvaluator {
 		trainSet = instances.trainCV(numOfFolds, foldNumber);
 		lcs.instances = InstancesUtility.convertIntancesToDouble(trainSet);
 		testSet = instances.testCV(numOfFolds, foldNumber);
+	}
+
+	/**
+	 * Print the evaluations.
+	 * 
+	 * @param means
+	 *            the array containing the evaluation means
+	 */
+	public void printEvaluations(double[] means) {
+		final String[] names = prototype.getEvaluationNames();
+
+		for (int i = 0; i < means.length; i++) {
+			System.out.println(names[i] + ": " + means[i]);
+		}
 	}
 }

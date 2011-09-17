@@ -393,6 +393,36 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 
 		}
 
+		/**
+		 * Return the numeric high bound of the interval.
+		 * 
+		 * @param chromosome
+		 *            the chromosome containing the interval
+		 * @return the numeric value of the high bound
+		 */
+		private float getHighBoundValue(final ExtendedBitSet chromosome) {
+			final int part = chromosome.getIntAt(positionInChromosome + 1
+					+ precisionBits, precisionBits);
+
+			return ((((float) part) / ((float) totalParts)) * (maxValue - minValue))
+					+ minValue;
+		}
+
+		/**
+		 * Return the numeric lower bound of the interval.
+		 * 
+		 * @param chromosome
+		 *            the chromosome containing the interval
+		 * @return the numeric value of the lower bound
+		 */
+		private float getLowBoundValue(final ExtendedBitSet chromosome) {
+			final int part = chromosome.getIntAt(positionInChromosome + 1,
+					precisionBits);
+
+			return ((((float) part) / ((float) totalParts)) * (maxValue - minValue))
+					+ minValue;
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -511,36 +541,6 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 					+ String.format("%.3f",
 							getHighBoundValue(convertingChromosome)) + "]";
 			return value;
-		}
-
-		/**
-		 * Return the numeric high bound of the interval.
-		 * 
-		 * @param chromosome
-		 *            the chromosome containing the interval
-		 * @return the numeric value of the high bound
-		 */
-		private float getHighBoundValue(final ExtendedBitSet chromosome) {
-			final int part = chromosome.getIntAt(positionInChromosome + 1
-					+ precisionBits, precisionBits);
-
-			return ((((float) part) / ((float) totalParts)) * (maxValue - minValue))
-					+ minValue;
-		}
-
-		/**
-		 * Return the numeric lower bound of the interval.
-		 * 
-		 * @param chromosome
-		 *            the chromosome containing the interval
-		 * @return the numeric value of the lower bound
-		 */
-		private float getLowBoundValue(final ExtendedBitSet chromosome) {
-			final int part = chromosome.getIntAt(positionInChromosome + 1,
-					precisionBits);
-
-			return ((((float) part) / ((float) totalParts)) * (maxValue - minValue))
-					+ minValue;
 		}
 
 	}
@@ -790,10 +790,6 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		this.myLcs = lcs;
 	}
 	
-	public final int getNumberOfAttributes() {
-		return attributeList.length - numberOfLabels;
-	}
-
 	/**
 	 * Arff Loader.
 	 * 
@@ -845,6 +841,61 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		return true;
 	}
 
+	/**
+	 * Build the representation for some instances.
+	 * 
+	 * @param instances
+	 *            the instances
+	 */
+	protected void buildRepresentationFromInstance(final Instances instances) {
+		for (int i = 0; i < (instances.numAttributes() - numberOfLabels); i++) {
+
+			final String attributeName = instances.attribute(i).name();
+
+			if (instances.attribute(i).isNominal()) {
+
+				String[] attributeNames = new String[instances.attribute(i)
+						.numValues()];
+				final Enumeration<?> values = instances.attribute(i)
+						.enumerateValues();
+				for (int j = 0; j < attributeNames.length; j++) {
+					attributeNames[j] = (String) values.nextElement();
+				}
+				// Create boolean or generic nominal
+				if (attributeNames.length > 2)
+					attributeList[i] = new ComplexRepresentation.NominalAttribute(
+							this.chromosomeSize, attributeName, attributeNames,
+							attributeGeneralizationRate);
+				else
+					attributeList[i] = new ComplexRepresentation.BooleanAttribute(
+							chromosomeSize, attributeName,
+							attributeGeneralizationRate);
+
+			} else if (instances.attribute(i).isNumeric()) {
+				// Find min-max values
+				float minValue, maxValue;
+				minValue = (float) instances.instance(0).toDoubleArray()[i];
+				maxValue = minValue;
+				for (int sample = 0; sample < instances.numInstances(); sample++) {
+					final float currentVal = (float) instances.instance(sample)
+							.toDoubleArray()[i];
+					if (currentVal > maxValue)
+						maxValue = currentVal;
+					if (currentVal < minValue)
+						minValue = currentVal;
+				}
+
+				attributeList[i] = new ComplexRepresentation.IntervalAttribute(
+						this.chromosomeSize, attributeName, minValue, maxValue,
+						precision, attributeGeneralizationRate);
+			}
+
+		}
+
+		// Build class into gene
+		createClassRepresentation(instances);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -884,6 +935,14 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			final double[] visionVector, final IClassificationStrategy strategy) {
 		return strategy.classify(aSet, visionVector);
 	}
+
+	/**
+	 * Create the class representation depending on the problem.
+	 * 
+	 * @param instances
+	 *            the Weka instances
+	 */
+	protected abstract void createClassRepresentation(Instances instances);
 
 	/*
 	 * (non-Javadoc)
@@ -931,6 +990,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 	@Override
 	public final String[] getLabelNames() {
 		return ruleConsequents;
+	}
+
+	public final int getNumberOfAttributes() {
+		return attributeList.length - numberOfLabels;
 	}
 
 	/*
@@ -1027,68 +1090,5 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		}
 		return nlRule.toString();
 	}
-
-	/**
-	 * Build the representation for some instances.
-	 * 
-	 * @param instances
-	 *            the instances
-	 */
-	protected void buildRepresentationFromInstance(final Instances instances) {
-		for (int i = 0; i < (instances.numAttributes() - numberOfLabels); i++) {
-
-			final String attributeName = instances.attribute(i).name();
-
-			if (instances.attribute(i).isNominal()) {
-
-				String[] attributeNames = new String[instances.attribute(i)
-						.numValues()];
-				final Enumeration<?> values = instances.attribute(i)
-						.enumerateValues();
-				for (int j = 0; j < attributeNames.length; j++) {
-					attributeNames[j] = (String) values.nextElement();
-				}
-				// Create boolean or generic nominal
-				if (attributeNames.length > 2)
-					attributeList[i] = new ComplexRepresentation.NominalAttribute(
-							this.chromosomeSize, attributeName, attributeNames,
-							attributeGeneralizationRate);
-				else
-					attributeList[i] = new ComplexRepresentation.BooleanAttribute(
-							chromosomeSize, attributeName,
-							attributeGeneralizationRate);
-
-			} else if (instances.attribute(i).isNumeric()) {
-				// Find min-max values
-				float minValue, maxValue;
-				minValue = (float) instances.instance(0).toDoubleArray()[i];
-				maxValue = minValue;
-				for (int sample = 0; sample < instances.numInstances(); sample++) {
-					final float currentVal = (float) instances.instance(sample)
-							.toDoubleArray()[i];
-					if (currentVal > maxValue)
-						maxValue = currentVal;
-					if (currentVal < minValue)
-						minValue = currentVal;
-				}
-
-				attributeList[i] = new ComplexRepresentation.IntervalAttribute(
-						this.chromosomeSize, attributeName, minValue, maxValue,
-						precision, attributeGeneralizationRate);
-			}
-
-		}
-
-		// Build class into gene
-		createClassRepresentation(instances);
-	}
-
-	/**
-	 * Create the class representation depending on the problem.
-	 * 
-	 * @param instances
-	 *            the Weka instances
-	 */
-	protected abstract void createClassRepresentation(Instances instances);
 
 }

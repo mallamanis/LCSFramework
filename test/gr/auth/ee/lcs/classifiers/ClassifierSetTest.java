@@ -191,6 +191,47 @@ public final class ClassifierSetTest extends EasyMockSupport{
 	}
 
 	@Test
+	public void testGenerateMatchSet() {
+		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
+		ClassifierSet population = new ClassifierSet(mockControlStrategy);
+		double instance[] = {0,1,2,3,4};
+		
+		mockBridge.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
+		expectLastCall().anyTimes();
+		
+		replayAll();
+		final Classifier mockClassifier1 = lcs
+			.getNewClassifier(new ExtendedBitSet("10010110"));
+		final Classifier mockClassifier2 = lcs
+			.getNewClassifier(new ExtendedBitSet("11010111"));
+		
+		verifyAll();
+		resetAll();
+		
+		mockControlStrategy.controlPopulation(population);
+		expectLastCall().times(2);
+
+		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class))).andReturn("").anyTimes();
+		expect(mockBridge.areEqual(anyObject(Classifier.class),anyObject(Classifier.class))).andReturn(false);
+		expect(mockClassifier1.isMatch(instance)).andReturn(false);
+		expect(mockClassifier2.isMatch(instance)).andReturn(true);
+		
+		replayAll();
+		
+		population.addClassifier(new Macroclassifier(mockClassifier1,10), true);
+		population.addClassifier(new Macroclassifier(mockClassifier2,8), true);
+				
+		ClassifierSet matchSet = population.generateMatchSet(instance);
+		
+		assertEquals(matchSet.getTotalNumerosity(),8);
+		assertEquals(matchSet.getNumberOfMacroclassifiers(),1);
+		assertEquals(matchSet.getClassifier(0),mockClassifier2);
+		
+		verifyAll();
+		
+	}
+
+	@Test
 	public void testRemoveAll() {
 		resetAll();
 		
@@ -285,47 +326,6 @@ public final class ClassifierSetTest extends EasyMockSupport{
 		assertEquals(testSet.getClassifierNumerosity(subsumableClassifier), 2);
 		
 		verifyAll();
-	}
-
-	@Test
-	public void testGenerateMatchSet() {
-		IPopulationControlStrategy mockControlStrategy = createMock(IPopulationControlStrategy.class);
-		ClassifierSet population = new ClassifierSet(mockControlStrategy);
-		double instance[] = {0,1,2,3,4};
-		
-		mockBridge.setRepresentationSpecificClassifierData(anyObject(Classifier.class));
-		expectLastCall().anyTimes();
-		
-		replayAll();
-		final Classifier mockClassifier1 = lcs
-			.getNewClassifier(new ExtendedBitSet("10010110"));
-		final Classifier mockClassifier2 = lcs
-			.getNewClassifier(new ExtendedBitSet("11010111"));
-		
-		verifyAll();
-		resetAll();
-		
-		mockControlStrategy.controlPopulation(population);
-		expectLastCall().times(2);
-
-		expect(mockBridge.toNaturalLanguageString(anyObject(Classifier.class))).andReturn("").anyTimes();
-		expect(mockBridge.areEqual(anyObject(Classifier.class),anyObject(Classifier.class))).andReturn(false);
-		expect(mockClassifier1.isMatch(instance)).andReturn(false);
-		expect(mockClassifier2.isMatch(instance)).andReturn(true);
-		
-		replayAll();
-		
-		population.addClassifier(new Macroclassifier(mockClassifier1,10), true);
-		population.addClassifier(new Macroclassifier(mockClassifier2,8), true);
-				
-		ClassifierSet matchSet = population.generateMatchSet(instance);
-		
-		assertEquals(matchSet.getTotalNumerosity(),8);
-		assertEquals(matchSet.getNumberOfMacroclassifiers(),1);
-		assertEquals(matchSet.getClassifier(0),mockClassifier2);
-		
-		verifyAll();
-		
 	}
 	
 }

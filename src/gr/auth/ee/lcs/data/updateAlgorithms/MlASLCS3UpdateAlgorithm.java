@@ -161,6 +161,30 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 		return new MlASLCSClassifierData();
 	}
 
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @param labelIndex
+	 *            the label index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateLabelCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex, final int labelIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			final Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
+					labelIndex) > 0)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -294,30 +318,6 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 			}
 		}
 
-	}
-
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @param labelIndex
-	 *            the label index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateLabelCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex, final int labelIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			final Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
-					labelIndex) > 0)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
 	}
 
 	/**

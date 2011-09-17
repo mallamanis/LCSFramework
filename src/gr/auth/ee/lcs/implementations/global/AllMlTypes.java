@@ -39,6 +39,15 @@ import java.io.IOException;
  */
 public class AllMlTypes {
 
+	private static AbstractLearningClassifierSystem getLCS(String name)
+			throws IOException, InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
+
+		return (AbstractLearningClassifierSystem) (Class.forName(name)
+				.newInstance());
+
+	}
+
 	/**
 	 * @param args
 	 * @throws IOException
@@ -64,15 +73,6 @@ public class AllMlTypes {
 			loader.evaluate();
 
 		}
-
-	}
-
-	private static AbstractLearningClassifierSystem getLCS(String name)
-			throws IOException, InstantiationException, IllegalAccessException,
-			ClassNotFoundException {
-
-		return (AbstractLearningClassifierSystem) (Class.forName(name)
-				.newInstance());
 
 	}
 }

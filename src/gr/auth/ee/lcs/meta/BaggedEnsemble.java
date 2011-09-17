@@ -112,6 +112,16 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 	@Override
 	public abstract double[] getEvaluations(Instances testSet);
 
+	private double[][] sampleTrainInstances() {
+		final double[][] sample = new double[this.instances.length][];
+		for (int i = 0; i < sample.length; i++) {
+			int pos = (int) Math.floor(Math.random() * this.instances.length);
+
+			sample[i] = this.instances[pos];
+		}
+		return sample;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -124,16 +134,6 @@ public abstract class BaggedEnsemble extends AbstractLearningClassifierSystem {
 			ensemble[i].train();
 		}
 
-	}
-
-	private double[][] sampleTrainInstances() {
-		final double[][] sample = new double[this.instances.length][];
-		for (int i = 0; i < sample.length; i++) {
-			int pos = (int) Math.floor(Math.random() * this.instances.length);
-
-			sample[i] = this.instances[pos];
-		}
-		return sample;
 	}
 
 }

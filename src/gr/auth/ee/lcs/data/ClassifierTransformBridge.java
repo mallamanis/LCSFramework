@@ -49,12 +49,6 @@ public abstract class ClassifierTransformBridge {
 	public abstract boolean areEqual(Classifier cl1, Classifier cl2);
 	
 	/**
-	 * Return the number of attributes contained in the problem.
-	 * @return
-	 */
-	public abstract int getNumberOfAttributes();
-
-	/**
 	 * @deprecated Unknown if useful
 	 */
 	@Deprecated
@@ -147,6 +141,12 @@ public abstract class ClassifierTransformBridge {
 	 * @return a String array containing all label names
 	 */
 	public abstract String[] getLabelNames();
+
+	/**
+	 * Return the number of attributes contained in the problem.
+	 * @return
+	 */
+	public abstract int getNumberOfAttributes();
 
 	/**
 	 * Checks if the visionVector matches the condition of the given chromosome.

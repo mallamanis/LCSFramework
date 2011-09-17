@@ -541,6 +541,29 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Ensures that the bit set is large enough to hold <code>length</code> bits
+	 * and extends it if it isn't.
+	 * 
+	 * @param length
+	 *            number of bits set is required to hold
+	 */
+	protected final void extendIfNeeded(final int length) {
+		if (length > lenBits) {
+			final int chunks = ((length - 1) / BITSINLONG) + 1;
+
+			if ((bitUnits == null) || (chunks > bitUnits.length)) {
+				final long[] newBits = new long[chunks];
+
+				if (bitUnits != null) {
+					System.arraycopy(bitUnits, 0, newBits, 0, bitUnits.length);
+				}
+				bitUnits = newBits;
+			}
+			lenBits = length;
+		}
+	}
+
+	/**
 	 * Returns the value of the bit set as a float (truncating it if it is
 	 * longer than thirtytwo bits).
 	 * 
@@ -1540,28 +1563,5 @@ public class ExtendedBitSet implements Cloneable, Serializable {
 			length -= BITSINLONG;
 		}
 		return this;
-	}
-
-	/**
-	 * Ensures that the bit set is large enough to hold <code>length</code> bits
-	 * and extends it if it isn't.
-	 * 
-	 * @param length
-	 *            number of bits set is required to hold
-	 */
-	protected final void extendIfNeeded(final int length) {
-		if (length > lenBits) {
-			final int chunks = ((length - 1) / BITSINLONG) + 1;
-
-			if ((bitUnits == null) || (chunks > bitUnits.length)) {
-				final long[] newBits = new long[chunks];
-
-				if (bitUnits != null) {
-					System.arraycopy(bitUnits, 0, newBits, 0, bitUnits.length);
-				}
-				bitUnits = newBits;
-			}
-			lenBits = length;
-		}
 	}
 }

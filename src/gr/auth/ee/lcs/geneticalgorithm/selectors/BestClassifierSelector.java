@@ -59,25 +59,6 @@ public final class BestClassifierSelector implements INaturalSelector {
 		this.mode = comparisonMode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(int,
-	 * gr.auth.ee.lcs.classifiers.ClassifierSet,
-	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
-	 */
-	@Override
-	public void select(final int howManyToSelect,
-			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
-		// Add it toPopulation
-		final int bestIndex = select(fromPopulation);
-		if (bestIndex == -1)
-			return;
-		toPopulation.addClassifier(
-				new Macroclassifier(fromPopulation.getClassifier(bestIndex),
-						howManyToSelect), true);
-	}
-
 	/**
 	 * Select for population.
 	 * 
@@ -112,6 +93,25 @@ public final class BestClassifierSelector implements INaturalSelector {
 		}
 
 		return bestIndex;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gr.auth.ee.lcs.geneticalgorithm.INaturalSelector#select(int,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet,
+	 * gr.auth.ee.lcs.classifiers.ClassifierSet)
+	 */
+	@Override
+	public void select(final int howManyToSelect,
+			final ClassifierSet fromPopulation, final ClassifierSet toPopulation) {
+		// Add it toPopulation
+		final int bestIndex = select(fromPopulation);
+		if (bestIndex == -1)
+			return;
+		toPopulation.addClassifier(
+				new Macroclassifier(fromPopulation.getClassifier(bestIndex),
+						howManyToSelect), true);
 	}
 
 }

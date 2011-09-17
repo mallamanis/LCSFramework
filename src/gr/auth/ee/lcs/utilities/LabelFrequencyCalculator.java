@@ -78,6 +78,30 @@ public class LabelFrequencyCalculator {
 	}
 
 	/**
+	 * Generate a unique identifier for a specific instance, given some label
+	 * activations.
+	 * 
+	 * @param activeLabels
+	 *            the array of active instances
+	 * @param instance
+	 *            the double instance (the last 'label' number of fields are
+	 *            labels)
+	 * @param labels
+	 *            the number of labels at the given instance
+	 * @return the unique identifier of the label combination.
+	 */
+	private static String generateString(int[] activeLabels, int labels,
+			double[] instance) {
+		String result = "";
+		for (int i = 0; i < activeLabels.length; i++) {
+			final int labelIndex = (instance.length - labels) + activeLabels[i];
+			result += (int) instance[labelIndex];
+		}
+
+		return result;
+	}
+
+	/**
 	 * Calculate the imbalance rate.
 	 * 
 	 * @param map
@@ -102,30 +126,6 @@ public class LabelFrequencyCalculator {
 
 		return ((double) maxCount) / ((double) minCount);
 
-	}
-
-	/**
-	 * Generate a unique identifier for a specific instance, given some label
-	 * activations.
-	 * 
-	 * @param activeLabels
-	 *            the array of active instances
-	 * @param instance
-	 *            the double instance (the last 'label' number of fields are
-	 *            labels)
-	 * @param labels
-	 *            the number of labels at the given instance
-	 * @return the unique identifier of the label combination.
-	 */
-	private static String generateString(int[] activeLabels, int labels,
-			double[] instance) {
-		String result = "";
-		for (int i = 0; i < activeLabels.length; i++) {
-			final int labelIndex = (instance.length - labels) + activeLabels[i];
-			result += (int) instance[labelIndex];
-		}
-
-		return result;
 	}
 
 }

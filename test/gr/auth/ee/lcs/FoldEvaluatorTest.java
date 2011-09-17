@@ -62,6 +62,38 @@ public class FoldEvaluatorTest {
 
 	/**
 	 * Test method for
+	 * {@link gr.auth.ee.lcs.FoldEvaluator#evaluate()}.
+	 */
+	@Test
+	public void testEvaluate() {
+		AbstractLearningClassifierSystem mockLcs = createMock(AbstractLearningClassifierSystem.class);
+		final Instances sampleDataSet = createMock(Instances.class);
+		final FoldEvaluator tested = new FoldEvaluator(10, 10, mockLcs,
+				sampleDataSet);
+		
+		expect(sampleDataSet.trainCV(anyInt(), anyInt())).andReturn(null).anyTimes();
+		expect(sampleDataSet.testCV(anyInt(), anyInt())).andReturn(null).anyTimes();
+		
+		expect(mockLcs.createNew()).andReturn(mockLcs).anyTimes();
+		double[] results = {.5,.22,.0,1.,.95};
+		expect(mockLcs.getEvaluations(anyObject(Instances.class))).andReturn(Arrays.copyOf(results,5)).times(10);
+		String[] names = {"","","","",""};
+		expect(mockLcs.getEvaluationNames()).andReturn(names).once();
+		
+		mockLcs.train();
+		expectLastCall().times(10);
+		
+		replay(mockLcs);
+		replay(sampleDataSet);
+		tested.evaluate();
+		verify(mockLcs);
+		verify(sampleDataSet);
+		
+		
+	}
+	
+	/**
+	 * Test method for
 	 * {@link gr.auth.ee.lcs.FoldEvaluator#gatherResults(double[], int)}.
 	 */
 	@Test
@@ -91,37 +123,5 @@ public class FoldEvaluatorTest {
 			// Exception thrown! That's what we expected.
 		}
 
-	}
-	
-	/**
-	 * Test method for
-	 * {@link gr.auth.ee.lcs.FoldEvaluator#evaluate()}.
-	 */
-	@Test
-	public void testEvaluate() {
-		AbstractLearningClassifierSystem mockLcs = createMock(AbstractLearningClassifierSystem.class);
-		final Instances sampleDataSet = createMock(Instances.class);
-		final FoldEvaluator tested = new FoldEvaluator(10, 10, mockLcs,
-				sampleDataSet);
-		
-		expect(sampleDataSet.trainCV(anyInt(), anyInt())).andReturn(null).anyTimes();
-		expect(sampleDataSet.testCV(anyInt(), anyInt())).andReturn(null).anyTimes();
-		
-		expect(mockLcs.createNew()).andReturn(mockLcs).anyTimes();
-		double[] results = {.5,.22,.0,1.,.95};
-		expect(mockLcs.getEvaluations(anyObject(Instances.class))).andReturn(Arrays.copyOf(results,5)).times(10);
-		String[] names = {"","","","",""};
-		expect(mockLcs.getEvaluationNames()).andReturn(names).once();
-		
-		mockLcs.train();
-		expectLastCall().times(10);
-		
-		replay(mockLcs);
-		replay(sampleDataSet);
-		tested.evaluate();
-		verify(mockLcs);
-		verify(sampleDataSet);
-		
-		
 	}
 }

@@ -393,6 +393,20 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
+	 * Sets the update-specific and transform-specific data needed.
+	 */
+	private void setConstructionData() {
+		if (updateStrategy != null)
+			updateData = updateStrategy.createStateClassifierObject();
+
+		if (transformBridge != null)
+			transformBridge.setRepresentationSpecificClassifierData(this);
+
+		this.serial = currentSerial;
+		currentSerial++;
+	}
+
+	/**
 	 * Sets the classifier's LCS
 	 * 
 	 * @param lcs
@@ -431,20 +445,6 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	@Override
 	public String toString() {
 		return transformBridge.toNaturalLanguageString(this);
-	}
-
-	/**
-	 * Sets the update-specific and transform-specific data needed.
-	 */
-	private void setConstructionData() {
-		if (updateStrategy != null)
-			updateData = updateStrategy.createStateClassifierObject();
-
-		if (transformBridge != null)
-			transformBridge.setRepresentationSpecificClassifierData(this);
-
-		this.serial = currentSerial;
-		currentSerial++;
 	}
 
 }

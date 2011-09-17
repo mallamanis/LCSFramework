@@ -342,6 +342,31 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * gr.auth.ee.lcs.data.ComplexRepresentation#createClassRepresentation()
+	 */
+	@Override
+	protected void createClassRepresentation(final Instances instances) {
+
+		if (instances.classIndex() < 0)
+			instances.setClassIndex(instances.numAttributes() - 1);
+
+		// Rule Consequents
+		final Enumeration<?> classNames = instances.classAttribute()
+				.enumerateValues();
+		final String[] ruleConsequents = new String[instances.numClasses()];
+		this.ruleConsequents = ruleConsequents;
+		for (int i = 0; i < instances.numClasses(); i++)
+			ruleConsequents[i] = (String) classNames.nextElement();
+
+		attributeList[attributeList.length - 1] = new UniLabel(chromosomeSize,
+				"class", ruleConsequents);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * gr.auth.ee.lcs.data.ClassifierTransformBridge#getClassification(gr.auth
 	 * .ee.lcs.classifiers.Classifier)
 	 */
@@ -371,31 +396,6 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 	public void setClassification(final Classifier aClassifier, final int action) {
 		((UniLabel) attributeList[attributeList.length - 1]).setValue(
 				aClassifier, action);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.ComplexRepresentation#createClassRepresentation()
-	 */
-	@Override
-	protected void createClassRepresentation(final Instances instances) {
-
-		if (instances.classIndex() < 0)
-			instances.setClassIndex(instances.numAttributes() - 1);
-
-		// Rule Consequents
-		final Enumeration<?> classNames = instances.classAttribute()
-				.enumerateValues();
-		final String[] ruleConsequents = new String[instances.numClasses()];
-		this.ruleConsequents = ruleConsequents;
-		for (int i = 0; i < instances.numClasses(); i++)
-			ruleConsequents[i] = (String) classNames.nextElement();
-
-		attributeList[attributeList.length - 1] = new UniLabel(chromosomeSize,
-				"class", ruleConsequents);
 
 	}
 

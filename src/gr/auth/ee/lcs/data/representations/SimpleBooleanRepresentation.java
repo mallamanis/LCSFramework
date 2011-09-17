@@ -245,6 +245,11 @@ public final class SimpleBooleanRepresentation extends
 		return str;
 	}
 
+	@Override
+	public int getNumberOfAttributes() {
+		return chromosomeSize / 2 ;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -362,11 +367,6 @@ public final class SimpleBooleanRepresentation extends
 		}
 		output += "=>" + getClassification(aClassifier)[0];
 		return output;
-	}
-
-	@Override
-	public int getNumberOfAttributes() {
-		return chromosomeSize / 2 ;
 	}
 
 }

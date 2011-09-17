@@ -155,6 +155,21 @@ public class AbstractLearningClassifierSystemTest {
 	}
 
 	/**
+	 * Test method for {@link gr.auth.ee.lcs.AbstractLearningClassifierSystem#trainSet(int, gr.auth.ee.lcs.classifiers.ClassifierSet)}.
+	 */
+	@Test
+	public void testTrainSetIntClassifierSet() {
+		reset(mockUpdate);
+		lcs.instances = new double[1][10];
+		mockUpdate.updateSet(eq(population), anyObject(ClassifierSet.class), eq(0), eq(true));
+		expectLastCall().times(10);
+		
+		replay(mockUpdate);	
+		lcs.trainSet(10, population);
+		verify(mockUpdate);
+	}
+
+	/**
 	 * Test method for {@link gr.auth.ee.lcs.AbstractLearningClassifierSystem#trainSet(int, gr.auth.ee.lcs.classifiers.ClassifierSet, boolean)}.
 	 */
 	@Test
@@ -200,21 +215,6 @@ public class AbstractLearningClassifierSystemTest {
 		
 		replay(mockUpdate);		
 		lcs.updatePopulation(1, population);
-		verify(mockUpdate);
-	}
-
-	/**
-	 * Test method for {@link gr.auth.ee.lcs.AbstractLearningClassifierSystem#trainSet(int, gr.auth.ee.lcs.classifiers.ClassifierSet)}.
-	 */
-	@Test
-	public void testTrainSetIntClassifierSet() {
-		reset(mockUpdate);
-		lcs.instances = new double[1][10];
-		mockUpdate.updateSet(eq(population), anyObject(ClassifierSet.class), eq(0), eq(true));
-		expectLastCall().times(10);
-		
-		replay(mockUpdate);	
-		lcs.trainSet(10, population);
 		verify(mockUpdate);
 	}
 
