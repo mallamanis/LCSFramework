@@ -97,7 +97,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 */
 		public abstract void fixAttributeRepresentation(
 				ExtendedBitSet generatedClassifier);
-
+		
 		/**
 		 * @return the length in bits of the chromosome.
 		 */
@@ -141,6 +141,12 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 		 */
 		public abstract boolean isMoreGeneral(ExtendedBitSet baseChromosome,
 				ExtendedBitSet testChromosome);
+
+		/**
+		 * Returns true if the specific attribute is specific (not generic).
+		 * @return true when attribute is specific
+		 */
+		public abstract boolean isSpecific(final ExtendedBitSet testedChromosome);
 
 		/**
 		 * Create a random gene for the vision attribute.
@@ -248,7 +254,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				return true;
 			}
 		}
-
+		
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -270,6 +276,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				return false;
 
 			return true;
+		}
+
+		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
+			return testedChromosome.get(this.positionInChromosome);
 		}
 
 		/*
@@ -467,7 +477,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return ((attributeVision >= getLowBoundValue(testedChromosome)) && (attributeVision <= getHighBoundValue(testedChromosome)));
 
 		}
-
+		
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -487,6 +497,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 					&& (getLowBoundValue(baseChromosome) <= getLowBoundValue(testChromosome)))
 				return true;
 			return false;
+		}
+
+		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
+			return testedChromosome.get(positionInChromosome);
 		}
 
 		/*
@@ -648,7 +662,7 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 			return testedChromosome.get(genePosition);
 
 		}
-
+		
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -671,6 +685,10 @@ public abstract class ComplexRepresentation extends ClassifierTransformBridge {
 				return false;
 
 			return true;
+		}
+
+		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
+			return testedChromosome.get(positionInChromosome);
 		}
 
 		/*

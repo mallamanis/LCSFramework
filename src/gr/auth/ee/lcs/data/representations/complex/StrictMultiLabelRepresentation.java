@@ -117,7 +117,7 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 			lengthInBits = 1;
 			chromosomeSize += lengthInBits;
 		}
-
+		
 		@Override
 		public void fixAttributeRepresentation(
 				final ExtendedBitSet generatedClassifier) {
@@ -155,6 +155,10 @@ public final class StrictMultiLabelRepresentation extends ComplexRepresentation 
 				final ExtendedBitSet testChromosome) {
 			return baseChromosome.get(positionInChromosome) == testChromosome
 					.get(positionInChromosome);
+		}
+
+		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
+			return true;
 		}
 
 		@Override

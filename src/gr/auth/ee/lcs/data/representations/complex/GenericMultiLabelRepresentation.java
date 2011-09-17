@@ -227,7 +227,7 @@ public final class GenericMultiLabelRepresentation extends
 				return true;
 			}
 		}
-
+		
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -251,6 +251,12 @@ public final class GenericMultiLabelRepresentation extends
 				return false;
 
 			return true;
+		}
+
+		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
+			if (!active) return false;
+			
+			return testedChromosome.get(positionInChromosome);
 		}
 
 		/*

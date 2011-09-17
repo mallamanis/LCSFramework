@@ -158,13 +158,17 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 			return testedChromosome
 					.getIntAt(positionInChromosome, lengthInBits) == (int) attributeVision;
 		}
-
+		
 		@Override
 		public final boolean isMoreGeneral(final ExtendedBitSet baseChromosome,
 				final ExtendedBitSet testChromosome) {
 			return (baseChromosome.getIntAt(positionInChromosome, lengthInBits) == testChromosome
 					.getIntAt(positionInChromosome, lengthInBits));
 
+		}
+
+		public boolean isSpecific(final ExtendedBitSet testedChromosome) {
+			return true;
 		}
 
 		@Override
