@@ -30,6 +30,7 @@ import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
+import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.Serializable;
 
@@ -75,6 +76,12 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 		public double tp = 0;
 
 	}
+
+	/**
+	 * The theta_del parameter.
+	 */
+	public static int THETA_DEL = (int) SettingsLoader.getNumericSetting(
+			"ASLCS_THETA_DEL", 20);
 
 	/**
 	 * The LCS instance being used.
@@ -161,30 +168,6 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 		return new MlASLCSClassifierData();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @param labelIndex
-	 *            the label index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateLabelCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex, final int labelIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			final Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
-					labelIndex) > 0)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -200,7 +183,7 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 		case COMPARISON_MODE_EXPLORATION:
 			return ((aClassifier.experience < 10) ? 0 : data.fitness);
 		case COMPARISON_MODE_DELETION:
-			return 1 / (data.fitness * ((aClassifier.experience < 20) ? 100.
+			return 1 / (data.fitness * ((aClassifier.experience < THETA_DEL) ? 100.
 					: Math.exp(-(Double.isNaN(data.ns) ? 1 : data.ns) + 1)));
 
 		case COMPARISON_MODE_EXPLOITATION:
@@ -317,6 +300,30 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 			}
 		}
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @param labelIndex
+	 *            the label index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateLabelCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex, final int labelIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			final Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyLabelCorrectly(instanceIndex,
+					labelIndex) > 0)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/**
