@@ -87,7 +87,9 @@ public class ArffTrainTestLoader {
 			try {
 				final TestFileClassification classificationModule = new TestFileClassification(
 						InstancesUtility.convertIntancesToDouble(testSet),
-						classificationFile, myLcs);
+						classificationFile, myLcs,
+						(int) SettingsLoader.getNumericSetting(
+								"numberOfLabels", 1));
 				classificationModule.produceClassification();
 			} catch (IOException e) {
 				e.printStackTrace();

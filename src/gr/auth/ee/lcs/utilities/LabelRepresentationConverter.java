@@ -28,12 +28,18 @@ public class LabelRepresentationConverter {
 		final StringBuffer response = new StringBuffer();
 
 		Arrays.sort(activeClasses);
-		for (int i = 0; i < numOfLabels; i++) {
+		for (int i = 0; i < (numOfLabels - 1); i++) {
 			if (Arrays.binarySearch(activeClasses, i) >= 0) {
 				response.append("1" + delimiter);
 			} else {
 				response.append("0" + delimiter);
 			}
+		}
+
+		if (Arrays.binarySearch(activeClasses, numOfLabels - 1) >= 0) {
+			response.append("1");
+		} else {
+			response.append("0");
 		}
 
 		return response.toString();
