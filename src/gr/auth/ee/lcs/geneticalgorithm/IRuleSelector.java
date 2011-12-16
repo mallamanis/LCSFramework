@@ -24,12 +24,12 @@ package gr.auth.ee.lcs.geneticalgorithm;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 
 /**
- * A generic interface for a natural selection strategy.
+ * A generic interface for a selection strategy.
  * 
  * @author Miltos Allamanis
  * 
  */
-public interface INaturalSelector {
+public interface IRuleSelector {
 
 	/**
 	 * The selection strategy.

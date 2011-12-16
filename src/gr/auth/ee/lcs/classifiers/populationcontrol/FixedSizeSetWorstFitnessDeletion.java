@@ -24,7 +24,7 @@ package gr.auth.ee.lcs.classifiers.populationcontrol;
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.IPopulationControlStrategy;
-import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 
 /**
  * A fixed size control strategy. Classifiers are deleted based on the selector
@@ -41,7 +41,7 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	/**
 	 * The Natural Selector used to select the the classifier to be deleted.
 	 */
-	private final INaturalSelector mySelector;
+	private final IRuleSelector mySelector;
 
 	/**
 	 * The fixed population size of the controlled set.
@@ -63,7 +63,7 @@ public class FixedSizeSetWorstFitnessDeletion implements
 	 */
 	public FixedSizeSetWorstFitnessDeletion(
 			final AbstractLearningClassifierSystem lcs,
-			final int maxPopulationSize, final INaturalSelector selector) {
+			final int maxPopulationSize, final IRuleSelector selector) {
 		this.populationSize = maxPopulationSize;
 		mySelector = selector;
 

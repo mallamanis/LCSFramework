@@ -23,7 +23,7 @@ package gr.auth.ee.lcs.geneticalgorithm.selectors;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 
 /**
  * Selects and adds the best classifier (based on fitness) from the inital
@@ -33,7 +33,7 @@ import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
  * @author Miltos Allamanis
  * 
  */
-public final class BestClassifierSelector implements INaturalSelector {
+public final class BestClassifierSelector implements IRuleSelector {
 
 	/**
 	 * Boolean indicating if the selector selects the best or worst classifier.

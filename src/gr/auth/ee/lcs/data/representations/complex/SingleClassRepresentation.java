@@ -29,7 +29,7 @@ import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.data.IClassificationStrategy;
-import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 import gr.auth.ee.lcs.geneticalgorithm.selectors.BestClassifierSelector;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 import gr.auth.ee.lcs.utilities.InstancesUtility;
@@ -67,7 +67,7 @@ public final class SingleClassRepresentation extends ComplexRepresentation {
 		@Override
 		public int[] classify(final ClassifierSet aSet,
 				final double[] visionVector) {
-			final INaturalSelector selector = new BestClassifierSelector(true,
+			final IRuleSelector selector = new BestClassifierSelector(true,
 					AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
 
 			// Generate MatchSet

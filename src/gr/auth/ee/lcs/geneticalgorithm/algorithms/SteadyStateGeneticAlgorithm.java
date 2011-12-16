@@ -28,7 +28,7 @@ import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
-import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 import gr.auth.ee.lcs.geneticalgorithm.IUnaryGeneticOperator;
 
 /**
@@ -44,7 +44,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	/**
 	 * The selector used for the next generation selection.
 	 */
-	final private INaturalSelector gaSelector;
+	final private IRuleSelector gaSelector;
 
 	/**
 	 * The crossover operator that will be used by the GA.
@@ -99,7 +99,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 	 *            the LCS instance used
 	 * 
 	 */
-	public SteadyStateGeneticAlgorithm(final INaturalSelector gaSelector,
+	public SteadyStateGeneticAlgorithm(final IRuleSelector gaSelector,
 			final IBinaryGeneticOperator crossoverOperator,
 			final float crossoverRate,
 			final IUnaryGeneticOperator mutationOperator,

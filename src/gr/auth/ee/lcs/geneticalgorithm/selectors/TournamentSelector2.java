@@ -26,7 +26,7 @@ package gr.auth.ee.lcs.geneticalgorithm.selectors;
 
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.geneticalgorithm.INaturalSelector;
+import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 
 import java.util.Arrays;
 
@@ -36,7 +36,7 @@ import java.util.Arrays;
  * @author Miltos Allamanis
  * 
  */
-public class TournamentSelector2 implements INaturalSelector {
+public class TournamentSelector2 implements IRuleSelector {
 
 	/**
 	 * The size of the tournaments.
