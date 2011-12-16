@@ -19,30 +19,42 @@ public abstract class AbstractRuleDistributer implements ILCSMetric {
 	/**
 	 * The LCS used by this distributer.
 	 */
-	AbstractLearningClassifierSystem mLCS;
+	final AbstractLearningClassifierSystem mLCS;
 	
 	/**
 	 * A rule selector, to select the rules to be added into the LCS population.
 	 */
-	IRuleSelector receiveSelector;
+	final IRuleSelector receiveSelector;
 	
 	/**
 	 * A rule selector, to select the rules to be send from the LCS.
 	 */
-	IRuleSelector sendSelector;
+	final IRuleSelector sendSelector;
 	
 	/**
 	 * The local router interface.
 	 */
-	IRuleRouter localRouter;
+	final IRuleRouter localRouter;
+	
+	ClassifierSet newRules = new ClassifierSet(null);
+	
+	
+	public AbstractRuleDistributer(IRuleRouter router, AbstractLearningClassifierSystem lcs, IRuleSelector receiver, IRuleSelector sender){
+		localRouter = router;
+		mLCS = lcs;
+		sendSelector = sender;
+		receiveSelector = receiver;
+	}
 	
 	/**
 	 * Receive rules from other LCSs
 	 * @param ruleSet the a set of rules being received
 	 * @param metaData any metadata on these rules (e.g. sender)
 	 */
-	void receiveRules(ClassifierSet ruleSet){
-		receiveSelector.select(-1, ruleSet, mLCS.getRulePopulation());
+	public void receiveRules(ClassifierSet ruleSet){
+		synchronized(newRules){
+			receiveSelector.select(-1, ruleSet, newRules);
+		}
 	}
 	
 	@Override
@@ -58,6 +70,10 @@ public abstract class AbstractRuleDistributer implements ILCSMetric {
 		ClassifierSet outRules = new ClassifierSet(null);
 		sendSelector.select(-1, mLCS.getRulePopulation(), outRules);
 		localRouter.sendRules(outRules);
+		synchronized(newRules){
+			mLCS.getRulePopulation().merge(newRules);
+			newRules = new ClassifierSet(null);
+		}
 	}
 		
 

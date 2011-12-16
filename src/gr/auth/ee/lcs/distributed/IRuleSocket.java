@@ -15,8 +15,9 @@ public interface IRuleSocket {
 	/**
 	 * Set the local router of the socket.
 	 * @param router
+	 * @param address the address of the router
 	 */
-	void setRuleRouter(IRuleRouter router);
+	void setRuleRouter(IRuleRouter router,String address);
 
 	/**
 	 * Send rules to a specific address. 
