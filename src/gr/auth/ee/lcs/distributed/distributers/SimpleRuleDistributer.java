@@ -11,41 +11,47 @@ import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 
 /**
  * A simple distributer, adding and sending rules with no filtering
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public class SimpleRuleDistributer extends AbstractRuleDistributer {
-	
+
 	/**
 	 * A simple selector that selects all the rules
 	 */
-	static IRuleSelector receiverSelector = new IRuleSelector(){
+	static IRuleSelector receiverSelector = new IRuleSelector() {
 		@Override
 		public void select(int howManyToSelect, ClassifierSet fromPopulation,
 				ClassifierSet toPopulation) {
-			toPopulation.merge(fromPopulation);			
+			toPopulation.merge(fromPopulation);
 		}
-		
+
 	};
 
 	/**
 	 * Constructor.
-	 * @param router the router
-	 * @param lcs the LCS
-	 * @param sender the send selection strategy
+	 * 
+	 * @param router
+	 *            the router
+	 * @param lcs
+	 *            the LCS
+	 * @param sender
+	 *            the send selection strategy
 	 */
 	public SimpleRuleDistributer(IRuleRouter router,
-			AbstractLearningClassifierSystem lcs, 
-			IRuleSelector sender) {
+			AbstractLearningClassifierSystem lcs, IRuleSelector sender) {
 		super(router, lcs, receiverSelector, sender);
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see gr.auth.ee.lcs.data.ILCSMetric#getMetricName()
 	 */
 	@Override
-	public String getMetricName() {		
+	public String getMetricName() {
 		return "SimpleRuleDistributor";
 	}
 

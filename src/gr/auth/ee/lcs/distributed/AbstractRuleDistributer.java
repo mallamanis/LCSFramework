@@ -9,72 +9,77 @@ import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 
 /**
- * An abstract class of an LCS callback that can be used for distributing rules in a distributed LCS environment.
- * Essentially this is a strategy for adding received rules.
+ * An abstract class of an LCS callback that can be used for distributing rules
+ * in a distributed LCS environment. Essentially this is a strategy for adding
+ * received rules.
+ * 
  * @author Miltiadis Allamanis
- *
+ * 
  */
 public abstract class AbstractRuleDistributer implements ILCSMetric {
-	
+
 	/**
 	 * The LCS used by this distributer.
 	 */
 	final AbstractLearningClassifierSystem mLCS;
-	
+
 	/**
 	 * A rule selector, to select the rules to be added into the LCS population.
 	 */
 	final IRuleSelector receiveSelector;
-	
+
 	/**
 	 * A rule selector, to select the rules to be send from the LCS.
 	 */
 	final IRuleSelector sendSelector;
-	
+
 	/**
 	 * The local router interface.
 	 */
 	final IRuleRouter localRouter;
-	
+
 	ClassifierSet newRules = new ClassifierSet(null);
-	
-	
-	public AbstractRuleDistributer(IRuleRouter router, AbstractLearningClassifierSystem lcs, IRuleSelector receiver, IRuleSelector sender){
+
+	public AbstractRuleDistributer(IRuleRouter router,
+			AbstractLearningClassifierSystem lcs, IRuleSelector receiver,
+			IRuleSelector sender) {
 		localRouter = router;
 		mLCS = lcs;
 		sendSelector = sender;
 		receiveSelector = receiver;
 	}
-	
+
 	/**
 	 * Receive rules from other LCSs
-	 * @param ruleSet the a set of rules being received
-	 * @param metaData any metadata on these rules (e.g. sender)
+	 * 
+	 * @param ruleSet
+	 *            the a set of rules being received
+	 * @param metaData
+	 *            any metadata on these rules (e.g. sender)
 	 */
-	public void receiveRules(ClassifierSet ruleSet){
-		synchronized(newRules){
+	public void receiveRules(ClassifierSet ruleSet) {
+		synchronized (newRules) {
 			receiveSelector.select(-1, ruleSet, newRules);
 		}
 	}
-	
+
 	@Override
-	public double getMetric(AbstractLearningClassifierSystem lcs){
+	public double getMetric(AbstractLearningClassifierSystem lcs) {
 		sendRules();
 		return 0;
 	}
-	
+
 	/**
 	 * Send rules to the local router.
 	 */
-	public void sendRules(){
+	public void sendRules() {
 		ClassifierSet outRules = new ClassifierSet(null);
 		sendSelector.select(-1, mLCS.getRulePopulation(), outRules);
 		localRouter.sendRules(outRules);
-		synchronized(newRules){
+		synchronized (newRules) {
 			mLCS.getRulePopulation().merge(newRules);
 			newRules = new ClassifierSet(null);
 		}
 	}
-		
 
 }
