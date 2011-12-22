@@ -267,7 +267,7 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 
 			for (int l = 0; l < numberOfLabels; l++) {
 				// Get classification ability for label l
-				float classificationAbility = cl.myClassifier
+				final float classificationAbility = cl.myClassifier
 						.classifyLabelCorrectly(instanceIndex, l);
 
 				if (classificationAbility == 0)
@@ -276,7 +276,7 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 					data.tp += 1;
 					final int labelNs = labelCorrectSets[l]
 							.getTotalNumerosity();
-					assert (labelNs > 0);
+					
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}
@@ -292,11 +292,13 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 			updateSubsumption(cl.myClassifier);
 		}
 
-		for (int l = 0; l < numberOfLabels; l++) {
-			if (labelCorrectSets[l].getNumberOfMacroclassifiers() > 0) {
-				ga.evolveSet(labelCorrectSets[l], population);
-			} else {
-				this.cover(population, instanceIndex);
+		if (evolve) {
+			for (int l = 0; l < numberOfLabels; l++) {
+				if (labelCorrectSets[l].getNumberOfMacroclassifiers() > 0) {
+					ga.evolveSet(labelCorrectSets[l], population);
+				} else {
+					this.cover(population, instanceIndex);
+				}
 			}
 		}
 

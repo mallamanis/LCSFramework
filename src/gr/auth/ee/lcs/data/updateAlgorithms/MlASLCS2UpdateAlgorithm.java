@@ -267,7 +267,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 
 			for (int l = 0; l < numberOfLabels; l++) {
 				// Get classification ability for label l
-				float classificationAbility = cl.myClassifier
+				final float classificationAbility = cl.myClassifier
 						.classifyLabelCorrectly(instanceIndex, l);
 
 				if (classificationAbility == 0)
@@ -277,7 +277,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 					data.tp += 1;
 					final int labelNs = labelCorrectSets[l]
 							.getTotalNumerosity();
-					assert (labelNs > 0);
+					
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}
@@ -288,20 +288,19 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 
 			cl.myClassifier.experience++;
 			if (minCurrentNs != Integer.MAX_VALUE)
-				// data.ns = (data.ns * (cl.myClassifier.experience - 1) +
-				// minCurrentNs)
-				// / (cl.myClassifier.experience);
 				data.ns += .1 * (minCurrentNs - data.ns);
 			data.fitness = Math.pow(((double) (data.tp)) / (double) (data.msa),
 					n);
 			updateSubsumption(cl.myClassifier);
 		}
 
-		for (int l = 0; l < numberOfLabels; l++) {
-			if (labelCorrectSets[l].getNumberOfMacroclassifiers() > 0) {
-				ga.evolveSet(labelCorrectSets[l], population);
-			} else {
-				this.cover(population, instanceIndex);
+		if (evolve) {
+			for (int l = 0; l < numberOfLabels; l++) {
+				if (labelCorrectSets[l].getNumberOfMacroclassifiers() > 0) {
+					ga.evolveSet(labelCorrectSets[l], population);
+				} else {
+					this.cover(population, instanceIndex);
+				}
 			}
 		}
 
