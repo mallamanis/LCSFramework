@@ -4,7 +4,9 @@
 package gr.auth.ee.lcs.distributed;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
+import gr.auth.ee.lcs.classifiers.Macroclassifier;
 import gr.auth.ee.lcs.data.ILCSMetric;
 import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
 
@@ -78,10 +80,16 @@ public abstract class AbstractRuleDistributer implements ILCSMetric {
 	 */
 	public void sendRules() {
 		ClassifierSet outRules = new ClassifierSet(null);
-		sendSelector.select(-1, mLCS.getRulePopulation(), outRules);
+		sendSelector.select(1, mLCS.getRulePopulation(), outRules);
+		
 		localRouter.sendRules(outRules);
 		synchronized (newRules) {
-			mLCS.getRulePopulation().merge(newRules);
+			for (int i = 0; i < newRules.getNumberOfMacroclassifiers(); i++) {
+				final Classifier initial = newRules.getClassifier(i);
+				final Classifier rule = (Classifier) initial.clone();
+				mLCS.getRulePopulation().addClassifier(new Macroclassifier(rule, 1), true);
+				
+			}
 			newRules = new ClassifierSet(null);
 		}
 	}

@@ -4,9 +4,12 @@
 package gr.auth.ee.lcs.implementations.parallel;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
+import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.distributed.distributers.SimpleRuleDistributer;
 import gr.auth.ee.lcs.distributed.routers.All2AllRouter;
 import gr.auth.ee.lcs.distributed.sockets.LocalHubbedRuleSocket;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.RouletteWheelSelector;
+import gr.auth.ee.lcs.geneticalgorithm.selectors.TournamentSelector;
 import gr.auth.ee.lcs.utilities.SettingsLoader;
 import weka.core.Instances;
 
@@ -68,16 +71,20 @@ public class P2Plcs extends AbstractLearningClassifierSystem {
 	 */
 	private void initNodes() throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
-		
-
+				
 		for (int i = 0; i < nodes.length; i++) {
 			final AbstractLearningClassifierSystem lcs = (AbstractLearningClassifierSystem) Class
 					.forName(lcsClassName).newInstance();
 			final SimpleRuleDistributer distributer = new SimpleRuleDistributer(
-					null, lcs);
+					null, lcs, new RouletteWheelSelector(AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,true)); //TODO: pass parameters
 			final All2AllRouter router = new All2AllRouter(distributer, socket);
 			distributer.setRouter(router);
-
+			socket.setRuleRouter(router, "lcs"+i);
+			
+			//Set all peers
+			for (int j = 0 ; j < nodes.length; j++)
+				if (j!=i)
+					router.getPeers().add("lcs"+j);
 			lcs.registerHook(distributer);
 
 			nodes[i] = lcs;

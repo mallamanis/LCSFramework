@@ -38,8 +38,8 @@ public class SimpleRuleDistributer extends AbstractRuleDistributer {
 	 *            the LCS
 	 */
 	public SimpleRuleDistributer(IRuleRouter router,
-			AbstractLearningClassifierSystem lcs) {
-		super(router, lcs, selector, selector);
+			AbstractLearningClassifierSystem lcs, IRuleSelector sendSelector) {
+		super(router, lcs, selector, sendSelector);
 
 	}
 

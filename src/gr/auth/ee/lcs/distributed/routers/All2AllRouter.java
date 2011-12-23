@@ -29,7 +29,7 @@ public class All2AllRouter implements IRuleRouter {
 	/**
 	 * A vector containing the addresses of all lcs peers.
 	 */
-	Vector<String> mPeers = new Vector<String>();
+	private Vector<String> mPeers = new Vector<String>();
 
 	/**
 	 * Constructor.
