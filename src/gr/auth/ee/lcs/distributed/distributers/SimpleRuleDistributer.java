@@ -20,7 +20,7 @@ public class SimpleRuleDistributer extends AbstractRuleDistributer {
 	/**
 	 * A simple selector that selects all the rules
 	 */
-	static IRuleSelector receiverSelector = new IRuleSelector() {
+	static IRuleSelector selector = new IRuleSelector() {
 		@Override
 		public void select(int howManyToSelect, ClassifierSet fromPopulation,
 				ClassifierSet toPopulation) {
@@ -36,12 +36,10 @@ public class SimpleRuleDistributer extends AbstractRuleDistributer {
 	 *            the router
 	 * @param lcs
 	 *            the LCS
-	 * @param sender
-	 *            the send selection strategy
 	 */
 	public SimpleRuleDistributer(IRuleRouter router,
-			AbstractLearningClassifierSystem lcs, IRuleSelector sender) {
-		super(router, lcs, receiverSelector, sender);
+			AbstractLearningClassifierSystem lcs) {
+		super(router, lcs, selector, selector);
 
 	}
 

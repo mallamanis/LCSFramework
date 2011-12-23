@@ -36,7 +36,7 @@ public abstract class AbstractRuleDistributer implements ILCSMetric {
 	/**
 	 * The local router interface.
 	 */
-	final IRuleRouter localRouter;
+	IRuleRouter localRouter;
 
 	ClassifierSet newRules = new ClassifierSet(null);
 
@@ -47,6 +47,10 @@ public abstract class AbstractRuleDistributer implements ILCSMetric {
 		mLCS = lcs;
 		sendSelector = sender;
 		receiveSelector = receiver;
+	}
+	
+	public void setRouter(IRuleRouter router) {
+		localRouter = router;
 	}
 
 	/**
