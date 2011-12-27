@@ -76,7 +76,7 @@ public class P2Plcs extends AbstractLearningClassifierSystem {
 			final AbstractLearningClassifierSystem lcs = (AbstractLearningClassifierSystem) Class
 					.forName(lcsClassName).newInstance();
 			final SimpleRuleDistributer distributer = new SimpleRuleDistributer(
-					null, lcs, new RouletteWheelSelector(AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,true)); //TODO: pass parameters
+					null, lcs, new TournamentSelector(15,true,AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION)); //TODO: pass parameters
 			final All2AllRouter router = new All2AllRouter(distributer, socket);
 			distributer.setRouter(router);
 			socket.setRuleRouter(router, "lcs"+i);

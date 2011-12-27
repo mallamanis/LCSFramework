@@ -80,7 +80,7 @@ public abstract class AbstractRuleDistributer implements ILCSMetric {
 	 */
 	public void sendRules() {
 		ClassifierSet outRules = new ClassifierSet(null);
-		sendSelector.select(1, mLCS.getRulePopulation(), outRules);
+		sendSelector.select(5, mLCS.getRulePopulation(), outRules);
 		
 		localRouter.sendRules(outRules);
 		synchronized (newRules) {
