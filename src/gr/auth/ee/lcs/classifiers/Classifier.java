@@ -176,6 +176,14 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 		myLcs = lcs;
 		setConstructionData();
 	}
+	
+	public final void setUpdateStrategy(AbstractUpdateStrategy strategy) {
+		this.updateStrategy = strategy;
+	}
+	
+	public final void setUpdateObject(Serializable obj) {
+		this.updateData = obj;
+	}
 
 	/**
 	 * Build matches vector (with train instances) and initialize it.
