@@ -43,15 +43,31 @@ import weka.core.Instances;
  */
 public class FoldEvaluator {
 
+	/**
+	 * An inner class representing a fold of training. To be run as a thread
+	 * 
+	 * @author Miltiadis Allamanis
+	 * 
+	 */
 	private final class FoldRunnable implements Runnable {
 		private final int metricOptimizationIndex;
 		private final int i;
 		private final int numOfFoldRepetitions;
 
-		private FoldRunnable(int metricOptimizationIndex, int i,
+		/**
+		 * Constructor
+		 * 
+		 * @param metricOptimizationIndex
+		 *            the index of the metric to optimize on
+		 * @param nFold
+		 *            the fold number
+		 * @param numOfFoldRepetitions
+		 *            the number of repetitions to perform
+		 */
+		private FoldRunnable(int metricOptimizationIndex, int nFold,
 				int numOfFoldRepetitions) {
 			this.metricOptimizationIndex = metricOptimizationIndex;
-			this.i = i;
+			this.i = nFold;
 			this.numOfFoldRepetitions = numOfFoldRepetitions;
 		}
 
