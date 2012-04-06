@@ -43,6 +43,45 @@ import weka.core.Instances;
  */
 public class FoldEvaluator {
 
+	private final class FoldRunnable implements Runnable {
+		private final int metricOptimizationIndex;
+		private final int i;
+		private final int numOfFoldRepetitions;
+
+		private FoldRunnable(int metricOptimizationIndex, int i,
+				int numOfFoldRepetitions) {
+			this.metricOptimizationIndex = metricOptimizationIndex;
+			this.i = i;
+			this.numOfFoldRepetitions = numOfFoldRepetitions;
+		}
+
+		@Override
+		public void run() {
+			double[][] results = new double[numOfFoldRepetitions][];
+			for (int repetition = 0; repetition < numOfFoldRepetitions; repetition++) {
+				AbstractLearningClassifierSystem foldLCS = prototype
+						.createNew();
+				System.out.println("Training Fold " + i);
+				loadFold(i, foldLCS);
+				foldLCS.train();
+
+				// Gather results...
+				results[repetition] = foldLCS.getEvaluations(testSet);
+			}
+
+			// Determine better repetition
+			int best = 0;
+			for (int j = 1; j < numOfFoldRepetitions; j++) {
+				if (results[j][metricOptimizationIndex] > results[best][metricOptimizationIndex])
+					best = j;
+			}
+
+			// Gather to fold stats
+			gatherResults(results[best], i);
+
+		}
+	}
+
 	/**
 	 * The number of folds to separate the dataset.
 	 */
@@ -163,36 +202,8 @@ public class FoldEvaluator {
 				.getNumericSetting("numOfFoldRepetitions", 1);
 
 		for (int currentRun = 0; currentRun < runs; currentRun++) {
-			final int i = currentRun;
-			Runnable foldEval = new Runnable() {
-
-				@Override
-				public void run() {
-					double[][] results = new double[numOfFoldRepetitions][];
-					for (int repetition = 0; repetition < numOfFoldRepetitions; repetition++) {
-						AbstractLearningClassifierSystem foldLCS = prototype
-								.createNew();
-						System.out.println("Training Fold " + i);
-						loadFold(i, foldLCS);
-						foldLCS.train();
-
-						// Gather results...
-						results[repetition] = foldLCS.getEvaluations(testSet);
-					}
-
-					// Determine better repetition
-					int best = 0;
-					for (int j = 1; j < numOfFoldRepetitions; j++) {
-						if (results[j][metricOptimizationIndex] > results[best][metricOptimizationIndex])
-							best = j;
-					}
-
-					// Gather to fold stats
-					gatherResults(results[best], i);
-
-				}
-
-			};
+			Runnable foldEval = new FoldRunnable(metricOptimizationIndex,
+					currentRun, numOfFoldRepetitions);
 			this.theadPool.execute(foldEval);
 		}
 
