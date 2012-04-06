@@ -29,6 +29,9 @@ import gr.auth.ee.lcs.utilities.SettingsLoader;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import weka.core.Instances;
 
@@ -76,6 +79,11 @@ public class FoldEvaluator {
 	final int runs;
 
 	/**
+	 * An executor service containing a thread pool to run folds
+	 */
+	final ExecutorService theadPool;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param folds
@@ -95,6 +103,10 @@ public class FoldEvaluator {
 		instances = InstancesUtility.openInstance(filename);
 		runs = (int) SettingsLoader.getNumericSetting("foldsToRun", numOfFolds);
 		instances.randomize(new Random());
+
+		int numOfThreads = (int) SettingsLoader.getNumericSetting(
+				"numOfThreads", 1);
+		theadPool = Executors.newFixedThreadPool(numOfThreads);
 
 	}
 
@@ -116,6 +128,10 @@ public class FoldEvaluator {
 		prototype = myLcs;
 		instances = inputInstances;
 		runs = numberOfRuns;
+
+		int numOfThreads = (int) SettingsLoader.getNumericSetting(
+				"numOfThreads", 1);
+		theadPool = Executors.newFixedThreadPool(numOfThreads);
 	}
 
 	/**
@@ -146,33 +162,51 @@ public class FoldEvaluator {
 		final int numOfFoldRepetitions = (int) SettingsLoader
 				.getNumericSetting("numOfFoldRepetitions", 1);
 
-		for (int i = 0; i < runs; i++) {
-			double[][] results = new double[numOfFoldRepetitions][];
-			for (int repetition = 0; repetition < numOfFoldRepetitions; repetition++) {
-				AbstractLearningClassifierSystem foldLCS = prototype
-						.createNew();
-				System.out.println("Training Fold " + i);
-				loadFold(i, foldLCS);
-				foldLCS.train();
+		for (int currentRun = 0; currentRun < runs; currentRun++) {
+			final int i = currentRun;
+			Runnable foldEval = new Runnable() {
 
-				// Gather results...
-				results[repetition] = foldLCS.getEvaluations(testSet);
-			}
+				@Override
+				public void run() {
+					double[][] results = new double[numOfFoldRepetitions][];
+					for (int repetition = 0; repetition < numOfFoldRepetitions; repetition++) {
+						AbstractLearningClassifierSystem foldLCS = prototype
+								.createNew();
+						System.out.println("Training Fold " + i);
+						loadFold(i, foldLCS);
+						foldLCS.train();
 
-			// Determine better repetition
-			int best = 0;
-			for (int j = 1; j < numOfFoldRepetitions; j++) {
-				if (results[j][metricOptimizationIndex] > results[best][metricOptimizationIndex])
-					best = j;
-			}
+						// Gather results...
+						results[repetition] = foldLCS.getEvaluations(testSet);
+					}
 
-			// Gather to fold stats
-			gatherResults(results[best], i);
+					// Determine better repetition
+					int best = 0;
+					for (int j = 1; j < numOfFoldRepetitions; j++) {
+						if (results[j][metricOptimizationIndex] > results[best][metricOptimizationIndex])
+							best = j;
+					}
+
+					// Gather to fold stats
+					gatherResults(results[best], i);
+
+				}
+
+			};
+			this.theadPool.execute(foldEval);
 		}
 
+		this.theadPool.shutdown();
+		try {
+			this.theadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			System.out.println("Thread Pool Interrupted");
+			e.printStackTrace();
+		}
 		final double[] means = calcMean(this.evals);
 		// print results
 		printEvaluations(means);
+
 	}
 
 	/**
@@ -186,7 +220,7 @@ public class FoldEvaluator {
 	 * @return the double containing all evaluations (up to the point being
 	 *         added)
 	 */
-	public double[][] gatherResults(double[] results, int fold) {
+	public synchronized double[][] gatherResults(double[] results, int fold) {
 		if (evals == null) {
 			evals = new double[runs][results.length];
 		}
@@ -195,6 +229,20 @@ public class FoldEvaluator {
 
 		return evals;
 
+	}
+
+	/**
+	 * Print the evaluations.
+	 * 
+	 * @param means
+	 *            the array containing the evaluation means
+	 */
+	public void printEvaluations(double[] means) {
+		final String[] names = prototype.getEvaluationNames();
+
+		for (int i = 0; i < means.length; i++) {
+			System.out.println(names[i] + ": " + means[i]);
+		}
 	}
 
 	/**
@@ -212,17 +260,4 @@ public class FoldEvaluator {
 		testSet = instances.testCV(numOfFolds, foldNumber);
 	}
 
-	/**
-	 * Print the evaluations.
-	 * 
-	 * @param means
-	 *            the array containing the evaluation means
-	 */
-	public void printEvaluations(double[] means) {
-		final String[] names = prototype.getEvaluationNames();
-
-		for (int i = 0; i < means.length; i++) {
-			System.out.println(names[i] + ": " + means[i]);
-		}
-	}
 }
