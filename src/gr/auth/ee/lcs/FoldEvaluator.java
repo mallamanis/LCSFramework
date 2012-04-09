@@ -55,6 +55,16 @@ public class FoldEvaluator {
 		private final int numOfFoldRepetitions;
 
 		/**
+		 * The train set.
+		 */
+		private Instances trainSet;
+
+		/**
+		 * The test set.
+		 */
+		private Instances testSet;
+
+		/**
 		 * Constructor
 		 * 
 		 * @param metricOptimizationIndex
@@ -96,6 +106,22 @@ public class FoldEvaluator {
 			gatherResults(results[best], i);
 
 		}
+
+		/**
+		 * Load a fold into the evaluator.
+		 * 
+		 * @param foldNumber
+		 *            the fold's index
+		 * @param lcs
+		 *            the LCS that will be used to evaluate this fold
+		 */
+		private void loadFold(int foldNumber,
+				AbstractLearningClassifierSystem lcs) {
+
+			trainSet = instances.trainCV(numOfFolds, foldNumber);
+			lcs.instances = InstancesUtility.convertIntancesToDouble(trainSet);
+			testSet = instances.testCV(numOfFolds, foldNumber);
+		}
 	}
 
 	/**
@@ -112,16 +138,6 @@ public class FoldEvaluator {
 	 * The instances that the LCS will be evaluated on.
 	 */
 	private final Instances instances;
-
-	/**
-	 * The train set.
-	 */
-	private Instances trainSet;
-
-	/**
-	 * The test set.
-	 */
-	private Instances testSet;
 
 	/**
 	 * The evaluations.
@@ -270,21 +286,6 @@ public class FoldEvaluator {
 		for (int i = 0; i < means.length; i++) {
 			System.out.println(names[i] + ": " + means[i]);
 		}
-	}
-
-	/**
-	 * Load a fold into the evaluator.
-	 * 
-	 * @param foldNumber
-	 *            the fold's index
-	 * @param lcs
-	 *            the LCS that will be used to evaluate this fold
-	 */
-	private void loadFold(int foldNumber, AbstractLearningClassifierSystem lcs) {
-
-		trainSet = instances.trainCV(numOfFolds, foldNumber);
-		lcs.instances = InstancesUtility.convertIntancesToDouble(trainSet);
-		testSet = instances.testCV(numOfFolds, foldNumber);
 	}
 
 }
