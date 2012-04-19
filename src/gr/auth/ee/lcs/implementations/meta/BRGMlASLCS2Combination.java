@@ -204,6 +204,10 @@ public class BRGMlASLCS2Combination extends AbstractLearningClassifierSystem {
 	private final int THETA_GA = (int) SettingsLoader.getNumericSetting(
 			"thetaGA", 300);
 
+	private int brIterations;
+
+	private int brInitPopulationSize;
+
 	/**
 	 * Constructor.
 	 * 
@@ -217,8 +221,13 @@ public class BRGMlASLCS2Combination extends AbstractLearningClassifierSystem {
 				"numberOfLabels", 1);
 		iterations = (int) SettingsLoader.getNumericSetting("trainIterations",
 				1000);
+		brIterations = (int) SettingsLoader.getNumericSetting("initIterations",
+				25);
 		populationSize = (int) SettingsLoader.getNumericSetting(
 				"populationSize", 1500);
+		brInitPopulationSize = (int) SettingsLoader.getNumericSetting(
+				"populationSize", populationSize / 3 );
+		
 		targetLC = (float) SettingsLoader.getNumericSetting(
 				"datasetLabelCardinality", 1);
 		selector = new BinaryRelevanceSelector(numberOfLabels);
@@ -344,7 +353,7 @@ public class BRGMlASLCS2Combination extends AbstractLearningClassifierSystem {
 
 		rulePopulation = new ClassifierSet(
 				new FixedSizeSetWorstFitnessDeletion(this, numberOfLabels
-						* populationSize, new RouletteWheelSelector(
+						* brInitPopulationSize, new RouletteWheelSelector(
 						AbstractUpdateStrategy.COMPARISON_MODE_DELETION, true)));
 
 		// Train BR
@@ -359,11 +368,11 @@ public class BRGMlASLCS2Combination extends AbstractLearningClassifierSystem {
 			ClassifierSet brpopulation = new ClassifierSet(
 					new FixedSizeSetWorstFitnessDeletion(
 							this,
-							populationSize,
+							brInitPopulationSize,
 							new RouletteWheelSelector(
 									AbstractUpdateStrategy.COMPARISON_MODE_DELETION,
 									true)));
-			trainSet(iterations, brpopulation);
+			trainSet(brIterations, brpopulation);
 
 			rep.reinforceDeactivatedLabels(brpopulation);
 			rulePopulation.merge(brpopulation);
