@@ -58,22 +58,22 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 		/**
 		 * The classifier's fitness
 		 */
-		public double fitness = .5;
+		public double fitness = 1;
 
 		/**
 		 * niche set size estimation.
 		 */
-		public double ns = 20;
+		public double ns = 10;
 
 		/**
 		 * Match Set Appearances.
 		 */
-		public int msa = 0;
+		public int msa = 1;
 
 		/**
 		 * true positives.
 		 */
-		public int tp = 0;
+		public int tp = 1;
 
 	}
 
@@ -209,6 +209,19 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 				+ data.msa + "ns:" + data.ns;
 	}
 
+	@Override
+	public void inheritParentParameters(Classifier parentA, Classifier parentB,
+			Classifier child) {
+		final MlASLCSClassifierData childData = ((MlASLCSClassifierData) child
+				.getUpdateDataObject());
+		final MlASLCSClassifierData parentAData = ((MlASLCSClassifierData) parentA
+				.getUpdateDataObject());
+		final MlASLCSClassifierData parentBData = ((MlASLCSClassifierData) parentB
+				.getUpdateDataObject());
+		childData.ns = (parentAData.ns + parentBData.ns) / 2;
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -277,7 +290,7 @@ public class MlASLCS2UpdateAlgorithm extends AbstractUpdateStrategy {
 					data.tp += 1;
 					final int labelNs = labelCorrectSets[l]
 							.getTotalNumerosity();
-					
+
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}

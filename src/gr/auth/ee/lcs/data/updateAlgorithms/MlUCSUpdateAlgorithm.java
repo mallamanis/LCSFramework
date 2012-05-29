@@ -182,28 +182,6 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	}
 
 	/**
-	 * Build active label array.
-	 * 
-	 * @param cl
-	 *            the classifier to build active labels array on
-	 */
-	private void buildActive(final Classifier cl) {
-		int active = 0;
-		final MlUCSClassifierData data = ((MlUCSClassifierData) cl
-				.getUpdateDataObject());
-		for (int i = 0; i < numberOfLabels; i++) {
-			if (cl.classifyLabelCorrectly(0, i) != 0) {
-				active++;
-				data.active[i] = true;
-			} else {
-				data.active[i] = false;
-			}
-		}
-
-		data.activeLabels = active;
-	}
-
-	/**
 	 * Calls covering operator.
 	 * 
 	 * @param population
@@ -223,6 +201,130 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	@Override
 	public Serializable createStateClassifierObject() {
 		return new MlUCSClassifierData(numberOfLabels);
+	}
+
+	@Override
+	public double getComparisonValue(final Classifier aClassifier,
+			final int mode) {
+		final MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
+				.getUpdateDataObject();
+
+		switch (mode) {
+		case COMPARISON_MODE_EXPLORATION:
+			final double value = data.fitness
+					* ((aClassifier.experience < deleteAge) ? 0.1 : 1);
+			return Double.isNaN(value) ? 0 : value;
+		case COMPARISON_MODE_DELETION:
+
+			if (aClassifier.experience > deleteAge) {
+				final double result = data.globalCs; // data.fitness;
+				return Double.isNaN(result) ? 1 : result;
+			}
+
+			return 0;
+
+		case COMPARISON_MODE_EXPLOITATION:
+
+			final double exploitValue = data.fitness
+					* ((aClassifier.experience < deleteAge) ? 0 : 1);
+			return Double.isNaN(exploitValue) ? 0 : exploitValue;
+		default:
+			return 0;
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
+	 * .ee.lcs.classifiers.Classifier)
+	 */
+	@Override
+	public String getData(final Classifier aClassifier) {
+		final MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
+				.getUpdateDataObject());
+		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
+				+ "tp:" + Arrays.toString(data.tp) + "globalCs:"
+				+ data.globalCs + "cs:" + Arrays.toString(data.cs); // TODO
+																	// more
+	}
+
+	@Override
+	public void inheritParentParameters(Classifier parentA, Classifier parentB,
+			Classifier child) {
+		final MlUCSClassifierData childData = ((MlUCSClassifierData) child
+				.getUpdateDataObject());
+		final MlUCSClassifierData parentAData = ((MlUCSClassifierData) parentA
+				.getUpdateDataObject());
+		final MlUCSClassifierData parentBData = ((MlUCSClassifierData) parentB
+				.getUpdateDataObject());
+		for (int i = 0; i < numberOfLabels; ++i)
+			childData.cs[i] = (parentAData.cs[i] + parentBData.cs[i]) / 2;
+		childData.globalCs = (parentAData.globalCs + parentBData.globalCs) / 2;
+
+	}
+
+	@Override
+	public void performUpdate(final ClassifierSet matchSet,
+			final ClassifierSet correctSet) {
+		return;
+	}
+
+	@Override
+	public void setComparisonValue(final Classifier aClassifier,
+			final int mode, final double comparisonValue) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateSet(final ClassifierSet population,
+			final ClassifierSet matchSet, final int instanceIndex,
+			final boolean evolve) {
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+
+		for (int i = 0; i < matchSetSize; i++) {
+			final Classifier cl = matchSet.getClassifier(i);
+			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
+					.getUpdateDataObject());
+			cl.experience++;
+
+			if (data.activeLabels < 0)
+				buildActive(cl);
+
+		}
+
+		updatePerLabel(population, matchSet, instanceIndex, evolve);
+
+		gatherResults(matchSet);
+
+		if ((matchSetSize > 0) && evolve)
+			ga.evolveSet(matchSet, population);
+
+	}
+
+	/**
+	 * Build active label array.
+	 * 
+	 * @param cl
+	 *            the classifier to build active labels array on
+	 */
+	private void buildActive(final Classifier cl) {
+		int active = 0;
+		final MlUCSClassifierData data = ((MlUCSClassifierData) cl
+				.getUpdateDataObject());
+		for (int i = 0; i < numberOfLabels; i++) {
+			if (cl.classifyLabelCorrectly(0, i) != 0) {
+				active++;
+				data.active[i] = true;
+			} else {
+				data.active[i] = false;
+			}
+		}
+
+		data.activeLabels = active;
 	}
 
 	/**
@@ -337,67 +439,6 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return labelMatchSet;
 	}
 
-	@Override
-	public double getComparisonValue(final Classifier aClassifier,
-			final int mode) {
-		final MlUCSClassifierData data = (MlUCSClassifierData) aClassifier
-				.getUpdateDataObject();
-
-		switch (mode) {
-		case COMPARISON_MODE_EXPLORATION:
-			final double value = data.fitness
-					* ((aClassifier.experience < deleteAge) ? 0.1 : 1);
-			return Double.isNaN(value) ? 0 : value;
-		case COMPARISON_MODE_DELETION:
-
-			if (aClassifier.experience > deleteAge) {
-				final double result = data.globalCs; // data.fitness;
-				return Double.isNaN(result) ? 1 : result;
-			}
-
-			return 0;
-
-		case COMPARISON_MODE_EXPLOITATION:
-
-			final double exploitValue = data.fitness
-					* ((aClassifier.experience < deleteAge) ? 0 : 1);
-			return Double.isNaN(exploitValue) ? 0 : exploitValue;
-		default:
-			return 0;
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * gr.auth.ee.lcs.data.UpdateAlgorithmFactoryAndStrategy#getData(gr.auth
-	 * .ee.lcs.classifiers.Classifier)
-	 */
-	@Override
-	public String getData(final Classifier aClassifier) {
-		final MlUCSClassifierData data = ((MlUCSClassifierData) aClassifier
-				.getUpdateDataObject());
-		return "Fitness: " + data.fitness + "activeLbl:" + data.activeLabels
-				+ "tp:" + Arrays.toString(data.tp) + "globalCs:"
-				+ data.globalCs + "cs:" + Arrays.toString(data.cs); // TODO
-																	// more
-	}
-
-	@Override
-	public void performUpdate(final ClassifierSet matchSet,
-			final ClassifierSet correctSet) {
-		return;
-	}
-
-	@Override
-	public void setComparisonValue(final Classifier aClassifier,
-			final int mode, final double comparisonValue) {
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * Update set per label.
 	 * 
@@ -481,32 +522,6 @@ public final class MlUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 						* ((data.fitness0[label] / fitnessSum) - data.labelFitness[label]);
 			}
 		}
-	}
-
-	@Override
-	public void updateSet(final ClassifierSet population,
-			final ClassifierSet matchSet, final int instanceIndex,
-			final boolean evolve) {
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-
-		for (int i = 0; i < matchSetSize; i++) {
-			final Classifier cl = matchSet.getClassifier(i);
-			final MlUCSClassifierData data = ((MlUCSClassifierData) cl
-					.getUpdateDataObject());
-			cl.experience++;
-
-			if (data.activeLabels < 0)
-				buildActive(cl);
-
-		}
-
-		updatePerLabel(population, matchSet, instanceIndex, evolve);
-
-		gatherResults(matchSet);
-
-		if ((matchSetSize > 0) && evolve)
-			ga.evolveSet(matchSet, population);
-
 	}
 
 }

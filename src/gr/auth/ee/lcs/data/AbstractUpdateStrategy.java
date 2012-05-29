@@ -94,6 +94,20 @@ public abstract class AbstractUpdateStrategy {
 	public abstract String getData(Classifier aClassifier);
 
 	/**
+	 * Inherit the parent's parameters (used when creating a classifier using
+	 * crossover).
+	 * 
+	 * @param parentA
+	 *            the first parent
+	 * @param parentB
+	 *            the second parent
+	 * @param child
+	 *            the child inheriting the parameters
+	 */
+	public abstract void inheritParentParameters(Classifier parentA,
+			Classifier parentB, Classifier child);
+
+	/**
 	 * Perform an update knowing only the correct set and match set.
 	 * 
 	 * @param matchSet
@@ -131,5 +145,4 @@ public abstract class AbstractUpdateStrategy {
 	 */
 	public abstract void updateSet(ClassifierSet population,
 			ClassifierSet matchSet, int instanceIndex, boolean evolve);
-
 }

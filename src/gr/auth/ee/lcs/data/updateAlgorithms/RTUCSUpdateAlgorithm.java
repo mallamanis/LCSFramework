@@ -246,6 +246,19 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return "tp:" + data.tp;
 	}
 
+	@Override
+	public void inheritParentParameters(Classifier parentA, Classifier parentB,
+			Classifier child) {
+		final UCSClassifierData childData = ((UCSClassifierData) child
+				.getUpdateDataObject());
+		final UCSClassifierData parentAData = ((UCSClassifierData) parentA
+				.getUpdateDataObject());
+		final UCSClassifierData parentBData = ((UCSClassifierData) parentB
+				.getUpdateDataObject());
+		childData.cs = (parentAData.cs + parentBData.cs) / 2;
+
+	}
+
 	/**
 	 * Perform an update to the set.
 	 * 
@@ -266,55 +279,6 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		data.fitness = comparisonValue;
-	}
-
-	/**
-	 * Share a the fitness among a set.
-	 * 
-	 * @param set
-	 *            a correct set to share fitness
-	 * @param fitnessToShare
-	 *            the numeric value of the fitness to share
-	 */
-	private void shareFitness(final ClassifierSet set,
-			final double fitnessToShare) {
-		double strengthSum = 0;
-		final int setSize = set.getNumberOfMacroclassifiers();
-		for (int i = 0; i < setSize; i++) {
-			Classifier cl = set.getClassifier(i);
-			UCSClassifierData data = ((UCSClassifierData) cl
-					.getUpdateDataObject());
-			cl.experience++;
-			data.msa += 1;
-			data.tp += 1;
-			data.fitness += b * (0 - data.fitness);
-			data.cs = data.cs + (b * (setSize - data.cs));
-			final double accuracy = ((double) data.tp) / ((double) data.msa);
-			if (accuracy > accuracy0) {
-				data.fitness0 = 1;
-
-				// Check subsumption
-				if (cl.experience >= this.subsumptionExperienceThreshold)
-					cl.setSubsumptionAbility(true);
-
-			} else {
-				data.fitness0 = a * Math.pow(accuracy / accuracy0, n);
-				cl.setSubsumptionAbility(false);
-			}
-
-			strengthSum += data.fitness0 * set.getClassifierNumerosity(i);
-		}
-
-		// Fix for avoiding problems...
-		if (strengthSum == 0)
-			strengthSum = 1;
-
-		for (int i = 0; i < setSize; i++) {
-			Classifier cl = set.getClassifier(i);
-			UCSClassifierData data = ((UCSClassifierData) cl
-					.getUpdateDataObject());
-			data.fitness += b * ((data.fitness0 / strengthSum) - data.fitness);
-		}
 	}
 
 	/*
@@ -385,6 +349,55 @@ public final class RTUCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			}
 		}
 
+	}
+
+	/**
+	 * Share a the fitness among a set.
+	 * 
+	 * @param set
+	 *            a correct set to share fitness
+	 * @param fitnessToShare
+	 *            the numeric value of the fitness to share
+	 */
+	private void shareFitness(final ClassifierSet set,
+			final double fitnessToShare) {
+		double strengthSum = 0;
+		final int setSize = set.getNumberOfMacroclassifiers();
+		for (int i = 0; i < setSize; i++) {
+			Classifier cl = set.getClassifier(i);
+			UCSClassifierData data = ((UCSClassifierData) cl
+					.getUpdateDataObject());
+			cl.experience++;
+			data.msa += 1;
+			data.tp += 1;
+			data.fitness += b * (0 - data.fitness);
+			data.cs = data.cs + (b * (setSize - data.cs));
+			final double accuracy = ((double) data.tp) / ((double) data.msa);
+			if (accuracy > accuracy0) {
+				data.fitness0 = 1;
+
+				// Check subsumption
+				if (cl.experience >= this.subsumptionExperienceThreshold)
+					cl.setSubsumptionAbility(true);
+
+			} else {
+				data.fitness0 = a * Math.pow(accuracy / accuracy0, n);
+				cl.setSubsumptionAbility(false);
+			}
+
+			strengthSum += data.fitness0 * set.getClassifierNumerosity(i);
+		}
+
+		// Fix for avoiding problems...
+		if (strengthSum == 0)
+			strengthSum = 1;
+
+		for (int i = 0; i < setSize; i++) {
+			Classifier cl = set.getClassifier(i);
+			UCSClassifierData data = ((UCSClassifierData) cl
+					.getUpdateDataObject());
+			data.fitness += b * ((data.fitness0 / strengthSum) - data.fitness);
+		}
 	}
 
 	/**

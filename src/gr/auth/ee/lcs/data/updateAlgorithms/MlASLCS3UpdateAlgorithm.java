@@ -209,6 +209,18 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 				+ data.msa + "ns:" + data.ns;
 	}
 
+	@Override
+	public void inheritParentParameters(Classifier parentA, Classifier parentB,
+			Classifier child) {
+		final MlASLCSClassifierData childData = ((MlASLCSClassifierData) child
+				.getUpdateDataObject());
+		final MlASLCSClassifierData parentAData = ((MlASLCSClassifierData) parentA
+				.getUpdateDataObject());
+		final MlASLCSClassifierData parentBData = ((MlASLCSClassifierData) parentB
+				.getUpdateDataObject());
+		childData.ns = (parentAData.ns + parentBData.ns) / 2;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -276,7 +288,7 @@ public class MlASLCS3UpdateAlgorithm extends AbstractUpdateStrategy {
 					data.tp += 1;
 					final int labelNs = labelCorrectSets[l]
 							.getTotalNumerosity();
-					
+
 					if (minCurrentNs > labelNs) {
 						minCurrentNs = labelNs;
 					}

@@ -176,14 +176,6 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 		myLcs = lcs;
 		setConstructionData();
 	}
-	
-	public final void setUpdateStrategy(AbstractUpdateStrategy strategy) {
-		this.updateStrategy = strategy;
-	}
-	
-	public final void setUpdateObject(Serializable obj) {
-		this.updateData = obj;
-	}
 
 	/**
 	 * Build matches vector (with train instances) and initialize it.
@@ -331,6 +323,20 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
+	 * Through the update strategy inherit the parameters
+	 * 
+	 * @param parentA
+	 *            the first parent
+	 * 
+	 * @param parentB
+	 *            the second parent
+	 */
+	public final void inheritParametersFromParents(Classifier parentA,
+			Classifier parentB) {
+		updateStrategy.inheritParentParameters(parentA, parentB, this);
+	}
+
+	/**
 	 * Calls the bridge to detect if the classifier is matching the vision
 	 * vector.
 	 * 
@@ -401,20 +407,6 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	}
 
 	/**
-	 * Sets the update-specific and transform-specific data needed.
-	 */
-	private void setConstructionData() {
-		if (updateStrategy != null)
-			updateData = updateStrategy.createStateClassifierObject();
-
-		if (transformBridge != null)
-			transformBridge.setRepresentationSpecificClassifierData(this);
-
-		this.serial = currentSerial;
-		currentSerial++;
-	}
-
-	/**
 	 * Sets the classifier's LCS
 	 * 
 	 * @param lcs
@@ -436,6 +428,14 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 		subsumes = canSubsumeAbility;
 	}
 
+	public final void setUpdateObject(Serializable obj) {
+		this.updateData = obj;
+	}
+
+	public final void setUpdateStrategy(AbstractUpdateStrategy strategy) {
+		this.updateStrategy = strategy;
+	}
+
 	/**
 	 * Calls the bridge to divide bits into attributes.
 	 * 
@@ -453,6 +453,20 @@ public final class Classifier extends ExtendedBitSet implements Serializable {
 	@Override
 	public String toString() {
 		return transformBridge.toNaturalLanguageString(this);
+	}
+
+	/**
+	 * Sets the update-specific and transform-specific data needed.
+	 */
+	private void setConstructionData() {
+		if (updateStrategy != null)
+			updateData = updateStrategy.createStateClassifierObject();
+
+		if (transformBridge != null)
+			transformBridge.setRepresentationSpecificClassifierData(this);
+
+		this.serial = currentSerial;
+		currentSerial++;
 	}
 
 }

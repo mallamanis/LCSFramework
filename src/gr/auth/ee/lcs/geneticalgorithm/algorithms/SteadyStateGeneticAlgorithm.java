@@ -25,7 +25,6 @@ import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
 import gr.auth.ee.lcs.classifiers.ClassifierSet;
 import gr.auth.ee.lcs.classifiers.Macroclassifier;
-import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.geneticalgorithm.IGeneticAlgorithmStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IRuleSelector;
@@ -128,7 +127,7 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		timestamp++;
 
 		final int meanAge = getMeanAge(evolveSet);
-		if (timestamp - meanAge < this.gaActivationAge)
+		if ((timestamp - meanAge) < this.gaActivationAge)
 			return;
 
 		final int evolveSetSize = evolveSet.getNumberOfMacroclassifiers();
@@ -150,23 +149,30 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		for (int i = 0; i < CHILDREN_PER_GENERATION; i++) {
 			Classifier child;
 			// produce a child
-			if (Math.random() < crossoverRate && parentA != parentB) {
+			if ((Math.random() < crossoverRate) && (parentA != parentB)) {
 				child = crossoverOp.operate((i == 0) ? parentB : parentA,
 						(i == 0) ? parentA : parentB);
 			} else {
 				child = (Classifier) ((i == 0) ? parentA : parentB).clone();
-				child.setComparisonValue(
-						AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION,
-						((i == 0) ? parentA : parentB)
-								.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLORATION));
 			}
 
 			child = mutationOp.operate(child);
+			child.inheritParametersFromParents(parentA, parentB);
 			myLcs.getClassifierTransformBridge().fixChromosome(child);
 			population.addClassifier(new Macroclassifier(child, 1), true);
 
 		}
 
+	}
+
+	/**
+	 * GA Setter.
+	 * 
+	 * @param age
+	 *            the theta_GA
+	 */
+	public void setThetaGA(int age) {
+		this.gaActivationAge = age;
 	}
 
 	/**
@@ -188,16 +194,6 @@ public class SteadyStateGeneticAlgorithm implements IGeneticAlgorithmStrategy {
 		meanAge /= ((double) set.getTotalNumerosity());
 
 		return meanAge;
-	}
-
-	/**
-	 * GA Setter.
-	 * 
-	 * @param age
-	 *            the theta_GA
-	 */
-	public void setThetaGA(int age) {
-		this.gaActivationAge = age;
 	}
 
 }

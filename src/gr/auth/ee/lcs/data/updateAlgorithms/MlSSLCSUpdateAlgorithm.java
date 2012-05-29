@@ -240,6 +240,20 @@ public final class MlSSLCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return "tp:" + data.tp + "msa:" + data.msa + " str:" + data.str;
 	}
 
+	@Override
+	public void inheritParentParameters(Classifier parentA, Classifier parentB,
+			Classifier child) {
+		final MlSSLCSClassifierData childData = ((MlSSLCSClassifierData) child
+				.getUpdateDataObject());
+		final MlSSLCSClassifierData parentAData = ((MlSSLCSClassifierData) parentA
+				.getUpdateDataObject());
+		final MlSSLCSClassifierData parentBData = ((MlSSLCSClassifierData) parentB
+				.getUpdateDataObject());
+		for (int i = 0; i < numberOfLabels; ++i)
+			childData.ns[i] = (parentAData.ns[i] + parentBData.ns[i]) / 2;
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

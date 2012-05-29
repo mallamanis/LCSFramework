@@ -60,7 +60,7 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		/**
 		 *
 		 */
-		private double fitness = 0;
+		private double fitness = 1;
 
 		/**
 		 * niche set size estimation.
@@ -209,27 +209,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return new UCSClassifierData();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -278,6 +257,19 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		final UCSClassifierData data = ((UCSClassifierData) aClassifier
 				.getUpdateDataObject());
 		return "tp:" + data.tp;
+	}
+
+	@Override
+	public final void inheritParentParameters(Classifier parentA,
+			Classifier parentB, Classifier child) {
+		final UCSClassifierData childData = ((UCSClassifierData) child
+				.getUpdateDataObject());
+		final UCSClassifierData parentAData = ((UCSClassifierData) parentA
+				.getUpdateDataObject());
+		final UCSClassifierData parentBData = ((UCSClassifierData) parentB
+				.getUpdateDataObject());
+		childData.cs = (parentAData.cs + parentBData.cs) / 2;
+
 	}
 
 	/**
@@ -354,26 +346,6 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		data.fitness = comparisonValue;
 	}
 
-	/**
-	 * Update the mean fitness variable.
-	 * 
-	 * @param population
-	 *            a set representing the population.
-	 */
-	private void updateMeanPopulationFitness(final ClassifierSet population) {
-		meanPopulationFitness = 0;
-		final int populationSize = population.getNumberOfMacroclassifiers();
-		for (int i = 0; i < populationSize; i++) {
-			final int clNumerosity = population.getClassifierNumerosity(i);
-			final Classifier cl = population.getClassifier(i);
-			final double fitness = ((UCSClassifierData) cl
-					.getUpdateDataObject()).fitness;
-			meanPopulationFitness += fitness * clNumerosity;
-		}
-
-		meanPopulationFitness /= population.getTotalNumerosity();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -421,6 +393,47 @@ public final class UCSUpdateAlgorithm extends AbstractUpdateStrategy {
 			}
 		}
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) >= correctSetThreshold)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
+	}
+
+	/**
+	 * Update the mean fitness variable.
+	 * 
+	 * @param population
+	 *            a set representing the population.
+	 */
+	private void updateMeanPopulationFitness(final ClassifierSet population) {
+		meanPopulationFitness = 0;
+		final int populationSize = population.getNumberOfMacroclassifiers();
+		for (int i = 0; i < populationSize; i++) {
+			final int clNumerosity = population.getClassifierNumerosity(i);
+			final Classifier cl = population.getClassifier(i);
+			final double fitness = ((UCSClassifierData) cl
+					.getUpdateDataObject()).fitness;
+			meanPopulationFitness += fitness * clNumerosity;
+		}
+
+		meanPopulationFitness /= population.getTotalNumerosity();
 	}
 
 }

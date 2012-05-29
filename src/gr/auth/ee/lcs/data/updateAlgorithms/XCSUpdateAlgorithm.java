@@ -95,11 +95,11 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 	 * alpha rate (accuracy function parameter).
 	 */
 	private final double alpha;
+
 	/**
 	 * The fitness threshold for subsumption.
 	 */
 	private final double subsumptionFitnessThreshold;
-
 	/**
 	 * The experience threshold for subsumption.
 	 */
@@ -196,27 +196,6 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		return new XCSClassifierData();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -258,6 +237,19 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 		response = "predictionError:" + data.predictionError
 				+ ", predictedPayOff:" + data.predictedPayOff;
 		return response;
+	}
+
+	@Override
+	public final void inheritParentParameters(Classifier parentA,
+			Classifier parentB, Classifier child) {
+		final XCSClassifierData childData = ((XCSClassifierData) child
+				.getUpdateDataObject());
+		final XCSClassifierData parentAData = ((XCSClassifierData) parentA
+				.getUpdateDataObject());
+		final XCSClassifierData parentBData = ((XCSClassifierData) parentB
+				.getUpdateDataObject());
+		childData.predictionError = (parentAData.predictionError + parentBData.predictionError) / 2;
+
 	}
 
 	/**
@@ -391,6 +383,27 @@ public final class XCSUpdateAlgorithm extends AbstractUpdateStrategy {
 				ga.evolveSet(correctSet, population);
 		}
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/**

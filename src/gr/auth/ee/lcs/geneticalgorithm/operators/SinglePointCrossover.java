@@ -23,7 +23,6 @@ package gr.auth.ee.lcs.geneticalgorithm.operators;
 
 import gr.auth.ee.lcs.AbstractLearningClassifierSystem;
 import gr.auth.ee.lcs.classifiers.Classifier;
-import gr.auth.ee.lcs.data.AbstractUpdateStrategy;
 import gr.auth.ee.lcs.geneticalgorithm.IBinaryGeneticOperator;
 import gr.auth.ee.lcs.utilities.ExtendedBitSet;
 
@@ -62,18 +61,11 @@ public class SinglePointCrossover implements IBinaryGeneticOperator {
 		/*
 		 * The point at which the crossover will occur
 		 */
-		final int mutationPoint = (int) Math.round(Math.random()
-				* chromosomeSize - 1);
+		final int mutationPoint = (int) Math
+				.round((Math.random() * chromosomeSize) - 1);
 		child = myLcs.getNewClassifier(performCrossover(classifierA,
 				classifierB, mutationPoint));
-		double newFitness = classifierA
-				.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION)
-				+ classifierB
-						.getComparisonValue(AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION);
-		newFitness /= 2;
-		child.setComparisonValue(
-				AbstractUpdateStrategy.COMPARISON_MODE_EXPLOITATION, newFitness);
-		// TODO: Set specific update data
+
 		return child;
 	}
 

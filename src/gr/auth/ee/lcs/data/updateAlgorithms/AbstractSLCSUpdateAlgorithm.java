@@ -160,27 +160,6 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		return new SLCSClassifierData();
 	}
 
-	/**
-	 * Generates the correct set.
-	 * 
-	 * @param matchSet
-	 *            the match set
-	 * @param instanceIndex
-	 *            the global instance index
-	 * @return the correct set
-	 */
-	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
-			final int instanceIndex) {
-		final ClassifierSet correctSet = new ClassifierSet(null);
-		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
-		for (int i = 0; i < matchSetSize; i++) {
-			Macroclassifier cl = matchSet.getMacroclassifier(i);
-			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
-				correctSet.addClassifier(cl, false);
-		}
-		return correctSet;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -194,6 +173,19 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 				.getUpdateDataObject());
 		return "tp:" + data.tp + "msa:" + data.msa + "str: " + data.str + "ns:"
 				+ data.ns;
+	}
+
+	@Override
+	public final void inheritParentParameters(Classifier parentA,
+			Classifier parentB, Classifier child) {
+		final SLCSClassifierData childData = ((SLCSClassifierData) child
+				.getUpdateDataObject());
+		final SLCSClassifierData parentAData = ((SLCSClassifierData) parentA
+				.getUpdateDataObject());
+		final SLCSClassifierData parentBData = ((SLCSClassifierData) parentB
+				.getUpdateDataObject());
+		childData.ns = (parentAData.ns + parentBData.ns) / 2;
+
 	}
 
 	@Override
@@ -273,6 +265,27 @@ public abstract class AbstractSLCSUpdateAlgorithm extends
 		else
 			ga.evolveSet(correctSet, population);
 
+	}
+
+	/**
+	 * Generates the correct set.
+	 * 
+	 * @param matchSet
+	 *            the match set
+	 * @param instanceIndex
+	 *            the global instance index
+	 * @return the correct set
+	 */
+	private ClassifierSet generateCorrectSet(final ClassifierSet matchSet,
+			final int instanceIndex) {
+		final ClassifierSet correctSet = new ClassifierSet(null);
+		final int matchSetSize = matchSet.getNumberOfMacroclassifiers();
+		for (int i = 0; i < matchSetSize; i++) {
+			Macroclassifier cl = matchSet.getMacroclassifier(i);
+			if (cl.myClassifier.classifyCorrectly(instanceIndex) == 1)
+				correctSet.addClassifier(cl, false);
+		}
+		return correctSet;
 	}
 
 	/**
